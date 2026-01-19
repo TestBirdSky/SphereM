@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Drama Sphere</string>
+    <string name="facebook_app_id" translatable="false">1234</string>
+    <string name="facebook_client_token" translatable="false">56789</string>
+    <string name="category_hot">Hot</string>
+    <string name="category_new">New</string>
+    <string name="home">Home</string>
+    <string name="profile">Profile</string>
+    <string name="for_you">For You</string>
+    <string name="no_more_data">No more data</string>
+    <string name="network_abnormality">Network abnormality, please try again later</string>
+    <string name="speed">Speed</string>
+    <string name="collect">Collect</string>
+    <string name="episodes">Episodes</string>
+    <string name="play_failed_please_try_again">Play failed, please try again.</string>
+    <string name="resolution">Resolution</string>
+    <string name="completed">Completed</string>
+    <string name="watching_in_order">Watching the episodes in order is even better!</string>
+    <string name="settings">Settings</string>
+    <string name="watch_history">Watch History</string>
+    <string name="collection">Collection</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="clear_cache">Clear Cache</string>
+    <string name="cache_cleared">Cache cleared</string>
+    <string name="no_data">No data</string>
+    <string name="preparing_ads">Preparing ads…</string>
+</resources>

@@ -1,0 +1,76 @@
+package com.sphere.shortvideos.vm
+
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.google.android.ump.ConsentInformation
+import com.google.android.ump.ConsentRequestParameters
+import com.google.android.ump.UserMessagingPlatform
+import com.sphere.shortvideos.baseui.GenericActivity
+import com.sphere.shortvideos.helper.EventData
+import com.sphere.shortvideos.helper.ad.AdUtils
+import com.sphere.shortvideos.helper.ad.LaunchPosition
+import com.sphere.shortvideos.helper.localEvent
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
+class LoadingViewModel : ViewModel() {
+
+    private var consentInformation: ConsentInformation? = null
+    private var waitLoadingJob: Job? = null
+    val umpCompletedLiveData = MutableLiveData<Boolean>()
+    val nextLiveData = MutableLiveData<Boolean>()
+
+    fun waitAdLoading(activity: GenericActivity) {
+        preload(true)
+        waitLoadingJob?.cancel()
+        waitLoadingJob = viewModelScope.launch(Dispatchers.IO) {
+            repeat(150) { num ->
+                delay(100L)
+                if (activity.getActivityState() && num >= 20 && AdUtils.launchHolder.isAdHaveCache()) {
+                    waitLoadingJob?.cancel()
+                    AdUtils.launchHolder.showFullAd(activity, onAdDismissed = {
+                        nextLiveData.postValue(true)
+                    })
+                } else if (num % 10 == 0) {
+                    preload()
+                }
+            }
+            nextLiveData.postValue(true)
+        }
+    }
+
+    fun getUmpIfNeed(activity: AppCompatActivity) {
+        runCatching {
+            if (euCountry.any { it == EventData.firstCountry }) {
+                consentInformation = UserMessagingPlatform.getConsentInformation(activity)
+                consentInformation?.requestConsentInfoUpdate(activity, ConsentRequestParameters.Builder().build(), {
+                    UserMessagingPlatform.loadAndShowConsentFormIfRequired(activity) { umpCompletedLiveData.postValue(true) }
+                }, { umpCompletedLiveData.postValue(false) })
+            } else {
+                umpCompletedLiveData.postValue(false)
+            }
+        }.onFailure {
+            umpCompletedLiveData.postValue(false)
+        }
+    }
+
+    private fun preload(needChance: Boolean = false) {
+        if (needChance) localEvent("ds_ad_chance", hashMapOf("ad_pos_id" to LaunchPosition.aliasName))
+        AdUtils.run {
+            launchHolder.preloadIfCan()
+            unlockHolder.preloadIfCan()
+        }
+    }
+
+    private val euCountry by lazy {
+        listOf(
+            "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT",
+            "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE", "NO", "IS", "LI", "CH", "GB"
+        )
+    }
+
+}
