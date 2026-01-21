@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Drama Sphere</string>
+    <string name="category_hot">Hot</string>
+    <string name="category_new">Baru</string>
+    <string name="home">Beranda</string>
+    <string name="profile">Profil</string>
+    <string name="for_you">Untuk Anda</string>
+    <string name="no_more_data">Tidak ada data lagi</string>
+    <string name="network_abnormality">Jaringan tidak normal, coba lagi nanti</string>
+    <string name="speed">Kecepatan</string>
+    <string name="collect">Kumpulkan</string>
+    <string name="episodes">Episode</string>
+    <string name="play_failed_please_try_again">Pemutaran gagal, coba lagi.</string>
+    <string name="resolution">Resolusi</string>
+    <string name="completed">Selesai</string>
+    <string name="watching_in_order">Menonton episode secara berurutan lebih baik!</string>
+    <string name="settings">Pengaturan</string>
+    <string name="watch_history">Riwayat Tontonan</string>
+    <string name="collection">Koleksi</string>
+    <string name="privacy_policy">Kebijakan Privasi</string>
+    <string name="clear_cache">Hapus Cache</string>
+    <string name="cache_cleared">Cache dihapus</string>
+    <string name="no_data">Tidak ada data</string>
+    <string name="preparing_ads">Menyiapkan iklan…</string>
+
+    <!-- Notifikasi Checkin -->
+    <string name="notification_checkin_title">Sudah check-in hari ini?</string>
+    <string name="notification_checkin_desc">Masuk sekarang dan ambil bonus.</string>
+    <string name="notification_drama_title">Pernikahan palsu berubah jadi cinta</string>
+    <string name="notification_drama_desc">Akhirnya di luar dugaan.</string>
+    <string name="notification_reward_title">Hampir tarik Rp720.000</string>
+    <string name="notification_reward_desc">Selesaikan tugas untuk mencairkan.</string>
+    <string name="notification_almost_title">Tinggal selangkah lagi</string>
+    <string name="notification_almost_desc">Capai Rp720.000 dan tarik.</string>
+
+    <!-- Notifikasi Screen On -->
+    <string name="notification_screen_on_title1">Setiap episode dibayar</string>
+    <string name="notification_screen_on_des1">Jangan ketinggalan</string>
+    <string name="notification_screen_on_title2">Penarikan makin dekat</string>
+    <string name="notification_screen_on_des2">Beberapa episode lagi dan siap tarik</string>
+    <string name="notification_screen_on_title3">Uang hampir cair</string>
+    <string name="notification_screen_on_des3">Jangan berhenti, kamu sudah dekat</string>
+    <string name="notification_screen_on_title4">Cinta terlarang terbongkar</string>
+    <string name="notification_screen_on_des4">Nonton sebelum semuanya terungkap</string>
+</resources>

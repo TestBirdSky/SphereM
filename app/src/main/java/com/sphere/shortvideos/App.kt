@@ -5,10 +5,13 @@ import com.bytedance.sdk.shortplay.api.PSSDK
 import com.google.android.libraries.ads.mobile.sdk.MobileAds
 import com.google.android.libraries.ads.mobile.sdk.initialization.InitializationConfig
 import com.sphere.shortvideos.helper.AppLifecycleManager
+import com.sphere.shortvideos.helper.OtherHelper
+import com.sphere.shortvideos.helper.HelperCheckTU
 import com.sphere.shortvideos.helper.InstallReferrerManager
 import com.sphere.shortvideos.helper.RemoteConfHelper
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
+import com.sphere.shortvideos.notification.NotificationHelper
 import com.tencent.mmkv.MMKV
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,6 +31,9 @@ class App : Application() {
         initPSSDK()
         InstallReferrerManager.fetch()
         initBackgroundActive()
+        HelperCheckTU.requestHerUser(this@App)
+        OtherHelper.registerInfo(this)
+        mFbAndAdjustHelper.initAdjust(this)
     }
 
     private fun initBackgroundActive() {
@@ -43,7 +49,9 @@ class App : Application() {
 
     private fun initAdmob() {
         CoroutineScope(Dispatchers.IO).launch {
-            val initConfig = InitializationConfig.Builder("ca-app-pub-3940256099942544~3347511713").setNativeValidatorDisabled().build()
+            val initConfig =
+                InitializationConfig.Builder("ca-app-pub-3940256099942544~3347511713").setNativeValidatorDisabled()
+                    .build()
             MobileAds.initialize(this@App, initConfig) {}
         }
     }
@@ -59,6 +67,11 @@ class App : Application() {
             logError("onInitFinished() called with: success = [$success], errorInfo = [$errorInfo]")
         }
         PSSDK.setEligibleAudience(true)
+    }
+
+    override fun onTerminate() {
+        super.onTerminate()
+        NotificationHelper.unregisterReceiver(this)
     }
 
 }

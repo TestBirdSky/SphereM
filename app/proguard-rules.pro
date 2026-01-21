@@ -23,3 +23,5 @@
 -keep class kotlin.jvm.internal.** { *; }
 -keep public class com.android.installreferrer.** { *; }
 -keep class com.bytedance.sdk.shortplay.** {*;}
+
+-keep class cn.shuzilm.core.** {*;}

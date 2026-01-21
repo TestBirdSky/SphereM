@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import com.bytedance.sdk.shortplay.api.EpisodeData
 import com.bytedance.sdk.shortplay.api.PSSDK
 import com.bytedance.sdk.shortplay.api.ShortPlay
 import com.bytedance.sdk.shortplay.api.ShortPlayFragment
@@ -172,7 +173,8 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
                 return false
             }
 
-            override fun onShortPlayPlayed(shortPlay: ShortPlay?, index: Int) = Unit
+            override fun onShortPlayPlayed(p0: ShortPlay?, p1: Int, p2: EpisodeData?) {}
+
 
             @SuppressLint("SetTextI18n")
             override fun onItemSelected(position: Int, type: PSSDK.ShortPlayDetailPageListener.ItemType?, index: Int) = Unit

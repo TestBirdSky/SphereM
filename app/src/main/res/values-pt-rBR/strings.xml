@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Drama Sphere</string>
+    <string name="category_hot">Em Alta</string>
+    <string name="category_new">Novo</string>
+    <string name="home">Início</string>
+    <string name="profile">Perfil</string>
+    <string name="for_you">Para Você</string>
+    <string name="no_more_data">Não há mais dados</string>
+    <string name="network_abnormality">Problema de rede, tente novamente mais tarde</string>
+    <string name="speed">Velocidade</string>
+    <string name="collect">Colecionar</string>
+    <string name="episodes">Episódios</string>
+    <string name="play_failed_please_try_again">Falha na reprodução, tente novamente.</string>
+    <string name="resolution">Resolução</string>
+    <string name="completed">Concluído</string>
+    <string name="watching_in_order">Assistir os episódios em ordem é ainda melhor!</string>
+    <string name="settings">Configurações</string>
+    <string name="watch_history">Histórico de Visualização</string>
+    <string name="collection">Coleção</string>
+    <string name="privacy_policy">Política de Privacidade</string>
+    <string name="clear_cache">Limpar Cache</string>
+    <string name="cache_cleared">Cache limpo</string>
+    <string name="no_data">Sem dados</string>
+    <string name="preparing_ads">Preparando anúncios…</string>
+
+    <!-- Notificações User Unlock -->
+    <string name="notification_checkin_title">Recompensa diária liberada</string>
+    <string name="notification_checkin_desc">Entre agora para coletar.</string>
+    <string name="notification_drama_title">Atividade diária ativa</string>
+    <string name="notification_drama_desc">Ganhe mais hoje.</string>
+    <string name="notification_reward_title">R$240 aguardando saque</string>
+    <string name="notification_reward_desc">Você recebeu um extra inesperado.</string>
+    <string name="notification_almost_title">Quase no saque: R$240</string>
+    <string name="notification_almost_desc">Conclua as tarefas e libere a retirada.</string>
+
+    <!-- Notificações Screen On -->
+    <string name="notification_screen_on_title1">Todo episódio paga</string>
+    <string name="notification_screen_on_des1">Você está perdendo</string>
+    <string name="notification_screen_on_title2">Seu saque se aproxima</string>
+    <string name="notification_screen_on_des2">Mais alguns episódios e pronto para retirar</string>
+    <string name="notification_screen_on_title3">Dinheiro quase liberado</string>
+    <string name="notification_screen_on_des3">Não pare agora, você está indo bem</string>
+    <string name="notification_screen_on_title4">Amor proibido revelado</string>
+    <string name="notification_screen_on_des4">Assista antes que a verdade venha à tona</string>
+
+</resources>

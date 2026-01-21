@@ -8,6 +8,18 @@
         android:id="@+id/tab_video"
         android:icon="@drawable/ic_nav_video"
         android:title="@string/for_you" />
+
+    <item
+        android:id="@+id/tab_wallet"
+        android:icon="@drawable/ic_nav_walt"
+        android:title="@string/wallet" />
+    <item
+        android:id="@+id/tab_task"
+        android:icon="@drawable/ic_nav_bill"
+        android:title="@string/task" />
+
+
+
     <item
         android:id="@+id/tab_user"
         android:icon="@drawable/ic_nav_user"

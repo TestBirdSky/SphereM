@@ -10,7 +10,9 @@ import com.sphere.shortvideos.baseui.GenericBindActivity
 import com.sphere.shortvideos.databinding.ActivityMainBinding
 import com.sphere.shortvideos.fragment.HomeFragment
 import com.sphere.shortvideos.fragment.ProfileFragment
+import com.sphere.shortvideos.fragment.TaskFragment
 import com.sphere.shortvideos.fragment.VideoStreamFragment
+import com.sphere.shortvideos.fragment.WalletFragment
 import com.sphere.shortvideos.vm.MainViewModel
 
 class MainActivity : GenericBindActivity<ActivityMainBinding>() {
@@ -26,7 +28,7 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
 
     private fun setupBottomNav() {
         binding.bottomNav.setOnApplyWindowInsetsListener(null)
-        val fragments = listOf(HomeFragment(), VideoStreamFragment(), ProfileFragment())
+        val fragments = listOf(HomeFragment(), WalletFragment(), TaskFragment(), VideoStreamFragment(), ProfileFragment())
         binding.viewPager.isUserInputEnabled = false
         binding.viewPager.offscreenPageLimit = fragments.size
         binding.viewPager.adapter = object : FragmentStateAdapter(supportFragmentManager, lifecycle) {
@@ -42,7 +44,9 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
             when (item.itemId) {
                 R.id.tab_home -> binding.viewPager.setCurrentItem(0, false)
                 R.id.tab_video -> binding.viewPager.setCurrentItem(1, false)
-                R.id.tab_user -> binding.viewPager.setCurrentItem(2, false)
+                R.id.tab_task -> binding.viewPager.setCurrentItem(2, false)
+                R.id.tab_wallet -> binding.viewPager.setCurrentItem(3, false)
+                R.id.tab_user -> binding.viewPager.setCurrentItem(4, false)
             }
             true
         }

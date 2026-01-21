@@ -6,8 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("com.google.devtools.ksp")
     id("kotlin-parcelize")
-    id("stringfog")
-    //id("com.google.gms.google-services")
+    id("stringfog") //id("com.google.gms.google-services")
     //id("com.google.firebase.crashlytics")
 }
 
@@ -32,8 +31,7 @@ android {
         versionCode = 1
         versionName = "1.0.0"
 
-        ndk {
-            //noinspection ChromeOsAbiSupport
+        ndk { //noinspection ChromeOsAbiSupport
             abiFilters += setOf("arm64-v8a", "armeabi-v7a")
         }
     }
@@ -55,8 +53,13 @@ android {
         buildConfig = true
         viewBinding = true
     }
-    fun Packaging.() {
-        jniLibs.useLegacyPackaging = true
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+        jniLibs.keepDebugSymbols.add("*/arm64-v8a/libdu.so")
+        jniLibs.keepDebugSymbols.add("*/armeabi-v7a/libdu.so")
+        jniLibs.keepDebugSymbols.add("*/x86/libdu.so")
     }
     bundle.language.enableSplit = false
     compileOptions {
@@ -73,10 +76,16 @@ android {
         exclude(group = "com.google.android.gms", module = "play-services-ads-lite")
     }
 
+    sourceSets {
+        getByName("main") {
+            jniLibs.srcDirs("libs")
+        }
+    }
+
 }
 
 dependencies {
-//    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -84,8 +93,7 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.swiperefreshlayout)
-    implementation(libs.androidx.browser)
-    // Room https://developer.android.com/training/data-storage/room
+    implementation(libs.androidx.browser) // Room https://developer.android.com/training/data-storage/room
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
@@ -98,8 +106,7 @@ dependencies {
     // https://github.com/scwang90/SmartRefreshLayout?tab=readme-ov-file
     implementation(libs.refresh.layout.kernel)
     implementation(libs.refresh.header.material)
-    implementation(libs.refresh.footer.ball)
-    // Gson
+    implementation(libs.refresh.footer.ball) // Gson
     implementation(libs.gson)
     implementation(libs.facebook.android.sdk)
 
@@ -114,13 +121,18 @@ dependencies {
     implementation("com.google.ads.mediation:mintegral:16.9.91.1")
     implementation("com.google.ads.mediation:vungle:7.5.1.0")
     implementation("com.unity3d.ads:unity-ads:4.16.1")
-    implementation("com.google.ads.mediation:unity:4.16.1.0")
-    // firebase
+    implementation("com.google.ads.mediation:unity:4.16.1.0") // firebase
     implementation(platform("com.google.firebase:firebase-bom:34.3.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-config")
     implementation("com.google.firebase:firebase-messaging")
     implementation("com.google.firebase:firebase-crashlytics-ndk")
 
+    // pangle 短剧sdk
     implementation("com.bytedance.dramaverse:pssdk:1.8.0.1")
+
+    //adjust
+    implementation("com.adjust.sdk:adjust-android:5.5.0")
+    implementation("com.android.installreferrer:installreferrer:2.2")
+    implementation("com.google.android.gms:play-services-ads-identifier:18.0.1")
 }

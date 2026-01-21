@@ -16,17 +16,20 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        flatDir {
+            dirs("libs")
+        }
         maven { url = uri("https://jitpack.io") }
         maven { url = uri("https://artifact.bytedance.com/repository/pangle/") }
         maven { url = uri("https://artifact.bytedance.com/repository/Volcengine/") }
         maven { url = uri("https://artifact.byteplus.com/repository/public/") }
         maven { url = uri("https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea") }
         maven {
-            url =uri("https://artifact.bytedance.com/repository/Volcengine/")
+            url = uri("https://artifact.bytedance.com/repository/Volcengine/")
 
         }
         maven {
-            url =uri("https://artifact.byteplus.com/repository/public/")
+            url = uri("https://artifact.byteplus.com/repository/public/")
         }
     }
 }

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="match_parent"
+        android:layout_height="333dp"
+        android:background="@drawable/ic_task_top_bg"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="36dp"
+        android:gravity="center"
+        android:text="@string/task"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv1"
+        android:layout_width="23dp"
+        android:layout_height="26.5dp"
+        android:layout_marginHorizontal="22dp"
+        android:src="@drawable/ic_money"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_money"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="9dp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/iv1"
+        app:layout_constraintStart_toEndOf="@id/iv1"
+        app:layout_constraintTop_toTopOf="@id/iv1"
+        tools:text="26sp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_withdraw"
+        android:layout_width="161dp"
+        android:layout_height="35dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="7dp"
+        android:background="@drawable/shape_bg_ye"
+        android:gravity="center"
+        android:text="@string/withdraw"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_money" />
+
+    <TextView
+        android:id="@+id/tv1"
+        android:layout_width="match_parent"
+        android:layout_height="126dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/shape_rec"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
+        android:text="@string/daily_rewards"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/tv_withdraw" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_watch_ad"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:layout_marginVertical="17dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="17dp"
+        android:background="@drawable/shape_wa_ad"
+        app:layout_constraintBottom_toBottomOf="@id/tv1"
+        app:layout_constraintEnd_toStartOf="@id/bg_h5"
+        app:layout_constraintStart_toStartOf="@id/tv1" />
+
+    <ImageView
+        android:id="@+id/iv_ad_tag"
+        android:layout_width="26dp"
+        android:layout_height="17dp"
+        android:layout_margin="8dp"
+        android:src="@drawable/ic_ad_tag"
+        app:layout_constraintLeft_toLeftOf="@id/iv_watch_ad"
+        app:layout_constraintTop_toTopOf="@id/iv_watch_ad" />
+
+    <TextView
+        android:id="@+id/tv_w_ad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:text="@string/watch_an_ad"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_ad_tag"
+        app:layout_constraintStart_toEndOf="@id/iv_ad_tag"
+        app:layout_constraintTop_toTopOf="@id/iv_ad_tag" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="21dp"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="7dp"
+        android:background="@drawable/shape_go"
+        android:gravity="center"
+        android:text="@string/tv_go"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_watch_ad"
+        app:layout_constraintEnd_toEndOf="@id/tv_w_ad"
+        app:layout_constraintStart_toStartOf="@id/iv_watch_ad" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/bg_h5"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:layout_marginVertical="17dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/shape_h5"
+        app:layout_constraintBottom_toBottomOf="@id/tv1"
+        app:layout_constraintEnd_toEndOf="@id/tv1"
+        app:layout_constraintStart_toEndOf="@id/iv_watch_ad" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_h51"
+        android:layout_width="31dp"
+        android:layout_height="31dp"
+        android:layout_marginHorizontal="6dp"
+        android:src="@drawable/ic_h5_tag"
+        app:layout_constraintBottom_toBottomOf="@id/bg_h5"
+        app:layout_constraintStart_toStartOf="@id/bg_h5"
+        app:layout_constraintTop_toTopOf="@id/bg_h5" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_h5_tips"
+        android:layout_width="0dp"
+        android:paddingHorizontal="6dp"
+        android:layout_height="wrap_content"
+        android:text="@string/tv_join"
+        android:textColor="#FFFFFF"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_h51"
+        app:layout_constraintLeft_toRightOf="@id/iv_h51"
+        app:layout_constraintRight_toRightOf="@id/bg_h5"
+        app:layout_constraintTop_toTopOf="@id/iv_h51" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

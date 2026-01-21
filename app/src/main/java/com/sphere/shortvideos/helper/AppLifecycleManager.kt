@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.os.Bundle
+import com.adjust.sdk.Adjust
 import com.sphere.shortvideos.activity.LoadingActivity
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.isInteractive
@@ -33,8 +34,13 @@ object AppLifecycleManager : Application.ActivityLifecycleCallbacks {
         activity.startActivity(Intent(activity, LoadingActivity::class.java))
     }
 
-    override fun onActivityResumed(activity: Activity) = Unit
-    override fun onActivityPaused(activity: Activity) = Unit
+    override fun onActivityResumed(activity: Activity) {
+        Adjust.onResume()
+    }
+
+    override fun onActivityPaused(activity: Activity) {
+        Adjust.onPause()
+    }
 
     override fun onActivityStopped(activity: Activity) {
         runCatching {

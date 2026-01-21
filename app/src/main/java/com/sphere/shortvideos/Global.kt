@@ -9,7 +9,9 @@ import android.view.Gravity
 import android.widget.Toast
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.sphere.shortvideos.bean.RiskBean
 import com.sphere.shortvideos.database.DramaDatabase
+import com.sphere.shortvideos.helper.FbAndAdjustHelper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 
@@ -17,6 +19,9 @@ lateinit var mApp: App
 val database by lazy { DramaDatabase.buildInstance(mApp) }
 val isDebugMode by lazy { true }
 var unlockIndex = 3
+var riskBean: RiskBean? = null
+
+val mFbAndAdjustHelper = FbAndAdjustHelper()
 
 fun logError(any: Any?) {
     if (isDebugMode) Log.e("Sphere", "$any")
@@ -62,7 +67,8 @@ fun HashMap<String, Any?>.toBundle(): Bundle? {
     return bundle
 }
 
-fun isInteractive() = runCatching { (mApp.getSystemService(Context.POWER_SERVICE) as PowerManager).isInteractive }.getOrNull() ?: false
+fun isInteractive() =
+    runCatching { (mApp.getSystemService(Context.POWER_SERVICE) as PowerManager).isInteractive }.getOrNull() ?: false
 
 inline fun <reified T> Context.nextView(block: Intent.() -> Unit = {}) {
     startActivity(Intent(this, T::class.java).also { it.block() })

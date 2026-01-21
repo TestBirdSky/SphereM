@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import com.bytedance.sdk.shortplay.api.EpisodeData
 import com.bytedance.sdk.shortplay.api.PSSDK
 import com.bytedance.sdk.shortplay.api.ShortPlay
 import com.bytedance.sdk.shortplay.api.ShortPlayFragment
@@ -54,7 +55,8 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
     private var resolutions: Array<Resolution>? = null
     private var currentResolution: Resolution? = null
     private var onProgressChanged: (progress: Int, max: Int) -> Unit = { _, _ -> }
-    private var onVideoInfoFetched: (resolutions: Array<Resolution>?, currentResolution: Resolution?) -> Unit = { _, _ -> }
+    private var onVideoInfoFetched: (resolutions: Array<Resolution>?, currentResolution: Resolution?) -> Unit =
+        { _, _ -> }
     private var controlViewHideJob: Job? = null
     private val speedArr = arrayOf(0.75f, 1.0f, 1.25f, 1.5f, 2.0f)
     private var isForceShowAd: Boolean = false
@@ -183,7 +185,8 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                         .show()
                 }
                 onVideoInfoFetched = { resolutions, currentResolution ->
-                    binding.btnResolution.text = "${currentResolution?.toString(VideoRef.TYPE_VIDEO)}"
+                    binding.btnResolution.text =
+                        "${currentResolution?.toString(VideoRef.TYPE_VIDEO)}"
                 }
                 showDramaFragment(item)
             }
@@ -241,7 +244,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                 return false
             }
 
-            override fun onShortPlayPlayed(shortPlay: ShortPlay?, index: Int) = Unit
+            override fun onShortPlayPlayed(p0: ShortPlay?, p1: Int, p2: EpisodeData?){}
 
             @SuppressLint("SetTextI18n")
             override fun onItemSelected(position: Int, type: PSSDK.ShortPlayDetailPageListener.ItemType?, index: Int) {
@@ -274,9 +277,9 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                 }
             }
 
-            fun isOddGreaterThanRemote(n: Int): Boolean {
-                return n >= unlockIndex && n % 2 == 1
-            }
+                fun isOddGreaterThanRemote(n: Int): Boolean {
+                    return n >= unlockIndex && n % 2 == 1
+                }
 
             fun showUnlockAd(index: Int) {
                 AdUtils.unlockHolder.showFullAd(activity, eventName = "ds_unlock_int", onAdDismissed = {
@@ -309,21 +312,21 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                         changeSeekbarSize(true)
                     }
 
-                    PSSDK.PLAYBACK_STATE_PLAY -> {
-                        changeSeekbarSize(false)
-                        controlViewHideJob = lifecycleScope.launch(Dispatchers.Main) {
-                            delay(5000L)
-                            binding.groupControl.isVisible = false
+                        PSSDK.PLAYBACK_STATE_PLAY -> {
+                            changeSeekbarSize(false)
+                            controlViewHideJob = lifecycleScope.launch(Dispatchers.Main) {
+                                delay(5000L)
+                                binding.groupControl.isVisible = false
+                            }
                         }
                     }
                 }
-            }
 
-            override fun onVideoPlayCompleted(shortPlay: ShortPlay?, index: Int) = Unit
-            override fun onEnterImmersiveMode() = Unit
-            override fun onExitImmersiveMode() = Unit
+                override fun onVideoPlayCompleted(shortPlay: ShortPlay?, index: Int) = Unit
+                override fun onEnterImmersiveMode() = Unit
+                override fun onExitImmersiveMode() = Unit
 
-            override fun isNeedBlock(shortPlay: ShortPlay?, index: Int): Boolean = false
+                override fun isNeedBlock(shortPlay: ShortPlay?, index: Int): Boolean = false
 
             override fun showAdIfNeed(
                 shortPlay: ShortPlay?,
@@ -337,9 +340,9 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                 onVideoInfoFetched.invoke(resolutions, currentResolution)
             }
 
-            override fun onObtainPlayerControlViews(): List<View?>? = null
+                override fun onObtainPlayerControlViews(): List<View?>? = null
 
-        })
+            })
         if (detailFragment == null) {
             showToast(R.string.play_failed_please_try_again)
             return

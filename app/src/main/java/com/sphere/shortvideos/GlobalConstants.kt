@@ -11,7 +11,7 @@ object GlobalConstants {
     const val EXTRA_KEY_COMMON_INT = "EXTRA_KEY_COMMON_INT"
     const val EXTRA_KEY_COMMON_LONG = "EXTRA_KEY_COMMON_LONG"
 
-    const val PRIVACY_POLICY = "https://www.google.com"
+    const val PRIVACY_POLICY = "https://www.google.com"// todo
 
     val DEFAULT_JSON = """
         {

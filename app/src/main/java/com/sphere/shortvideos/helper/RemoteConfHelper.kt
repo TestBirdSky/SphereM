@@ -4,8 +4,12 @@ import com.google.firebase.Firebase
 import com.google.firebase.remoteconfig.get
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
+import com.google.gson.Gson
+import com.sphere.shortvideos.bean.RiskBean
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.isDebugMode
+import com.sphere.shortvideos.mFbAndAdjustHelper
+import com.sphere.shortvideos.riskBean
 import com.sphere.shortvideos.unlockIndex
 
 class RemoteConfHelper {
@@ -26,6 +30,7 @@ class RemoteConfHelper {
     private fun fetchAll() {
         fetchAdRemote()
         fetchUnlockIndex()
+        fetchRisk()
     }
 
     private fun fetchAdRemote() {
@@ -36,6 +41,16 @@ class RemoteConfHelper {
         runCatching {
             unlockIndex = remoteConfig["unlock_ep"].asString().toIntOrNull() ?: 4
         }
+    }
+
+    private fun fetchRisk(){
+        val str = remoteConfig.getString("risk_control")
+        runCatching {
+            val bean = Gson().fromJson(str, RiskBean::class.java)
+            riskBean = bean
+        }
+        val fbInfo = remoteConfig.getString("drama_fb")
+        mFbAndAdjustHelper.initFb(fbInfo)
     }
 
 

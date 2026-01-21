@@ -30,7 +30,7 @@ class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
         viewModel.onErrorLiveData.observe(this) {
             initialized = false
             binding.refreshLayout.isRefreshing = false
-            binding.errorView.findViewById<TextView>(com.pssdk.publish_module.R.id.pssdk_error_tip)?.text = getString(R.string.network_abnormality)
+//            binding.errorView.findViewById<TextView>(com.pssdk.publish_module.R.id.pssdk_error_tip)?.text = getString(R.string.network_abnormality)
             binding.errorView.isVisible = true
         }
         viewModel.refreshLiveData.observe(this) { result ->
