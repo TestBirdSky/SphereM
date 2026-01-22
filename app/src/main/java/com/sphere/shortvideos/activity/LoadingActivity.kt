@@ -55,6 +55,9 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
         }
         session()
         PermissionHelper.checkCueDay()
+        // todo test
+        nextView<MainActivity>()
+        finish()
     }
 
     override fun onBackActioned() = Unit

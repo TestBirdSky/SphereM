@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv1"
+        android:layout_width="match_parent"
+        android:layout_height="126dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/shape_rec"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
+        android:text="@string/daily_rewards"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/tv_withdraw" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_watch_ad"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:layout_marginVertical="17dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="17dp"
+        android:background="@drawable/shape_wa_ad"
+        app:layout_constraintBottom_toBottomOf="@id/tv1"
+        app:layout_constraintEnd_toStartOf="@id/bg_h5"
+        app:layout_constraintStart_toStartOf="@id/tv1" />
+
+    <ImageView
+        android:id="@+id/iv_ad_tag"
+        android:layout_width="26dp"
+        android:layout_height="17dp"
+        android:layout_margin="8dp"
+        android:src="@drawable/ic_ad_tag"
+        app:layout_constraintLeft_toLeftOf="@id/iv_watch_ad"
+        app:layout_constraintTop_toTopOf="@id/iv_watch_ad" />
+
+    <TextView
+        android:id="@+id/tv_w_ad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:text="@string/watch_an_ad"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_ad_tag"
+        app:layout_constraintStart_toEndOf="@id/iv_ad_tag"
+        app:layout_constraintTop_toTopOf="@id/iv_ad_tag" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="21dp"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="7dp"
+        android:background="@drawable/shape_go"
+        android:gravity="center"
+        android:text="@string/tv_go"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_watch_ad"
+        app:layout_constraintEnd_toEndOf="@id/tv_w_ad"
+        app:layout_constraintStart_toStartOf="@id/iv_watch_ad" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/bg_h5"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:layout_marginVertical="17dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/shape_h5"
+        app:layout_constraintBottom_toBottomOf="@id/tv1"
+        app:layout_constraintEnd_toEndOf="@id/tv1"
+        app:layout_constraintStart_toEndOf="@id/iv_watch_ad" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_h51"
+        android:layout_width="31dp"
+        android:layout_height="31dp"
+        android:layout_marginHorizontal="6dp"
+        android:src="@drawable/ic_h5_tag"
+        app:layout_constraintBottom_toBottomOf="@id/bg_h5"
+        app:layout_constraintStart_toStartOf="@id/bg_h5"
+        app:layout_constraintTop_toTopOf="@id/bg_h5" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_h5_tips"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="6dp"
+        android:text="@string/tv_join"
+        android:textColor="#FFFFFF"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_h51"
+        app:layout_constraintLeft_toRightOf="@id/iv_h51"
+        app:layout_constraintRight_toRightOf="@id/bg_h5"
+        app:layout_constraintTop_toTopOf="@id/iv_h51" />
+
+    <ImageView
+        android:id="@+id/iv_bg_watch"
+        android:layout_width="match_parent"
+        android:layout_height="126dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/shape_w_t_tips"
+        app:layout_constraintTop_toBottomOf="@id/tv1" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvc"
+        android:layout_width="wrap_content"
+        android:layout_height="28dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="6dp"
+        android:gravity="center"
+        android:text="@string/watch_earn_coins"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="@id/iv_bg_watch"
+        app:layout_constraintTop_toTopOf="@id/iv_bg_watch" />
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progress_view"
+        android:layout_width="0dp"
+        android:layout_height="6dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="34dp"
+        android:indeterminate="false"
+        app:indicatorColor="#FFE600"
+        app:layout_constraintBottom_toBottomOf="@id/iv_bg_watch"
+        app:layout_constraintLeft_toLeftOf="@id/iv_bg_watch"
+        app:layout_constraintRight_toRightOf="@id/iv_bg_watch"
+        app:trackColor="#858585"
+        app:trackCornerRadius="6dp"
+        app:trackThickness="6dp" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="0dp"
+        android:layout_height="89dp"
+        android:gravity="bottom"
+        android:paddingBottom="14dp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_bg_watch"
+        app:layout_constraintEnd_toEndOf="@id/progress_view"
+        app:layout_constraintStart_toStartOf="@id/progress_view">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_small_money"
+                android:layout_width="26dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_coin_high" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_des1"
+                android:layout_width="wrap_content"
+                android:layout_height="16sp"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="8sp" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_selected"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:background="@drawable/shape_circle" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_des2"
+                android:layout_width="wrap_content"
+                android:layout_height="16dp"
+                android:gravity="center"
+                android:text="10min"
+                android:textColor="@color/white"
+                android:textSize="8sp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_small_money"
+                android:layout_width="26dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_coin_high" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_des1"
+                android:layout_width="wrap_content"
+                android:layout_height="16sp"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="8sp" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_selected"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:background="@drawable/shape_circle" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_des2"
+                android:layout_width="wrap_content"
+                android:layout_height="16dp"
+                android:gravity="center"
+                android:text="15min"
+                android:textColor="@color/white"
+                android:textSize="8sp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_small_money"
+                android:layout_width="26dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_coin_high" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_des1"
+                android:layout_width="wrap_content"
+                android:layout_height="16sp"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="8sp" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_selected"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:background="@drawable/shape_circle" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_des2"
+                android:layout_width="wrap_content"
+                android:layout_height="16dp"
+                android:gravity="center"
+                android:text="30min"
+                android:textColor="@color/white"
+                android:textSize="8sp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center|bottom"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_big_money"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/ic_coin_high" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_des1"
+                android:layout_width="wrap_content"
+                android:layout_height="16sp"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="8sp" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_select_status"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:background="@drawable/shape_circle" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_des2"
+                android:layout_width="wrap_content"
+                android:layout_height="16dp"
+                android:gravity="center"
+                android:text="60min"
+                android:textColor="@color/white"
+                android:textSize="8sp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center|bottom"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_big_money"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/ic_coin_high" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_des1"
+                android:layout_width="wrap_content"
+                android:layout_height="16sp"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="8sp" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_selected"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:background="@drawable/shape_circle" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_des2"
+                android:layout_width="wrap_content"
+                android:layout_height="16dp"
+                android:gravity="center"
+                android:text="2h"
+                android:textColor="@color/white"
+                android:textSize="8sp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center|bottom"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_big_money"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/ic_coin_high" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_des1"
+                android:layout_width="wrap_content"
+                android:layout_height="16sp"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="8sp" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_selected"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:background="@drawable/shape_circle" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_des2"
+                android:layout_width="wrap_content"
+                android:layout_height="16dp"
+                android:gravity="center"
+                android:text="4h"
+                android:textColor="@color/white"
+                android:textSize="8sp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <ImageView
+        android:id="@+id/iv_bg_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="199dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/shape_grey_12"
+        app:layout_constraintTop_toBottomOf="@id/iv_bg_watch" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="@string/day_grand_prize"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="@id/iv_bg_bottom"
+        app:layout_constraintTop_toTopOf="@id/iv_bg_bottom" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
