@@ -7,20 +7,19 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import com.sphere.shortvideos.R
-import com.sphere.shortvideos.databinding.DialogWelcomeBonusBinding
-import com.sphere.shortvideos.helper.MoneyCacheHelper
-import com.sphere.shortvideos.helper.mmkv.MMKVRepository
+import com.sphere.shortvideos.databinding.DialogCongratulateBinding
 import com.sphere.shortvideos.view.AnimViewHelper
 
 /**
- * Date：2026/1/22
- * Describe: Welcome bonus dialog
+ * Date：2026/1/23
+ * Describe: Congratulate dialog
  */
-class WelcomeBonusDialogFragment : DialogFragment() {
+class CongratulateDialogFragment : DialogFragment() {
 
-    var onDismissCall: (() -> Unit)? = null
+    var onClaim: (() -> Unit)? = null
+    var onClose: (() -> Unit)? = null
 
-    private var _binding: DialogWelcomeBonusBinding? = null
+    private var _binding: DialogCongratulateBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,21 +33,20 @@ class WelcomeBonusDialogFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = DialogWelcomeBonusBinding.inflate(inflater, container, false)
+        _binding = DialogCongratulateBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         AnimViewHelper.playWelcomeBonusAnim(binding.ivAnim, binding.ivRewardBox)
-        binding.btnClaim.setOnClickListener {
-            onDismissCall?.invoke()
-            MMKVRepository.isNewUser = false
-            MoneyCacheHelper.addNewUserGift()
+        AnimViewHelper.slideInFromTop(binding.ivAnim2, 1200L)
+        binding.ivClose.setOnClickListener {
+            onClose?.invoke()
             dismissAllowingStateLoss()
         }
-        binding.ivClose.setOnClickListener {
-            onDismissCall?.invoke()
+        binding.btnClaim.setOnClickListener {
+            onClaim?.invoke()
             dismissAllowingStateLoss()
         }
     }

@@ -1,10 +1,8 @@
 package com.sphere.shortvideos.helper.permission
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,10 +21,9 @@ class PostPermission(private val activity: ComponentActivity) {
     private val permissionLauncher: ActivityResultLauncher<String> =
         activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
-                PermissionHelper.reqNotificationPermissionStatus = 100
                 onPermissionResult?.invoke(100)
             } else {
-                PermissionHelper.reqNotificationPermissionStatus = 50
+                PermissionHelper.showOpenNotifDialogFlag = 30
                 onPermissionResult?.invoke(0)
             }
         }
@@ -49,7 +46,6 @@ class PostPermission(private val activity: ComponentActivity) {
             } else {
                 when {
                     checkPermission() -> {
-                        PermissionHelper.reqNotificationPermissionStatus = 100
                         onResult(100)
                     }
                     activity.shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> { // 第二次弹窗

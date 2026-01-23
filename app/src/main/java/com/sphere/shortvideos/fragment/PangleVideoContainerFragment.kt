@@ -4,6 +4,9 @@ import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
+import android.animation.ValueAnimator
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -12,6 +15,7 @@ import android.widget.SeekBar
 import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.bytedance.sdk.shortplay.api.EpisodeData
 import com.bytedance.sdk.shortplay.api.PSSDK
@@ -19,23 +23,29 @@ import com.bytedance.sdk.shortplay.api.ShortPlay
 import com.bytedance.sdk.shortplay.api.ShortPlayFragment
 import com.sphere.shortvideos.GlobalConstants
 import com.sphere.shortvideos.R
+import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.activity.PangleDramaPlayActivity
 import com.sphere.shortvideos.baseui.GenericFragment
 import com.sphere.shortvideos.database
 import com.sphere.shortvideos.database.DramaCollectEntity
 import com.sphere.shortvideos.databinding.FragmentPangleVideoContainerBinding
-import com.sphere.shortvideos.helper.TaskHelper
+import com.sphere.shortvideos.helper.MoneyCacheHelper
+import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.nextView
 import com.sphere.shortvideos.showToast
 import com.sphere.shortvideos.toJson
 import com.sphere.shortvideos.view.SpineHelper
+import com.sphere.shortvideos.vm.MainViewModel
 import com.ss.ttvideoengine.TTVideoEngineInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.getValue
 
 class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContainerBinding>() {
     private val spineHelper = SpineHelper()
+    private var fingerAnimator: ObjectAnimator? = null
+    private val viewModel by activityViewModels<MainViewModel>()
 
     private var shortPlay: ShortPlay? = null
     private var shortPlayCollect: DramaCollectEntity? = null
@@ -134,6 +144,8 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
                 showDramaFragment(item)
             }
         }
+        showNewUser()
+        registerMainViewModel()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -190,13 +202,20 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
 
                 override fun onVideoPlayStateChanged(shortPlay: ShortPlay?, index: Int, playbackState: Int) {
                     when (playbackState) {
-                        PSSDK.PLAYBACK_STATE_PLAY -> TaskHelper.startWatchVideo()
-                        PSSDK.PLAYBACK_STATE_PAUSE -> TaskHelper.stopWatchVideo()
+                        PSSDK.PLAYBACK_STATE_PLAY -> {
+                            MoneyCacheHelper.startWatchVideo()
+                            viewModel.playMoneyProgress()
+                        }
+                        PSSDK.PLAYBACK_STATE_PAUSE -> {
+                            MoneyCacheHelper.stopWatchVideo()
+                            viewModel.pauseMoneyProgress()
+                        }
                     }
                 }
 
                 override fun onVideoPlayCompleted(shortPlay: ShortPlay?, index: Int) {
-                    TaskHelper.stopWatchVideo()
+                    MoneyCacheHelper.stopWatchVideo()
+                    viewModel.pauseMoneyProgress()
                     requireContext().nextView<PangleDramaPlayActivity> {
                         putExtra(GlobalConstants.EXTRA_KEY_SHORT_PLAY, shortPlay)
                         putExtra(GlobalConstants.EXTRA_KEY_START_INDEX, 2)
@@ -229,7 +248,59 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
 
     override fun onPause() {
         super.onPause()
-        TaskHelper.stopWatchVideo()
+        MoneyCacheHelper.stopWatchVideo()
+        viewModel.pauseMoneyProgress()
+    }
+
+    private fun showNewUser() {
+        if (MMKVRepository.isNewUser) {
+            setGuideVisibility(View.VISIBLE)
+            startFingerAnim()
+            binding.ivFirstGuide.setOnClickListener {
+                (activity as? MainActivity)?.showWelcomDialog()
+                setGuideVisibility(View.GONE)
+                stopFingerAnim()
+            }
+        }
+    }
+
+    private fun setGuideVisibility(sta: Int) {
+        binding.ivFirstGuide.visibility = sta
+        binding.ivFingerAnim.visibility = sta
+        binding.tvTipsUser.visibility = sta
+    }
+
+    private fun startFingerAnim() {
+        if (fingerAnimator != null) return
+        binding.ivFingerAnim.scaleX = 0.8f
+        binding.ivFingerAnim.scaleY = 0.8f
+        val scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 0.8f, 1.3f)
+        val scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.8f, 1.3f)
+        fingerAnimator = ObjectAnimator.ofPropertyValuesHolder(binding.ivFingerAnim, scaleX, scaleY).apply {
+            duration = 1000
+            repeatCount = ValueAnimator.INFINITE
+            repeatMode = ValueAnimator.REVERSE
+            start()
+        }
+    }
+
+    private fun stopFingerAnim() {
+        fingerAnimator?.cancel()
+        fingerAnimator = null
+    }
+
+    override fun onDestroyView() {
+        stopFingerAnim()
+        super.onDestroyView()
+    }
+
+    private fun registerMainViewModel() {
+        viewModel.numProgress.observe(this, {
+            binding.progressPrice.progress = it
+        })
+        viewModel.numTime.observe(this, {
+            binding.tvTipsNum.text = it
+        })
     }
 
 }

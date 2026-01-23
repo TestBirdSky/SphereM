@@ -240,7 +240,7 @@
         app:layout_constraintTop_toTopOf="@id/layout_price_progress" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_color"
+        android:id="@+id/tv_tips_user"
         android:visibility="gone"
         tools:visibility="visible"
         android:layout_width="202dp"

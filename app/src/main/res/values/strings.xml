@@ -41,6 +41,8 @@
     <string name="notification_screen_on_des3">Don’t stop now, you’re doing great</string>
     <string name="notification_screen_on_title4">Forbidden love revealed</string>
     <string name="notification_screen_on_des4">Watch before the truth comes out</string>
+    <string name="v_pri">Double Bonus</string>
+    <string name="watch_basic_ad"><u>Just the Basics</u></string>
 
     <string name="start">START</string>
     <string name="task">Task</string>
@@ -55,6 +57,16 @@
     <string name="bonus_welcome_title">Bonus De Boas-Vindas</string>
     <string name="bonus_welcome_action">Receba Recompensas</string>
     <string name="tips_info">Watch Shows, Make Money!\n100% Secure Payouts!</string>
+    <string name="turn_on_push_notifications">Turn on push notifications</string>
+    <string name="dram_short_tips_dialog"><![CDATA[Watch &Earn！Catch hot short dramas first！]]></string>
+    <string name="allow_get"><![CDATA[Allow & Get]]></string>
+
+    <string name="back_tips_title">Don’t Miss Rewards!</string>
+    <string name="back_tips_desc">Your Progress And Rewards Will Be Paused If You Leave.</string>
+    <string name="back_tips_exit">Exit</string>
+    <string name="back_tips_stay">Stay</string>
+    <string name="congratulate">Congratulate</string>
+    <string name="withdrawal_progress">Withdrawal Progress</string>
 
 
 </resources>

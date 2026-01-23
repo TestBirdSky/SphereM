@@ -2,6 +2,7 @@ package com.sphere.shortvideos.activity
 
 import android.graphics.drawable.Drawable
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
@@ -12,19 +13,33 @@ import androidx.viewpager2.widget.ViewPager2
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.baseui.GenericBindActivity
 import com.sphere.shortvideos.databinding.ActivityMainBinding
+import com.sphere.shortvideos.dialogs.BackTipsDialogFragment
+import com.sphere.shortvideos.dialogs.CongratulateDialogFragment
+import com.sphere.shortvideos.dialogs.OpenNotificationDialogFragment
 import com.sphere.shortvideos.dialogs.WelcomeBonusDialogFragment
 import com.sphere.shortvideos.fragment.HomeFragment
 import com.sphere.shortvideos.fragment.ProfileFragment
 import com.sphere.shortvideos.fragment.TaskFragment
 import com.sphere.shortvideos.fragment.VideoStreamFragment
 import com.sphere.shortvideos.fragment.WalletFragment
+import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
+import com.sphere.shortvideos.helper.permission.PermissionHelper
 import com.sphere.shortvideos.view.SpineHelper
 import com.sphere.shortvideos.vm.MainViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 class MainActivity : GenericBindActivity<ActivityMainBinding>() {
+    private var moneyGe = -1.0
+    private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (PermissionHelper.areNotificationsEnabled(this)) {
+            if (moneyGe > 0) {
+                MoneyCacheHelper.addNotExchangeMoney(moneyGe)
+            }
+        }
+    }
     private val h = SpineHelper()
     private val viewModel by viewModels<MainViewModel>()
 
@@ -73,6 +88,11 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
                 }
 
                 R.id.tab_wallet -> {
+                    lifecycleScope.launch {
+                        delay(1200)
+                        CongratulateDialogFragment().show(supportFragmentManager, "")
+                    }
+
                     binding.viewPager.setCurrentItem(2, false)
                 }
 
@@ -95,8 +115,11 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         h.addViewWallet(binding.centerWallet, this)
         if (MMKVRepository.isNewUser) {
             binding.ivFirstGuide.visibility = View.VISIBLE
-            binding.ivFirstGuide.setOnClickListener {
-
+            binding.ivFirstGuide.setOnClickListener {}
+        } else {
+            lifecycleScope.launch {
+                delay(Random.nextLong(1500, 3000))
+                showNotificationOpen()
             }
         }
     }
@@ -114,9 +137,34 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         return ContextCompat.getDrawable(this@MainActivity, this)
     }
 
-    fun showDialog() {
-        lifecycleScope.launch {
-            WelcomeBonusDialogFragment().show(supportFragmentManager, "welcome")
+    fun showWelcomDialog() {
+        binding.ivFirstGuide.visibility = View.GONE
+        WelcomeBonusDialogFragment().apply {
+            onDismissCall = {
+                showNotificationOpen()
+            }
+        }.show(supportFragmentManager, "welcome")
+    }
+
+    fun showNotificationOpen(isHome: Boolean = true) {
+        val isShow = if (isHome) PermissionHelper.isShowNotificationDialogHome(this@MainActivity)
+        else PermissionHelper.isShowNotificationDialogAfterRv(this)
+        if (isShow) {
+            val notificationDialogFragment = OpenNotificationDialogFragment()
+            notificationDialogFragment.onClaim = {
+                moneyGe = it
+                startForResult.launch(GoSettingAndCheckActivity.fetchIntent(activity, 0))
+            }
+            notificationDialogFragment.show(supportFragmentManager, "")
+        }
+    }
+
+    override fun onBackActioned() {
+        if (MMKVRepository.isShowBackTips) {
+            MMKVRepository.isShowBackTips = false
+            BackTipsDialogFragment({ super.onBackActioned() }).show(supportFragmentManager, "onBack")
+        } else {
+            super.onBackActioned()
         }
     }
 

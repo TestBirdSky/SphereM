@@ -83,6 +83,12 @@
             android:configChanges="keyboardHidden|screenSize|orientation"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
+        <activity
+            android:name="com.sphere.shortvideos.activity.GoSettingAndCheckActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
 
         <!--        <meta-data-->
         <!--            android:name="com.facebook.sdk.ApplicationId"-->

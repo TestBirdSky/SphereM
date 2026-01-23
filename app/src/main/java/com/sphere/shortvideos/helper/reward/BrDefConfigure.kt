@@ -1,49 +1,10 @@
-package com.sphere.shortvideos.helper
-
-import com.google.gson.Gson
-import com.sphere.shortvideos.bean.RewardConfig
+package com.sphere.shortvideos.helper.reward
 
 /**
- * Date：2026/1/22
- * Describe: BR 奖励配置读取
+ * Date：2026/1/23
+ * Describe:
  */
-object RewardHelper {
-    private var lastRemoteConfigure = ""
-
-    private const val REMOTE_KEY = "br_reward"
-
-    private val gson = Gson()
-
-    @Volatile
-    private var cachedConfig: RewardConfig? = null
-
-    fun getConfig(): RewardConfig {
-        cachedConfig?.let { return it }
-        val remoteJson = RemoteConfHelper().getString(REMOTE_KEY)
-        if (remoteJson.isNotBlank()) {
-            lastRemoteConfigure = remoteJson
-        }
-        val config = parseConfig(remoteJson) ?: parseConfig(DEFAULT_JSON)
-        cachedConfig = config
-        return config!!
-    }
-
-    fun updateConfigure() {
-        val remoteJson = RemoteConfHelper().getString(REMOTE_KEY)
-        if (remoteJson.isNotBlank() && lastRemoteConfigure != remoteJson) {
-            lastRemoteConfigure = remoteJson
-            parseConfig(remoteJson)?.let {
-                cachedConfig = it
-            }
-        }
-    }
-
-    private fun parseConfig(json: String?): RewardConfig? {
-        if (json.isNullOrBlank()) return null
-        return runCatching { gson.fromJson(json, RewardConfig::class.java) }.getOrNull()
-    }
-
-    private const val DEFAULT_JSON = """
+const val DEFAULT_JSON = """
 {
   "money_newuser_gift": {
     "reward": 100
@@ -183,4 +144,3 @@ object RewardHelper {
   "ad_interval": [2, 4, 2, 1]
 }
 """
-}

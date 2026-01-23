@@ -2,16 +2,13 @@ package com.sphere.shortvideos.notification
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import com.sphere.shortvideos.R
-import com.sphere.shortvideos.activity.LoadingActivity
+import com.sphere.shortvideos.helper.permission.PermissionHelper
 import com.sphere.shortvideos.logError
 
 /**
@@ -117,10 +114,6 @@ object NotificationHelper {
      * 检查通知权限
      */
     fun hasNotificationPermission(context: Context): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            NotificationManagerCompat.from(context).areNotificationsEnabled()
-        } else {
-            true
-        }
+        return PermissionHelper.areNotificationsEnabled(context)
     }
 }

@@ -1,36 +1,40 @@
 package com.sphere.shortvideos.helper.permission
 
 import android.content.Context
-import android.content.Intent
-import android.provider.Settings
+import androidx.core.app.NotificationManagerCompat
 import com.sphere.shortvideos.helper.mmkv.MMKVData
-import java.text.SimpleDateFormat
-import java.util.Date
 
 /**
  * Date：2026/1/21
  * Describe:
  */
 object PermissionHelper {
-    var reqNotificationPermissionStatus by MMKVData(0) // 显示自定义弹窗
-    private var permissionPostDay by MMKVData("") // 当天
+    var showOpenNotifDialogFlag by MMKVData(0) // 显示自定义弹窗 50就证明首次通知弹窗没展示
 
-    fun checkCueDay(): Boolean {
-        val day = SimpleDateFormat("yyyy-MM-dd").format(Date())
-        if (permissionPostDay != day) {
-            reqNotificationPermissionStatus = 50
-            permissionPostDay = day
+    fun isShowNotificationDialogHome(context: Context): Boolean {
+        if (showOpenNotifDialogFlag > 50) return false
+        if (areNotificationsEnabled(context)) {
+            showOpenNotifDialogFlag = 100
             return false
         }
+        showOpenNotifDialogFlag = 55
         return true
     }
 
-    fun openNotificationSettings(activity: Context) {
-        val intent = Intent().apply {
-            action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
-            putExtra(Settings.EXTRA_APP_PACKAGE, activity.packageName)
+
+    fun isShowNotificationDialogAfterRv(context: Context): Boolean {
+        if (showOpenNotifDialogFlag > 80) return false
+        if (areNotificationsEnabled(context)) {
+            showOpenNotifDialogFlag = 100
+            return false
         }
-        activity.startActivity(intent)
+        showOpenNotifDialogFlag = 90
+        return true
     }
 
+
+
+    fun areNotificationsEnabled(context: Context): Boolean {
+        return NotificationManagerCompat.from(context).areNotificationsEnabled()
+    }
 }

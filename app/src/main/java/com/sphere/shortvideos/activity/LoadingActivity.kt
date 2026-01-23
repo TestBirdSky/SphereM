@@ -57,7 +57,7 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
             }
         }
         session()
-        PermissionHelper.checkCueDay()
+        MMKVRepository.checkCueDay()
         // todo test
         nextView<MainActivity>()
         finish()

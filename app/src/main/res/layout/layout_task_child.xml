@@ -17,7 +17,7 @@
         android:textColor="@color/white"
         android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/tv_withdraw" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_watch_ad"
@@ -175,7 +175,7 @@
                 android:background="@drawable/shape_circle" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                
+
                 android:layout_width="wrap_content"
                 android:layout_height="16dp"
                 android:gravity="center"
@@ -199,7 +199,7 @@
                 android:src="@drawable/ic_coin_high" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                
+
                 android:layout_width="wrap_content"
                 android:layout_height="16sp"
                 android:gravity="center"
@@ -213,7 +213,7 @@
                 android:background="@drawable/shape_circle" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                
+
                 android:layout_width="wrap_content"
                 android:layout_height="16dp"
                 android:gravity="center"
@@ -251,7 +251,7 @@
                 android:background="@drawable/shape_circle" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                
+
                 android:layout_width="wrap_content"
                 android:layout_height="16dp"
                 android:gravity="center"
@@ -289,7 +289,7 @@
                 android:background="@drawable/shape_circle" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                
+
                 android:layout_width="wrap_content"
                 android:layout_height="16dp"
                 android:gravity="center"
@@ -327,7 +327,7 @@
                 android:background="@drawable/shape_circle" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                
+
                 android:layout_width="wrap_content"
                 android:layout_height="16dp"
                 android:gravity="center"
@@ -366,7 +366,7 @@
                 android:background="@drawable/shape_circle" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                
+
                 android:layout_width="wrap_content"
                 android:layout_height="16dp"
                 android:gravity="center"

@@ -7,6 +7,7 @@ import com.google.firebase.remoteconfig.remoteConfigSettings
 import com.google.gson.Gson
 import com.sphere.shortvideos.bean.RiskBean
 import com.sphere.shortvideos.helper.ad.AdUtils
+import com.sphere.shortvideos.helper.reward.RewardHelper
 import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.mFbAndAdjustHelper
 import com.sphere.shortvideos.riskBean
@@ -15,7 +16,11 @@ import com.sphere.shortvideos.unlockIndex
 class RemoteConfHelper {
 
     private val remoteConfig by lazy {
-        Firebase.remoteConfig.apply { setConfigSettingsAsync(remoteConfigSettings { minimumFetchIntervalInSeconds = 3600 }) }
+        Firebase.remoteConfig.apply {
+            setConfigSettingsAsync(remoteConfigSettings {
+                minimumFetchIntervalInSeconds = 3600
+            })
+        }
     }
 
     fun fetch() {
@@ -44,17 +49,19 @@ class RemoteConfHelper {
         }
     }
 
-    private fun fetchRisk(){
-        val str = remoteConfig.getString("risk_control")
+    private fun fetchRisk() {
+        val str = getString("risk_control")
         runCatching {
             val bean = Gson().fromJson(str, RiskBean::class.java)
             riskBean = bean
         }
-        val fbInfo = remoteConfig.getString("drama_fb")
+        val fbInfo = getString("drama_fb")
         mFbAndAdjustHelper.initFb(fbInfo)
     }
 
-    fun getString(key: String): String = remoteConfig.getString(key)
+    fun getString(key: String): String = runCatching {
+        remoteConfig.getString(key)
+    }.getOrNull() ?: ""
 
 
 }
