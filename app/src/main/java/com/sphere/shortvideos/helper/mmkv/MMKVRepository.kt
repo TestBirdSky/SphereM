@@ -8,4 +8,6 @@ object MMKVRepository {
     var isNeedRequestUMP by MMKVData(true)
     var lastSessionActive by MMKVData(0L)
 
+    var isNewUser by MMKVData(true)
+
 }

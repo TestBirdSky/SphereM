@@ -1,29 +1,37 @@
 package com.sphere.shortvideos.activity
 
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
+import android.graphics.drawable.Drawable
+import android.view.View
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.baseui.GenericBindActivity
 import com.sphere.shortvideos.databinding.ActivityMainBinding
+import com.sphere.shortvideos.dialogs.WelcomeBonusDialogFragment
 import com.sphere.shortvideos.fragment.HomeFragment
 import com.sphere.shortvideos.fragment.ProfileFragment
 import com.sphere.shortvideos.fragment.TaskFragment
 import com.sphere.shortvideos.fragment.VideoStreamFragment
 import com.sphere.shortvideos.fragment.WalletFragment
+import com.sphere.shortvideos.helper.mmkv.MMKVRepository
+import com.sphere.shortvideos.view.SpineHelper
 import com.sphere.shortvideos.vm.MainViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : GenericBindActivity<ActivityMainBinding>() {
-
+    private val h = SpineHelper()
     private val viewModel by viewModels<MainViewModel>()
-    private val walletIndex = 2 // 钱包是第3个（从0开始）
 
-    override val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+    override val binding by lazy {
+        topMar = 0
+        ActivityMainBinding.inflate(layoutInflater)
+    }
 
     override fun initUI() {
         setupBottomNav()
@@ -47,15 +55,14 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 binding.bottomNav.menu[position].isChecked = true
-                binding.bottomNav.menu.findItem(R.id.tab_wallet).icon =
-                    ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_nav_bill)
             }
         })
         binding.bottomNav.setOnItemSelectedListener { item ->
+            setOther()
             when (item.itemId) {
                 R.id.tab_home -> {
                     binding.bottomNav.menu.findItem(R.id.tab_home).icon =
-                        ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_nav_home)
+                        ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_nav_home_selected)
                     binding.viewPager.setCurrentItem(0, false)
                 }
 
@@ -67,7 +74,6 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
 
                 R.id.tab_wallet -> {
                     binding.viewPager.setCurrentItem(2, false)
-
                 }
 
                 R.id.tab_task -> {
@@ -85,6 +91,33 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
             true
         }
         binding.viewPager.setCurrentItem(1, false)
+        binding.bottomNav.menu.findItem(R.id.tab_video).icon = R.drawable.ic_nav_video_selected.fetchIcon()
+        h.addViewWallet(binding.centerWallet, this)
+        if (MMKVRepository.isNewUser) {
+            binding.ivFirstGuide.visibility = View.VISIBLE
+            binding.ivFirstGuide.setOnClickListener {
+
+            }
+        }
+    }
+
+    private fun setOther() {
+        binding.bottomNav.menu.apply {
+            findItem(R.id.tab_home).icon = R.drawable.ic_nav_home.fetchIcon()
+            findItem(R.id.tab_user).icon = R.drawable.ic_nav_user.fetchIcon()
+            findItem(R.id.tab_task).icon = R.drawable.ic_nav_task.fetchIcon()
+            findItem(R.id.tab_video).icon = R.drawable.ic_nav_video.fetchIcon()
+        }
+    }
+
+    private fun Int.fetchIcon(): Drawable? {
+        return ContextCompat.getDrawable(this@MainActivity, this)
+    }
+
+    fun showDialog() {
+        lifecycleScope.launch {
+            WelcomeBonusDialogFragment().show(supportFragmentManager, "welcome")
+        }
     }
 
 }

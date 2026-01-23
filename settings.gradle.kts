@@ -31,6 +31,10 @@ dependencyResolutionManagement {
         maven {
             url = uri("https://artifact.byteplus.com/repository/public/")
         }
+
+        maven {
+            url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+        }
     }
 }
 

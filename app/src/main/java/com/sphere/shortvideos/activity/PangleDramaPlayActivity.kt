@@ -25,6 +25,7 @@ import com.sphere.shortvideos.database.DramaEpisodeEntity
 import com.sphere.shortvideos.database.DramaHistoryEntity
 import com.sphere.shortvideos.databinding.ActivityDramaPlayPangleBinding
 import com.sphere.shortvideos.dialogs.showIndexSelectorDialog
+import com.sphere.shortvideos.helper.TaskHelper
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.showToast
@@ -307,22 +308,26 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                 }
                 when (playbackState) {
                     PSSDK.PLAYBACK_STATE_PAUSE -> {
+                        TaskHelper.stopWatchVideo()
                         controlViewHideJob?.cancel()
                         binding.groupControl.isVisible = true
                         changeSeekbarSize(true)
                     }
 
-                        PSSDK.PLAYBACK_STATE_PLAY -> {
-                            changeSeekbarSize(false)
-                            controlViewHideJob = lifecycleScope.launch(Dispatchers.Main) {
-                                delay(5000L)
-                                binding.groupControl.isVisible = false
-                            }
+                    PSSDK.PLAYBACK_STATE_PLAY -> {
+                        TaskHelper.startWatchVideo()
+                        changeSeekbarSize(false)
+                        controlViewHideJob = lifecycleScope.launch(Dispatchers.Main) {
+                            delay(5000L)
+                            binding.groupControl.isVisible = false
                         }
+                    }
                     }
                 }
 
-                override fun onVideoPlayCompleted(shortPlay: ShortPlay?, index: Int) = Unit
+                override fun onVideoPlayCompleted(shortPlay: ShortPlay?, index: Int) {
+                    TaskHelper.stopWatchVideo()
+                }
                 override fun onEnterImmersiveMode() = Unit
                 override fun onExitImmersiveMode() = Unit
 
@@ -352,6 +357,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
 
     override fun onPause() {
         super.onPause()
+        TaskHelper.stopWatchVideo()
         shortPlayHistory?.let {
             lifecycleScope.launch(Dispatchers.IO) {
                 database.historyDao().upsert(it)

@@ -1,0 +1,14 @@
+skeleton.png
+size:318,127
+filter:Linear,Linear
+pma:true
+1
+bounds:2,2,144,123
+offsets:0,0,145,123
+2
+bounds:148,9,116,76
+offsets:0,1,116,77
+rotate:90
+Ellipse 259
+bounds:226,34,90,91
+offsets:1,2,93,93

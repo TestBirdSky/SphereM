@@ -24,15 +24,18 @@ import com.sphere.shortvideos.baseui.GenericFragment
 import com.sphere.shortvideos.database
 import com.sphere.shortvideos.database.DramaCollectEntity
 import com.sphere.shortvideos.databinding.FragmentPangleVideoContainerBinding
+import com.sphere.shortvideos.helper.TaskHelper
 import com.sphere.shortvideos.nextView
 import com.sphere.shortvideos.showToast
 import com.sphere.shortvideos.toJson
+import com.sphere.shortvideos.view.SpineHelper
 import com.ss.ttvideoengine.TTVideoEngineInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContainerBinding>() {
+    private val spineHelper = SpineHelper()
 
     private var shortPlay: ShortPlay? = null
     private var shortPlayCollect: DramaCollectEntity? = null
@@ -56,23 +59,23 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
         }
     }
 
-    override fun bindView(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ) = run {
+    override fun bindView(inflater: LayoutInflater, container: ViewGroup?) = run {
         FragmentPangleVideoContainerBinding.inflate(inflater, container, false)
     }
 
     @SuppressLint("SetTextI18n")
     override fun initUI() {
         initSeekbarAnim()
+        spineHelper.addViewMoney1(binding.layoutAnim, requireContext())
         lifecycleScope.launch(Dispatchers.Main) {
             shortPlay?.let { item ->
                 withContext(Dispatchers.IO) {
                     shortPlayCollect = database.collectDao().getItemById(item.id.toString())
                 }
                 var isCollected = shortPlayCollect != null
-                binding.imageCollect.imageTintList = ColorStateList.valueOf(if (isCollected) ContextCompat.getColor(requireContext(), R.color.color_red) else Color.WHITE)
+                binding.imageCollect.imageTintList = ColorStateList.valueOf(if (isCollected) ContextCompat.getColor(
+                    requireContext(),
+                    R.color.color_red) else Color.WHITE)
                 binding.seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                     override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) = Unit
                     override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
@@ -123,7 +126,8 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
                         }
                         withContext(Dispatchers.Main) {
                             binding.imageCollect.imageTintList =
-                                ColorStateList.valueOf(if (isCollected) ContextCompat.getColor(requireContext(), R.color.color_red) else Color.WHITE)
+                                ColorStateList.valueOf(if (isCollected) ContextCompat.getColor(requireContext(),
+                                    R.color.color_red) else Color.WHITE)
                         }
                     }
                 }
@@ -144,8 +148,10 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
     }
 
     private fun changeSeekbarSize(isLarge: Boolean) {
-        binding.seekbar.thumb = ContextCompat.getDrawable(requireContext(), if (isLarge) R.drawable.seekbar_thum_large else R.drawable.seekbar_thum)
-        binding.seekbar.progressDrawable = ContextCompat.getDrawable(requireContext(), if (isLarge) R.drawable.seekbar_bg_large else R.drawable.seekbar_bg)
+        binding.seekbar.thumb = ContextCompat.getDrawable(requireContext(),
+            if (isLarge) R.drawable.seekbar_thum_large else R.drawable.seekbar_thum)
+        binding.seekbar.progressDrawable = ContextCompat.getDrawable(requireContext(),
+            if (isLarge) R.drawable.seekbar_bg_large else R.drawable.seekbar_bg)
     }
 
     private fun showDramaFragment(shortPlay: ShortPlay) {
@@ -163,52 +169,67 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
             displayTextVisibility(PSSDK.DetailPageConfig.TEXT_POS_BOTTOM_TITLE, false)
             displayTextVisibility(PSSDK.DetailPageConfig.TEXT_POS_BOTTOM_DESC, false)
         }
-        detailFragment = PSSDK.createDetailFragment(shortPlay, builder.build(), object : PSSDK.ShortPlayDetailPageListener {
-            override fun onOverScroll(index: Int) = Unit
-            override fun onProgressChange(shortPlay: ShortPlay?, index: Int, currentPlayTime: Int, duration: Int) {
-                onProgressChanged.invoke(currentPlayTime, duration)
-            }
-
-            override fun onPlayFailed(e: PSSDK.ErrorInfo?): Boolean {
-                return false
-            }
-
-            override fun onShortPlayPlayed(p0: ShortPlay?, p1: Int, p2: EpisodeData?) {}
-
-
-            @SuppressLint("SetTextI18n")
-            override fun onItemSelected(position: Int, type: PSSDK.ShortPlayDetailPageListener.ItemType?, index: Int) = Unit
-
-            override fun onVideoPlayStateChanged(shortPlay: ShortPlay?, index: Int, playbackState: Int) = Unit
-
-            override fun onVideoPlayCompleted(shortPlay: ShortPlay?, index: Int) {
-                requireContext().nextView<PangleDramaPlayActivity> {
-                    putExtra(GlobalConstants.EXTRA_KEY_SHORT_PLAY, shortPlay)
-                    putExtra(GlobalConstants.EXTRA_KEY_START_INDEX, 2)
-                    putExtra(GlobalConstants.EXTRA_KEY_START_PROGRESS, 0)
+        detailFragment =
+            PSSDK.createDetailFragment(shortPlay, builder.build(), object : PSSDK.ShortPlayDetailPageListener {
+                override fun onOverScroll(index: Int) = Unit
+                override fun onProgressChange(shortPlay: ShortPlay?, index: Int, currentPlayTime: Int, duration: Int) {
+                    onProgressChanged.invoke(currentPlayTime, duration)
                 }
-            }
 
-            override fun onEnterImmersiveMode() = Unit
-            override fun onExitImmersiveMode() = Unit
+                override fun onPlayFailed(e: PSSDK.ErrorInfo?): Boolean {
+                    return false
+                }
 
-            override fun isNeedBlock(shortPlay: ShortPlay?, index: Int): Boolean = false
+                override fun onShortPlayPlayed(p0: ShortPlay?, p1: Int, p2: EpisodeData?) {}
 
-            override fun showAdIfNeed(
-                shortPlay: ShortPlay?,
-                p1: Int,
-                p2: PSSDK.ShortPlayBlockResultListener?
-            ) = Unit
 
-            override fun onVideoInfoFetched(shortPlay: ShortPlay?, index: Int, videoPlayInfo: PSSDK.VideoPlayInfo?) = Unit
-            override fun onObtainPlayerControlViews(): List<View?>? = null
+                @SuppressLint("SetTextI18n")
+                override fun onItemSelected(position: Int,
+                                            type: PSSDK.ShortPlayDetailPageListener.ItemType?,
+                                            index: Int) = Unit
 
-        })
+                override fun onVideoPlayStateChanged(shortPlay: ShortPlay?, index: Int, playbackState: Int) {
+                    when (playbackState) {
+                        PSSDK.PLAYBACK_STATE_PLAY -> TaskHelper.startWatchVideo()
+                        PSSDK.PLAYBACK_STATE_PAUSE -> TaskHelper.stopWatchVideo()
+                    }
+                }
+
+                override fun onVideoPlayCompleted(shortPlay: ShortPlay?, index: Int) {
+                    TaskHelper.stopWatchVideo()
+                    requireContext().nextView<PangleDramaPlayActivity> {
+                        putExtra(GlobalConstants.EXTRA_KEY_SHORT_PLAY, shortPlay)
+                        putExtra(GlobalConstants.EXTRA_KEY_START_INDEX, 2)
+                        putExtra(GlobalConstants.EXTRA_KEY_START_PROGRESS, 0)
+                    }
+                }
+
+                override fun onEnterImmersiveMode() = Unit
+                override fun onExitImmersiveMode() = Unit
+
+                override fun isNeedBlock(shortPlay: ShortPlay?, index: Int): Boolean = false
+
+                override fun showAdIfNeed(shortPlay: ShortPlay?, p1: Int, p2: PSSDK.ShortPlayBlockResultListener?) =
+                    Unit
+
+                override fun onVideoInfoFetched(shortPlay: ShortPlay?,
+                                                index: Int,
+                                                videoPlayInfo: PSSDK.VideoPlayInfo?) = Unit
+
+                override fun onObtainPlayerControlViews(): List<View?>? = null
+
+            })
         if (detailFragment == null) {
             requireContext().showToast(R.string.play_failed_please_try_again)
             return
         }
-        childFragmentManager.beginTransaction().add(R.id.fragment_container, detailFragment!!).show(detailFragment!!).commit()
+        childFragmentManager.beginTransaction().add(R.id.fragment_container, detailFragment!!).show(detailFragment!!)
+            .commit()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        TaskHelper.stopWatchVideo()
     }
 
 }

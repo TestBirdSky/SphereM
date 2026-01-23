@@ -135,4 +135,6 @@ dependencies {
     implementation("com.adjust.sdk:adjust-android:5.5.0")
     implementation("com.android.installreferrer:installreferrer:2.2")
     implementation("com.google.android.gms:play-services-ads-identifier:18.0.1")
+
+    implementation("com.esotericsoftware.spine:spine-android:4.2.10")
 }

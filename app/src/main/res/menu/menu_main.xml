@@ -11,7 +11,6 @@
 
     <item
         android:id="@+id/tab_wallet"
-        android:icon="@drawable/ic_nav_bill"
         android:title="@string/wallet" />
     <item
         android:id="@+id/tab_task"

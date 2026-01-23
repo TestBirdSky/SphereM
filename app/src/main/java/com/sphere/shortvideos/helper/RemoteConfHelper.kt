@@ -31,6 +31,7 @@ class RemoteConfHelper {
         fetchAdRemote()
         fetchUnlockIndex()
         fetchRisk()
+        RewardHelper.updateConfigure()
     }
 
     private fun fetchAdRemote() {
@@ -52,6 +53,8 @@ class RemoteConfHelper {
         val fbInfo = remoteConfig.getString("drama_fb")
         mFbAndAdjustHelper.initFb(fbInfo)
     }
+
+    fun getString(key: String): String = remoteConfig.getString(key)
 
 
 }

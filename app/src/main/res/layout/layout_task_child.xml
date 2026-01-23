@@ -22,7 +22,7 @@
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_watch_ad"
         android:layout_width="0dp"
-        android:layout_height="64dp"
+        android:layout_height="65dp"
         android:layout_marginVertical="17dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="17dp"
@@ -155,7 +155,7 @@
             android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_small_money"
+                android:id="@+id/iv_small_money1"
                 android:layout_width="26dp"
                 android:layout_height="22dp"
                 android:src="@drawable/ic_coin_high" />
@@ -169,13 +169,13 @@
                 android:textSize="8sp" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_selected"
+                android:id="@+id/iv_selected1"
                 android:layout_width="14dp"
                 android:layout_height="14dp"
                 android:background="@drawable/shape_circle" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_des2"
+                
                 android:layout_width="wrap_content"
                 android:layout_height="16dp"
                 android:gravity="center"
@@ -193,13 +193,13 @@
             android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_small_money"
+                android:id="@+id/iv_small_money2"
                 android:layout_width="26dp"
                 android:layout_height="22dp"
                 android:src="@drawable/ic_coin_high" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_des1"
+                
                 android:layout_width="wrap_content"
                 android:layout_height="16sp"
                 android:gravity="center"
@@ -207,13 +207,13 @@
                 android:textSize="8sp" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_selected"
+                android:id="@+id/iv_selected2"
                 android:layout_width="14dp"
                 android:layout_height="14dp"
                 android:background="@drawable/shape_circle" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_des2"
+                
                 android:layout_width="wrap_content"
                 android:layout_height="16dp"
                 android:gravity="center"
@@ -230,15 +230,14 @@
             android:gravity="center"
             android:orientation="vertical">
 
-
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_small_money"
+                android:id="@+id/iv_small_money3"
                 android:layout_width="26dp"
                 android:layout_height="22dp"
                 android:src="@drawable/ic_coin_high" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_des1"
+                android:id="@+id/tv_des3"
                 android:layout_width="wrap_content"
                 android:layout_height="16sp"
                 android:gravity="center"
@@ -246,13 +245,13 @@
                 android:textSize="8sp" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_selected"
+                android:id="@+id/iv_selected3"
                 android:layout_width="14dp"
                 android:layout_height="14dp"
                 android:background="@drawable/shape_circle" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_des2"
+                
                 android:layout_width="wrap_content"
                 android:layout_height="16dp"
                 android:gravity="center"
@@ -270,13 +269,13 @@
             android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_big_money"
+                android:id="@+id/iv_big_money1"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:src="@drawable/ic_coin_high" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_des1"
+                android:id="@+id/tv_des4"
                 android:layout_width="wrap_content"
                 android:layout_height="16sp"
                 android:gravity="center"
@@ -284,13 +283,13 @@
                 android:textSize="8sp" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_select_status"
+                android:id="@+id/iv_select4"
                 android:layout_width="14dp"
                 android:layout_height="14dp"
                 android:background="@drawable/shape_circle" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_des2"
+                
                 android:layout_width="wrap_content"
                 android:layout_height="16dp"
                 android:gravity="center"
@@ -308,13 +307,13 @@
             android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_big_money"
+                android:id="@+id/iv_big_money2"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:src="@drawable/ic_coin_high" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_des1"
+                android:id="@+id/tv_des5"
                 android:layout_width="wrap_content"
                 android:layout_height="16sp"
                 android:gravity="center"
@@ -322,13 +321,13 @@
                 android:textSize="8sp" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_selected"
+                android:id="@+id/iv_select5"
                 android:layout_width="14dp"
                 android:layout_height="14dp"
                 android:background="@drawable/shape_circle" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_des2"
+                
                 android:layout_width="wrap_content"
                 android:layout_height="16dp"
                 android:gravity="center"
@@ -346,14 +345,14 @@
             android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_big_money"
+                android:id="@+id/iv_big_money3"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:src="@drawable/ic_coin_high" />
 
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_des1"
+                android:id="@+id/tv_des6"
                 android:layout_width="wrap_content"
                 android:layout_height="16sp"
                 android:gravity="center"
@@ -361,13 +360,13 @@
                 android:textSize="8sp" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_selected"
+                android:id="@+id/iv_select6"
                 android:layout_width="14dp"
                 android:layout_height="14dp"
                 android:background="@drawable/shape_circle" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_des2"
+                
                 android:layout_width="wrap_content"
                 android:layout_height="16dp"
                 android:gravity="center"
@@ -389,6 +388,7 @@
         app:layout_constraintTop_toBottomOf="@id/iv_bg_watch" />
 
     <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv7_day"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
@@ -398,5 +398,389 @@
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="@id/iv_bg_bottom"
         app:layout_constraintTop_toTopOf="@id/iv_bg_bottom" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_7day_row1"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintLeft_toLeftOf="@id/iv_bg_bottom"
+        app:layout_constraintRight_toRightOf="@id/iv_bg_bottom"
+        app:layout_constraintTop_toBottomOf="@id/tv7_day">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_row1_25"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.25" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_row1_50"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_row1_75"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.75" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/iv_day1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/shape_op"
+            android:paddingBottom="4dp"
+            app:layout_constraintEnd_toStartOf="@id/guideline_row1_25"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_day1_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Day1"
+                android:textColor="@color/white"
+                android:textSize="8sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_day1_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="2dp"
+                android:src="@drawable/ic_finish_7day"
+                app:layout_constraintBottom_toTopOf="@id/tv_day1_desc"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_day1_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+5000"
+                android:textColor="@color/white"
+                android:textSize="8sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/iv_day2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="4dp"
+            android:background="@drawable/shape_op"
+            android:paddingBottom="4dp"
+            app:layout_constraintEnd_toStartOf="@id/guideline_row1_50"
+            app:layout_constraintStart_toStartOf="@id/guideline_row1_25"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_day2_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Day2"
+                android:textColor="@color/white"
+                android:textSize="8sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_day2_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="2dp"
+                android:src="@drawable/ic_normal_day"
+                app:layout_constraintBottom_toTopOf="@id/tv_day2_desc"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_day2_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+5000"
+                android:textColor="#49F46F"
+                android:textSize="8sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/iv_day3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="4dp"
+            android:background="@drawable/shape_op"
+            android:paddingBottom="4dp"
+            app:layout_constraintEnd_toStartOf="@id/guideline_row1_75"
+            app:layout_constraintStart_toStartOf="@id/guideline_row1_50"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_day3_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Day3"
+                android:textColor="@color/white"
+                android:textSize="8sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_day3_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="2dp"
+                android:src="@drawable/ic_normal_day"
+                app:layout_constraintBottom_toTopOf="@id/tv_day3_desc"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_day3_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+5000"
+                android:textColor="#49F46F"
+                android:textSize="8sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/iv_day4"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/shape_op"
+            android:paddingBottom="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/guideline_row1_75"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_day4_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Day4"
+                android:textColor="@color/white"
+                android:textSize="8sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_day4_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="2dp"
+                android:src="@drawable/ic_normal_day"
+                app:layout_constraintBottom_toTopOf="@id/tv_day4_desc"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_day4_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+5000"
+                android:textColor="#49F46F"
+                android:textSize="8sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_7day_row2"
+        android:layout_width="0dp"
+        android:layout_height="65dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintLeft_toLeftOf="@id/iv_bg_bottom"
+        app:layout_constraintRight_toRightOf="@id/iv_bg_bottom"
+        app:layout_constraintTop_toBottomOf="@id/layout_7day_row1">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_row2_25"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.25" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_row2_50"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_row2_75"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.75" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/iv_day5"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/shape_op"
+            android:paddingBottom="4dp"
+            app:layout_constraintEnd_toStartOf="@id/guideline_row2_25"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_day5_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Day5"
+                android:textColor="@color/white"
+                android:textSize="8sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_day5_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="2dp"
+                android:src="@drawable/ic_normal_day"
+                app:layout_constraintBottom_toTopOf="@id/tv_day5_desc"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_day5_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+5000"
+                android:textColor="#49F46F"
+                android:textSize="8sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/iv_day6"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="4dp"
+            android:background="@drawable/shape_op"
+            android:paddingBottom="4dp"
+            app:layout_constraintEnd_toStartOf="@id/guideline_row2_50"
+            app:layout_constraintStart_toStartOf="@id/guideline_row2_25"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_day6_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Day6"
+                android:textColor="@color/white"
+                android:textSize="8sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_day6_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="2dp"
+                android:src="@drawable/ic_normal_day"
+                app:layout_constraintBottom_toTopOf="@id/tv_day6_desc"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_day6_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+5000"
+                android:textColor="#49F46F"
+                android:textSize="8sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/iv_day7"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/shape_op"
+            android:paddingBottom="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/guideline_row2_50"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_day7_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Day7"
+                android:textColor="@color/white"
+                android:textSize="8sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_day7_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="2dp"
+                android:src="@drawable/ic_last_day"
+                app:layout_constraintBottom_toTopOf="@id/tv_day7_desc2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_day7_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:text="≈ $1"
+                android:textColor="#49F46F"
+                android:textSize="8sp"
+                app:layout_constraintBottom_toBottomOf="@id/iv_day7_icon"
+                app:layout_constraintStart_toEndOf="@id/iv_day7_icon"
+                app:layout_constraintTop_toTopOf="@id/iv_day7_icon" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_day7_desc2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Check In For 7 Consecutive Days"
+                android:textColor="#FFE600"
+                android:textSize="7sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

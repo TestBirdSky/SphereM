@@ -52,6 +52,9 @@
     <string name="tv_join">Join the community</string>
     <string name="watch_earn_coins"><![CDATA[Watch & earn coins]]></string>
     <string name="day_grand_prize">7-Day Grand Prize</string>
+    <string name="bonus_welcome_title">Bonus De Boas-Vindas</string>
+    <string name="bonus_welcome_action">Receba Recompensas</string>
+    <string name="tips_info">Watch Shows, Make Money!\n100% Secure Payouts!</string>
 
 
 </resources>

@@ -32,8 +32,6 @@ object OtherHelper {
     }
 
 
-
-
     private fun register(topicName: String) {
         if (topicSuccessName.contains(topicName)) return
         runCatching {

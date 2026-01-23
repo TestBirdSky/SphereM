@@ -24,7 +24,10 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
     private val mPostPermission = PostPermission(this)
     private val viewModel by viewModels<LoadingViewModel>()
 
-    override val binding by lazy { ActivityLoadingBinding.inflate(layoutInflater) }
+    override val binding by lazy {
+        topMar = 0
+        ActivityLoadingBinding.inflate(layoutInflater)
+    }
 
     override fun initUI() {
         viewModel.umpCompletedLiveData.observe(this) {
