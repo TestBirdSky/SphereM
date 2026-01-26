@@ -12,6 +12,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -26,11 +27,15 @@ import com.sphere.shortvideos.R
 import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.activity.PangleDramaPlayActivity
 import com.sphere.shortvideos.baseui.GenericFragment
+import com.sphere.shortvideos.baseui.refreshView
 import com.sphere.shortvideos.database
 import com.sphere.shortvideos.database.DramaCollectEntity
 import com.sphere.shortvideos.databinding.FragmentPangleVideoContainerBinding
+import com.sphere.shortvideos.dialogs.NormalCongratulateDialogFragment
+import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
+import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.nextView
 import com.sphere.shortvideos.showToast
 import com.sphere.shortvideos.toJson
@@ -38,6 +43,8 @@ import com.sphere.shortvideos.view.SpineHelper
 import com.sphere.shortvideos.vm.MainViewModel
 import com.ss.ttvideoengine.TTVideoEngineInterface
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.getValue
@@ -77,10 +84,18 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
     override fun initUI() {
         initSeekbarAnim()
         spineHelper.addViewMoney1(binding.layoutAnim, requireContext())
+        val isNew = showNewUser()
         lifecycleScope.launch(Dispatchers.Main) {
             shortPlay?.let { item ->
                 withContext(Dispatchers.IO) {
                     shortPlayCollect = database.collectDao().getItemById(item.id.toString())
+                }
+                if (isNew) {
+                    withContext(Dispatchers.IO) {
+                        while (MMKVRepository.isNewUser) {
+                            delay(500)
+                        }
+                    }
                 }
                 var isCollected = shortPlayCollect != null
                 binding.imageCollect.imageTintList = ColorStateList.valueOf(if (isCollected) ContextCompat.getColor(
@@ -144,7 +159,6 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
                 showDramaFragment(item)
             }
         }
-        showNewUser()
         registerMainViewModel()
     }
 
@@ -206,6 +220,7 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
                             MoneyCacheHelper.startWatchVideo()
                             viewModel.playMoneyProgress()
                         }
+
                         PSSDK.PLAYBACK_STATE_PAUSE -> {
                             MoneyCacheHelper.stopWatchVideo()
                             viewModel.pauseMoneyProgress()
@@ -252,16 +267,19 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
         viewModel.pauseMoneyProgress()
     }
 
-    private fun showNewUser() {
+    private fun showNewUser(): Boolean {
         if (MMKVRepository.isNewUser) {
             setGuideVisibility(View.VISIBLE)
             startFingerAnim()
             binding.ivFirstGuide.setOnClickListener {
+                MMKVRepository.isNewUser = false
                 (activity as? MainActivity)?.showWelcomDialog()
                 setGuideVisibility(View.GONE)
                 stopFingerAnim()
             }
+            return true
         }
+        return false
     }
 
     private fun setGuideVisibility(sta: Int) {
@@ -301,6 +319,23 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
         viewModel.numTime.observe(this, {
             binding.tvTipsNum.text = it
         })
+        viewModel.nextRewordType.observe(this, {
+            when (it) {
+                1 -> {
+                    spineHelper.addViewMoney2(binding.layoutAnim, requireContext())
+                }
+
+                else -> {
+                    spineHelper.addViewMoney1(binding.layoutAnim, requireContext())
+                }
+            }
+        })
+        viewModel.curGetMoneyStr.observe(this, {
+            binding.layoutMoney.refreshView(it.first, it.second,activity as AppCompatActivity)
+        })
+        (activity as? MainActivity)?.let {
+            HelperRewardShow.registerConDialog(it)
+        }
     }
 
 }

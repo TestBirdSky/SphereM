@@ -8,9 +8,9 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/layout_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
+        android:layout_marginTop="24dp"
         android:gravity="center_vertical"
-        android:paddingVertical="10dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -24,6 +24,13 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
+    <include
+        android:id="@+id/layout_money"
+        layout="@layout/layout_money_top_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/layout_bar" />
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/btn_history"
         android:layout_width="match_parent"
@@ -32,7 +39,7 @@
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingVertical="13dp"
-        app:layout_constraintTop_toBottomOf="@+id/layout_bar">
+        app:layout_constraintTop_toBottomOf="@+id/layout_money">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="wrap_content"

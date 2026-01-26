@@ -14,7 +14,7 @@ import com.sphere.shortvideos.R
 import com.sphere.shortvideos.baseui.GenericBindActivity
 import com.sphere.shortvideos.databinding.ActivityMainBinding
 import com.sphere.shortvideos.dialogs.BackTipsDialogFragment
-import com.sphere.shortvideos.dialogs.CongratulateDialogFragment
+import com.sphere.shortvideos.dialogs.NormalCongratulateDialogFragment
 import com.sphere.shortvideos.dialogs.OpenNotificationDialogFragment
 import com.sphere.shortvideos.dialogs.WelcomeBonusDialogFragment
 import com.sphere.shortvideos.fragment.HomeFragment
@@ -22,9 +22,9 @@ import com.sphere.shortvideos.fragment.ProfileFragment
 import com.sphere.shortvideos.fragment.TaskFragment
 import com.sphere.shortvideos.fragment.VideoStreamFragment
 import com.sphere.shortvideos.fragment.WalletFragment
-import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.helper.permission.PermissionHelper
+import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.view.SpineHelper
 import com.sphere.shortvideos.vm.MainViewModel
 import kotlinx.coroutines.delay
@@ -36,7 +36,7 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
     private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (PermissionHelper.areNotificationsEnabled(this)) {
             if (moneyGe > 0) {
-                MoneyCacheHelper.addNotExchangeMoney(moneyGe)
+                viewModel.addMoneyNotExChange(moneyGe)
             }
         }
     }
@@ -88,11 +88,6 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
                 }
 
                 R.id.tab_wallet -> {
-                    lifecycleScope.launch {
-                        delay(1200)
-                        CongratulateDialogFragment().show(supportFragmentManager, "")
-                    }
-
                     binding.viewPager.setCurrentItem(2, false)
                 }
 
@@ -116,6 +111,7 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         if (MMKVRepository.isNewUser) {
             binding.ivFirstGuide.visibility = View.VISIBLE
             binding.ivFirstGuide.setOnClickListener {}
+            viewModel.newUserProgress()
         } else {
             lifecycleScope.launch {
                 delay(Random.nextLong(1500, 3000))
@@ -141,6 +137,7 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         binding.ivFirstGuide.visibility = View.GONE
         WelcomeBonusDialogFragment().apply {
             onDismissCall = {
+                viewModel.addMoney(0.0)
                 showNotificationOpen()
             }
         }.show(supportFragmentManager, "welcome")

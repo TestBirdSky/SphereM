@@ -6,13 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.sphere.shortvideos.database
 import com.sphere.shortvideos.database.DramaCollectEntity
 import com.sphere.shortvideos.database.DramaHistoryEntity
+import com.sphere.shortvideos.helper.AddMoneyListener
+import com.sphere.shortvideos.helper.HelperRewardShow
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel() {
+class MainViewModel : ViewModel(), AddMoneyListener {
 
     val historyLiveData = MutableLiveData<List<DramaHistoryEntity>>()
     val collectionLiveData = MutableLiveData<List<DramaCollectEntity>>()
@@ -33,39 +33,34 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    private var num = 1
-    private var MAX_NUM = 3
-    var numTime = MutableLiveData("1/3")
-    var numProgress = MutableLiveData<Int>(0)
-    var maxReachedCount = 0
-    private var progressJob: Job? = null
-    private val progressMax = 100
-    private val roundDurationMs = 15_000L
+    val numTime = HelperRewardShow.numTime
+    val numProgress = HelperRewardShow.numProgress
+    val nextRewordType = HelperRewardShow.nextRewordType
+    val curGetMoneyStr = HelperRewardShow.curGetMoneyStr
+    val showDialogType = HelperRewardShow.showDialogType
+
+    init {
+        HelperRewardShow.init()
+    }
 
     fun playMoneyProgress() {
-        if (progressJob?.isActive == true) return
-        val stepDelayMs = roundDurationMs / progressMax
-        progressJob = viewModelScope.launch(Dispatchers.IO) {
-            while (true) {
-                delay(stepDelayMs)
-                var nextProgress =(numProgress.value ?: 0) + 1
-                if (nextProgress >= progressMax) {
-                    nextProgress = 0
-                    num += 1
-                    if (num > MAX_NUM) {
-                        num = 1
-                        maxReachedCount++
-                    }
-                    numTime.postValue("$num/$MAX_NUM")
-                }
-                numProgress.postValue(nextProgress)
-            }
-        }
+        HelperRewardShow.playMoneyProgress(viewModelScope)
     }
 
     fun pauseMoneyProgress() {
-        progressJob?.cancel()
-        progressJob = null
+        HelperRewardShow.pauseMoneyProgress()
+    }
+
+    fun newUserProgress() {
+        HelperRewardShow.newUserProgress()
+    }
+
+    override fun addMoney(d: Double) {
+        HelperRewardShow.addMoney(d)
+    }
+
+    override fun addMoneyNotExChange(d: Double) {
+        HelperRewardShow.addMoneyNotExChange(d)
     }
 
 }

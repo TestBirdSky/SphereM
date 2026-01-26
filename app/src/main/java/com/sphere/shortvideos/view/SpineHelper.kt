@@ -1,7 +1,6 @@
 package com.sphere.shortvideos.view
 
 import android.content.Context
-import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.esotericsoftware.spine.android.SpineController
@@ -12,8 +11,10 @@ import com.esotericsoftware.spine.android.SpineView
  * Describe:
  */
 class SpineHelper {
-    val controller = SpineController { spineController ->
-        spineController.getAnimationState().setAnimation(0, "animation", true)
+    private fun createController(): SpineController {
+        return SpineController { spineController ->
+            spineController.getAnimationState().setAnimation(0, "animation", true)
+        }
     }
 
     fun addViewMoney1(parent: ViewGroup, context: Context) {
@@ -21,7 +22,7 @@ class SpineHelper {
             "money1/skeleton.atlas",
             "money1/skeleton.json",
             context,
-            controller
+            createController()
         )
         spineView.layoutParams = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.MATCH_PARENT,
@@ -36,7 +37,7 @@ class SpineHelper {
             "money2/skeleton.atlas",
             "money2/skeleton.json",
             context,
-            controller
+            createController()
         )
         spineView.layoutParams = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.MATCH_PARENT,
@@ -50,7 +51,7 @@ class SpineHelper {
             "wallet/skeleton.atlas",
             "wallet/skeleton.json",
             context,
-            controller
+            createController()
         )
         spineView.layoutParams = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.MATCH_PARENT,

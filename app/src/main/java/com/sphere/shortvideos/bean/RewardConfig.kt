@@ -32,20 +32,11 @@ data class RewardConfig(@SerializedName("money_newuser_gift") val moneyNewuserGi
                         @SerializedName("rv_video") val rvVideo: List<RewardRange>,
 
                         @SerializedName("ad_interval") val adInterval: List<Int>) {
-    var isIdConfigure = false
     var moneyRate = 1.0 //价钱换算默认巴西币
     var moneyShowUnit = "R$"
 
-    fun getNewUserGiftBr(): Double { //转换成巴西币
-        if (isIdConfigure) {
-            return getRewardNewUser() / moneyRate
-        } else {
-            return getRewardNewUser()
-        }
-    }
-
-    fun getRewardNewUser(): Double {
-        return moneyNewuserGift.reward
+    fun getRewardNewUser(): Pair<Double, String> {
+        return Pair(moneyNewuserGift.reward, "+$moneyShowUnit\t${moneyNewuserGift.reward}")
     }
 
     // 传进来的是巴西币
@@ -53,10 +44,20 @@ data class RewardConfig(@SerializedName("money_newuser_gift") val moneyNewuserGi
         val m = moneyPush.firstOrNull {
             it.isInRange(moneyBr * moneyRate)
         }?.reward?.random() ?: 0.0
-        logError("getNotificationRewardMoney-->$moneyBr --$m --$moneyShowUnit")
-        return Pair(m, moneyShowUnit)
+        return Pair(m, "$moneyShowUnit${m}")
     }
 
+    // getVideo
+    fun getRvRewardMoney(moneyBr: Double): Pair<Double, String> {
+        val m = rvVideo.firstOrNull {
+            it.isInRange(moneyBr * moneyRate)
+        }?.reward?.random() ?: 0.0
+        return Pair(m, "+$moneyShowUnit\t${m}")
+    }
+
+    fun getWatchTime1Money(): Double {
+
+    }
 }
 
 data class RewardValue(@SerializedName("reward") val reward: Double)

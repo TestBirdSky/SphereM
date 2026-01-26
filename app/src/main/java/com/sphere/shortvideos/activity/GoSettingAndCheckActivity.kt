@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.notification.NotificationHelper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -68,10 +69,9 @@ class GoSettingAndCheckActivity : AppCompatActivity() {
                     0 -> {
                         if (NotificationHelper.hasNotificationPermission(this@GoSettingAndCheckActivity)) {
                             startActivity(Intent(this@GoSettingAndCheckActivity, GoSettingAndCheckActivity::class.java))
-                            break
+                            return@launch
                         }
                     }
-
                     else -> {
                         break
                     }

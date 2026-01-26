@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/ic_top_pay_tips_bg"
+        android:gravity="center|start"
+        android:paddingHorizontal="20dp"
+        app:layout_constraintTop_toBottomOf="@id/layout_bar">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_p_tag"
+            android:layout_width="80dp"
+            android:layout_height="27dp"
+            android:background="@drawable/ic_pix_w"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_cur_money"
+            tools:text="R$ 150,0000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:textColor="#F3CD0C"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@id/tv_tips"
+            app:layout_constraintLeft_toRightOf="@id/iv_p_tag"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_tips"
+            tools:text="Only R$ 0.5 more to withdraw! Act fast!"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="9sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@id/tv_cur_money"
+            app:layout_constraintTop_toBottomOf="@id/tv_cur_money" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

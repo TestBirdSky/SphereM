@@ -53,6 +53,7 @@
         app:layout_constraintTop_toTopOf="@id/iv_ad_tag" />
 
     <TextView
+        android:id="@+id/tv_ad_go"
         android:layout_width="0dp"
         android:layout_height="21dp"
         android:layout_marginHorizontal="8dp"

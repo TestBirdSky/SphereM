@@ -5,7 +5,6 @@ import com.sphere.shortvideos.bean.RewardConfig
 import com.sphere.shortvideos.helper.LauageTools
 import com.sphere.shortvideos.helper.RemoteConfHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
-import com.sphere.shortvideos.logError
 
 /**
  * Date：2026/1/22
@@ -26,18 +25,18 @@ object RewardHelper {
     @Volatile
     private var cachedConfigId: RewardConfig? = null
 
-    fun getBrConfig(): RewardConfig {
+    private fun getBrConfig(): RewardConfig {
         cachedConfig?.let { return it }
         val remoteJson = RemoteConfHelper().getString(REMOTE_KEY)
         if (remoteJson.isNotBlank()) {
             lastRemoteConfigure = remoteJson
         }
         val config = parseConfig(remoteJson) ?: parseConfig(DEFAULT_JSON)
-        updateBrConfigure(config!!)
+        updateBrAndDefaultConfigure(config!!)
         return config
     }
 
-    fun getIdConfig(): RewardConfig {
+    private fun getIdConfig(): RewardConfig {
         cachedConfigId?.let { return it }
         val remoteJson = RemoteConfHelper().getString(REMOTE_ID_KEY)
         if (remoteJson.isNotBlank()) {
@@ -49,7 +48,15 @@ object RewardHelper {
     }
 
     fun getConfigByLanguage(): RewardConfig {
-        return if (LauageTools.isIndonesia()) getIdConfig() else getBrConfig()
+        return when {
+            LauageTools.isIndonesia() -> {
+                getIdConfig()
+            }
+
+            else -> {
+                getBrConfig()
+            }
+        }
     }
 
 
@@ -58,7 +65,7 @@ object RewardHelper {
         if (remoteJson.isNotBlank() && lastRemoteConfigure != remoteJson) {
             lastRemoteConfigure = remoteJson
             parseConfig(remoteJson)?.let {
-                updateBrConfigure(it)
+                updateBrAndDefaultConfigure(it)
             }
         }
         val remoteIdJson = RemoteConfHelper().getString(REMOTE_ID_KEY)
@@ -71,16 +78,14 @@ object RewardHelper {
     }
 
     private fun updateIdConfigure(config: RewardConfig) {
-        config.isIdConfigure = true
         config.moneyRate = WithdrawAmountHelper.IDR_PER_BRL
-        config.moneyShowUnit = "Rp"
+        config.moneyShowUnit = WithdrawAmountHelper.IDR_UNIT
         cachedConfigId = config
     }
 
-    private fun updateBrConfigure(config: RewardConfig) {
-        config.isIdConfigure = false
+    private fun updateBrAndDefaultConfigure(config: RewardConfig) {
         config.moneyRate = WithdrawAmountHelper.BRL
-        config.moneyShowUnit = "R$"
+        config.moneyShowUnit = WithdrawAmountHelper.BRL_UNIT
         cachedConfig = config
     }
 

@@ -105,25 +105,5 @@ object LauageTools {
         }
     }
 
-    /**
-     * 判断是否为东南亚用户（印尼、泰国、越南、菲律宾等）
-     * @return true 是东南亚用户，false 不是
-     */
-    fun isSoutheastAsia(context: Context): Boolean {
-        val countryCode = getDeviceCountryCode(context)
-        val southeastAsiaCodes = listOf(
-            "ID", // 印尼
-            "TH", // 泰国
-            "VN", // 越南
-            "PH", // 菲律宾
-            "MY", // 马来西亚
-            "SG", // 新加坡
-            "MM", // 缅甸
-            "KH", // 柬埔寨
-            "LAO", // 老挝
-            "TL"  // 东帝汶
-        )
-        return countryCode in southeastAsiaCodes
-    }
 
 }

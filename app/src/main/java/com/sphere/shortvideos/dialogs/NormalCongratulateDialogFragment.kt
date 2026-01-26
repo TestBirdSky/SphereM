@@ -8,13 +8,15 @@ import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.databinding.DialogCongratulateBinding
+import com.sphere.shortvideos.helper.MoneyCacheHelper
+import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.view.AnimViewHelper
 
 /**
  * Date：2026/1/23
  * Describe: Congratulate dialog
  */
-class CongratulateDialogFragment : DialogFragment() {
+class NormalCongratulateDialogFragment : DialogFragment() {
 
     var onClaim: (() -> Unit)? = null
     var onClose: (() -> Unit)? = null
@@ -41,9 +43,18 @@ class CongratulateDialogFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         AnimViewHelper.playWelcomeBonusAnim(binding.ivAnim, binding.ivRewardBox)
         AnimViewHelper.slideInFromTop(binding.ivAnim2, 1200L)
+        val con = MoneyCacheHelper.fetchRvVideoReward()
+        val money = WithdrawAmountHelper.fetchCurMoneyAndGetMoneyMinValue()
+        val des = WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(money.first) + "/" + WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(money.second)
+        binding.tvPro.text = des
+        binding.progressView.progress = WithdrawAmountHelper.fetchGetMoneyProgress()
+        binding.tvRewardValue.text = con.second
         binding.ivClose.setOnClickListener {
             onClose?.invoke()
             dismissAllowingStateLoss()
+        }
+        binding.btnNormal.setOnClickListener {
+            binding.ivClose.performClick()
         }
         binding.btnClaim.setOnClickListener {
             onClaim?.invoke()

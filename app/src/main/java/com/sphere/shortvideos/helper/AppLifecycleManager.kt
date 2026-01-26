@@ -8,6 +8,7 @@ import com.adjust.sdk.Adjust
 import com.sphere.shortvideos.activity.LoadingActivity
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.isInteractive
+import com.sphere.shortvideos.logError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -23,9 +24,11 @@ object AppLifecycleManager : Application.ActivityLifecycleCallbacks {
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         synchronized(activityList) { activityList.add(activity) }
+        logError("onActivityCreated-->$activity")
     }
 
     override fun onActivityStarted(activity: Activity) {
+        logError("onActivityStarted-->$activity")
         foregroundCounts++
         backgroundJob?.cancel()
         if (!restart) return
@@ -43,6 +46,7 @@ object AppLifecycleManager : Application.ActivityLifecycleCallbacks {
     }
 
     override fun onActivityStopped(activity: Activity) {
+        logError("onActivityStopped-->$activity")
         runCatching {
             backgroundJob?.cancel()
             if (--foregroundCounts <= 0) {
@@ -66,6 +70,7 @@ object AppLifecycleManager : Application.ActivityLifecycleCallbacks {
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
 
     override fun onActivityDestroyed(activity: Activity) {
+        logError("onActivityDestroyed-->$activity")
         synchronized(activityList) { activityList.remove(activity) }
     }
 

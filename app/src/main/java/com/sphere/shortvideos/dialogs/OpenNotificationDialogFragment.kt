@@ -42,7 +42,7 @@ class OpenNotificationDialogFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         startSwingAnim()
         val rewardValue = MoneyCacheHelper.fetchPushReward()
-        binding.tvMoney.text = getString(R.string.allow_get) + "\t${rewardValue.second}${rewardValue.first}"
+        binding.tvMoney.text = getString(R.string.allow_get) + "\t${rewardValue.second}"
         binding.ivClose.setOnClickListener {
             onClose?.invoke()
             dismissAllowingStateLoss()
