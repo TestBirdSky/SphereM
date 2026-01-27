@@ -381,7 +381,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
 
     private fun bindClick() {
         binding.layoutTop.setOnClickListener {
-            TaskInfoDialogFragment().show(supportFragmentManager,"task_fragment")
+            TaskInfoDialogFragment().show(supportFragmentManager, "task_fragment")
         }
         registerMainViewModel()
     }
@@ -410,6 +410,14 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
             binding.tvCurMoney.text = it.first
         })
         HelperRewardShow.registerConDialog(activity)
+        HelperRewardShow.pauseVideoPlay.observe(this) { shouldPause ->
+            if (shouldPause == null) return@observe
+            if (shouldPause) {
+                detailFragment?.pausePlay()
+            } else {
+                detailFragment?.startPlay()
+            }
+        }
     }
 
 }

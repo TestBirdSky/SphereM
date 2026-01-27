@@ -1,7 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="match_parent"
+        android:layout_height="333dp"
+        android:background="@drawable/ic_task_top_bg"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="18dp"
+        android:gravity="center"
+        android:text="@string/withdraw"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_bg_top"
+        android:layout_width="305dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="28dp"
+        android:layout_marginTop="20dp"
+        android:adjustViewBounds="true"
+        android:src="@drawable/ic_withdraw_top_bg"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="25dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/noto_sans"
+        android:text="@string/my_balance"
+        android:textColor="#F8F8F8"
+        android:textSize="12sp"
+        app:layout_constraintLeft_toLeftOf="@id/iv_bg_top"
+        app:layout_constraintTop_toTopOf="@id/iv_bg_top" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv1"
+        android:layout_width="23dp"
+        android:layout_height="26.5dp"
+        android:layout_marginTop="7dp"
+        android:src="@drawable/ic_money"
+        app:layout_constraintStart_toStartOf="@id/tv_name"
+        app:layout_constraintTop_toBottomOf="@id/tv_name" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_money"
+        android:layout_width="wrap_content"
+        android:layout_height="52dp"
+        android:layout_marginHorizontal="9dp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/iv1"
+        app:layout_constraintStart_toEndOf="@id/iv1"
+        app:layout_constraintTop_toTopOf="@id/iv1"
+        tools:text="R$ 150,000" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:adjustViewBounds="true"
+        android:src="@drawable/ic_big_wallet"
+        app:layout_constraintBottom_toBottomOf="@id/tv_money"
+        app:layout_constraintEnd_toEndOf="@id/iv_bg_top"
+        app:layout_constraintTop_toTopOf="@id/iv_bg_top" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_wm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:fontFamily="@font/noto_sans"
+        android:text="@string/withdrawal_method"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_bg_top"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_withdraw"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="5dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/tv_wm" />
+
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/layout_wa"
+        android:layout_width="match_parent"
+        android:layout_height="189dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="26dp"
+        android:background="@drawable/shape_g1a0_12"
+        android:orientation="vertical"
+        android:paddingHorizontal="9dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rv_withdraw">
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_withdraw_money"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/noto_sans"
+            android:text="@string/withdrawal_amount"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_withdraw_money"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            app:layout_constraintTop_toBottomOf="@id/tv_withdraw_money" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_user_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6.5dp"
+        android:fontFamily="@font/noto_sans"
+        android:gravity="center"
+        android:text="@string/proud_to_cash_out"
+        android:textColor="#AD74FF"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/layout_wa" />
+
+    <FrameLayout
+        android:id="@+id/layout_with_user_info"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="7.5dp"
+        android:paddingHorizontal="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_user_title">
+
+    </FrameLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_withdraw"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_marginHorizontal="21dp"
+        android:layout_marginTop="7dp"
+        android:background="@drawable/shape_bg_ye"
+        android:fontFamily="@font/noto_sans"
+        android:gravity="center"
+        android:text="@string/withdraw"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_with_user_info" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

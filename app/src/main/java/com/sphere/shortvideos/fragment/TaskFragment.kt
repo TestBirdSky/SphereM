@@ -12,6 +12,7 @@ import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.baseui.GenericFragment
 import com.sphere.shortvideos.baseui.setTaskInfo
 import com.sphere.shortvideos.databinding.FragmentTaskBinding
+import com.sphere.shortvideos.dialogs.LuckChallengeDialogFragment
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.task.TaskHelper
@@ -37,7 +38,6 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
             (activity as? MainActivity)?.jumpWallet()
         }
         binding.layoutPop1.setOnClickListener {
-
         }
         binding.layoutPop2.setOnClickListener {
 

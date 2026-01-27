@@ -80,6 +80,10 @@ object WithdrawAmountHelper {
         return Pair(mo, total.toDouble())
     }
 
+    fun fetchWithdrawAmounts(): List<Double> {
+        return tiers.map { it.fetWithdraw() }
+    }
+
     data class WithdrawTier(val brl: Long, val usd: Long, val idr: Long) {
         fun fetWithdraw(): Double {
             return (if (LauageTools.isIndonesia()) idr else brl).toDouble()

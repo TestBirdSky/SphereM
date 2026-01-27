@@ -4,6 +4,7 @@ import android.app.Activity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import com.sphere.shortvideos.baseui.GenericActivity
+import com.sphere.shortvideos.dialogs.LuckChallengeDialogFragment
 import com.sphere.shortvideos.dialogs.NormalCongratulateDialogFragment
 import com.sphere.shortvideos.helper.reward.RewardHelper
 import com.sphere.shortvideos.logError
@@ -21,7 +22,7 @@ object HelperRewardShow {
     val nextRewordType = MutableLiveData(-1) //0 普通奖励看插屏 1 倍率玩法看激励广告
     val curGetMoneyStr = MutableLiveData(Pair("", "")) //当前获取到的奖励和还差多少可领取奖励
     val showDialogType = MutableLiveData<Int>(-1) //0 普通奖励看插屏 1 倍率玩法看激励广告
-    val pauseVideoPlay = MutableLiveData(false)
+    val pauseVideoPlay = MutableLiveData<Boolean>(null)
     private var maxReachedCount = 0
     private var progressJob: Job? = null
     private val progressMax = 100
@@ -55,11 +56,11 @@ object HelperRewardShow {
                         maxReachedCount++
                         if (maxReachedCount >= tagGam) {
                             maxReachedCount = 0
-                            showDialogType.postValue(1)
+                            postOnceDialogType(1)
                             setGameTargetNum()
                             nextRewordType.postValue(if (maxReachedCount >= tagGam - 1) 1 else 0)
                         } else {
-                            showDialogType.postValue(0)
+                            postOnceDialogType(0)
                         }
                     }
                     numTime.postValue("$num/$maxNum")
@@ -97,6 +98,16 @@ object HelperRewardShow {
         numIntervalIndex++
     }
 
+    private fun postOnce(isPause: Boolean) {
+        pauseVideoPlay.postValue(isPause)
+        pauseVideoPlay.value = null
+    }
+
+    private fun postOnceDialogType(int: Int) {
+        showDialogType.postValue(int)
+        showDialogType.postValue(-1)
+    }
+
     fun registerConDialog(activity: GenericActivity) {
         logError("registerConDialog-->$activity")
         showDialogType.observe(activity) {
@@ -104,22 +115,26 @@ object HelperRewardShow {
             if (it == -1) return@observe
             when (it) {
                 0 -> {
-                    pauseVideoPlay.postValue(true)
+                    postOnce(true)
                     NormalCongratulateDialogFragment().apply {
                         onClaim = {
-                            pauseVideoPlay.postValue(false)
+                            postOnce(false)
                         }
                         onClose = {
-                            pauseVideoPlay.postValue(false)
+                            postOnce(false)
                         }
                     }.show(activity.supportFragmentManager, "congratulation")
                 }
 
                 1 -> {
-
+                    postOnce(true)
+                    LuckChallengeDialogFragment().apply {
+                        onResult = {
+                            postOnce(false)
+                        }
+                    }.show(activity.supportFragmentManager, "luck")
                 }
             }
-            showDialogType.value = -1
         }
     }
 }

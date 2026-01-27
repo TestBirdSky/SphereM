@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black">
+    android:background="@color/transport">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_close"
@@ -22,7 +22,6 @@
         android:id="@+id/iv_dialog_bg"
         android:layout_width="match_parent"
         android:layout_height="609dp"
-        android:alpha="0.5"
         android:background="@drawable/shape_dia_r16_top"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

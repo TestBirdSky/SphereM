@@ -23,9 +23,6 @@ import com.sphere.shortvideos.vm.StreamViewModel
 
 class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
 
-    private val curMoneyObserver = Observer<Pair<String, String>> { value ->
-
-    }
     private val viewModel by viewModels<StreamViewModel>()
     private var feedListAdapter: FeedListAdapter? = null
     private var initialized: Boolean = false
@@ -60,6 +57,7 @@ class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
         initAdapter()
         autoRefresh()
         HelperRewardShow.pauseVideoPlay.observe(viewLifecycleOwner) { shouldPause ->
+            if (shouldPause == null) return@observe
             if (shouldPause) {
                 pauseCurrentVideo()
             } else {
