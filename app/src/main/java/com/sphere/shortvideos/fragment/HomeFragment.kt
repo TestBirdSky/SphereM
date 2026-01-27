@@ -52,7 +52,7 @@ class HomeFragment : GenericFragment<FragmentHomeBinding>() {
             tab.text = categories.getOrNull(position)?.name ?: ""
         }.attach()
         registerViewModel()
-        loadData()
+//        loadData()
     }
 
     override fun onResume() {

@@ -29,6 +29,10 @@ object MoneyCacheHelper {
         return mo
     }
 
+    fun fetchCurMoneyBr(): Double {
+        return userFetchMoneyBr
+    }
+
     // 存储是巴西币，进来后需要进行换算
     @Synchronized
     fun addMoney(value: Double) {
@@ -45,6 +49,7 @@ object MoneyCacheHelper {
     }
 
     var watchVideoTime by MMKVData(0L) // 观看时长
+        private set
 
     private var time = 0L
     fun startWatchVideo() {
@@ -67,5 +72,20 @@ object MoneyCacheHelper {
         watchVideoTime += durationMs
     }
 
+    private val listWatchValue = ArrayList<Pair<Double, String>>()
+
+    fun fetchAllWatchReword(): List<Pair<Double, String>> {
+        if (listWatchValue.isEmpty()) {
+            val mo = userFetchMoneyBr
+            val conf = RewardHelper.getConfigByLanguage()
+            listWatchValue.add(conf.getDramaTime1Reward(mo))
+            listWatchValue.add(conf.getDramaTime2Reward(mo))
+            listWatchValue.add(conf.getDramaTime3Reward(mo))
+            listWatchValue.add(conf.getDramaTime4Reward(mo))
+            listWatchValue.add(conf.getDramaTime5Reward(mo))
+            listWatchValue.add(conf.getDramaTime6Reward(mo))
+        }
+        return listWatchValue
+    }
 
 }

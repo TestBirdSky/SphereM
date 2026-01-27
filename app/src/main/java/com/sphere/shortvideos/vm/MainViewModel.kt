@@ -37,14 +37,13 @@ class MainViewModel : ViewModel(), AddMoneyListener {
     val numProgress = HelperRewardShow.numProgress
     val nextRewordType = HelperRewardShow.nextRewordType
     val curGetMoneyStr = HelperRewardShow.curGetMoneyStr
-    val showDialogType = HelperRewardShow.showDialogType
 
     init {
         HelperRewardShow.init()
     }
 
     fun playMoneyProgress() {
-        HelperRewardShow.playMoneyProgress(viewModelScope)
+        HelperRewardShow.playMoneyProgress()
     }
 
     fun pauseMoneyProgress() {
@@ -53,6 +52,10 @@ class MainViewModel : ViewModel(), AddMoneyListener {
 
     fun newUserProgress() {
         HelperRewardShow.newUserProgress()
+    }
+
+    fun fetchCurMoney(): String {
+        return curGetMoneyStr.value?.first ?: "--"
     }
 
     override fun addMoney(d: Double) {

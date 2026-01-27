@@ -79,13 +79,11 @@ object RewardHelper {
 
     private fun updateIdConfigure(config: RewardConfig) {
         config.moneyRate = WithdrawAmountHelper.IDR_PER_BRL
-        config.moneyShowUnit = WithdrawAmountHelper.IDR_UNIT
         cachedConfigId = config
     }
 
     private fun updateBrAndDefaultConfigure(config: RewardConfig) {
         config.moneyRate = WithdrawAmountHelper.BRL
-        config.moneyShowUnit = WithdrawAmountHelper.BRL_UNIT
         cachedConfig = config
     }
 

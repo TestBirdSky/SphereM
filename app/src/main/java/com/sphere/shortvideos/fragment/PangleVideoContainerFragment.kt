@@ -18,6 +18,7 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Observer
 import com.bytedance.sdk.shortplay.api.EpisodeData
 import com.bytedance.sdk.shortplay.api.PSSDK
 import com.bytedance.sdk.shortplay.api.ShortPlay
@@ -33,6 +34,7 @@ import com.sphere.shortvideos.database.DramaCollectEntity
 import com.sphere.shortvideos.databinding.FragmentPangleVideoContainerBinding
 import com.sphere.shortvideos.dialogs.NormalCongratulateDialogFragment
 import com.sphere.shortvideos.helper.HelperRewardShow
+import com.sphere.shortvideos.helper.HelperRewardShow.showDialogType
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.logError
@@ -159,7 +161,6 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
                 showDramaFragment(item)
             }
         }
-        registerMainViewModel()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -267,6 +268,11 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
         viewModel.pauseMoneyProgress()
     }
 
+    override fun onResume() {
+        super.onResume()
+        registerMainViewModel()
+    }
+
     private fun showNewUser(): Boolean {
         if (MMKVRepository.isNewUser) {
             setGuideVisibility(View.VISIBLE)
@@ -312,30 +318,30 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
         super.onDestroyView()
     }
 
-    private fun registerMainViewModel() {
-        viewModel.numProgress.observe(this, {
-            binding.progressPrice.progress = it
-        })
-        viewModel.numTime.observe(this, {
-            binding.tvTipsNum.text = it
-        })
-        viewModel.nextRewordType.observe(this, {
-            when (it) {
-                1 -> {
-                    spineHelper.addViewMoney2(binding.layoutAnim, requireContext())
-                }
-
-                else -> {
-                    spineHelper.addViewMoney1(binding.layoutAnim, requireContext())
-                }
-            }
-        })
-        viewModel.curGetMoneyStr.observe(this, {
-            binding.layoutMoney.refreshView(it.first, it.second,activity as AppCompatActivity)
-        })
-        (activity as? MainActivity)?.let {
-            HelperRewardShow.registerConDialog(it)
+    private val numProgressObserver = Observer<Int> { value ->
+        binding.progressPrice.progress = value
+    }
+    private val numTimeObserver = Observer<String> { value ->
+        binding.tvTipsNum.text = value
+    }
+    private val nextRewardObserver = Observer<Int> { value ->
+        when (value) {
+            1 -> spineHelper.addViewMoney2(binding.layoutAnim, requireContext())
+            else -> spineHelper.addViewMoney1(binding.layoutAnim, requireContext())
         }
+    }
+    private val curMoneyObserver = Observer<Pair<String, String>> { value ->
+        binding.layoutMoney.refreshView(value.first, value.second, activity as AppCompatActivity)
+    }
+    private var isObserversRegistered = false
+
+    private fun registerMainViewModel() {
+        if (isObserversRegistered) return
+        isObserversRegistered = true
+        viewModel.numProgress.observe(viewLifecycleOwner, numProgressObserver)
+        viewModel.numTime.observe(viewLifecycleOwner, numTimeObserver)
+        viewModel.nextRewordType.observe(viewLifecycleOwner, nextRewardObserver)
+        viewModel.curGetMoneyStr.observe(viewLifecycleOwner, curMoneyObserver)
     }
 
 }

@@ -69,6 +69,7 @@
     <string name="congratulate">Congratulate</string>
     <string name="withdrawal_progress">Withdrawal Progress</string>
     <string name="withdraw_tips">Only %s more to withdraw! Act fast!</string>
+    <string name="claim">Claim</string>
 
 
 </resources>

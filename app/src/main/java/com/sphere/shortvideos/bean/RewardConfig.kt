@@ -1,7 +1,7 @@
 package com.sphere.shortvideos.bean
 
 import com.google.gson.annotations.SerializedName
-import com.sphere.shortvideos.logError
+import com.sphere.shortvideos.helper.WithdrawAmountHelper
 
 /**
  * Date：2026/1/22
@@ -33,10 +33,9 @@ data class RewardConfig(@SerializedName("money_newuser_gift") val moneyNewuserGi
 
                         @SerializedName("ad_interval") val adInterval: List<Int>) {
     var moneyRate = 1.0 //价钱换算默认巴西币
-    var moneyShowUnit = "R$"
 
     fun getRewardNewUser(): Pair<Double, String> {
-        return Pair(moneyNewuserGift.reward, "+$moneyShowUnit\t${moneyNewuserGift.reward}")
+        return Pair(moneyNewuserGift.reward, "+${WithdrawAmountHelper.moneyFormatAddUnit(moneyNewuserGift.reward)}")
     }
 
     // 传进来的是巴西币
@@ -44,19 +43,65 @@ data class RewardConfig(@SerializedName("money_newuser_gift") val moneyNewuserGi
         val m = moneyPush.firstOrNull {
             it.isInRange(moneyBr * moneyRate)
         }?.reward?.random() ?: 0.0
-        return Pair(m, "$moneyShowUnit${m}")
+        return Pair(m, WithdrawAmountHelper.moneyFormatAddUnit(m))
     }
 
     // getVideo
     fun getRvRewardMoney(moneyBr: Double): Pair<Double, String> {
-        val m = rvVideo.firstOrNull {
-            it.isInRange(moneyBr * moneyRate)
-        }?.reward?.random() ?: 0.0
-        return Pair(m, "+$moneyShowUnit\t${m}")
+        return buildReward(rvVideo, moneyBr, true)
     }
 
-    fun getWatchTime1Money(): Double {
+    fun getMoneyVideoIconReward(moneyBr: Double, withPlus: Boolean = true): Pair<Double, String> {
+        return buildReward(moneyVideoIcon, moneyBr, withPlus)
+    }
 
+    fun getDramaTime1Reward(moneyBr: Double): Pair<Double, String> {
+        return buildReward(dramaTime1, moneyBr, false, false)
+    }
+
+    fun getDramaTime2Reward(moneyBr: Double): Pair<Double, String> {
+        return buildReward(dramaTime2, moneyBr, false, false)
+    }
+
+    fun getDramaTime3Reward(moneyBr: Double): Pair<Double, String> {
+        return buildReward(dramaTime3, moneyBr, false, false)
+    }
+
+    fun getDramaTime4Reward(moneyBr: Double): Pair<Double, String> {
+        return buildReward(dramaTime4, moneyBr, false, false)
+    }
+
+    fun getDramaTime5Reward(moneyBr: Double): Pair<Double, String> {
+        return buildReward(dramaTime5, moneyBr, false, false)
+    }
+
+    fun getDramaTime6Reward(moneyBr: Double): Pair<Double, String> {
+        return buildReward(dramaTime6, moneyBr, false, false)
+    }
+
+    fun getTaskPopReward(moneyBr: Double, withPlus: Boolean = true): Pair<Double, String> {
+        return buildReward(taskPop, moneyBr, withPlus)
+    }
+
+    fun getSignInReward(moneyBr: Double, withPlus: Boolean = true): Pair<Double, String> {
+        return buildReward(signIn, moneyBr, withPlus)
+    }
+
+    private fun buildReward(
+        list: List<RewardRange>,
+        moneyBr: Double,
+        withPlus: Boolean,
+        withSpace: Boolean = true
+    ): Pair<Double, String> {
+        val m = list.firstOrNull {
+            it.isInRange(moneyBr * moneyRate)
+        }?.reward?.random() ?: 0.0
+        val formatted = if (withSpace) {
+            WithdrawAmountHelper.moneyFormatAddUnit(m)
+        } else {
+            WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(m)
+        }
+        return if (withPlus) Pair(m, "+$formatted") else Pair(m, formatted)
     }
 }
 

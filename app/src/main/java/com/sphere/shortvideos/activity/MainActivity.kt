@@ -22,6 +22,8 @@ import com.sphere.shortvideos.fragment.ProfileFragment
 import com.sphere.shortvideos.fragment.TaskFragment
 import com.sphere.shortvideos.fragment.VideoStreamFragment
 import com.sphere.shortvideos.fragment.WalletFragment
+import com.sphere.shortvideos.helper.HelperRewardShow
+import com.sphere.shortvideos.helper.HelperRewardShow.showDialogType
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.helper.permission.PermissionHelper
 import com.sphere.shortvideos.logError
@@ -105,8 +107,7 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
             }
             true
         }
-        binding.viewPager.setCurrentItem(1, false)
-        binding.bottomNav.menu.findItem(R.id.tab_video).icon = R.drawable.ic_nav_video_selected.fetchIcon()
+        binding.bottomNav.selectedItemId = R.id.tab_video
         h.addViewWallet(binding.centerWallet, this)
         if (MMKVRepository.isNewUser) {
             binding.ivFirstGuide.visibility = View.VISIBLE
@@ -118,6 +119,7 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
                 showNotificationOpen()
             }
         }
+        registerViewModel()
     }
 
     private fun setOther() {
@@ -163,6 +165,14 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         } else {
             super.onBackActioned()
         }
+    }
+
+    private fun registerViewModel() {
+        HelperRewardShow.registerConDialog(this)
+    }
+
+    fun jumpWallet() {
+        binding.bottomNav.selectedItemId = R.id.tab_wallet
     }
 
 }

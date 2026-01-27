@@ -23,7 +23,7 @@ object WithdrawAmountHelper {
     fun fetchCurMoneyAndWithdrawNeedMoney(): Pair<String, String> {
         val curMoney = fetchCurMoney()
         val curMoneyStr = moneyFormatAddUnit(curMoney)
-        val needTagMoney = moneyFormatAddUnit(defLow.fetWithdraw() - curMoney) // 剩余体现的金额
+        val needTagMoney = moneyFormatAddUnitWithNoSpace(defLow.fetWithdraw() - curMoney) // 剩余体现的金额
         return Pair(curMoneyStr, needTagMoney)
     }
 
@@ -32,10 +32,10 @@ object WithdrawAmountHelper {
     }
 
     fun moneyFormatAddUnitWithNoSpace(double: Double): String {
-        return "${resolveMoneyUnit()}\t${formatMoney(double)}"
+        return "${resolveMoneyUnit()}${formatMoney(double)}"
     }
 
-    fun fetchMoneyBankIcon(isBlack: Boolean=false): Int {
+    fun fetchMoneyBankIcon(isBlack: Boolean = false): Int {
         if (LauageTools.isIndonesia()) {
             return if (isBlack) R.drawable.ic_ovo_b else R.drawable.ic_ovo_w
         } else {
@@ -43,7 +43,7 @@ object WithdrawAmountHelper {
         }
     }
 
-    private fun formatMoney(value: Double): String {
+    fun formatMoney(value: Double): String {
         val locale = if (LauageTools.isIndonesia()) { //99999 -> 99.999
             LauageTools.getLocaleByCountry(LauageTools.CountryCode.INDONESIA)
         } else { //2999.99 --> 2.999,99

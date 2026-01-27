@@ -10,6 +10,7 @@ import com.sphere.shortvideos.R
 import com.sphere.shortvideos.baseui.GenericBindActivity
 import com.sphere.shortvideos.baseui.setColor
 import com.sphere.shortvideos.databinding.ActivityLoadingBinding
+import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.OtherHelper
 import com.sphere.shortvideos.helper.mmkv.MMKVData
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
@@ -59,6 +60,7 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
         session()
         MMKVRepository.checkCueDay()
         // todo test
+        MoneyCacheHelper.addWatchVideoTime(60000 * 30)
         nextView<MainActivity>()
         finish()
     }

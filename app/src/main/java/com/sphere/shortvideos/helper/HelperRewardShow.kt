@@ -1,6 +1,7 @@
 package com.sphere.shortvideos.helper
 
 import android.app.Activity
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.dialogs.NormalCongratulateDialogFragment
@@ -18,7 +19,7 @@ object HelperRewardShow {
     val numTime = MutableLiveData("1/3")
     val numProgress = MutableLiveData<Int>(0)
     val nextRewordType = MutableLiveData(-1) //0 普通奖励看插屏 1 倍率玩法看激励广告
-    val curGetMoneyStr = MutableLiveData(Pair("", ""))
+    val curGetMoneyStr = MutableLiveData(Pair("", ""))//当前获取到的奖励和还差多少可领取奖励
     val showDialogType = MutableLiveData<Int>(-1) //0 普通奖励看插屏 1 倍率玩法看激励广告
     private var maxReachedCount = 0
     private var progressJob: Job? = null
@@ -96,8 +97,9 @@ object HelperRewardShow {
     }
 
     fun registerConDialog(activity: GenericActivity) {
+        logError("registerConDialog-->$activity")
         showDialogType.observe(activity) {
-            logError("registerViewModule-->$it")
+            logError("registerConDialog-->$it")
             when (it) {
                 0 -> {
                     NormalCongratulateDialogFragment().apply {
