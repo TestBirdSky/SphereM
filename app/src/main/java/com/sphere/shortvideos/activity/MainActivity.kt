@@ -16,6 +16,7 @@ import com.sphere.shortvideos.databinding.ActivityMainBinding
 import com.sphere.shortvideos.dialogs.BackTipsDialogFragment
 import com.sphere.shortvideos.dialogs.NormalCongratulateDialogFragment
 import com.sphere.shortvideos.dialogs.OpenNotificationDialogFragment
+import com.sphere.shortvideos.dialogs.TaskInfoDialogFragment
 import com.sphere.shortvideos.dialogs.WelcomeBonusDialogFragment
 import com.sphere.shortvideos.fragment.HomeFragment
 import com.sphere.shortvideos.fragment.ProfileFragment
@@ -173,6 +174,10 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
 
     fun jumpWallet() {
         binding.bottomNav.selectedItemId = R.id.tab_wallet
+    }
+
+    fun showMyWalletFragment() {
+        TaskInfoDialogFragment().show(supportFragmentManager,"task_fragment")
     }
 
 }

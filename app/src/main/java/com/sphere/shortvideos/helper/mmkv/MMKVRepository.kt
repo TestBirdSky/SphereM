@@ -19,7 +19,7 @@ object MMKVRepository {
     private var isCurDayStr by MMKVData("") // 当天
 
     fun checkCueDay(): Boolean {
-        if (isDebugMode) {
+        if (isDebugMode) {//todo
             isCurDayStr = ""
         }
         val day = SimpleDateFormat("yyyy-MM-dd").format(Date())

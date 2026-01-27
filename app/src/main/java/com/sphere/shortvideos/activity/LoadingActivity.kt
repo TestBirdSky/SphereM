@@ -60,7 +60,6 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
         session()
         MMKVRepository.checkCueDay()
         // todo test
-        MoneyCacheHelper.addWatchVideoTime(60000 * 30)
         nextView<MainActivity>()
         finish()
     }

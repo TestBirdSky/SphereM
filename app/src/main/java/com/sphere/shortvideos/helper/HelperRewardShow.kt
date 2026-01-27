@@ -17,10 +17,11 @@ object HelperRewardShow {
     private var num = 1
     private var maxNum = 3
     val numTime = MutableLiveData("1/3")
-    val numProgress = MutableLiveData<Int>(0)
+    val numProgress = MutableLiveData<Int>(1)
     val nextRewordType = MutableLiveData(-1) //0 普通奖励看插屏 1 倍率玩法看激励广告
-    val curGetMoneyStr = MutableLiveData(Pair("", ""))//当前获取到的奖励和还差多少可领取奖励
+    val curGetMoneyStr = MutableLiveData(Pair("", "")) //当前获取到的奖励和还差多少可领取奖励
     val showDialogType = MutableLiveData<Int>(-1) //0 普通奖励看插屏 1 倍率玩法看激励广告
+    val pauseVideoPlay = MutableLiveData(false)
     private var maxReachedCount = 0
     private var progressJob: Job? = null
     private val progressMax = 100
@@ -100,21 +101,25 @@ object HelperRewardShow {
         logError("registerConDialog-->$activity")
         showDialogType.observe(activity) {
             logError("registerConDialog-->$it")
+            if (it == -1) return@observe
             when (it) {
                 0 -> {
+                    pauseVideoPlay.postValue(true)
                     NormalCongratulateDialogFragment().apply {
                         onClaim = {
-
+                            pauseVideoPlay.postValue(false)
                         }
                         onClose = {
-
+                            pauseVideoPlay.postValue(false)
                         }
                     }.show(activity.supportFragmentManager, "congratulation")
                 }
+
                 1 -> {
 
                 }
             }
+            showDialogType.value = -1
         }
     }
 }

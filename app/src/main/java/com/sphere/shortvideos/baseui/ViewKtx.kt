@@ -14,9 +14,11 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.sphere.shortvideos.R
+import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.databinding.LayoutMoneyTopViewBinding
 import com.sphere.shortvideos.databinding.LayoutTaskChildBinding
 import com.sphere.shortvideos.adapter.SevenDayRewardAdapter
+import com.sphere.shortvideos.baseui.isAnim
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.task.TaskHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
@@ -43,7 +45,7 @@ fun TextView.setColor(fullText: String, firStart: Int = 0, endIndex: Int = 5) {
     text = spannableString
 }
 
-fun LayoutMoneyTopViewBinding.refreshView(money: String, tagMoney: String, activity: AppCompatActivity) {
+fun LayoutMoneyTopViewBinding.refreshView(money: String, tagMoney: String, activity: MainActivity) {
     tvCurMoney.text = money
     val fullText = root.context.getString(R.string.withdraw_tips, tagMoney)
     val start = fullText.indexOf(tagMoney)
@@ -58,7 +60,7 @@ fun LayoutMoneyTopViewBinding.refreshView(money: String, tagMoney: String, activ
     }
     ivPTag.setBackgroundResource(WithdrawAmountHelper.fetchMoneyBankIcon())
     layout.setOnClickListener {
-
+        activity.showMyWalletFragment()
     }
 }
 
@@ -69,10 +71,13 @@ fun LayoutTaskChildBinding.setTaskInfo(activity: Context,
     }
     bgH5.setOnClickListener { // todo 显示H5
     }
+    isAnim = false
     setWatchLayout(activity, watchTimeArriver)
     set7DayReword(daySignSuccess)
 
 }
+
+private var isAnim = false
 
 private fun LayoutTaskChildBinding.set7DayReword(daySignSuccess: (Double, ImageView) -> Unit) {
     val states = TaskHelper.fetchSignInStates()
@@ -129,10 +134,11 @@ private fun LayoutTaskChildBinding.setWatchLayout(context: Context, watchTimeArr
         val reward = TaskHelper.clickWatchReward(index)
         if (reward != null) {
             watchTimeArriver.invoke(reward, view)
+            isAnim = true
             setWatchLayout(context, watchTimeArriver)
         }
     }
-    progressView.progress = (((curIndexReward + 1) / 6.0) * 100).toInt()
+    progressView.setProgress((((curIndexReward + 1) / 6.0) * 100).toInt(), isAnim)
     when (curIndexReward) {
         0 -> {
             ivSmallMoney1.setImageResource(R.drawable.ic_coin_low_grey)

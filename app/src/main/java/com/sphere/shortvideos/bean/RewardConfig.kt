@@ -79,12 +79,11 @@ data class RewardConfig(@SerializedName("money_newuser_gift") val moneyNewuserGi
         return buildReward(dramaTime6, moneyBr, false, false)
     }
 
-    fun getTaskPopReward(moneyBr: Double, withPlus: Boolean = true): Pair<Double, String> {
-        return buildReward(taskPop, moneyBr, withPlus)
-    }
-
-    fun getSignInReward(moneyBr: Double, withPlus: Boolean = true): Pair<Double, String> {
-        return buildReward(signIn, moneyBr, withPlus)
+    fun getTaskPopReward(moneyBr: Double): Pair<Double, String> {
+        val m = taskPop.firstOrNull {
+            it.isInRange(moneyBr * moneyRate)
+        }?.reward?.random() ?: 0.0
+        return Pair(m, "+${WithdrawAmountHelper.formatMoney(m)}")
     }
 
     private fun buildReward(

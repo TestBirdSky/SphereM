@@ -43,4 +43,7 @@
     <string name="notification_screen_on_des3">Jangan berhenti, kamu sudah dekat</string>
     <string name="notification_screen_on_title4">Cinta terlarang terbongkar</string>
     <string name="notification_screen_on_des4">Nonton sebelum semuanya terungkap</string>
+
+    <string name="fortune_challenge">Tantangan Roda Keberuntungan</string>
+    <string name="redeem">Klaim</string>
 </resources>

@@ -3,21 +3,29 @@ package com.sphere.shortvideos.fragment
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Observer
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.bytedance.sdk.shortplay.api.ShortPlay
 import com.sphere.shortvideos.R
+import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.baseui.GenericFragment
+import com.sphere.shortvideos.baseui.refreshView
 import com.sphere.shortvideos.databinding.FragmentVideoStreamBinding
+import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.vm.StreamViewModel
 
 class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
 
+    private val curMoneyObserver = Observer<Pair<String, String>> { value ->
+
+    }
     private val viewModel by viewModels<StreamViewModel>()
     private var feedListAdapter: FeedListAdapter? = null
     private var initialized: Boolean = false
@@ -29,8 +37,8 @@ class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
     override fun initUI() {
         viewModel.onErrorLiveData.observe(this) {
             initialized = false
-            binding.refreshLayout.isRefreshing = false
-//            binding.errorView.findViewById<TextView>(com.pssdk.publish_module.R.id.pssdk_error_tip)?.text = getString(R.string.network_abnormality)
+            binding.refreshLayout.isRefreshing =
+                false //            binding.errorView.findViewById<TextView>(com.pssdk.publish_module.R.id.pssdk_error_tip)?.text = getString(R.string.network_abnormality)
             binding.errorView.isVisible = true
         }
         viewModel.refreshLiveData.observe(this) { result ->
@@ -51,6 +59,18 @@ class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
         }
         initAdapter()
         autoRefresh()
+        HelperRewardShow.pauseVideoPlay.observe(viewLifecycleOwner) { shouldPause ->
+            if (shouldPause) {
+                pauseCurrentVideo()
+            } else {
+                resumeCurrentVideo()
+            }
+        }
+        HelperRewardShow.curGetMoneyStr.observe(viewLifecycleOwner, { value ->
+            activity?.let {
+                binding.layoutMoney.refreshView(value.first, value.second, it as MainActivity)
+            }
+        })
     }
 
     private fun initAdapter() {
@@ -77,7 +97,20 @@ class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
         autoRefresh()
     }
 
-    inner class FeedListAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) : FragmentStateAdapter(fragmentManager, lifecycle) {
+    fun pauseCurrentVideo() {
+        val currentIndex = binding.viewPager.currentItem
+        val current = childFragmentManager.findFragmentByTag("f$currentIndex")
+        (current as? PangleVideoContainerFragment)?.pausePlay()
+    }
+
+    fun resumeCurrentVideo() {
+        val currentIndex = binding.viewPager.currentItem
+        val current = childFragmentManager.findFragmentByTag("f$currentIndex")
+        (current as? PangleVideoContainerFragment)?.resumePlay()
+    }
+
+    inner class FeedListAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
+        FragmentStateAdapter(fragmentManager, lifecycle) {
 
         val datas = mutableListOf<Any>()
 

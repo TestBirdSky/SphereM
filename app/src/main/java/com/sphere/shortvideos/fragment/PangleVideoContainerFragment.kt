@@ -161,6 +161,7 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
                 showDramaFragment(item)
             }
         }
+
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -262,6 +263,14 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
             .commit()
     }
 
+    fun pausePlay() {
+        detailFragment?.pausePlay()
+    }
+
+    fun resumePlay() {
+        detailFragment?.startPlay()
+    }
+
     override fun onPause() {
         super.onPause()
         MoneyCacheHelper.stopWatchVideo()
@@ -330,9 +339,7 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
             else -> spineHelper.addViewMoney1(binding.layoutAnim, requireContext())
         }
     }
-    private val curMoneyObserver = Observer<Pair<String, String>> { value ->
-        binding.layoutMoney.refreshView(value.first, value.second, activity as AppCompatActivity)
-    }
+
     private var isObserversRegistered = false
 
     private fun registerMainViewModel() {
@@ -341,7 +348,6 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
         viewModel.numProgress.observe(viewLifecycleOwner, numProgressObserver)
         viewModel.numTime.observe(viewLifecycleOwner, numTimeObserver)
         viewModel.nextRewordType.observe(viewLifecycleOwner, nextRewardObserver)
-        viewModel.curGetMoneyStr.observe(viewLifecycleOwner, curMoneyObserver)
     }
 
 }

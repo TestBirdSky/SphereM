@@ -24,6 +24,7 @@ import com.sphere.shortvideos.database.DramaCollectEntity
 import com.sphere.shortvideos.database.DramaEpisodeEntity
 import com.sphere.shortvideos.database.DramaHistoryEntity
 import com.sphere.shortvideos.databinding.ActivityDramaPlayPangleBinding
+import com.sphere.shortvideos.dialogs.TaskInfoDialogFragment
 import com.sphere.shortvideos.dialogs.showIndexSelectorDialog
 import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.MoneyCacheHelper
@@ -116,7 +117,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                         detailFragment?.setCurrentPlayTimeSeconds(seekBar?.progress ?: 0)
                         controlViewHideJob = lifecycleScope.launch(Dispatchers.Main) {
                             delay(5000L)
-                            binding.groupControl.isVisible = false
+                            binding.groupControl.visibility = View.INVISIBLE
                         }
                     }
                 })
@@ -318,18 +319,20 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                     }
                     when (playbackState) {
                         PSSDK.PLAYBACK_STATE_PAUSE -> {
+                            HelperRewardShow.pauseMoneyProgress()
                             MoneyCacheHelper.stopWatchVideo()
                             controlViewHideJob?.cancel()
-                            binding.groupControl.isVisible = true
+                            binding.groupControl.visibility = View.VISIBLE
                             changeSeekbarSize(true)
                         }
 
                         PSSDK.PLAYBACK_STATE_PLAY -> {
+                            HelperRewardShow.playMoneyProgress()
                             MoneyCacheHelper.startWatchVideo()
                             changeSeekbarSize(false)
                             controlViewHideJob = lifecycleScope.launch(Dispatchers.Main) {
                                 delay(5000L)
-                                binding.groupControl.isVisible = false
+                                binding.groupControl.visibility = View.INVISIBLE
                             }
                         }
                     }
@@ -337,6 +340,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
 
                 override fun onVideoPlayCompleted(shortPlay: ShortPlay?, index: Int) {
                     MoneyCacheHelper.stopWatchVideo()
+                    HelperRewardShow.pauseMoneyProgress()
                 }
 
                 override fun onEnterImmersiveMode() = Unit
@@ -368,7 +372,6 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
 
     override fun onPause() {
         super.onPause()
-        MoneyCacheHelper.stopWatchVideo()
         shortPlayHistory?.let {
             lifecycleScope.launch(Dispatchers.IO) {
                 database.historyDao().upsert(it)
@@ -378,7 +381,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
 
     private fun bindClick() {
         binding.layoutTop.setOnClickListener {
-
+            TaskInfoDialogFragment().show(supportFragmentManager,"task_fragment")
         }
         registerMainViewModel()
     }

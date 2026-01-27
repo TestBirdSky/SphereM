@@ -14,6 +14,7 @@ import com.sphere.shortvideos.GlobalConstants
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.activity.DramaCollectionActivity
 import com.sphere.shortvideos.activity.DramaHistoryActivity
+import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.activity.PangleDramaPlayActivity
 import com.sphere.shortvideos.baseui.GenericFragment
 import com.sphere.shortvideos.baseui.refreshView
@@ -89,8 +90,10 @@ class ProfileFragment : GenericFragment<FragmentProfileBinding>() {
     }.getOrNull() ?: 0L
 
     private fun registerViewModel() {
-        viewModel.curGetMoneyStr.observe(this) {
-            binding.layoutMoney.refreshView(it.first, it.second, activity as AppCompatActivity)
+        viewModel.curGetMoneyStr.observe(this) { pair ->
+            activity?.let {
+                binding.layoutMoney.refreshView(pair.first, pair.second, it as MainActivity)
+            }
         }
     }
 

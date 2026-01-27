@@ -49,5 +49,8 @@
     <string name="bonus_welcome_title">Bônus de Boas-Vindas</string>
     <string name="watch_basic_ad"><u>Prêmio Normal</u></string>
     <string name="bonus_welcome_action">Reciba recompensas</string>
+    <string name="fortune_challenge">Desafio da Roda da Sorte</string>
+    <string name="redeem">Resgatar</string>
+
 
 </resources>

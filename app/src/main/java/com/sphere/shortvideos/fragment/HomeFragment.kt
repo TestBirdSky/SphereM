@@ -12,6 +12,7 @@ import com.bytedance.sdk.shortplay.api.PSSDK
 import com.bytedance.sdk.shortplay.api.ShortPlay.ShortPlayCategory
 import com.google.android.material.tabs.TabLayoutMediator
 import com.sphere.shortvideos.R
+import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.baseui.GenericFragment
 import com.sphere.shortvideos.baseui.refreshView
 import com.sphere.shortvideos.databinding.FragmentHomeBinding
@@ -52,12 +53,13 @@ class HomeFragment : GenericFragment<FragmentHomeBinding>() {
             tab.text = categories.getOrNull(position)?.name ?: ""
         }.attach()
         registerViewModel()
-//        loadData()
+        //        loadData()
     }
 
     override fun onResume() {
         super.onResume()
         loadData()
+
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -93,7 +95,7 @@ class HomeFragment : GenericFragment<FragmentHomeBinding>() {
     private fun registerViewModel() {
         viewModel.curGetMoneyStr.observe(this) { pair ->
             activity?.let {
-                binding.layoutMoney.refreshView(pair.first, pair.second, it as AppCompatActivity)
+                binding.layoutMoney.refreshView(pair.first, pair.second, it as MainActivity)
             }
         }
     }

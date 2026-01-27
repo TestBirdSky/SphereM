@@ -14,6 +14,7 @@ import com.sphere.shortvideos.baseui.setTaskInfo
 import com.sphere.shortvideos.databinding.FragmentTaskBinding
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
+import com.sphere.shortvideos.helper.task.TaskHelper
 import com.sphere.shortvideos.vm.MainViewModel
 
 /**
@@ -49,6 +50,9 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
             isInit = false
             setupWatchCoins()
         }
+        val mo = TaskHelper.fetchTaskPopReward().second
+        binding.tvPopReward1.text = mo
+        binding.tvPopReward2.text = mo
         binding.tvMoney.text = viewModel.fetchCurMoney()
         startPopFloatAnim()
     }

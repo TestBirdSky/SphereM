@@ -46,6 +46,11 @@ object TaskHelper {
         return s.max()
     }
 
+    fun fetchTaskPopReward(): Pair<Double, String> {
+        return RewardHelper.getConfigByLanguage().getTaskPopReward(MoneyCacheHelper.fetchCurMoneyBr())
+    }
+
+
     fun canClaimWatchReward(index: Int): Boolean {
         if (index !in list.indices) return false
         val watchTime = MoneyCacheHelper.watchVideoTime
@@ -67,7 +72,7 @@ object TaskHelper {
         if (claimed.contains(index)) return null
         val rewards = MoneyCacheHelper.fetchAllWatchReword()
         val claimIndices = mutableListOf<Int>()
-        if (index >= 2) { // 30分钟档及以上，未领的前置奖励一起领取
+        if (index >= 1) { // 15分钟档及以上，未领的前置奖励一起领取
             for (i in 0..index) {
                 if (watchTime >= list[i] && !claimed.contains(i)) {
                     claimIndices.add(i)

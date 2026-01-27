@@ -70,6 +70,10 @@
     <string name="withdrawal_progress">Withdrawal Progress</string>
     <string name="withdraw_tips">Only %s more to withdraw! Act fast!</string>
     <string name="claim">Claim</string>
+    <string name="my_wallet">My wallet</string>
+    <string name="fortune_challenge">Wheel of Fortune Challenge</string>
+    <string name="redeem">redeem</string>
+
 
 
 </resources>
