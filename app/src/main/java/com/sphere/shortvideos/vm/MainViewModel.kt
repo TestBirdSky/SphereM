@@ -1,5 +1,7 @@
 package com.sphere.shortvideos.vm
 
+import android.animation.ValueAnimator
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,11 +10,13 @@ import com.sphere.shortvideos.database.DramaCollectEntity
 import com.sphere.shortvideos.database.DramaHistoryEntity
 import com.sphere.shortvideos.helper.AddMoneyListener
 import com.sphere.shortvideos.helper.HelperRewardShow
+import com.sphere.shortvideos.helper.MoneyCacheHelper
+import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel(), AddMoneyListener {
+class MainViewModel : ViewModel() {
 
     val historyLiveData = MutableLiveData<List<DramaHistoryEntity>>()
     val collectionLiveData = MutableLiveData<List<DramaCollectEntity>>()
@@ -58,11 +62,8 @@ class MainViewModel : ViewModel(), AddMoneyListener {
         return curGetMoneyStr.value?.first ?: "--"
     }
 
-    override fun addMoney(d: Double) {
-        HelperRewardShow.addMoney(d)
-    }
 
-    override fun addMoneyNotExChange(d: Double) {
+    fun addMoneyNotExChange(d: Double) {
         HelperRewardShow.addMoneyNotExChange(d)
     }
 

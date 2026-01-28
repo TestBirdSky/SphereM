@@ -63,6 +63,7 @@ class LoadingViewModel : ViewModel() {
         AdUtils.run {
             launchHolder.preloadIfCan()
             unlockHolder.preloadIfCan()
+            rewardHolder.preloadIfCan()
         }
     }
 

@@ -8,6 +8,7 @@ import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.databinding.DialogWelcomeBonusBinding
+import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.reward.RewardHelper
 import com.sphere.shortvideos.view.AnimViewHelper
@@ -39,7 +40,7 @@ class WelcomeBonusDialogFragment : DialogFragment() {
         val config = RewardHelper.getConfigByLanguage()
         val r = config.getRewardNewUser()
         binding.tvRewardValue.text = r.second
-        MoneyCacheHelper.addNotExchangeMoney(r.first)
+        HelperRewardShow.addMoneyNotExChange(r.first)
         binding.btnClaim.setOnClickListener {
             onDismissCall.invoke()
             dismissAllowingStateLoss()

@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.sphere.shortvideos.R
+import com.sphere.shortvideos.view.AnimViewHelper
 import com.sphere.shortvideos.databinding.Item7dayClickBinding
 
 class SevenDayRewardAdapter : RecyclerView.Adapter<SevenDayRewardAdapter.RewardViewHolder>() {
@@ -76,6 +77,7 @@ class SevenDayRewardAdapter : RecyclerView.Adapter<SevenDayRewardAdapter.RewardV
 
             binding.tvDayTitle.setTextColor(textColor)
             binding.tvDayDesc.setTextColor(textColor)
+            AnimViewHelper.playClaimablePulseAnim(binding.layoutDay, isClaimable)
             binding.layoutDay.setOnClickListener {
                 if (isClaimable) {
                     onItemClick?.invoke(item, binding.ivDay)

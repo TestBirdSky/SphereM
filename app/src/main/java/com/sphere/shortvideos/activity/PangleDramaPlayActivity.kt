@@ -29,6 +29,7 @@ import com.sphere.shortvideos.dialogs.showIndexSelectorDialog
 import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.ad.AdUtils
+import com.sphere.shortvideos.helper.ad.UnlockPosition
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.showToast
 import com.sphere.shortvideos.toJson
@@ -271,7 +272,8 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                     val lastEven = lastIsEven
                     val currentIsEven = index % 2 == 0
                     lastIsEven = currentIsEven
-                    if (index >= unlockIndex) localEvent("ds_ad_chance", hashMapOf("ad_pos_id" to "ds_unlock_int"))
+                    if (index >= unlockIndex) localEvent("ds_ad_chance",
+                        hashMapOf("ad_pos_id" to UnlockPosition.aliasName))
                     if (AdUtils.unlockHolder.isAdHaveCache()) {
                         if (isOddGreaterThanRemote(index)) {
                             showUnlockAd(index)
@@ -294,7 +296,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                 }
 
                 fun showUnlockAd(index: Int) {
-                    AdUtils.unlockHolder.showFullAd(activity, eventName = "ds_unlock_int", onAdDismissed = {
+                    AdUtils.unlockHolder.showFullAd(activity, eventName = UnlockPosition.aliasName, onAdDismissed = {
                         episodeEntity?.let {
                             updateEpisodeData(shortPlay, it, index)
                         }
@@ -381,7 +383,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
 
     private fun bindClick() {
         binding.layoutTop.setOnClickListener {
-            TaskInfoDialogFragment().show(supportFragmentManager, "task_fragment")
+            TaskInfoDialogFragment(this).show(supportFragmentManager, "task_fragment")
         }
         registerMainViewModel()
     }

@@ -1,8 +1,11 @@
 package com.sphere.shortvideos.notification
 
+import android.Manifest
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.widget.RemoteViews
+import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.sphere.shortvideos.R
@@ -36,6 +39,7 @@ class NotificationImpl(val notificationId: Int = 1000,
         }
     }
 
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private fun show(context: Context, title: String, contextStr: String) {
         logError("show--->$title --$contextStr")
         val intent = Intent(context, LoadingActivity::class.java).apply {
@@ -46,11 +50,27 @@ class NotificationImpl(val notificationId: Int = 1000,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
+        val smallView = RemoteViews(context.packageName, R.layout.layout_notification_small).apply {
+            setTextViewText(R.id.tv_title, title)
+            setTextViewText(R.id.tv_des, contextStr)
+            setOnClickPendingIntent(R.id.layout_root, pendingIntent)
+        }
+        val bigView = RemoteViews(context.packageName, R.layout.layout_notification_big).apply {
+            setTextViewText(R.id.tv_title, title)
+            setTextViewText(R.id.tv_des, contextStr)
+            setTextViewText(R.id.tv_btn, context.getString(R.string.start))
+            setOnClickPendingIntent(R.id.layout_root, pendingIntent)
+            setOnClickPendingIntent(R.id.tv_btn, pendingIntent)
+        }
+
         val notification =
             NotificationCompat.Builder(context, NotificationHelper.CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification_app)
                 .setContentTitle(title)
                 .setContentText(contextStr)
+                .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+                .setCustomContentView(smallView)
+                .setCustomBigContentView(bigView)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent).setAutoCancel(true).build()
         try {

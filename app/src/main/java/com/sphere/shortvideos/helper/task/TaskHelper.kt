@@ -1,5 +1,6 @@
 package com.sphere.shortvideos.helper.task
 
+import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.mmkv.MMKVData
 import com.sphere.shortvideos.helper.reward.RewardHelper
@@ -88,7 +89,7 @@ object TaskHelper {
             val rewardValue = rewards.getOrNull(i)?.first ?: 0.0
             if (rewardValue > 0) {
                 totalReward += rewardValue
-                MoneyCacheHelper.addNotExchangeMoney(rewardValue)
+                HelperRewardShow.addMoneyNotExChange(rewardValue)
             }
             claimed.add(i)
         }
@@ -161,7 +162,7 @@ object TaskHelper {
         signInLastDate = today
         saveSignInRewardRecord(record)
         if (reward > 0) {
-            MoneyCacheHelper.addNotExchangeMoney(reward)
+            HelperRewardShow.addMoneyNotExChange(reward)
         }
         return reward
     }

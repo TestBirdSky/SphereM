@@ -130,6 +130,7 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
             findItem(R.id.tab_user).icon = R.drawable.ic_nav_user.fetchIcon()
             findItem(R.id.tab_task).icon = R.drawable.ic_nav_task.fetchIcon()
             findItem(R.id.tab_video).icon = R.drawable.ic_nav_video.fetchIcon()
+            h.addViewWallet(binding.centerWallet, this@MainActivity)
         }
     }
 
@@ -141,7 +142,7 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         binding.ivFirstGuide.visibility = View.GONE
         WelcomeBonusDialogFragment().apply {
             onDismissCall = {
-                viewModel.addMoney(0.0)
+                viewModel.addMoneyNotExChange(0.0)
                 showNotificationOpen()
             }
         }.show(supportFragmentManager, "welcome")
@@ -178,7 +179,7 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
     }
 
     fun showMyWalletFragment() {
-        TaskInfoDialogFragment().show(supportFragmentManager,"task_fragment")
+        TaskInfoDialogFragment(this).show(supportFragmentManager, "task_fragment")
     }
 
 }

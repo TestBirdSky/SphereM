@@ -91,6 +91,7 @@
                     tools:text="+300" />
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_pop1"
                     android:layout_width="59dp"
                     android:layout_height="56dp"
                     android:background="@drawable/ic_task_pop"
@@ -137,6 +138,7 @@
                     tools:text="+300" />
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_pop2"
                     android:layout_width="59dp"
                     android:layout_height="56dp"
                     android:background="@drawable/ic_task_pop"
@@ -168,14 +170,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 app:layout_constraintTop_toBottomOf="@id/tv_withdraw" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_anim"
-                android:layout_width="23dp"
-                android:layout_height="26.5dp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

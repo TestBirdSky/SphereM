@@ -1,11 +1,12 @@
 package com.sphere.shortvideos.helper
 
-import android.app.Activity
-import androidx.lifecycle.LifecycleOwner
+import android.animation.ValueAnimator
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.lifecycle.MutableLiveData
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.dialogs.LuckChallengeDialogFragment
 import com.sphere.shortvideos.dialogs.NormalCongratulateDialogFragment
+import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.reward.RewardHelper
 import com.sphere.shortvideos.logError
 import kotlinx.coroutines.CoroutineScope
@@ -79,15 +80,35 @@ object HelperRewardShow {
         numProgress.postValue(100)
     }
 
-    fun addMoney(d: Double) {
-        MoneyCacheHelper.addMoney(d)
-        curGetMoneyStr.postValue(WithdrawAmountHelper.fetchCurMoneyAndWithdrawNeedMoney())
-    }
-
     fun addMoneyNotExChange(d: Double) {
         MoneyCacheHelper.addNotExchangeMoney(d)
         curGetMoneyStr.postValue(WithdrawAmountHelper.fetchCurMoneyAndWithdrawNeedMoney())
+        playMoneyIncreaseAnimAndSave(d)
     }
+
+    val moneyAnimLiveData = MutableLiveData<String>()
+
+    private var moneyAnimator: ValueAnimator? = null
+
+
+    private fun playMoneyIncreaseAnimAndSave(reward: Double) {
+        moneyAnimator?.cancel()
+        if (reward <= 0) {
+            return
+        }
+        val endValue = MoneyCacheHelper.fetchCurMoney()
+        val startValue = (endValue - reward).coerceAtLeast(0.0)
+        moneyAnimator = ValueAnimator.ofFloat(startValue.toFloat(), endValue.toFloat()).apply {
+            duration = 600L
+            interpolator = AccelerateDecelerateInterpolator()
+            addUpdateListener { animator ->
+                val value = (animator.animatedValue as Float).toDouble()
+                moneyAnimLiveData.postValue(WithdrawAmountHelper.moneyFormatAddUnit(value))
+            }
+            start()
+        }
+    }
+
 
     private fun setGameTargetNum() {
         val list = RewardHelper.getConfigByLanguage().adInterval
@@ -117,8 +138,10 @@ object HelperRewardShow {
                     NormalCongratulateDialogFragment().apply {
                         onClaim = {
                             postOnce(false)
+                            AdUtils.showRvAd(activity)
                         }
                         onClose = {
+                            AdUtils.showRateAd(activity)
                             postOnce(false)
                         }
                     }.show(activity.supportFragmentManager, "congratulation")
@@ -128,6 +151,7 @@ object HelperRewardShow {
                     postOnce(true)
                     LuckChallengeDialogFragment().apply {
                         onResult = {
+                            AdUtils.showRvAd(activity)
                             postOnce(false)
                         }
                     }.show(activity.supportFragmentManager, "luck")

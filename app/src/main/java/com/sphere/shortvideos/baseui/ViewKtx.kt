@@ -1,27 +1,22 @@
 package com.sphere.shortvideos.baseui
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.Color
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
-import android.animation.PropertyValuesHolder
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.databinding.LayoutMoneyTopViewBinding
 import com.sphere.shortvideos.databinding.LayoutTaskChildBinding
 import com.sphere.shortvideos.adapter.SevenDayRewardAdapter
-import com.sphere.shortvideos.baseui.isAnim
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.task.TaskHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
+import com.sphere.shortvideos.view.AnimViewHelper
 
 /**
  * Date：2026/1/21
@@ -64,16 +59,21 @@ fun LayoutMoneyTopViewBinding.refreshView(money: String, tagMoney: String, activ
     }
 }
 
-fun LayoutTaskChildBinding.setTaskInfo(activity: Context,
-                                       daySignSuccess: (Double, ImageView) -> Unit,
-                                       watchTimeArriver: (Double, ImageView) -> Unit) {
+fun LayoutTaskChildBinding.setTaskInfo(
+    activity: GenericActivity,
+    receiverMoneyEvent: (Double, ImageView) -> Unit,
+) {
     ivWatchAd.setOnClickListener { // todo 显示广告
+
     }
     bgH5.setOnClickListener { // todo 显示H5
+
     }
+    AnimViewHelper.playClaimablePulseAnim(ivH51, true)
+
     isAnim = false
-    setWatchLayout(activity, watchTimeArriver)
-    set7DayReword(daySignSuccess)
+    setWatchLayout(activity, receiverMoneyEvent)
+    set7DayReword(receiverMoneyEvent)
 
 }
 
@@ -124,12 +124,12 @@ private fun LayoutTaskChildBinding.setWatchLayout(context: Context, watchTimeArr
     tvDes5.text = bean[4].second
     tvDes6.text = bean[5].second
     val curIndexReward = TaskHelper.fetchCurClaimedIndex()
-    applyClaimableAnim(ivSmallMoney1, TaskHelper.canClaimWatchReward(0))
-    applyClaimableAnim(ivSmallMoney2, TaskHelper.canClaimWatchReward(1))
-    applyClaimableAnim(ivSmallMoney3, TaskHelper.canClaimWatchReward(2))
-    applyClaimableAnim(ivBigMoney1, TaskHelper.canClaimWatchReward(3))
-    applyClaimableAnim(ivBigMoney2, TaskHelper.canClaimWatchReward(4))
-    applyClaimableAnim(ivBigMoney3, TaskHelper.canClaimWatchReward(5))
+    AnimViewHelper.playClaimablePulseAnim(ivSmallMoney1, TaskHelper.canClaimWatchReward(0))
+    AnimViewHelper.playClaimablePulseAnim(ivSmallMoney2, TaskHelper.canClaimWatchReward(1))
+    AnimViewHelper.playClaimablePulseAnim(ivSmallMoney3, TaskHelper.canClaimWatchReward(2))
+    AnimViewHelper.playClaimablePulseAnim(ivBigMoney1, TaskHelper.canClaimWatchReward(3))
+    AnimViewHelper.playClaimablePulseAnim(ivBigMoney2, TaskHelper.canClaimWatchReward(4))
+    AnimViewHelper.playClaimablePulseAnim(ivBigMoney3, TaskHelper.canClaimWatchReward(5))
     fun clickReward(index: Int, view: ImageView) {
         val reward = TaskHelper.clickWatchReward(index)
         if (reward != null) {
@@ -239,35 +239,4 @@ private fun LayoutTaskChildBinding.setWatchLayout(context: Context, watchTimeArr
     ivBigMoney3.setOnClickListener {
         clickReward(5, ivBigMoney3)
     }
-}
-
-private fun applyClaimableAnim(view: ImageView, isClaimable: Boolean) {
-    val animator = view.tag as? AnimatorSet
-    if (!isClaimable) {
-        animator?.cancel()
-        view.scaleX = 1f
-        view.scaleY = 1f
-        view.alpha = 1f
-        view.translationX = 0f
-        view.tag = null
-        return
-    }
-    if (animator?.isRunning == true) return
-    val scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 1.15f, 1f)
-    val scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 1.15f, 1f)
-    val scaleAnim = ObjectAnimator.ofPropertyValuesHolder(view, scaleX, scaleY).apply {
-        duration = 1200L
-        repeatCount = ObjectAnimator.INFINITE
-        repeatMode = ObjectAnimator.RESTART
-    }
-    val alphaAnim = ObjectAnimator.ofFloat(view, View.ALPHA, 1f, 0.6f, 1f).apply {
-        duration = 1200L
-        repeatCount = ObjectAnimator.INFINITE
-        repeatMode = ObjectAnimator.RESTART
-    }
-    val newAnimator = AnimatorSet().apply {
-        playTogether(scaleAnim, alphaAnim)
-    }
-    view.tag = newAnimator
-    newAnimator.start()
 }

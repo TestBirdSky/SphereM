@@ -79,7 +79,13 @@ class AdHolder(private val position: AdPosition) {
         val adEntity = adItem?.buildController(position)
         if (null == adEntity) {
             loading = false
-            onAdLoaded(false)
+            onAdLoaded(false) // 加载完成
+            if (position != LaunchPosition) {
+                AdUtils.adScope.launch {
+                    delay(3000)
+                    preloadIfCan()
+                }
+            }
             return
         }
         adEntity.preload { success ->

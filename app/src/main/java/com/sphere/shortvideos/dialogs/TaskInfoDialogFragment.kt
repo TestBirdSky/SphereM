@@ -8,15 +8,17 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import com.sphere.shortvideos.R
+import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.baseui.setTaskInfo
 import com.sphere.shortvideos.databinding.DialogTaskInfoBinding
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
+import com.sphere.shortvideos.view.AnimViewHelper
 
 /**
  * Date：2026/1/27
  * Describe: Task info dialog
  */
-class TaskInfoDialogFragment : DialogFragment() {
+class TaskInfoDialogFragment(val ac:GenericActivity) : DialogFragment() {
 
     var onClose: (() -> Unit)? = null
 
@@ -40,16 +42,21 @@ class TaskInfoDialogFragment : DialogFragment() {
             onClose?.invoke()
             dismissAllowingStateLoss()
         }
+        refreshMoney()
+        binding.layoutTask.setTaskInfo(ac, receiverMoneyEvent = { m, sourceView ->
+            AnimViewHelper.playCoinFlyAnim(sourceView, binding.ivM)
+            refreshMoney()
+        })
+    }
+
+    private fun refreshMoney() {
         val progressText = WithdrawAmountHelper.fetchCurMoneyAndGetMoneyMinValue().let { pair ->
-            "${WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(pair.first)}/${WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(pair.second)}"
+            "${WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(pair.first)}/${
+                WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(pair.second)
+            }"
         }
         binding.tvProgress.text = progressText
-        binding.progressView.setProgress(WithdrawAmountHelper.fetchGetMoneyProgress(), false)
-        binding.layoutTask.setTaskInfo(
-            requireContext(),
-            daySignSuccess = { _, _ -> },
-            watchTimeArriver = { _, _ -> }
-        )
+        binding.progressView.setProgress(WithdrawAmountHelper.fetchGetMoneyProgress(), true)
     }
 
     override fun onStart() {

@@ -7,6 +7,7 @@ import com.google.firebase.remoteconfig.remoteConfigSettings
 import com.google.gson.Gson
 import com.sphere.shortvideos.bean.RiskBean
 import com.sphere.shortvideos.helper.ad.AdUtils
+import com.sphere.shortvideos.helper.ad.DramaIntAdHelper
 import com.sphere.shortvideos.helper.reward.RewardHelper
 import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.mFbAndAdjustHelper
@@ -37,10 +38,11 @@ class RemoteConfHelper {
         fetchUnlockIndex()
         fetchRisk()
         RewardHelper.updateConfigure()
+        DramaIntAdHelper.updateConfigure()
     }
 
     private fun fetchAdRemote() {
-        AdUtils.initData(remoteConfig["ds_ad_config"].asString())
+        AdUtils.initData(remoteConfig["dlmsf_ad_config"].asString())
     }
 
     private fun fetchUnlockIndex() {

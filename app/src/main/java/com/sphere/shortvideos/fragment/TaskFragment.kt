@@ -1,31 +1,33 @@
 package com.sphere.shortvideos.fragment
 
 import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.widget.ImageView
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.baseui.GenericFragment
 import com.sphere.shortvideos.baseui.setTaskInfo
 import com.sphere.shortvideos.databinding.FragmentTaskBinding
-import com.sphere.shortvideos.dialogs.LuckChallengeDialogFragment
-import com.sphere.shortvideos.helper.MoneyCacheHelper
-import com.sphere.shortvideos.helper.WithdrawAmountHelper
+import com.sphere.shortvideos.helper.HelperRewardShow
+import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.task.TaskHelper
+import com.sphere.shortvideos.view.AnimViewHelper
 import com.sphere.shortvideos.vm.MainViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 /**
  * Date：2026/1/21
  * Describe:
  */
 class TaskFragment : GenericFragment<FragmentTaskBinding>() {
+    private var curPopMoney = 0.0
     private var isInit = true
     private val viewModel by activityViewModels<MainViewModel>()
-    private var moneyAnimator: ValueAnimator? = null
     private var popAnimator1: ObjectAnimator? = null
     private var popAnimator2: ObjectAnimator? = null
 
@@ -37,10 +39,39 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
         binding.tvWithdraw.setOnClickListener {
             (activity as? MainActivity)?.jumpWallet()
         }
-        binding.layoutPop1.setOnClickListener {
+        HelperRewardShow.moneyAnimLiveData.observe(viewLifecycleOwner) { moneyText ->
+            binding.tvMoney.text = moneyText
         }
-        binding.layoutPop2.setOnClickListener {
+        binding.layoutPop1.setOnClickListener {
+            if (curPopMoney > 0) {
+                viewModel.addMoneyNotExChange(curPopMoney)
+                AnimViewHelper.flyToTarget(binding.layoutPop1, binding.iv1, end = {
+                    lifecycleScope.launch {
+                        delay(Random.nextLong(3000, 8000))
+                        binding.layoutPop1.visibility = View.VISIBLE
+                    }
+                })
+                showPopAd()
+            }
+        }
 
+        binding.layoutPop2.setOnClickListener {
+            if (curPopMoney > 0) {
+                viewModel.addMoneyNotExChange(curPopMoney)
+                AnimViewHelper.flyToTarget(binding.layoutPop2, binding.iv1, end = {
+                    lifecycleScope.launch {
+                        delay(Random.nextLong(6000, 16000))
+                        binding.layoutPop2.visibility = View.VISIBLE
+                    }
+                })
+                showPopAd()
+            }
+        }
+    }
+
+    private fun showPopAd() {
+        (activity as? MainActivity)?.let {
+            AdUtils.showRateAd(it)
         }
     }
 
@@ -50,84 +81,28 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
             isInit = false
             setupWatchCoins()
         }
-        val mo = TaskHelper.fetchTaskPopReward().second
-        binding.tvPopReward1.text = mo
-        binding.tvPopReward2.text = mo
+        refreshMoney()
         binding.tvMoney.text = viewModel.fetchCurMoney()
         startPopFloatAnim()
     }
 
+    private fun refreshMoney() {
+        val bean = TaskHelper.fetchTaskPopReward()
+        curPopMoney = bean.first
+        val mo = bean.second
+        binding.tvPopReward1.text = mo
+        binding.tvPopReward2.text = mo
+    }
+
     private fun setupWatchCoins() {
-        activity?.let {
-            binding.layoutTask.setTaskInfo(it, daySignSuccess = { reward, sourceView ->
-                onRewardReceived(reward, sourceView)
-            }, watchTimeArriver = { reward, sourceView ->
-                onRewardReceived(reward, sourceView)
+        (activity as? MainActivity)?.let {
+            binding.layoutTask.setTaskInfo(it, receiverMoneyEvent = { reward, sourceView ->
+                AnimViewHelper.playCoinFlyAnim(sourceView, binding.iv1)
             })
         }
     }
 
-    private fun onRewardReceived(reward: Double, sourceView: ImageView) {
-        if (reward <= 0) {
-            binding.tvMoney.text = viewModel.fetchCurMoney()
-            return
-        }
-        playCoinFlyAnim(sourceView, {
-            playMoneyIncreaseAnim(reward)
-        })
-    }
-
-    private fun playMoneyIncreaseAnim(reward: Double) {
-        moneyAnimator?.cancel()
-        val endValue = MoneyCacheHelper.fetchCurMoney()
-        val startValue = (endValue - reward).coerceAtLeast(0.0)
-        moneyAnimator = ValueAnimator.ofFloat(startValue.toFloat(), endValue.toFloat()).apply {
-            duration = 600L
-            interpolator = AccelerateDecelerateInterpolator()
-            addUpdateListener { animator ->
-                val value = (animator.animatedValue as Float).toDouble()
-                binding.tvMoney.text = WithdrawAmountHelper.moneyFormatAddUnit(value)
-            }
-            start()
-        }
-    }
-
-    private fun playCoinFlyAnim(sourceView: ImageView, end: () -> Unit) {
-        val animView = binding.ivAnim
-        animView.setImageDrawable(sourceView.drawable)
-        animView.post {
-            val rootLocation = IntArray(2)
-            val startLocation = IntArray(2)
-            val endLocation = IntArray(2)
-            binding.root.getLocationInWindow(rootLocation)
-            sourceView.getLocationInWindow(startLocation)
-            binding.iv1.getLocationInWindow(endLocation)
-
-            val startX = startLocation[0] - rootLocation[0] + sourceView.width / 2f - animView.width / 2f
-            val startY = startLocation[1] - rootLocation[1] + sourceView.height / 2f - animView.height / 2f
-            val endX = endLocation[0] - rootLocation[0] + binding.iv1.width / 2f - animView.width / 2f
-            val endY = endLocation[1] - rootLocation[1] + binding.iv1.height / 2f - animView.height / 2f
-
-            animView.apply {
-                visibility = View.VISIBLE
-                alpha = 1f
-                scaleX = 1f
-                scaleY = 1f
-                x = startX
-                y = startY
-                animate().cancel()
-                animate().x(endX).y(endY).alpha(0.2f).setDuration(600L).withEndAction {
-                    visibility = View.GONE
-                    alpha = 1f
-                    end.invoke()
-                }.start()
-            }
-        }
-    }
-
     override fun onDestroyView() {
-        moneyAnimator?.cancel()
-        moneyAnimator = null
         stopPopFloatAnim()
         super.onDestroyView()
     }

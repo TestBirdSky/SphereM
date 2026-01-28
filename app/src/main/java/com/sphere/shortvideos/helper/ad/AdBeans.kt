@@ -11,7 +11,7 @@ data class AdItemBean(
 ) {
     fun buildController(position: AdPosition): AdmobFullAd {
         return when (format) {
-            AppOpenFormat, InterstitialFormat -> AdmobFullAd(position, this)
+            AppOpenFormat, InterstitialFormat, RewardFormat -> AdmobFullAd(position, this)
         }
     }
 }
@@ -21,11 +21,15 @@ sealed class AdPosition {
 }
 
 data object LaunchPosition : AdPosition() {
-    override val aliasName: String get() = "ds_launch"
+    override val aliasName: String get() = "dlmsf_launch"
 }
 
 data object UnlockPosition : AdPosition() {
-    override val aliasName: String get() = "ds_unlock_int"
+    override val aliasName: String get() = "dlmsf_int"
+}
+
+data object RewardPosition : AdPosition() {
+    override val aliasName: String get() = "dlmsf_rv"
 }
 
 sealed class AdFormat {
@@ -38,6 +42,10 @@ data object AppOpenFormat : AdFormat() {
 
 data object InterstitialFormat : AdFormat() {
     override val aliasName: String get() = "interstitial"
+}
+
+data object RewardFormat : AdFormat() {
+    override val aliasName: String get() = "reward"
 }
 
 interface IAdController {

@@ -10,6 +10,9 @@ import com.google.android.gms.ads.appopen.AppOpenAd
 import com.google.android.gms.ads.appopen.AppOpenAd.AppOpenAdLoadCallback
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.google.android.gms.ads.rewarded.RewardItem
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.sphere.shortvideos.mApp
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.helper.RevenueHelper
@@ -82,6 +85,22 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                         }
                     })
             }
+
+            RewardFormat -> {
+                RewardedAd.load(mApp, adBean.adId, AdRequest.Builder().build(), object : RewardedAdLoadCallback() {
+                    override fun onAdLoaded(ad: RewardedAd) {
+                        adLogger("onAdLoad success")
+                        loadedTimeMills = System.currentTimeMillis()
+                        fullAd = ad
+                        onLoaded(true)
+                    }
+
+                    override fun onAdFailedToLoad(adError: LoadAdError) {
+                        adLogger("onAdLoadFailed:${adError.message}")
+                        onLoaded(false)
+                    }
+                })
+            }
         }
     }
 
@@ -128,6 +147,27 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                     RevenueHelper.onAdmobRevenueCallback(value, adBean, position, ad.responseInfo)
                 }
                 ad.show(activity)
+            }
+
+            is RewardedAd -> {
+                val callback = object : FullScreenContentCallback() {
+                    override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                        onAdDismissed(activity, onDismissed)
+                    }
+
+                    override fun onAdShowedFullScreenContent() {
+                        onAdShowed()
+                    }
+
+                    override fun onAdDismissedFullScreenContent() = onAdDismissed(activity, onDismissed)
+                }
+                ad.fullScreenContentCallback = callback
+                ad.setOnPaidEventListener { value: AdValue ->
+                    RevenueHelper.onAdmobRevenueCallback(value, adBean, position, ad.responseInfo)
+                }
+                ad.show(activity) { _: RewardItem ->
+                    // reward callback handled by caller if needed
+                }
             }
 
             else -> onAdDismissed(activity, onDismissed)
