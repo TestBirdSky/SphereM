@@ -4,7 +4,7 @@ import android.app.Activity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import com.google.android.libraries.ads.mobile.sdk.MobileAds
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.databinding.LayoutProgressbarBinding
@@ -28,7 +28,7 @@ class AdHolder(private val position: AdPosition) {
 
     fun preloadIfCan() {
         AdUtils.adScope.launch {
-            if (!MobileAds.isInitialized || sourceList.isEmpty()) return@launch
+            if (!isAdmobReady() || sourceList.isEmpty()) return@launch
             removeExpiredAd()
             if (cacheList.isNotEmpty() || loading) return@launch
             loading = true
@@ -92,11 +92,15 @@ class AdHolder(private val position: AdPosition) {
     }
 
     private fun showAdDialog(activity: Activity): AlertDialog? {
-        val binding = LayoutProgressbarBinding.inflate(LayoutInflater.from(activity), activity.window.decorView as ViewGroup, false)
-        return MaterialAlertDialogBuilder(activity)
-            .setView(binding.root)
-            .setCancelable(false)
-            .show()
+        val binding = LayoutProgressbarBinding.inflate(LayoutInflater.from(activity),
+            activity.window.decorView as ViewGroup,
+            false)
+        return MaterialAlertDialogBuilder(activity).setView(binding.root).setCancelable(false).show()
+    }
+
+    private fun isAdmobReady(): Boolean {
+        val status = MobileAds.getInitializationStatus()
+        return status?.adapterStatusMap?.isNotEmpty() == true
     }
 
 }

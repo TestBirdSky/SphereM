@@ -177,7 +177,8 @@
             app:indicatorSize="40dp"
             app:trackColor="#000000"
             app:trackThickness="3.5dp"
-            tools:progress="80" />
+            app:indicatorTrackGapSize="0dp"
+            tools:progress="70" />
     </FrameLayout>
 
     <androidx.appcompat.widget.AppCompatImageView

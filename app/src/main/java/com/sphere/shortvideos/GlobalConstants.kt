@@ -11,7 +11,40 @@ object GlobalConstants {
     const val EXTRA_KEY_COMMON_INT = "EXTRA_KEY_COMMON_INT"
     const val EXTRA_KEY_COMMON_LONG = "EXTRA_KEY_COMMON_LONG"
 
-    const val PRIVACY_POLICY = "https://www.google.com"// todo
+    const val PRIVACY_POLICY = "https://www.google.com" // todo
+
+    val NEW_DEFAULT_AD_LOCAL_JSON = """
+        {
+          "dlmsf_switch": false
+          "ds_launch":[
+              {
+                 "byfxjhld":"ca-app-pub-3940256099942544/9257395921",
+                 "dmhytwql":"admob",
+                 "ugebepat":"open",
+                 "gqqvwedz":13800,
+                 "wdzqbsbt":3
+              }
+           ],
+          "dlmsf_int": [
+            {
+              "byfxjhld": "ca-app-pub-3940256099942544/1033173712",
+              "dmhytwql": "admob",
+              "ugebepat": "interstitial",
+              "gqqvwedz": 13800,
+              "wdzqbsbt": 1
+            }
+          ],
+          "dlmsf_rv": [
+            {
+              "byfxjhld": "ca-app-pub-3940256099942544/5224354917",
+              "dmhytwql": "admob",
+              "ugebepat": "reward",
+              "gqqvwedz": 3000,
+              "wdzqbsbt": 1
+            }
+          ]
+        }
+    """.trimIndent()
 
     val DEFAULT_JSON = """
         {

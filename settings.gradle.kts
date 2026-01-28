@@ -35,6 +35,18 @@ dependencyResolutionManagement {
         maven {
             url = uri("https://oss.sonatype.org/content/repositories/snapshots")
         }
+
+        maven {
+            url = uri("https://android-sdk.is.com/")
+        }
+
+        //Chartboost
+        maven {
+            url =uri("https://cboost.jfrog.io/artifactory/chartboost-ads")
+        }
+        maven {
+            url =uri("https://cboost.jfrog.io/artifactory/chartboost-mediation")
+        }
     }
 }
 

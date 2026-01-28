@@ -100,12 +100,10 @@ object HelperRewardShow {
 
     private fun postOnce(isPause: Boolean) {
         pauseVideoPlay.postValue(isPause)
-        pauseVideoPlay.value = null
     }
 
     private fun postOnceDialogType(int: Int) {
         showDialogType.postValue(int)
-        showDialogType.postValue(-1)
     }
 
     fun registerConDialog(activity: GenericActivity) {
@@ -135,6 +133,7 @@ object HelperRewardShow {
                     }.show(activity.supportFragmentManager, "luck")
                 }
             }
+            showDialogType.value = -1
         }
     }
 }

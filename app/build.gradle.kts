@@ -95,6 +95,7 @@ dependencies {
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.androidx.browser) // Room https://developer.android.com/training/data-storage/room
     implementation(libs.androidx.room.runtime)
+    implementation(libs.play.services.ads.api)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
     implementation(libs.mmkv)
@@ -114,14 +115,21 @@ dependencies {
     implementation(libs.installreferrer)
 
     // admob
-    implementation("com.google.android.libraries.ads.mobile.sdk:ads-mobile-sdk:0.20.0-beta01")
-    implementation("com.google.ads.mediation:pangle:7.6.0.2.0")
-    implementation("com.google.ads.mediation:facebook:6.20.0.1")
-    implementation("com.google.ads.mediation:applovin:13.4.0.0")
-    implementation("com.google.ads.mediation:mintegral:16.9.91.1")
-    implementation("com.google.ads.mediation:vungle:7.5.1.0")
-    implementation("com.unity3d.ads:unity-ads:4.16.1")
-    implementation("com.google.ads.mediation:unity:4.16.1.0") // firebase
+//    implementation("com.google.android.libraries.ads.mobile.sdk:ads-mobile-sdk:0.20.0-beta01")
+    implementation("com.google.android.gms:play-services-ads:24.9.0")
+    implementation("com.google.ads.mediation:applovin:13.5.1.0")
+    implementation("com.google.ads.mediation:chartboost:9.11.0.0")
+    implementation("com.google.ads.mediation:fyber:8.4.2.0")
+    implementation("com.google.ads.mediation:inmobi:11.1.0.0")
+    implementation("com.google.ads.mediation:ironsource:9.2.0.0")
+    implementation("com.google.ads.mediation:vungle:7.6.3.0")
+    implementation("com.google.ads.mediation:facebook:6.21.0.0")
+    implementation("com.google.ads.mediation:mintegral:17.0.61.0")
+    implementation("com.google.ads.mediation:moloco:4.4.0.0")
+    implementation("com.google.ads.mediation:pangle:7.8.5.2.0")
+    implementation("com.unity3d.ads:unity-ads:4.16.5")
+    implementation("com.google.ads.mediation:unity:4.16.5.0")
+    // firebase
     implementation(platform("com.google.firebase:firebase-bom:34.3.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-config")

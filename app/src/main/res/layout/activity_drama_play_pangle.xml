@@ -103,8 +103,10 @@
             android:layout_height="match_parent"
             android:indeterminate="false"
             android:max="100"
+            android:progress="1"
             app:indicatorColor="#FFCC00"
             app:indicatorSize="40dp"
+            app:indicatorTrackGapSize="0dp"
             app:trackColor="#000000"
             app:trackThickness="3.5dp"
             tools:progress="80" />

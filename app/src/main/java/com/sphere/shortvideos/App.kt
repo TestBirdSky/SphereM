@@ -2,8 +2,7 @@ package com.sphere.shortvideos
 
 import android.app.Application
 import com.bytedance.sdk.shortplay.api.PSSDK
-import com.google.android.libraries.ads.mobile.sdk.MobileAds
-import com.google.android.libraries.ads.mobile.sdk.initialization.InitializationConfig
+import com.google.android.gms.ads.MobileAds
 import com.sphere.shortvideos.helper.AppLifecycleManager
 import com.sphere.shortvideos.helper.OtherHelper
 import com.sphere.shortvideos.helper.HelperCheckTU
@@ -51,10 +50,7 @@ class App : Application() {
 
     private fun initAdmob() {
         CoroutineScope(Dispatchers.IO).launch {
-            val initConfig =
-                InitializationConfig.Builder("ca-app-pub-3940256099942544~3347511713").setNativeValidatorDisabled()
-                    .build()
-            MobileAds.initialize(this@App, initConfig) {}
+            MobileAds.initialize(this@App) {}
         }
     }
 

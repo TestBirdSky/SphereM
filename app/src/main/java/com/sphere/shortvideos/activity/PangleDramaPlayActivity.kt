@@ -417,6 +417,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
             } else {
                 detailFragment?.startPlay()
             }
+            HelperRewardShow.pauseVideoPlay.value = null
         }
     }
 

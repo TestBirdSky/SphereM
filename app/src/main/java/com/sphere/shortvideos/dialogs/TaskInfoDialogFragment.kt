@@ -1,6 +1,7 @@
 package com.sphere.shortvideos.dialogs
 
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,6 +57,7 @@ class TaskInfoDialogFragment : DialogFragment() {
         dialog?.window?.let { window ->
             window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
             window.setBackgroundDrawableResource(android.R.color.transparent)
+            window.attributes = window.attributes.apply { gravity = Gravity.BOTTOM }
         }
     }
 

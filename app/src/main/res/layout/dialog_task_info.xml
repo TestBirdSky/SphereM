@@ -51,6 +51,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/iv_dialog_bg"
         app:trackColor="#483E5F"
+        app:indicatorTrackGapSize="0dp"
         app:trackCornerRadius="17dp"
         app:trackThickness="20dp"
         tools:progress="80" />

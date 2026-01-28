@@ -63,6 +63,7 @@ class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
             } else {
                 resumeCurrentVideo()
             }
+            HelperRewardShow.pauseVideoPlay.value = null
         }
         HelperRewardShow.curGetMoneyStr.observe(viewLifecycleOwner, { value ->
             activity?.let {

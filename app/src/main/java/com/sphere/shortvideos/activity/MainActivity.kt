@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.gms.ads.appopen.AppOpenAd
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.baseui.GenericBindActivity
 import com.sphere.shortvideos.databinding.ActivityMainBinding

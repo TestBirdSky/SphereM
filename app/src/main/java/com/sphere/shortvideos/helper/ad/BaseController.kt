@@ -1,15 +1,16 @@
 package com.sphere.shortvideos.helper.ad
 
 import androidx.lifecycle.lifecycleScope
-import com.google.android.libraries.ads.mobile.sdk.appopen.AppOpenAd
-import com.google.android.libraries.ads.mobile.sdk.appopen.AppOpenAdEventCallback
-import com.google.android.libraries.ads.mobile.sdk.common.AdLoadCallback
-import com.google.android.libraries.ads.mobile.sdk.common.AdRequest
-import com.google.android.libraries.ads.mobile.sdk.common.AdValue
-import com.google.android.libraries.ads.mobile.sdk.common.FullScreenContentError
-import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError
-import com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAd
-import com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAdEventCallback
+import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdValue
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.appopen.AppOpenAd
+import com.google.android.gms.ads.appopen.AppOpenAd.AppOpenAdLoadCallback
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.sphere.shortvideos.mApp
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.helper.RevenueHelper
 import com.sphere.shortvideos.logError
@@ -21,7 +22,8 @@ abstract class BaseController(val position: AdPosition, val adBean: AdItemBean) 
 
     var loadedTimeMills = System.currentTimeMillis()
 
-    fun isAdExpired() = if (0 == adBean.timeout) false else (System.currentTimeMillis() - loadedTimeMills) >= (adBean.timeout * 1000L)
+    fun isAdExpired() =
+        if (0 == adBean.timeout) false else (System.currentTimeMillis() - loadedTimeMills) >= (adBean.timeout * 1000L)
 
     fun adLogger(text: String?) {
         logError("${position.aliasName}: ${adBean.format.aliasName}, ${adBean.adId}, $text")
@@ -43,35 +45,42 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
         adLogger("begin loading")
         when (adBean.format) {
             AppOpenFormat -> {
-                AppOpenAd.load(AdRequest.Builder(adBean.adId).build(), object : AdLoadCallback<AppOpenAd> {
-                    override fun onAdLoaded(ad: AppOpenAd) {
-                        adLogger("onAdLoad success")
-                        loadedTimeMills = System.currentTimeMillis()
-                        fullAd = ad
-                        onLoaded(true)
-                    }
+                AppOpenAd.load(
+                    mApp,
+                    adBean.adId,
+                    AdRequest.Builder().build(),
+                    object : AppOpenAdLoadCallback() {
+                        override fun onAdLoaded(ad: AppOpenAd) {
+                            adLogger("onAdLoad success")
+                            loadedTimeMills = System.currentTimeMillis()
+                            fullAd = ad
+                            onLoaded(true)
+                        }
 
-                    override fun onAdFailedToLoad(adError: LoadAdError) {
-                        adLogger("onAdLoadFailed:${adError.message}")
-                        onLoaded(false)
-                    }
-                })
+                        override fun onAdFailedToLoad(adError: LoadAdError) {
+                            adLogger("onAdLoadFailed:${adError.message}")
+                            onLoaded(false)
+                        }
+                    })
             }
 
             InterstitialFormat -> {
-                InterstitialAd.load(AdRequest.Builder(adBean.adId).build(), object : AdLoadCallback<InterstitialAd> {
-                    override fun onAdLoaded(ad: InterstitialAd) {
-                        adLogger("onAdLoad success")
-                        loadedTimeMills = System.currentTimeMillis()
-                        fullAd = ad
-                        onLoaded(true)
-                    }
+                InterstitialAd.load(mApp,
+                    adBean.adId,
+                    AdRequest.Builder().build(),
+                    object : InterstitialAdLoadCallback() {
+                        override fun onAdLoaded(ad: InterstitialAd) {
+                            adLogger("onAdLoad success")
+                            loadedTimeMills = System.currentTimeMillis()
+                            fullAd = ad
+                            onLoaded(true)
+                        }
 
-                    override fun onAdFailedToLoad(adError: LoadAdError) {
-                        adLogger("onAdLoadFailed:${adError.message}")
-                        onLoaded(false)
-                    }
-                })
+                        override fun onAdFailedToLoad(adError: LoadAdError) {
+                            adLogger("onAdLoadFailed:${adError.message}")
+                            onLoaded(false)
+                        }
+                    })
             }
         }
     }
@@ -84,8 +93,8 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
         }
         when (ad) {
             is AppOpenAd -> {
-                val callback = object : AppOpenAdEventCallback {
-                    override fun onAdFailedToShowFullScreenContent(fullScreenContentError: FullScreenContentError) {
+                val callback = object : FullScreenContentCallback() {
+                    override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                         onAdDismissed(activity, onDismissed)
                     }
 
@@ -94,17 +103,17 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                     }
 
                     override fun onAdDismissedFullScreenContent() = onAdDismissed(activity, onDismissed)
-                    override fun onAdPaid(value: AdValue) {
-                        RevenueHelper.onAdmobRevenueCallback(value, adBean, position, ad.getResponseInfo().loadedAdSourceResponseInfo)
-                    }
                 }
-                ad.adEventCallback = callback
+                ad.fullScreenContentCallback = callback
+                ad.setOnPaidEventListener { value: AdValue ->
+                    RevenueHelper.onAdmobRevenueCallback(value, adBean, position, ad.responseInfo)
+                }
                 ad.show(activity)
             }
 
             is InterstitialAd -> {
-                val callback = object : InterstitialAdEventCallback {
-                    override fun onAdFailedToShowFullScreenContent(fullScreenContentError: FullScreenContentError) {
+                val callback = object : FullScreenContentCallback() {
+                    override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                         onAdDismissed(activity, onDismissed)
                     }
 
@@ -113,11 +122,11 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                     }
 
                     override fun onAdDismissedFullScreenContent() = onAdDismissed(activity, onDismissed)
-                    override fun onAdPaid(value: AdValue) {
-                        RevenueHelper.onAdmobRevenueCallback(value, adBean, position, ad.getResponseInfo().loadedAdSourceResponseInfo)
-                    }
                 }
-                ad.adEventCallback = callback
+                ad.fullScreenContentCallback = callback
+                ad.setOnPaidEventListener { value: AdValue ->
+                    RevenueHelper.onAdmobRevenueCallback(value, adBean, position, ad.responseInfo)
+                }
                 ad.show(activity)
             }
 

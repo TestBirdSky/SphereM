@@ -32,13 +32,13 @@
         android:id="@+id/center_wallet"
         android:layout_width="30dp"
         android:layout_height="34dp"
-        android:elevation="4dp"
+        android:elevation="8dp"
         android:gravity="bottom"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/bottom_nav">
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:background="@drawable/ic_nav_bill" />
