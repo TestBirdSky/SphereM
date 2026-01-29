@@ -1,8 +1,6 @@
 package com.sphere.shortvideos.notification
 
 import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -22,8 +20,8 @@ import com.sphere.shortvideos.R
 import com.sphere.shortvideos.activity.LoadingActivity
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.localEvent
-import com.sphere.shortvideos.helper.permission.PermissionHelper
 import com.sphere.shortvideos.helper.mmkv.MMKVData
+import com.sphere.shortvideos.helper.permission.PermissionHelper
 import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.service.SphereService
@@ -37,7 +35,7 @@ import java.util.concurrent.TimeUnit
 object NotificationHelper {
     private const val NOTI_ID_UNLOCK = 1002
     private const val NOTI_ID_TIMER = 1111
-    private const val NOTI_ID_FCM_DATA = 1092
+    const val NOTI_ID_FCM_DATA = 1092
     const val NOTI_ID_FIXED = 10091
 
     const val NOTIFICATION_ID_KEY = "notification_id"
@@ -268,6 +266,15 @@ object NotificationHelper {
         }
     }
 
+    fun showFcmDataNotification(context: Context, title: String, desc: String) {
+        if (hasNotificationPermission(context).not()) {
+            logError("no post permission")
+            return
+        }
+        initChannel(context)
+        NotificationImpl(NOTI_ID_FCM_DATA, arrayListOf(), arrayListOf(), 0).showNotification(context, title, desc)
+    }
+
     fun updateFixedNotification(context: Context) {
         runCatching {
             NotificationManagerCompat.from(context).notify(NOTI_ID_FIXED, createFixNotification(context))
@@ -295,17 +302,11 @@ object NotificationHelper {
                 setOnClickPendingIntent(R.id.tv_withdraw, pendingIntent)
             }
 
-            NotificationCompat.Builder(this, NotificationHelper.CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification_app)
-                .setGroupSummary(false)
-                .setSound(null)
-                .setGroup("Sphere")
-                .setContentTitle(title + desc).setContentText(title + desc)
-                .setStyle(NotificationCompat.DecoratedCustomViewStyle()).setCustomContentView(remoteView)
-                .setCustomBigContentView(remoteView)
-                .setOngoing(true)
-                .setOnlyAlertOnce(true)
-                .setContentIntent(pendingIntent).build()
+            NotificationCompat.Builder(this, NotificationHelper.CHANNEL_ID).setSmallIcon(R.drawable.ic_notification_app)
+                .setGroupSummary(false).setSound(null).setGroup("Sphere").setContentTitle(title + desc)
+                .setContentText(title + desc).setStyle(NotificationCompat.DecoratedCustomViewStyle())
+                .setCustomContentView(remoteView).setCustomBigContentView(remoteView).setOngoing(true)
+                .setOnlyAlertOnce(true).setContentIntent(pendingIntent).build()
         }
         return buildFixedNotification()
     }

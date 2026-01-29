@@ -27,6 +27,7 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
     private var isFirstGoLoadingPage by MMKVData(true)
     private val mPostPermission = PostPermission(this)
     private val viewModel by viewModels<LoadingViewModel>()
+    private var lastNotificationId = -1
 
     override val binding by lazy {
         topMar = 0
@@ -36,6 +37,7 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
     override fun initUI() {
         val notificationId = intent.getIntExtra(NotificationHelper.NOTIFICATION_ID_KEY, -1)
         val fromNotification = notificationId != -1
+        lastNotificationId = notificationId
         if (notificationId != -1) {
             runCatching {
                 NotificationManagerCompat.from(this).cancel(notificationId)
@@ -75,7 +77,7 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
 
     private fun openMain(fromNotification: Boolean) {
         nextView<MainActivity> {
-            if (fromNotification) putExtra(NotificationHelper.NOTIFICATION_ID_KEY, 1)
+            if (fromNotification) putExtra(NotificationHelper.NOTIFICATION_ID_KEY, lastNotificationId)
         }
         finish()
     }

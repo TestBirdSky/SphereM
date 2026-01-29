@@ -53,6 +53,7 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
 
     override fun initUI() {
         setupBottomNav()
+        selectForYouIfFromNotification(intent)
         viewModel.collectHistoryRoom()
         lifecycleScope.launch {
             delay(1000)
@@ -194,7 +195,11 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
     private fun selectForYouIfFromNotification(intent: Intent) {
         val notificationId = intent.getIntExtra(NotificationHelper.NOTIFICATION_ID_KEY, -1)
         if (notificationId != -1) {
-            binding.bottomNav.selectedItemId = R.id.tab_video
+            binding.bottomNav.selectedItemId = if (notificationId == NotificationHelper.NOTI_ID_FIXED) {
+                R.id.tab_wallet
+            } else {
+                R.id.tab_video
+            }
         }
     }
 

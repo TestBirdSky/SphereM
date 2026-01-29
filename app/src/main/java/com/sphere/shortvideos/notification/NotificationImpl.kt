@@ -29,14 +29,15 @@ class NotificationImpl(val notificationId: Int = 1000,
             logError("no post permission")
             return
         }
+        if (strTitle.isEmpty() || strContext.isEmpty()) return
+        val total = minOf(strTitle.size, strContext.size)
+        if (total <= 0) return
         val currentTime = System.currentTimeMillis()
         if (currentTime - lastNotificationTime >= period) {
+            val safeIndex = ((index % total) + total) % total
             lastNotificationTime = currentTime
-            show(context, context.getString(strTitle[index]), context.getString(strContext[index]))
-            index++
-            if (index == strContext.size) {
-                index = 0
-            }
+            show(context, context.getString(strTitle[safeIndex]), context.getString(strContext[safeIndex]))
+            index = (safeIndex + 1) % total
         }
     }
 
