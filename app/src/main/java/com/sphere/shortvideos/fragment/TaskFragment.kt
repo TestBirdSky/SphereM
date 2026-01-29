@@ -50,7 +50,6 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
         binding.layoutPop2.setOnClickListener {
             showPopAd(binding.layoutPop2)
         }
-        setupWatchCoins()
     }
 
     private fun showPopAd(view: View) {
@@ -73,6 +72,7 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
     override fun onResume() {
         super.onResume()
         localEvent("billetera_page")
+        setupWatchCoins()
         refreshMoney()
         startPopFloatAnim()
     }
@@ -88,7 +88,11 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
     private fun setupWatchCoins() {
         (activity as? MainActivity)?.let {
             binding.layoutTask.setTaskInfo(it, receiverMoneyEvent = { reward, sourceView ->
-                AnimViewHelper.playCoinFlyCopyAnim(sourceView, binding.iv1)
+                AnimViewHelper.playCoinFlyCopyAnim(sourceView, binding.iv1, end = {
+                    if (reward > 0) {
+                        HelperRewardShow.addMoneyNotExChange(reward)
+                    }
+                })
             })
         }
     }

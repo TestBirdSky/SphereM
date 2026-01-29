@@ -11,6 +11,7 @@ import com.sphere.shortvideos.R
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.view.setTaskInfo
 import com.sphere.shortvideos.databinding.DialogTaskInfoBinding
+import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.view.AnimViewHelper
@@ -46,8 +47,12 @@ class TaskInfoDialogFragment(val ac: GenericActivity) : DialogFragment() {
             dismissAllowingStateLoss()
         }
         refreshMoney()
-        binding.layoutTask.setTaskInfo(ac, receiverMoneyEvent = { m, sourceView ->
-            AnimViewHelper.playCoinFlyCopyAnim(sourceView, binding.ivM)
+        binding.layoutTask.setTaskInfo(ac, receiverMoneyEvent = { reward, sourceView ->
+            AnimViewHelper.playCoinFlyCopyAnim(sourceView, binding.ivM, end = {
+                if (reward > 0) {
+                    HelperRewardShow.addMoneyNotExChange(reward)
+                }
+            })
             refreshMoney()
         })
     }

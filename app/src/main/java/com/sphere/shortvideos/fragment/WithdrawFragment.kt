@@ -42,7 +42,6 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
     override fun initUI() {
         setupWithdrawMethods()
         setupWithdrawAmounts()
-        binding.tvMoney.text = WithdrawAmountHelper.moneyFormatAddUnit(MoneyCacheHelper.fetchCurMoney())
         setupUserInfoMarquee()
         binding.tvWithdraw.setOnClickListener {
             val cur = MoneyCacheHelper.fetchCurMoney()
@@ -164,5 +163,6 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
     override fun onResume() {
         super.onResume()
         localEvent("withdraw_page")
+        binding.tvMoney.text = WithdrawAmountHelper.moneyFormatAddUnit(MoneyCacheHelper.fetchCurMoney())
     }
 }

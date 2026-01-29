@@ -27,7 +27,7 @@ object HelperRewardShow {
     private var maxReachedCount = 0
     private var progressJob: Job? = null
     private val progressMax = 100
-    private val roundDurationMs = 5000L //15_000L todo
+    private val roundDurationMs = 15000L //15_000L
 
     private var numIntervalIndex = 0 // 目标
     private var tagGam = -1
@@ -116,22 +116,31 @@ object HelperRewardShow {
         moneyAnimator?.cancel()
         moneyNeedAnimator?.cancel()
         if (reward <= 0) return
+        val durationMs = run {
+            val minReward = 0.02
+            val maxReward = 4.0
+            val steps = 5 // 300..800 step 100 => 6 levels
+            val ratio = ((reward - minReward) / (maxReward - minReward)).coerceIn(0.0, 1.0)
+            val stepIndex = kotlin.math.floor(ratio * steps).toInt().coerceIn(0, steps)
+            300L + stepIndex * 100L
+        }
         val endValue = MoneyCacheHelper.fetchCurMoney().coerceAtLeast(0.0)
         val startValue = (endValue - reward).coerceAtLeast(0.0)
         val total = WithdrawAmountHelper.fetchCurMoneyAndGetMoneyMinValue().second
         val startNeed = (total - startValue).coerceAtLeast(0.0)
         val endNeed = (total - endValue).coerceAtLeast(0.0)
         moneyAnimator = ValueAnimator.ofFloat(startValue.toFloat(), endValue.toFloat()).apply {
-            duration = 600L
+            duration = durationMs
             interpolator = AccelerateDecelerateInterpolator()
             addUpdateListener { animator ->
                 val value = (animator.animatedValue as Float).toDouble()
                 curGetMoneyAnimLiveData.postValue(WithdrawAmountHelper.moneyFormatAddUnit(value))
             }
             start()
+            end.invoke()
         }
         moneyNeedAnimator = ValueAnimator.ofFloat(startNeed.toFloat(), endNeed.toFloat()).apply {
-            duration = 600L
+            duration = durationMs
             interpolator = AccelerateDecelerateInterpolator()
             addUpdateListener { animator ->
                 val value = (animator.animatedValue as Float).toDouble()

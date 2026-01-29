@@ -71,6 +71,47 @@
     <string name="notification_local_79_title4">Rp720.000 bisa ditarik sekarang</string>
     <string name="notification_local_79_desc4">Masuk dan lakukan penarikan.</string>
 
+    <string name="bonus_welcome_title">Bonus Sambutan</string>
+    <string name="bonus_welcome_action">Terima hadiah</string>
+    <string name="tips_info">Tonton drama dan dapatkan hadiah besar!</string>
+    <string name="v_pri">Bonus Ganda</string>
+    <string name="watch_basic_ad"><u>Hadiah Normal</u></string>
+
+    <string name="start">MULAI</string>
+    <string name="task">Tugas</string>
+    <string name="wallet">Dompet</string>
+    <string name="withdraw">Tarik</string>
+    <string name="daily_rewards">Hadiah harian</string>
+    <string name="watch_an_ad">Tonton Iklan</string>
+    <string name="tv_go">Pergi</string>
+    <string name="tv_join">Gabung komunitas</string>
+    <string name="watch_earn_coins"><![CDATA[Tonton & dapatkan koin]]></string>
+    <string name="day_grand_prize">Hadiah Utama 7 Hari</string>
+
+    <string name="turn_on_push_notifications">Aktifkan notifikasi push</string>
+    <string name="dram_short_tips_dialog"><![CDATA[Tonton & Dapatkan! Dapatkan drama pendek hits lebih dulu!]]></string>
+    <string name="allow_get"><![CDATA[Izinkan & Dapatkan]]></string>
+
+    <string name="back_tips_title">Jangan Lewatkan Hadiah!</string>
+    <string name="back_tips_desc">Progres dan hadiah akan dijeda jika Anda keluar.</string>
+    <string name="back_tips_exit">Keluar</string>
+    <string name="back_tips_stay">Tetap</string>
+    <string name="congratulate">Selamat</string>
+    <string name="withdrawal_progress">Progres Penarikan</string>
+    <string name="withdraw_tips">Hanya %s lagi untuk menarik! Cepat!</string>
+    <string name="claim">Klaim</string>
+    <string name="my_wallet">Dompet saya</string>
     <string name="fortune_challenge">Tantangan Roda Keberuntungan</string>
     <string name="redeem">Klaim</string>
+    <string name="my_balance">Saldo Saya</string>
+    <string name="withdrawal_method">Metode penarikan</string>
+    <string name="withdrawal_amount">Jumlah Penarikan</string>
+    <string name="proud_to_cash_out">-Bangga Mencairkan-</string>
+    <string name="arrived_via">datang melalui [%s]</string>
+    <string name="cant_with_tips">Anda belum mencapai batas penarikan</string>
+    <string name="get_tips">Dapatkan %s</string>
+    <string name="ad_limit_reached">Batas Iklan Tercapai</string>
+    <string name="limit_tips_des">Anda telah menonton semua iklan hari ini. Coba lagi besok.</string>
+    <string name="ok">Oke</string>
+    <string name="wi_notification_tips">Menunggu di Dompet Anda.</string>
 </resources>

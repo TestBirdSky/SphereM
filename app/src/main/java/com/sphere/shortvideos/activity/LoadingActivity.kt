@@ -35,22 +35,14 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
     }
 
     override fun initUI() {
-        val notificationId = intent.getIntExtra(NotificationHelper.NOTIFICATION_ID_KEY, -1)
-        val fromNotification = notificationId != -1
-        lastNotificationId = notificationId
-        if (notificationId != -1) {
-            runCatching {
-                NotificationManagerCompat.from(this).cancel(notificationId)
-            }
-            NotificationHelper.clickNotiEvent(notificationId)
-        }
+        checkNotification()
         viewModel.umpCompletedLiveData.observe(this) {
             if (isFirstGoLoadingPage.not()) {
                 viewModel.waitAdLoading(this)
             }
         }
         viewModel.nextLiveData.observe(this) {
-            openMain(fromNotification)
+            openMain()
         }
         if (MMKVRepository.isNeedRequestUMP) {
             MMKVRepository.isNeedRequestUMP = false
@@ -63,7 +55,7 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
             binding.tvPp.visibility = View.VISIBLE
             binding.tvStart.setOnClickListener {
                 localEvent("launch_start")
-                openMain(fromNotification)
+                openMain()
             }
             binding.tvPp.setOnClickListener {
                 CustomTabsIntent.Builder().build().launchUrl(this, GlobalConstants.PRIVACY_POLICY.toUri())
@@ -71,13 +63,11 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
         }
         session()
         MMKVRepository.checkCueDay()
-        // todo test
-        openMain(fromNotification)
     }
 
-    private fun openMain(fromNotification: Boolean) {
+    private fun openMain() {
         nextView<MainActivity> {
-            if (fromNotification) putExtra(NotificationHelper.NOTIFICATION_ID_KEY, lastNotificationId)
+            if (lastNotificationId > 0) putExtra(NotificationHelper.NOTIFICATION_ID_KEY, lastNotificationId)
         }
         finish()
     }
@@ -97,6 +87,17 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
         lifecycleScope.launch {
             delay(1000)
             NotificationHelper.showNotificationService(this@LoadingActivity)
+        }
+    }
+
+    private fun checkNotification() {
+        val notificationId = intent.getIntExtra(NotificationHelper.NOTIFICATION_ID_KEY, -1)
+        lastNotificationId = notificationId
+        if (notificationId != -1) {
+            runCatching {
+                NotificationManagerCompat.from(this).cancel(notificationId)
+            }
+            NotificationHelper.clickNotiEvent(notificationId)
         }
     }
 }

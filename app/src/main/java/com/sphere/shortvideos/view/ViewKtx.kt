@@ -83,14 +83,14 @@ fun LayoutTaskChildBinding.setTaskInfo(
             ivWatchAd.isClickable = true
         })
     }
-//    bgH5.setOnClickListener { // todo 显示H5
+//    bgH5.setOnClickListener {
 //
 //    }
     val moneyWatchRv = MoneyCacheHelper.fetchRvAdReward()
     val tagStr = moneyWatchRv.second
     val fullText = root.context.getString(R.string.get_tips, tagStr)
     tvAdGo.setColorText(fullText, tagStr, Color.parseColor("#F3CD0C"))
-    AnimViewHelper.playClaimablePulseAnim(ivH51, true)
+//    AnimViewHelper.playClaimablePulseAnim(ivH51, true)
 
     isAnim = false
     setWatchLayout(activity, receiverMoneyEvent)
@@ -131,7 +131,7 @@ private fun LayoutTaskChildBinding.set7DayReword(daySignSuccess: (Double, ImageV
         if (reward != null) {
             localEvent("billetera_signin")
             daySignSuccess.invoke(reward, view)
-            set7DayReword(daySignSuccess)
+            root.post { set7DayReword(daySignSuccess) }
         }
     }
     adapter.submitList(items)

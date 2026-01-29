@@ -89,7 +89,6 @@ object TaskHelper {
             val rewardValue = rewards.getOrNull(i)?.first ?: 0.0
             if (rewardValue > 0) {
                 totalReward += rewardValue
-                HelperRewardShow.addMoneyNotExChange(rewardValue)
             }
             claimed.add(i)
         }
@@ -161,9 +160,6 @@ object TaskHelper {
         signInStreak = (signInStreak + 1).coerceAtMost(7)
         signInLastDate = today
         saveSignInRewardRecord(record)
-        if (reward > 0) {
-            HelperRewardShow.addMoneyNotExChange(reward)
-        }
         return reward
     }
 

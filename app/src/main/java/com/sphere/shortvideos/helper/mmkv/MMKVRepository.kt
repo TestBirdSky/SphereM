@@ -1,9 +1,9 @@
 package com.sphere.shortvideos.helper.mmkv
 
 import android.provider.Settings
+import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.permission.PermissionHelper.showOpenNotifDialogFlag
-import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.mApp
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -24,9 +24,11 @@ object MMKVRepository {
     private var isCurDayStr by MMKVData("") // 当天
 
     fun checkCueDay(): Boolean {
-        if (isDebugMode) { //todo
-            isCurDayStr = ""
-        }
+        //        if (isDebugMode) { //
+        //            isCurDayStr = ""
+        //        }
+        // todo test
+        MoneyCacheHelper.addWatchVideoTime(60000 * 10)
         val day = SimpleDateFormat("yyyy-MM-dd").format(Date())
         if (isCurDayStr != day) {
             isCurDayStr = day

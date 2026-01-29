@@ -77,7 +77,7 @@ class SevenDayRewardAdapter : RecyclerView.Adapter<SevenDayRewardAdapter.RewardV
 
             binding.tvDayTitle.setTextColor(textColor)
             binding.tvDayDesc.setTextColor(textColor)
-            AnimViewHelper.playClaimablePulseAnim(binding.layoutDay, isClaimable, 0.85f, 1.05f)
+            AnimViewHelper.playClaimablePulseAnim(binding.layoutDay, isClaimable, 0.82f, 1.03f)
             binding.layoutDay.setOnClickListener {
                 if (isClaimable) {
                     onItemClick?.invoke(item, binding.ivDay)

@@ -78,7 +78,7 @@ class LuckChallengeDialogFragment : DialogFragment() {
         binding.tvRewardValue.text = reward.second
         binding.btnClaim.setOnClickListener {
             localEvent("wheel_pop_c")
-            onResult?.invoke(rate * money.first)
+            onResult?.invoke(rate * reward.first)
             dismissAllowingStateLoss()
         }
         localEvent("wheel_pop")

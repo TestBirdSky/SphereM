@@ -76,9 +76,44 @@
     <string name="bonus_welcome_title">Bônus de Boas-Vindas</string>
     <string name="watch_basic_ad"><u>Prêmio Normal</u></string>
     <string name="bonus_welcome_action">Reciba recompensas</string>
+
+    <string name="start">INICIAR</string>
+    <string name="task">Tarefa</string>
+    <string name="wallet">Carteira</string>
+    <string name="withdraw">Sacar</string>
+    <string name="daily_rewards">Recompensas diárias</string>
+    <string name="watch_an_ad">Assistir a um anúncio</string>
+    <string name="tv_go">Ir</string>
+    <string name="tv_join">Entrar na comunidade</string>
+    <string name="watch_earn_coins">Assista e ganhe moedas</string>
+    <string name="day_grand_prize">Grande Prêmio de 7 Dias</string>
+
+    <string name="turn_on_push_notifications">Ativar notificações push</string>
+    <string name="dram_short_tips_dialog"><![CDATA[Assista e ganhe! Veja primeiro os melhores dramas curtos!]]></string>
+    <string name="allow_get"><![CDATA[Permitir e ganhar]]></string>
+
+    <string name="back_tips_title">Não perca as recompensas!</string>
+    <string name="back_tips_desc">Seu progresso e recompensas serão pausados se você sair.</string>
+    <string name="back_tips_exit">Sair</string>
+    <string name="back_tips_stay">Ficar</string>
+    <string name="congratulate">Parabéns</string>
+    <string name="withdrawal_progress">Progresso de Saque</string>
+    <string name="withdraw_tips">Faltam apenas %s para sacar! Aproveite!</string>
+    <string name="claim">Resgatar</string>
+    <string name="my_wallet">Minha carteira</string>
     <string name="fortune_challenge">Desafio da Roda da Sorte</string>
     <string name="redeem">Resgatar</string>
     <string name="proud_to_cash_out">-Orgulhe-se do Saque-</string>
+    <string name="my_balance">Meu saldo</string>
+    <string name="withdrawal_method">Método de saque</string>
+    <string name="withdrawal_amount">Valor do saque</string>
+    <string name="arrived_via">chegou via [%s]</string>
+    <string name="cant_with_tips">Você ainda não atingiu o limite de saque</string>
+    <string name="get_tips">Ganhe %s</string>
+    <string name="ad_limit_reached">Limite de anúncios atingido</string>
+    <string name="limit_tips_des">Você já assistiu a todos os anúncios de hoje. Tente novamente amanhã.</string>
+    <string name="ok">Ok</string>
+    <string name="wi_notification_tips">Está esperando na sua carteira.</string>
 
 
 </resources>
