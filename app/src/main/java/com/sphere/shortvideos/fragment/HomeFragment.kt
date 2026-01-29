@@ -13,8 +13,8 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.baseui.GenericFragment
-import com.sphere.shortvideos.baseui.initView
-import com.sphere.shortvideos.baseui.refreshViewTagMoney
+import com.sphere.shortvideos.view.initView
+import com.sphere.shortvideos.view.refreshViewTagMoney
 import com.sphere.shortvideos.databinding.FragmentHomeBinding
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.vm.MainViewModel
@@ -94,7 +94,7 @@ class HomeFragment : GenericFragment<FragmentHomeBinding>() {
 
     private fun registerLiveData() {
         activity?.let {
-            binding.layoutMoney.initView(it as MainActivity)
+            binding.layoutMoney.initView(it as MainActivity,"list")
         }
         viewModel.curGetMoneyStr.observe(this) { pair ->
             binding.layoutMoney.tvCurMoney.text = pair.first

@@ -9,10 +9,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.baseui.GenericFragment
-import com.sphere.shortvideos.baseui.setTaskInfo
+import com.sphere.shortvideos.view.setTaskInfo
 import com.sphere.shortvideos.databinding.FragmentTaskBinding
 import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.ad.AdUtils
+import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.task.TaskHelper
 import com.sphere.shortvideos.view.AnimViewHelper
 import com.sphere.shortvideos.vm.MainViewModel
@@ -43,44 +44,35 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
             binding.tvMoney.text = moneyText
         }
         binding.layoutPop1.setOnClickListener {
-            if (curPopMoney > 0) {
-                viewModel.addMoneyNotExChange(curPopMoney)
-                AnimViewHelper.flyToTarget(binding.layoutPop1, binding.iv1, end = {
-                    lifecycleScope.launch {
-                        delay(Random.nextLong(3000, 8000))
-                        binding.layoutPop1.visibility = View.VISIBLE
-                    }
-                })
-                showPopAd()
-            }
+            showPopAd(binding.layoutPop1)
         }
 
         binding.layoutPop2.setOnClickListener {
-            if (curPopMoney > 0) {
-                viewModel.addMoneyNotExChange(curPopMoney)
-                AnimViewHelper.flyToTarget(binding.layoutPop2, binding.iv1, end = {
-                    lifecycleScope.launch {
-                        delay(Random.nextLong(6000, 16000))
-                        binding.layoutPop2.visibility = View.VISIBLE
-                    }
-                })
-                showPopAd()
-            }
+            showPopAd(binding.layoutPop2)
         }
+        setupWatchCoins()
     }
 
-    private fun showPopAd() {
-        (activity as? MainActivity)?.let {
-            AdUtils.showRateAd(it)
+    private fun showPopAd(view: View) {
+        localEvent("billetera_bubble")
+        localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_task_int"))
+        if (curPopMoney > 0) {
+            viewModel.addMoneyNotExChange(curPopMoney)
+            AnimViewHelper.flyToTarget(view, binding.iv1, end = {
+                lifecycleScope.launch {
+                    delay(Random.nextLong(6000, 16000))
+                    view.visibility = View.VISIBLE
+                }
+            })
+            (activity as? MainActivity)?.let {
+                AdUtils.showRateAd(it)
+            }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        if (isInit) {
-            isInit = false
-            setupWatchCoins()
-        }
+        localEvent("billetera_page")
         refreshMoney()
         startPopFloatAnim()
     }

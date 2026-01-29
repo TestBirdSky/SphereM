@@ -40,8 +40,8 @@ class WelcomeBonusDialogFragment : DialogFragment() {
         val config = RewardHelper.getConfigByLanguage()
         val r = config.getRewardNewUser()
         binding.tvRewardValue.text = r.second
-        HelperRewardShow.addMoneyNotExChange(r.first)
         binding.btnClaim.setOnClickListener {
+            HelperRewardShow.addMoneyNotExChange(r.first)
             onDismissCall.invoke()
             dismissAllowingStateLoss()
         }

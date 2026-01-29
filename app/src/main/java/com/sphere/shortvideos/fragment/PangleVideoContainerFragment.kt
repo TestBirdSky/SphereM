@@ -27,15 +27,15 @@ import com.sphere.shortvideos.R
 import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.activity.PangleDramaPlayActivity
 import com.sphere.shortvideos.baseui.GenericFragment
-import com.sphere.shortvideos.baseui.initView
-import com.sphere.shortvideos.baseui.refreshViewTagMoney
+import com.sphere.shortvideos.view.initView
+import com.sphere.shortvideos.view.refreshViewTagMoney
 import com.sphere.shortvideos.database
 import com.sphere.shortvideos.database.DramaCollectEntity
 import com.sphere.shortvideos.databinding.FragmentPangleVideoContainerBinding
 import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.MoneyCacheHelper
+import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
-import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.nextView
 import com.sphere.shortvideos.showToast
 import com.sphere.shortvideos.toJson
@@ -83,7 +83,7 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
     override fun initUI() {
         initSeekbarAnim()
         spineHelper.addViewMoney1(binding.layoutAnim, requireContext())
-        val isNew = showNewUser()
+        val isNew = MMKVRepository.isNewUser
         lifecycleScope.launch(Dispatchers.Main) {
             shortPlay?.let { item ->
                 withContext(Dispatchers.IO) {
@@ -92,7 +92,7 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
                 if (isNew) {
                     withContext(Dispatchers.IO) {
                         while (MMKVRepository.isNewUser) {
-                            delay(500)
+                            delay(200)
                         }
                     }
                 }
@@ -130,6 +130,7 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
                     }
                 }
                 binding.layoutPlayList.setOnClickListener {
+                    localEvent("foru_enter")
                     requireContext().nextView<PangleDramaPlayActivity> {
                         putExtra(GlobalConstants.EXTRA_KEY_SHORT_PLAY, item)
                         putExtra(GlobalConstants.EXTRA_KEY_START_INDEX, 1)
@@ -159,7 +160,7 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
             }
         }
         activity?.let {
-            binding.layoutMoney.initView(it as MainActivity)
+            binding.layoutMoney.initView(it as MainActivity, "for_u")
         }
     }
 
@@ -279,21 +280,38 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
     override fun onResume() {
         super.onResume()
         registerMainViewModel()
+        showNewUser()
     }
 
     private fun showNewUser(): Boolean {
         if (MMKVRepository.isNewUser) {
             setGuideVisibility(View.VISIBLE)
+            localEvent("new_guide")
             startFingerAnim()
             binding.ivFirstGuide.setOnClickListener {
-                MMKVRepository.isNewUser = false
-                (activity as? MainActivity)?.showWelcomDialog()
-                setGuideVisibility(View.GONE)
-                stopFingerAnim()
+                localEvent("new_guide_c", hashMapOf("type" to "mask_2"))
+                hide()
+            }
+            binding.ivFingerAnim.setOnClickListener {
+                hide()
+                localEvent("new_guide_c", hashMapOf("type" to "mask_1"))
             }
             return true
         }
         return false
+    }
+
+    private fun hide() {
+        (activity as? MainActivity)?.showWelcomDialog({
+            MMKVRepository.isNewUser = false
+        })
+        setGuideVisibility(View.GONE)
+        stopFingerAnim()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        MMKVRepository.isNewUser = false
     }
 
     private fun setGuideVisibility(sta: Int) {

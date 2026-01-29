@@ -55,9 +55,8 @@ object HelperRewardShow {
                 if (nextProgress >= progressMax) {
                     nextProgress = 0
                     if (num == 2) {
-
-                    } // todo test
-                    addMoneyInTwoWatchVideo(this)
+                        addMoneyInTwoWatchVideo(this)
+                    }
                     num += 1
                     if (num > maxNum) {
                         num = 1
@@ -161,7 +160,6 @@ object HelperRewardShow {
     }
 
     fun registerConDialog(activity: GenericActivity) {
-        logError("registerConDialog-->$activity")
         showDialogType.observe(activity) {
             logError("registerConDialog-->$it")
             if (it == -1) return@observe
@@ -170,14 +168,13 @@ object HelperRewardShow {
                     postOnce(true)
                     NormalCongratulateDialogFragment().apply {
                         onClaim = { reward ->
-                            AdUtils.showRvAd(activity, {
-                                addMoneyNotExChange(reward)
-                            }, dismiss = {
-                                postOnce(false)
-                            })
+                            localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_video_rv"))
+                            showRvAd(activity, reward)
                         }
                         onClose = {
-                            AdUtils.showRateAd(activity)
+                            AdUtils.showRateAd(activity, isRate = {
+                                localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_video_int"))
+                            })
                             postOnce(false)
                         }
                     }.show(activity.supportFragmentManager, "congratulation")
@@ -187,15 +184,26 @@ object HelperRewardShow {
                     postOnce(true)
                     LuckChallengeDialogFragment().apply {
                         onResult = { reward ->
-                            AdUtils.showRvAd(activity, {
-                                addMoneyNotExChange(reward)
-                            })
-                            postOnce(false)
+                            localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_wheel_rv"))
+                            showRvAd(activity, reward)
                         }
                     }.show(activity.supportFragmentManager, "luck")
                 }
             }
             showDialogType.value = -1
         }
+    }
+
+    private var isFetchReward = false
+    private fun showRvAd(activity: GenericActivity, reward: Double) {
+        isFetchReward = false
+        AdUtils.showRvAd(activity, {
+            isFetchReward = true
+        }, dismiss = {
+            if (isFetchReward) {
+                addMoneyNotExChange(reward)
+            }
+            postOnce(false)
+        })
     }
 }

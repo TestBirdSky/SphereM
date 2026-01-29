@@ -5,6 +5,7 @@ import androidx.activity.viewModels
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
+import androidx.lifecycle.lifecycleScope
 import com.sphere.shortvideos.GlobalConstants
 
 import com.sphere.shortvideos.baseui.GenericBindActivity
@@ -19,6 +20,8 @@ import com.sphere.shortvideos.helper.session
 import com.sphere.shortvideos.nextView
 import com.sphere.shortvideos.notification.NotificationHelper
 import com.sphere.shortvideos.vm.LoadingViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
     private var isFirstGoLoadingPage by MMKVData(true)
@@ -37,6 +40,7 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
             runCatching {
                 NotificationManagerCompat.from(this).cancel(notificationId)
             }
+            NotificationHelper.clickNotiEvent(notificationId)
         }
         viewModel.umpCompletedLiveData.observe(this) {
             if (isFirstGoLoadingPage.not()) {
@@ -64,8 +68,8 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
             }
         }
         session()
-        MMKVRepository.checkCueDay() // todo test
-        MoneyCacheHelper.userFetchMoneyBr = 120.0
+        MMKVRepository.checkCueDay()
+        // todo test
         openMain(fromNotification)
     }
 
@@ -88,5 +92,9 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
         super.onResume()
         mPostPermission.requestPermission {}
         localEvent("launch_page")
+        lifecycleScope.launch {
+            delay(1000)
+            NotificationHelper.showNotificationService(this@LoadingActivity)
+        }
     }
 }

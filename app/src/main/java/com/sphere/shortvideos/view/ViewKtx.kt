@@ -1,4 +1,4 @@
-package com.sphere.shortvideos.baseui
+package com.sphere.shortvideos.view
 
 import android.content.Context
 import android.graphics.Color
@@ -12,12 +12,13 @@ import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.databinding.LayoutMoneyTopViewBinding
 import com.sphere.shortvideos.databinding.LayoutTaskChildBinding
 import com.sphere.shortvideos.adapter.SevenDayRewardAdapter
+import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.task.TaskHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.ad.AdUtils
-import com.sphere.shortvideos.view.AnimViewHelper
+import com.sphere.shortvideos.helper.localEvent
 
 /**
  * Date：2026/1/21
@@ -56,9 +57,10 @@ fun TextView.setColorText(fullText: String, tagString: String, color: Int) {
 }
 
 
-fun LayoutMoneyTopViewBinding.initView(activity: MainActivity) {
+fun LayoutMoneyTopViewBinding.initView(activity: MainActivity, tag: String) {
     ivPTag.setBackgroundResource(WithdrawAmountHelper.fetchMoneyBankIcon())
     layout.setOnClickListener {
+        localEvent("earn_banner_c", hashMapOf("from" to tag))
         activity.showMyWalletFragment()
     }
 }
@@ -73,6 +75,7 @@ fun LayoutTaskChildBinding.setTaskInfo(
     receiverMoneyEvent: (Double, ImageView) -> Unit,
 ) {
     ivWatchAd.setOnClickListener {
+        localEvent("billetera_pm_ad")
         ivWatchAd.isClickable = false
         AdUtils.showRvAd(activity, {
             HelperRewardShow.addMoneyNotExChange(MoneyCacheHelper.fetchRvAdReward().first)
@@ -80,9 +83,9 @@ fun LayoutTaskChildBinding.setTaskInfo(
             ivWatchAd.isClickable = true
         })
     }
-    bgH5.setOnClickListener { // todo 显示H5
-
-    }
+//    bgH5.setOnClickListener { // todo 显示H5
+//
+//    }
     val moneyWatchRv = MoneyCacheHelper.fetchRvAdReward()
     val tagStr = moneyWatchRv.second
     val fullText = root.context.getString(R.string.get_tips, tagStr)
@@ -126,6 +129,7 @@ private fun LayoutTaskChildBinding.set7DayReword(daySignSuccess: (Double, ImageV
     adapter.onItemClick = { _, view ->
         val reward = TaskHelper.claimSignInReward()
         if (reward != null) {
+            localEvent("billetera_signin")
             daySignSuccess.invoke(reward, view)
             set7DayReword(daySignSuccess)
         }
@@ -151,6 +155,7 @@ private fun LayoutTaskChildBinding.setWatchLayout(context: Context, watchTimeArr
     fun clickReward(index: Int, view: ImageView) {
         val reward = TaskHelper.clickWatchReward(index)
         if (reward != null) {
+            localEvent("billetera_time")
             watchTimeArriver.invoke(reward, view)
             isAnim = true
             setWatchLayout(context, watchTimeArriver)

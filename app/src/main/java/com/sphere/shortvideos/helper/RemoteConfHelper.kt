@@ -52,7 +52,7 @@ class RemoteConfHelper {
     }
 
     private fun fetchRisk() {
-        val str = getString("risk_control")
+        val str = getString("drama_risk_control")
         if (str.isNotEmpty()){
             RiskHelper.refreshRiskBean(str)
         }

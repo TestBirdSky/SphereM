@@ -26,7 +26,8 @@ import java.util.UUID
 
 object EventData {
 
-    private val baseUrl = if (isDebugMode) "https://test-sperry.dramasphere.link/integral/rotten/wigmake" else "https://sperry.dramasphere.link/waterway/croatia/tenney"
+    private val baseUrl =
+        if (isDebugMode) "https://test-sperry.dramasphere.link/integral/rotten/wigmake" else "https://sperry.dramasphere.link/waterway/croatia/tenney"
     private val okHttpClient by lazy { OkHttpClient.Builder().build() }
     val distinctId by lazy { fetchDeviceId() }
     val firstCountry by lazy { fetchCountryCode() }
@@ -60,16 +61,18 @@ object EventData {
         }
     }
 
-    fun eventCall(obj: JSONObject) {
+    fun eventCall(obj: JSONObject, success: (() -> Unit)? = null) {
         val jsonString = obj.toString()
         var retry = 0
 
         fun callEvent() {
             eventScope.launch {
-                val request = Request.Builder().post(jsonString.toRequestBody("application/json".toMediaTypeOrNull())).url(baseUrl).build()
+                val request = Request.Builder().post(jsonString.toRequestBody("application/json".toMediaTypeOrNull()))
+                    .url(baseUrl).build()
                 okHttpClient.newCall(request).enqueue(object : Callback {
                     override fun onResponse(call: Call, response: Response) {
                         logError(response.body?.string())
+                        success?.invoke()
                     }
 
                     override fun onFailure(call: Call, e: IOException) {

@@ -59,7 +59,7 @@ class LoadingViewModel : ViewModel() {
     }
 
     private fun preload(needChance: Boolean = false) {
-        if (needChance) localEvent("ds_ad_chance", hashMapOf("ad_pos_id" to LaunchPosition.aliasName))
+        if (needChance) localEvent("ad_chance", hashMapOf("ad_pos_id" to LaunchPosition.aliasName))
         AdUtils.run {
             launchHolder.preloadIfCan()
             unlockHolder.preloadIfCan()

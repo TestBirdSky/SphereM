@@ -9,6 +9,7 @@ import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.databinding.DialogBackTipsBinding
+import com.sphere.shortvideos.helper.localEvent
 
 /**
  * Date：2026/1/23
@@ -32,11 +33,13 @@ class BackTipsDialogFragment(val onExit: () -> Unit) : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        localEvent("exit_pop")
         binding.btnExit.setOnClickListener {
             onExit.invoke()
             dismissAllowingStateLoss()
         }
         binding.btnStay.setOnClickListener {
+            localEvent("exit_pop_c")
             dismissAllowingStateLoss()
         }
     }

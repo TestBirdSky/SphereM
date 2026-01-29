@@ -9,9 +9,10 @@ import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.baseui.GenericActivity
-import com.sphere.shortvideos.baseui.setTaskInfo
+import com.sphere.shortvideos.view.setTaskInfo
 import com.sphere.shortvideos.databinding.DialogTaskInfoBinding
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
+import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.view.AnimViewHelper
 
 /**
@@ -39,6 +40,7 @@ class TaskInfoDialogFragment(val ac: GenericActivity) : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        localEvent("billetera_pop")
         binding.ivClose.setOnClickListener {
             onClose?.invoke()
             dismissAllowingStateLoss()

@@ -16,6 +16,7 @@ import com.sphere.shortvideos.R
 import com.sphere.shortvideos.databinding.DialogLuckChallengeBinding
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
+import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.view.AnimViewHelper
 import kotlin.random.Random
 
@@ -76,9 +77,11 @@ class LuckChallengeDialogFragment : DialogFragment() {
         binding.progressView.progress = WithdrawAmountHelper.fetchGetMoneyProgress()
         binding.tvRewardValue.text = reward.second
         binding.btnClaim.setOnClickListener {
+            localEvent("wheel_pop_c")
             onResult?.invoke(rate * money.first)
             dismissAllowingStateLoss()
         }
+        localEvent("wheel_pop")
         setupRateViews()
         startRateRoll()
     }

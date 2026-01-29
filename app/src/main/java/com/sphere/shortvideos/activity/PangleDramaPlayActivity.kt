@@ -274,8 +274,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                     val lastEven = lastIsEven
                     val currentIsEven = index % 2 == 0
                     lastIsEven = currentIsEven
-                    if (index >= unlockIndex) localEvent("ds_ad_chance",
-                        hashMapOf("ad_pos_id" to UnlockPosition.aliasName))
+                    if (index >= unlockIndex) localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_switch_int"))
                     if (AdUtils.unlockHolder.isAdHaveCache()) {
                         if (isOddGreaterThanRemote(index)) {
                             showUnlockAd(index)
@@ -385,6 +384,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
 
     private fun bindClick() {
         binding.layoutTop.setOnClickListener {
+            localEvent("earn_banner_c", hashMapOf("from" to "drama"))
             TaskInfoDialogFragment(this).show(supportFragmentManager, "task_fragment")
         }
         registerLV()
@@ -410,7 +410,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                 }
             }
         })
-        HelperRewardShow.curGetMoneyAnimLiveData.observe(this,{
+        HelperRewardShow.curGetMoneyAnimLiveData.observe(this, {
             binding.tvCurMoney.text = it
         })
         HelperRewardShow.registerConDialog(activity)
@@ -427,11 +427,24 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
         HelperRewardShow.animAddMoneyDurationInMill.observe(this, {
             logError("animAddMoney -->$it --$this")
             if (it > 0) {
-                AnimViewHelper.playCoinFlyWithHitAnim(binding.ivIconAnim, binding.iv1, durationMs = it, scaleTo = 1.5f, end = {
-                    HelperRewardShow.animAddMoneyDurationInMill.value = 0
-                })
+                AnimViewHelper.playCoinFlyWithHitAnim(binding.ivIconAnim,
+                    binding.iv1,
+                    durationMs = it,
+                    scaleTo = 1.5f,
+                    end = {
+                        HelperRewardShow.animAddMoneyDurationInMill.value = 0
+                    })
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        localEvent("drame_page")
+        AdUtils.run {
+            unlockHolder.preloadIfCan()
+            rewardHolder.preloadIfCan()
+        }
     }
 
 }

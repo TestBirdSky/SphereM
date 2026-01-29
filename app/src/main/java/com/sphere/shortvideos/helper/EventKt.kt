@@ -1,6 +1,7 @@
 package com.sphere.shortvideos.helper
 
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.mApp
@@ -19,7 +20,9 @@ fun install(block: (JSONObject) -> Unit) {
         put("calypso", "vamp")
     }
     block.invoke(root)
-    EventData.eventCall(root)
+    EventData.eventCall(root, success = {
+        MMKVRepository.installJson = ""
+    })
 }
 
 fun session() {

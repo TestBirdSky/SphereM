@@ -19,6 +19,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.sphere.shortvideos.R
+import com.sphere.shortvideos.helper.localEvent
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -28,7 +29,7 @@ import kotlin.random.Random
  * Date：2026/1/21
  * Describe:
  */
-class WalletFragment : GenericFragment<FragmentWallteBinding>() {
+class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
     private val listPayInfo = arrayListOf("Paypal", "PayBank", "OVO", "DANA", "PIX")
     private val methodAdapter = WithdrawMethodAdapter()
     private val amountAdapter = WithdrawAmountAdapter()
@@ -46,6 +47,7 @@ class WalletFragment : GenericFragment<FragmentWallteBinding>() {
         binding.tvWithdraw.setOnClickListener {
             val cur = MoneyCacheHelper.fetchCurMoney()
             val m = amountAdapter.fetchWithdrawMoney()
+            localEvent("withdraw_withdraw")
             if (cur < m) {
                 Toast.makeText(context, getString(R.string.cant_with_tips), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -157,5 +159,10 @@ class WalletFragment : GenericFragment<FragmentWallteBinding>() {
         marqueeAnimator?.cancel()
         marqueeAnimator = null
         super.onDestroyView()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        localEvent("withdraw_page")
     }
 }

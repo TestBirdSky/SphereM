@@ -16,8 +16,8 @@ import com.sphere.shortvideos.activity.DramaHistoryActivity
 import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.activity.PangleDramaPlayActivity
 import com.sphere.shortvideos.baseui.GenericFragment
-import com.sphere.shortvideos.baseui.initView
-import com.sphere.shortvideos.baseui.refreshViewTagMoney
+import com.sphere.shortvideos.view.initView
+import com.sphere.shortvideos.view.refreshViewTagMoney
 import com.sphere.shortvideos.databinding.FragmentProfileBinding
 import com.sphere.shortvideos.fragment.adapters.HistoryAdapter
 import com.sphere.shortvideos.fromJson
@@ -91,7 +91,7 @@ class ProfileFragment : GenericFragment<FragmentProfileBinding>() {
 
     private fun registerLV() {
         activity?.let {
-            binding.layoutMoney.initView(it as MainActivity)
+            binding.layoutMoney.initView(it as MainActivity, "perfil")
         }
         viewModel.curGetMoneyStr.observe(this) { pair ->
             binding.layoutMoney.tvCurMoney.text = pair.first

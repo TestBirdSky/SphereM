@@ -10,13 +10,23 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 
 object InstallReferrerManager {
 
     private var tickerJob: Job? = null
 
     fun fetch() {
-        if (MMKVRepository.referrerUrl.isNotEmpty()) return
+        if (MMKVRepository.referrerUrl.isNotEmpty()) {
+            if (MMKVRepository.installJson.isNotEmpty()) {
+                runCatching {
+                    EventData.eventCall(JSONObject(MMKVRepository.installJson), success = {
+                        MMKVRepository.installJson = ""
+                    })
+                }
+            }
+            return
+        }
         tickerJob = CoroutineScope(Dispatchers.IO).launch {
             startFlowTicker(1000L, 30000L).collect {
                 runCatching {
@@ -42,6 +52,7 @@ object InstallReferrerManager {
                                             put("marshall", 0L)
                                             put("lichen", 0L)
                                         }
+                                        MMKVRepository.installJson = obj.toString()
                                     }
                                 }
                                 referrerClient.endConnection()

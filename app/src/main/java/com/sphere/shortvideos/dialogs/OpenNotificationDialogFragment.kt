@@ -12,6 +12,7 @@ import androidx.fragment.app.DialogFragment
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.databinding.DialogOpenNotificationBinding
 import com.sphere.shortvideos.helper.MoneyCacheHelper
+import com.sphere.shortvideos.helper.localEvent
 
 /**
  * Date：2026/1/23
@@ -44,13 +45,16 @@ class OpenNotificationDialogFragment : DialogFragment() {
         val rewardValue = MoneyCacheHelper.fetchPushReward()
         binding.tvMoney.text = getString(R.string.allow_get) + "\t${rewardValue.second}"
         binding.ivClose.setOnClickListener {
+            localEvent("noti_confirm_pop_skip")
             onClose?.invoke()
             dismissAllowingStateLoss()
         }
         binding.btnClaim.setOnClickListener {
+            localEvent("noti_confirm_pop_allow")
             onClaim?.invoke(rewardValue.first)
             dismissAllowingStateLoss()
         }
+        localEvent("noti_confirm_pop")
     }
 
     private fun startSwingAnim() {

@@ -1,21 +1,32 @@
 package com.sphere.shortvideos.notification
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
+import android.widget.RemoteViews
+import androidx.core.app.NotificationChannelCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.sphere.shortvideos.R
+import com.sphere.shortvideos.activity.LoadingActivity
+import com.sphere.shortvideos.helper.WithdrawAmountHelper
+import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.permission.PermissionHelper
 import com.sphere.shortvideos.helper.mmkv.MMKVData
 import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.logError
+import com.sphere.shortvideos.service.SphereService
 import java.util.concurrent.TimeUnit
 
 /**
@@ -24,6 +35,10 @@ import java.util.concurrent.TimeUnit
  * 功能：注册用户解锁广播，间隔 30 分钟弹出通知
  */
 object NotificationHelper {
+    private const val NOTI_ID_UNLOCK = 1002
+    private const val NOTI_ID_TIMER = 1111
+    private const val NOTI_ID_FCM_DATA = 1092
+    const val NOTI_ID_FIXED = 10091
 
     const val NOTIFICATION_ID_KEY = "notification_id"
     private const val WORK_NAME_23 = "local_notification_23"
@@ -95,8 +110,12 @@ object NotificationHelper {
 
     const val CHANNEL_ID = "unlock_notification_channel"
     private const val CHANNEL_NAME = "notification_unlock"
-    private val notificationImplUU by lazy { NotificationImpl(1002, listUserUnlockTitle, listUserUnlockContent) }
-    private val notificationImplSU by lazy { NotificationImpl(1003, listScreenUnlockTitle, listScreenUnlockContent) }
+    private val notificationImplUU by lazy {
+        NotificationImpl(NOTI_ID_UNLOCK, listUserUnlockTitle, listUserUnlockContent)
+    }
+    private val notificationImplSU by lazy {
+        NotificationImpl(NOTI_ID_UNLOCK, listScreenUnlockTitle, listScreenUnlockContent)
+    }
     private var localIndex23 by MMKVData(0)
     private var localIndex59 by MMKVData(0)
     private var localIndex79 by MMKVData(0)
@@ -108,13 +127,9 @@ object NotificationHelper {
      * 初始化通知渠道
      */
     fun initChannel(context: Context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT).apply {
-                description = "Notification_User_PRESENT"
-            }
-            val notificationManager = context.getSystemService(NotificationManager::class.java)
-            notificationManager.createNotificationChannel(channel)
-        }
+        NotificationManagerCompat.from(context).createNotificationChannel(NotificationChannelCompat.Builder(CHANNEL_ID,
+            NotificationManagerCompat.IMPORTANCE_DEFAULT).setSound(null, null).setLightsEnabled(false)
+            .setVibrationEnabled(false).setShowBadge(false).setName(CHANNEL_NAME).build())
     }
 
     /**
@@ -167,9 +182,9 @@ object NotificationHelper {
 
     fun showLocalNotification(context: Context, type: Int) {
         val (titles, descs, index, notificationId) = when (type) {
-            LOCAL_TYPE_59 -> Quad(listLocal59Title, listLocal59Content, localIndex59, 1102)
-            LOCAL_TYPE_79 -> Quad(listLocal79Title, listLocal79Content, localIndex79, 1103)
-            else -> Quad(listLocal23Title, listLocal23Content, localIndex23, 1101)
+            LOCAL_TYPE_59 -> Quad(listLocal59Title, listLocal59Content, localIndex59, NOTI_ID_TIMER)
+            LOCAL_TYPE_79 -> Quad(listLocal79Title, listLocal79Content, localIndex79, NOTI_ID_TIMER)
+            else -> Quad(listLocal23Title, listLocal23Content, localIndex23, NOTI_ID_TIMER)
         }
         if (titles.isEmpty() || descs.isEmpty()) return
         val safeIndex = index.coerceAtLeast(0) % titles.size
@@ -215,4 +230,83 @@ object NotificationHelper {
                             val descs: ArrayList<Int>,
                             val index: Int,
                             val notificationId: Int)
+
+    fun showNotiEvent(id: Int) {
+        val type = when (id) {
+            NOTI_ID_TIMER -> "noti"
+            NOTI_ID_UNLOCK -> "unlock"
+            NOTI_ID_FCM_DATA -> "fcm"
+            NOTI_ID_FIXED -> "fixed"
+            else -> "unKnown"
+        }
+        localEvent("all_noti_t", hashMapOf("type" to type))
+    }
+
+    fun clickNotiEvent(id: Int) {
+        val type = when (id) {
+            NOTI_ID_TIMER -> "noti"
+            NOTI_ID_UNLOCK -> "unlock"
+            NOTI_ID_FCM_DATA -> "fcm"
+            NOTI_ID_FIXED -> "fixed"
+            else -> "unKnown"
+        }
+        localEvent("all_noti_c", hashMapOf("type" to type))
+    }
+
+    fun showNotificationService(context: Context) {
+        if (hasNotificationPermission(context).not()) {
+            return
+        }
+        if (SphereService.isOpenService) {
+            updateFixedNotification(context)
+        } else {
+            try {
+                ContextCompat.startForegroundService(context, Intent(context, SphereService::class.java))
+            } catch (_: Throwable) {
+
+            }
+        }
+    }
+
+    fun updateFixedNotification(context: Context) {
+        runCatching {
+            NotificationManagerCompat.from(context).notify(NOTI_ID_FIXED, createFixNotification(context))
+        }
+    }
+
+    fun createFixNotification(context: Context): Notification {
+        fun buildFixedNotification() = context.run {
+            val title =
+                WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(WithdrawAmountHelper.fetchCurMoneyAndGetMoneyMinValue().first)
+            val desc = getString(R.string.wi_notification_tips)
+            val pendingIntent = PendingIntent.getActivity(this,
+                NotificationHelper.NOTI_ID_FIXED,
+                Intent(this, LoadingActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    putExtra(NOTIFICATION_ID_KEY, NotificationHelper.NOTI_ID_FIXED)
+                },
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+            val remoteView = RemoteViews(packageName, R.layout.layout_notification_fix).apply {
+                setTextViewText(R.id.tv_title, title)
+                setTextViewText(R.id.tv_des, desc)
+                setTextViewText(R.id.tv_withdraw, getString(R.string.withdraw))
+                setOnClickPendingIntent(R.id.layout_root, pendingIntent)
+                setOnClickPendingIntent(R.id.tv_withdraw, pendingIntent)
+            }
+
+            NotificationCompat.Builder(this, NotificationHelper.CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification_app)
+                .setGroupSummary(false)
+                .setSound(null)
+                .setGroup("Sphere")
+                .setContentTitle(title + desc).setContentText(title + desc)
+                .setStyle(NotificationCompat.DecoratedCustomViewStyle()).setCustomContentView(remoteView)
+                .setCustomBigContentView(remoteView)
+                .setOngoing(true)
+                .setOnlyAlertOnce(true)
+                .setContentIntent(pendingIntent).build()
+        }
+        return buildFixedNotification()
+    }
 }

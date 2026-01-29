@@ -110,6 +110,7 @@
     <string name="ad_limit_reached">Ad Limit Reached</string>
     <string name="limit_tips_des">You’ve watched all available ads for today. Try again tomorrow.</string>
     <string name="ok">Ok</string>
+    <string name="wi_notification_tips">Is Waiting In Your Wallet.</string>
 
 
 </resources>

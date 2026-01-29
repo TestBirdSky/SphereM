@@ -11,12 +11,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
-import com.google.android.gms.ads.appopen.AppOpenAd
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.baseui.GenericBindActivity
 import com.sphere.shortvideos.databinding.ActivityMainBinding
 import com.sphere.shortvideos.dialogs.BackTipsDialogFragment
-import com.sphere.shortvideos.dialogs.NormalCongratulateDialogFragment
 import com.sphere.shortvideos.dialogs.OpenNotificationDialogFragment
 import com.sphere.shortvideos.dialogs.TaskInfoDialogFragment
 import com.sphere.shortvideos.dialogs.WelcomeBonusDialogFragment
@@ -24,12 +22,11 @@ import com.sphere.shortvideos.fragment.HomeFragment
 import com.sphere.shortvideos.fragment.ProfileFragment
 import com.sphere.shortvideos.fragment.TaskFragment
 import com.sphere.shortvideos.fragment.VideoStreamFragment
-import com.sphere.shortvideos.fragment.WalletFragment
+import com.sphere.shortvideos.fragment.WithdrawFragment
 import com.sphere.shortvideos.helper.HelperRewardShow
-import com.sphere.shortvideos.helper.HelperRewardShow.showDialogType
+import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.helper.permission.PermissionHelper
-import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.notification.NotificationHelper
 import com.sphere.shortvideos.view.SpineHelper
 import com.sphere.shortvideos.vm.MainViewModel
@@ -57,6 +54,10 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
     override fun initUI() {
         setupBottomNav()
         viewModel.collectHistoryRoom()
+        lifecycleScope.launch {
+            delay(1000)
+            NotificationHelper.showNotificationService(this@MainActivity)
+        }
     }
 
     private fun setupBottomNav() {
@@ -66,7 +67,7 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         binding.bottomNav.itemIconTintList = null
         binding.bottomNav.itemTextColor = null
         val fragments =
-            listOf(HomeFragment(), VideoStreamFragment(), WalletFragment(), TaskFragment(), ProfileFragment())
+            listOf(HomeFragment(), VideoStreamFragment(), WithdrawFragment(), TaskFragment(), ProfileFragment())
         binding.viewPager.isUserInputEnabled = false
         binding.viewPager.offscreenPageLimit = fragments.size
         binding.viewPager.adapter = object : FragmentStateAdapter(supportFragmentManager, lifecycle) {
@@ -140,11 +141,11 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         return ContextCompat.getDrawable(this@MainActivity, this)
     }
 
-    fun showWelcomDialog() {
+    fun showWelcomDialog(dis: () -> Unit) {
         binding.ivFirstGuide.visibility = View.GONE
         WelcomeBonusDialogFragment().apply {
             onDismissCall = {
-                viewModel.addMoneyNotExChange(0.0)
+                dis.invoke()
                 showNotificationOpen()
             }
         }.show(supportFragmentManager, "welcome")
@@ -194,6 +195,14 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         val notificationId = intent.getIntExtra(NotificationHelper.NOTIFICATION_ID_KEY, -1)
         if (notificationId != -1) {
             binding.bottomNav.selectedItemId = R.id.tab_video
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        AdUtils.run {
+            unlockHolder.preloadIfCan()
+            rewardHolder.preloadIfCan()
         }
     }
 }

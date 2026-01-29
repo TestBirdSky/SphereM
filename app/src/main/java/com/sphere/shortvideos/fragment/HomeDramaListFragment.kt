@@ -24,6 +24,8 @@ import com.sphere.shortvideos.baseui.GenericFragment
 import com.sphere.shortvideos.databinding.FragmentHomeDramaListBinding
 import com.sphere.shortvideos.databinding.ItemDramaInfoBinding
 import com.sphere.shortvideos.dp2Px
+import com.sphere.shortvideos.helper.ad.LaunchPosition
+import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.nextView
 import com.sphere.shortvideos.showToast
 import com.sphere.shortvideos.vm.DramaListViewModel
@@ -98,6 +100,7 @@ class HomeDramaListFragment : GenericFragment<FragmentHomeDramaListBinding>() {
             }
         })
         mAdapter = DramaInfoListAdapter(requireContext()) {
+            localEvent("list_drama_c", hashMapOf("name" to it.title))
             requireContext().nextView<PangleDramaPlayActivity> {
                 putExtra(GlobalConstants.EXTRA_KEY_SHORT_PLAY, it)
             }

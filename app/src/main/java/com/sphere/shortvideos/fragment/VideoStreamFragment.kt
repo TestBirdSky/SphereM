@@ -13,6 +13,7 @@ import com.bytedance.sdk.shortplay.api.ShortPlay
 import com.sphere.shortvideos.baseui.GenericFragment
 import com.sphere.shortvideos.databinding.FragmentVideoStreamBinding
 import com.sphere.shortvideos.helper.HelperRewardShow
+import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.vm.StreamViewModel
 
 class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
@@ -83,6 +84,7 @@ class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
     override fun onResume() {
         super.onResume()
         autoRefresh()
+        localEvent("foru_page")
     }
 
     fun pauseCurrentVideo() {

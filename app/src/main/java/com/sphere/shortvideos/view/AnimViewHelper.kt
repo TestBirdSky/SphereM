@@ -140,7 +140,12 @@ object AnimViewHelper {
      * @param view 需要展示动画的View
      * @param isClaimable 是否可领取，false 会停止并重置动画
      */
-    fun playClaimablePulseAnim(view: View, isClaimable: Boolean) {
+    fun playClaimablePulseAnim(
+        view: View,
+        isClaimable: Boolean,
+        minScale: Float = 1f,
+        maxScale: Float = 1.15f
+    ) {
         val animator = view.tag as? AnimatorSet
         if (!isClaimable) {
             animator?.cancel()
@@ -152,8 +157,10 @@ object AnimViewHelper {
             return
         }
         if (animator?.isRunning == true) return
-        val scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 1.15f, 1f)
-        val scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 1.15f, 1f)
+        val safeMin = minScale.coerceAtLeast(0.6f)
+        val safeMax = maxScale.coerceAtMost(1.4f).coerceAtLeast(safeMin)
+        val scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, safeMin, safeMax, safeMin)
+        val scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, safeMin, safeMax, safeMin)
         val scaleAnim = ObjectAnimator.ofPropertyValuesHolder(view, scaleX, scaleY).apply {
             duration = 1200L
             repeatCount = ObjectAnimator.INFINITE

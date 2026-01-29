@@ -51,6 +51,7 @@ class NotificationImpl(val notificationId: Int = 1000,
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private fun show(context: Context, title: String, contextStr: String) {
         logError("show--->$title --$contextStr")
+        NotificationHelper.showNotiEvent(notificationId)
         val intent = Intent(context, LoadingActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             putExtra(NOTIFICATION_ID_KEY, notificationId)

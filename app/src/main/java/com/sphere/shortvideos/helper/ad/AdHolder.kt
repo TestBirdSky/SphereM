@@ -41,16 +41,9 @@ class AdHolder(private val position: AdPosition) {
         }
     }
 
-    fun showFullAd(
-        activity: GenericActivity,
-        eventName: String = position.aliasName,
-        canShowAd: () -> Boolean = {
-            RiskHelper.isAdLimit().not()
-        },
-        onAdDismissed: () -> Unit = {},
-        onAdShowed: () -> Unit = {},
-        rewardCall: (() -> Unit)? = null
-    ) {
+    fun showFullAd(activity: GenericActivity, eventName: String = position.aliasName, canShowAd: () -> Boolean = {
+        RiskHelper.isAdLimit().not()
+    }, onAdDismissed: () -> Unit = {}, onAdShowed: () -> Unit = {}, rewardCall: (() -> Unit)? = null) {
         AdUtils.adScope.launch {
             if (!canShowAd()) {
                 onAdDismissed()
@@ -89,7 +82,7 @@ class AdHolder(private val position: AdPosition) {
         if (null == adEntity) {
             loading = false
             onAdLoaded(false) // 加载完成
-            if (position != LaunchPosition) {
+            if (position != LaunchPosition && isAdHaveCache().not()) {
                 AdUtils.adScope.launch {
                     delay(3000)
                     preloadIfCan()
@@ -99,6 +92,12 @@ class AdHolder(private val position: AdPosition) {
         }
         adEntity.preload { success ->
             if (success) {
+                localEvent("ad_return",
+                    hashMapOf(
+                        "ad_code_id" to adEntity.adBean.adId,
+                        "ad_format" to adEntity.adBean.format,
+                        "ad_platform" to adEntity.adBean.source,
+                    ))
                 cacheList.add(adEntity)
                 loading = false
                 onAdLoaded(true)

@@ -16,6 +16,7 @@ import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.sphere.shortvideos.mApp
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.helper.RevenueHelper
+import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.risk.RiskHelper
 import com.sphere.shortvideos.logError
 import kotlinx.coroutines.Dispatchers
@@ -46,14 +47,35 @@ abstract class BaseController(val position: AdPosition, val adBean: AdItemBean) 
             AppOpenFormat -> {
 
             }
+
             InterstitialFormat -> {
 
             }
+
             RewardFormat -> {
                 RiskHelper.showRvEvent()
             }
         }
+    }
 
+    fun adLoadFiledEvent(reason: String) {
+        localEvent("ad_return_fail",
+            hashMapOf(
+                "ad_code_id" to adBean.adId,
+                "ad_format" to adBean.format,
+                "ad_platform" to adBean.source,
+                "reason" to reason,
+            ))
+    }
+
+    fun adShowFiledEvent(reason: String) {
+        localEvent("ad_impression_fail",
+            hashMapOf(
+                "ad_code_id" to adBean.adId,
+                "ad_format" to adBean.format,
+                "ad_platform" to adBean.source,
+                "reason" to reason,
+            ))
     }
 
     var onUserEarnedReward: (() -> Unit)? = null
@@ -65,25 +87,28 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
 
     override fun preload(onLoaded: (Boolean) -> Unit) {
         adLogger("begin loading")
+        localEvent("ad_request",
+            hashMapOf(
+                "ad_code_id" to adBean.adId,
+                "ad_format" to adBean.format,
+                "ad_platform" to adBean.source,
+            ))
         when (adBean.format) {
             AppOpenFormat -> {
-                AppOpenAd.load(
-                    mApp,
-                    adBean.adId,
-                    AdRequest.Builder().build(),
-                    object : AppOpenAdLoadCallback() {
-                        override fun onAdLoaded(ad: AppOpenAd) {
-                            adLogger("onAdLoad success")
-                            loadedTimeMills = System.currentTimeMillis()
-                            fullAd = ad
-                            onLoaded(true)
-                        }
+                AppOpenAd.load(mApp, adBean.adId, AdRequest.Builder().build(), object : AppOpenAdLoadCallback() {
+                    override fun onAdLoaded(ad: AppOpenAd) {
+                        adLogger("onAdLoad success")
+                        loadedTimeMills = System.currentTimeMillis()
+                        fullAd = ad
+                        onLoaded(true)
+                    }
 
-                        override fun onAdFailedToLoad(adError: LoadAdError) {
-                            adLogger("onAdLoadFailed:${adError.message}")
-                            onLoaded(false)
-                        }
-                    })
+                    override fun onAdFailedToLoad(adError: LoadAdError) {
+                        adLogger("onAdLoadFailed:${adError.message}")
+                        adLoadFiledEvent(adError.message)
+                        onLoaded(false)
+                    }
+                })
             }
 
             InterstitialFormat -> {
@@ -100,6 +125,7 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
 
                         override fun onAdFailedToLoad(adError: LoadAdError) {
                             adLogger("onAdLoadFailed:${adError.message}")
+                            adLoadFiledEvent(adError.message)
                             onLoaded(false)
                         }
                     })
@@ -116,6 +142,7 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
 
                     override fun onAdFailedToLoad(adError: LoadAdError) {
                         adLogger("onAdLoadFailed:${adError.message}")
+                        adLoadFiledEvent(adError.message)
                         onLoaded(false)
                     }
                 })
@@ -134,6 +161,7 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                 val callback = object : FullScreenContentCallback() {
                     override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                         onAdDismissed(activity, onDismissed)
+                        adShowFiledEvent(adError.message)
                     }
 
                     override fun onAdShowedFullScreenContent() {
@@ -154,6 +182,7 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                 val callback = object : FullScreenContentCallback() {
                     override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                         onAdDismissed(activity, onDismissed)
+                        adShowFiledEvent(adError.message)
                     }
 
                     override fun onAdShowedFullScreenContent() {
@@ -174,6 +203,7 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                 val callback = object : FullScreenContentCallback() {
                     override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                         onAdDismissed(activity, onDismissed)
+                        adShowFiledEvent(adError.message)
                     }
 
                     override fun onAdShowedFullScreenContent() {
@@ -187,8 +217,7 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                 ad.setOnPaidEventListener { value: AdValue ->
                     RevenueHelper.onAdmobRevenueCallback(value, adBean, position, ad.responseInfo)
                 }
-                ad.show(activity) { _: RewardItem ->
-                    // reward callback handled by caller if needed
+                ad.show(activity) { _: RewardItem -> // reward callback handled by caller if needed
                     onUserEarnedReward?.invoke()
                 }
             }
