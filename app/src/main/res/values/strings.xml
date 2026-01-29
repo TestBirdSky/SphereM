@@ -41,6 +41,33 @@
     <string name="notification_screen_on_des3">Don’t stop now, you’re doing great</string>
     <string name="notification_screen_on_title4">Forbidden love revealed</string>
     <string name="notification_screen_on_des4">Watch before the truth comes out</string>
+
+    <string name="notification_local_23_title1">Watch and withdraw cash</string>
+    <string name="notification_local_23_desc1">Each episode increases your balance. Start now.</string>
+    <string name="notification_local_23_title2">Drama that really pays</string>
+    <string name="notification_local_23_desc2">Watch now and earn real money.</string>
+    <string name="notification_local_23_title3">She cheated on the wedding day</string>
+    <string name="notification_local_23_desc3">What happened next shocked everyone.</string>
+    <string name="notification_local_23_title4">R$240 is close</string>
+    <string name="notification_local_23_desc4">Complete tasks to withdraw.</string>
+
+    <string name="notification_local_59_title1">More episodes, more earnings</string>
+    <string name="notification_local_59_desc1">Withdrawal is getting closer.</string>
+    <string name="notification_local_59_title2">He returned rich to take revenge</string>
+    <string name="notification_local_59_desc2">The family was shocked.</string>
+    <string name="notification_local_59_title3">She was kicked out... and returned a millionaire</string>
+    <string name="notification_local_59_desc3">Watch now.</string>
+    <string name="notification_local_59_title4">The lover was her best friend</string>
+    <string name="notification_local_59_desc4">The heavy drama has begun.</string>
+
+    <string name="notification_local_79_title1">Money grows with every episode</string>
+    <string name="notification_local_79_desc1">Watch one more.</string>
+    <string name="notification_local_79_title2">A slap changed everything</string>
+    <string name="notification_local_79_desc2">This episode is on fire.</string>
+    <string name="notification_local_79_title3">Surprise reward unlocked</string>
+    <string name="notification_local_79_desc3">An unexpected bonus hit your balance.</string>
+    <string name="notification_local_79_title4">Luck of the day activated</string>
+    <string name="notification_local_79_desc4">A reward has been added.</string>
     <string name="bonus_welcome_title">Welcome Bonus</string>
     <string name="bonus_welcome_action">Receive rewards</string>
     <string name="tips_info">Watch dramas and earn huge rewards!</string>
@@ -79,6 +106,10 @@
     <string name="proud_to_cash_out">-Proud to Cash Out-</string>
     <string name="arrived_via">arrived via [%s]</string>
     <string name="cant_with_tips">You have not reached the withdrawal threshold</string>
+    <string name="get_tips">Get %s</string>
+    <string name="ad_limit_reached">Ad Limit Reached</string>
+    <string name="limit_tips_des">You’ve watched all available ads for today. Try again tomorrow.</string>
+    <string name="ok">Ok</string>
 
 
 </resources>

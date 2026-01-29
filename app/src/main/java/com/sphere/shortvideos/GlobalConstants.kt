@@ -13,6 +13,10 @@ object GlobalConstants {
 
     const val PRIVACY_POLICY = "https://www.google.com" // todo
 
+    const val RISK_URL = "https://ip-prod.dramasphere.net/api/cbird"
+//    const val RISK_URL = "https://ip-test.dramasphere.com/api/cbird"// todo
+
+
     val NEW_DEFAULT_AD_LOCAL_JSON = """
         {
           "dlmsf_switch": false,

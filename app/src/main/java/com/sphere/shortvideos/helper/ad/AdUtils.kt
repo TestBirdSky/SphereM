@@ -1,7 +1,11 @@
 package com.sphere.shortvideos.helper.ad
 
+import com.chartboost.sdk.ads.Rewarded
 import com.sphere.shortvideos.GlobalConstants
 import com.sphere.shortvideos.baseui.GenericActivity
+import com.sphere.shortvideos.dialogs.ShowAdLimitDialogFragment
+import com.sphere.shortvideos.helper.mmkv.MMKVData
+import com.sphere.shortvideos.helper.risk.RiskHelper
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -10,6 +14,7 @@ import org.json.JSONObject
 
 object AdUtils {
 
+    var allAdShowNum by MMKVData(0)
     val adScope by lazy { CoroutineScope(Dispatchers.Main + SupervisorJob() + CoroutineExceptionHandler { _, _ -> }) }
     val launchHolder = AdHolder(LaunchPosition)
     val unlockHolder = AdHolder(UnlockPosition)
@@ -58,15 +63,7 @@ object AdUtils {
         return result
     }
 
-    fun showUnlockAd(activity: GenericActivity) {
-        if (unlockHolder.isAdHaveCache()) {
-            unlockHolder.showFullAd(activity)
-        } else {
-            unlockHolder.preloadIfCan()
-        }
-    }
-
-    fun showRateAd(activity: GenericActivity, dismiss: () -> Unit={}) {
+    fun showRateAd(activity: GenericActivity, dismiss: () -> Unit = {}) {
         if (DramaIntAdHelper.fetchIsShowRateAd().not()) {
             dismiss.invoke()
             return
@@ -79,13 +76,33 @@ object AdUtils {
     }
 
 
-    fun showRvAd(activity: GenericActivity) {
+    fun showRvAd(activity: GenericActivity, rewardCall: (() -> Unit) = { }, dismiss: () -> Unit = {}) {
+        if (RiskHelper.isAdLimit()) {
+            ShowAdLimitDialogFragment({
+                dismiss.invoke()
+            }).show(activity.supportFragmentManager, "limit_ad")
+            return
+        }
         if (rewardHolder.isAdHaveCache()) {
-            rewardHolder.showFullAd(activity, onAdDismissed = {
-
+            var time = 0L
+            rewardHolder.showFullAd(activity, rewardCall = rewardCall, onAdDismissed = {
+                dismiss.invoke()
+                RiskHelper.closeRvEvent(System.currentTimeMillis() - time)
+            }, onAdShowed = {
+                time = System.currentTimeMillis()
             })
         } else if (isSwitchIntAd) {
-            showUnlockAd(activity)
+            if (unlockHolder.isAdHaveCache()) {
+                val time = System.currentTimeMillis()
+                unlockHolder.showFullAd(activity, onAdDismissed = {
+                    if (System.currentTimeMillis() - time > 10000) {
+                        rewardCall.invoke()
+                    }
+                    dismiss.invoke()
+                })
+            } else {
+                unlockHolder.preloadIfCan()
+            }
         } else {
             rewardHolder.preloadIfCan()
         }

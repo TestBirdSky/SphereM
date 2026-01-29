@@ -3,21 +3,21 @@ package com.sphere.shortvideos.activity
 import android.view.View
 import androidx.activity.viewModels
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
 import com.sphere.shortvideos.GlobalConstants
-import com.sphere.shortvideos.R
 
 import com.sphere.shortvideos.baseui.GenericBindActivity
-import com.sphere.shortvideos.baseui.setColor
 import com.sphere.shortvideos.databinding.ActivityLoadingBinding
 import com.sphere.shortvideos.helper.MoneyCacheHelper
-import com.sphere.shortvideos.helper.OtherHelper
+import com.sphere.shortvideos.helper.AppHelper
+import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.mmkv.MMKVData
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
-import com.sphere.shortvideos.helper.permission.PermissionHelper
 import com.sphere.shortvideos.helper.permission.PostPermission
 import com.sphere.shortvideos.helper.session
 import com.sphere.shortvideos.nextView
+import com.sphere.shortvideos.notification.NotificationHelper
 import com.sphere.shortvideos.vm.LoadingViewModel
 
 class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
@@ -31,14 +31,20 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
     }
 
     override fun initUI() {
+        val notificationId = intent.getIntExtra(NotificationHelper.NOTIFICATION_ID_KEY, -1)
+        val fromNotification = notificationId != -1
+        if (notificationId != -1) {
+            runCatching {
+                NotificationManagerCompat.from(this).cancel(notificationId)
+            }
+        }
         viewModel.umpCompletedLiveData.observe(this) {
             if (isFirstGoLoadingPage.not()) {
                 viewModel.waitAdLoading(this)
             }
         }
         viewModel.nextLiveData.observe(this) {
-            nextView<MainActivity>()
-            finish()
+            openMain(fromNotification)
         }
         if (MMKVRepository.isNeedRequestUMP) {
             MMKVRepository.isNeedRequestUMP = false
@@ -50,17 +56,23 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
             binding.tvStart.visibility = View.VISIBLE
             binding.tvPp.visibility = View.VISIBLE
             binding.tvStart.setOnClickListener {
-                nextView<MainActivity>()
-                finish()
+                localEvent("launch_start")
+                openMain(fromNotification)
             }
             binding.tvPp.setOnClickListener {
                 CustomTabsIntent.Builder().build().launchUrl(this, GlobalConstants.PRIVACY_POLICY.toUri())
             }
         }
         session()
-        MMKVRepository.checkCueDay()
-        // todo test
-        nextView<MainActivity>()
+        MMKVRepository.checkCueDay() // todo test
+        MoneyCacheHelper.userFetchMoneyBr = 120.0
+        openMain(fromNotification)
+    }
+
+    private fun openMain(fromNotification: Boolean) {
+        nextView<MainActivity> {
+            if (fromNotification) putExtra(NotificationHelper.NOTIFICATION_ID_KEY, 1)
+        }
         finish()
     }
 
@@ -68,12 +80,13 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
 
     override fun onDestroy() {
         super.onDestroy()
-        OtherHelper.isNeedFetch = true
+        AppHelper.isNeedFetch = true
         isFirstGoLoadingPage = false
     }
 
     override fun onResume() {
         super.onResume()
         mPostPermission.requestPermission {}
+        localEvent("launch_page")
     }
 }

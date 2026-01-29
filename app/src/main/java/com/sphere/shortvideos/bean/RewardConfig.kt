@@ -47,12 +47,16 @@ data class RewardConfig(@SerializedName("money_newuser_gift") val moneyNewuserGi
     }
 
     // getVideo
-    fun getRvRewardMoney(moneyBr: Double): Pair<Double, String> {
-        return buildReward(rvVideo, moneyBr, true)
+    fun getRvRewardMoney(moneyBr: Double, withPlus: Boolean = true): Pair<Double, String> {
+        return buildReward(rvVideo, moneyBr, withPlus)
     }
 
-    fun getMoneyVideoIconReward(moneyBr: Double, withPlus: Boolean = true): Pair<Double, String> {
-        return buildReward(moneyVideoIcon, moneyBr, withPlus)
+    // 网赚纸钞挂件 、  - 每两次现金加载，自动给用户累加，需有现金收缩动画不展示弹窗
+    fun getMoneyVideoIconReward(moneyBr: Double): Double {
+        val m = moneyVideoIcon.firstOrNull {
+            it.isInRange(moneyBr * moneyRate)
+        }?.reward?.random() ?: 0.0
+        return m
     }
 
     fun getDramaTime1Reward(moneyBr: Double): Pair<Double, String> {
@@ -86,12 +90,10 @@ data class RewardConfig(@SerializedName("money_newuser_gift") val moneyNewuserGi
         return Pair(m, "+${WithdrawAmountHelper.formatMoney(m)}")
     }
 
-    private fun buildReward(
-        list: List<RewardRange>,
-        moneyBr: Double,
-        withPlus: Boolean,
-        withSpace: Boolean = true
-    ): Pair<Double, String> {
+    private fun buildReward(list: List<RewardRange>,
+                            moneyBr: Double,
+                            withPlus: Boolean,
+                            withSpace: Boolean = true): Pair<Double, String> {
         val m = list.firstOrNull {
             it.isInRange(moneyBr * moneyRate)
         }?.reward?.random() ?: 0.0

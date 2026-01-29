@@ -9,15 +9,19 @@ import com.sphere.shortvideos.logError
  * Describe:
  */
 object MoneyCacheHelper {
-    private var userFetchMoneyBr by MMKVData(0.0) //用户现在有多少钱默认存的是巴西币,需要去兑换
+    var userFetchMoneyBr by MMKVData(0.0) //用户现在有多少钱默认存的是巴西币,需要去兑换
 
 
     fun fetchPushReward(): Pair<Double, String> {
         return RewardHelper.getConfigByLanguage().getNotificationRewardMoney(userFetchMoneyBr)
     }
 
-    fun fetchRvVideoReward(): Pair<Double, String> {
+    fun fetchRvAdReward(): Pair<Double, String> {
         return RewardHelper.getConfigByLanguage().getRvRewardMoney(userFetchMoneyBr)
+    }
+
+    fun fetchWatchVideoReward(): Double {
+        return RewardHelper.getConfigByLanguage().getMoneyVideoIconReward(userFetchMoneyBr)
     }
 
 
@@ -41,6 +45,7 @@ object MoneyCacheHelper {
 
     @Synchronized
     fun addNotExchangeMoney(value: Double) {
+        logError("000>addNotExchangeMoney$value")
         if (LauageTools.isIndonesia()) {
             userFetchMoneyBr += value / WithdrawAmountHelper.IDR_PER_BRL
         } else {

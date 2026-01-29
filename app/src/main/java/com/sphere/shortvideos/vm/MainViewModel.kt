@@ -58,10 +58,6 @@ class MainViewModel : ViewModel() {
         HelperRewardShow.newUserProgress()
     }
 
-    fun fetchCurMoney(): String {
-        return curGetMoneyStr.value?.first ?: "--"
-    }
-
 
     fun addMoneyNotExChange(d: Double) {
         HelperRewardShow.addMoneyNotExChange(d)

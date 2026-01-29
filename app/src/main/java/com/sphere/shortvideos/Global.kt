@@ -19,7 +19,6 @@ lateinit var mApp: App
 val database by lazy { DramaDatabase.buildInstance(mApp) }
 val isDebugMode by lazy { true }
 var unlockIndex = 3
-var riskBean: RiskBean? = null
 
 val mFbAndAdjustHelper = FbAndAdjustHelper()
 

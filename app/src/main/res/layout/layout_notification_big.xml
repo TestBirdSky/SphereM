@@ -12,7 +12,6 @@
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="31dp"
         android:layout_marginBottom="3dp"
         android:gravity="center"
         android:textColor="#FFFFFF"
@@ -25,11 +24,10 @@
         android:id="@+id/tv_des"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="31dp"
         android:layout_marginBottom="17dp"
         android:gravity="center"
         android:textColor="#FFFFFF"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         tools:text="xxxxxxxxxxxxxxxxxxxx" />
 

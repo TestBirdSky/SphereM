@@ -9,6 +9,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.databinding.LayoutProgressbarBinding
 import com.sphere.shortvideos.helper.localEvent
+import com.sphere.shortvideos.helper.risk.RiskHelper
+import com.sphere.shortvideos.logError
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -27,6 +29,9 @@ class AdHolder(private val position: AdPosition) {
     }
 
     fun preloadIfCan() {
+        if (RiskHelper.isAdLimit()) {
+            logError("ad limit-->")
+        }
         AdUtils.adScope.launch {
             if (!isAdmobReady() || sourceList.isEmpty()) return@launch
             removeExpiredAd()
@@ -39,9 +44,12 @@ class AdHolder(private val position: AdPosition) {
     fun showFullAd(
         activity: GenericActivity,
         eventName: String = position.aliasName,
-        canShowAd: () -> Boolean = { true },
+        canShowAd: () -> Boolean = {
+            RiskHelper.isAdLimit().not()
+        },
         onAdDismissed: () -> Unit = {},
         onAdShowed: () -> Unit = {},
+        rewardCall: (() -> Unit)? = null
     ) {
         AdUtils.adScope.launch {
             if (!canShowAd()) {
@@ -58,6 +66,7 @@ class AdHolder(private val position: AdPosition) {
                 val dialog = showAdDialog(activity)
                 delay(1000L)
                 dialog?.dismiss()
+                ad.onUserEarnedReward = rewardCall
                 ad.showFullScreenAd(activity, onAdDismissed, onAdShowed)
                 localEvent("ds_ad_impression", hashMapOf("ad_pos_id" to eventName))
                 onAdLoaded = {}

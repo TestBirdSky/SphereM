@@ -1,7 +1,10 @@
 package com.sphere.shortvideos.helper.mmkv
 
+import android.provider.Settings
+import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.permission.PermissionHelper.showOpenNotifDialogFlag
 import com.sphere.shortvideos.isDebugMode
+import com.sphere.shortvideos.mApp
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -10,6 +13,8 @@ object MMKVRepository {
     var deviceId by MMKVData("")
     var userFirstCountry by MMKVData("")
     var referrerUrl by MMKVData("")
+    var installJson by MMKVData("")
+
     var isNeedRequestUMP by MMKVData(true)
     var lastSessionActive by MMKVData(0L)
 
@@ -19,7 +24,7 @@ object MMKVRepository {
     private var isCurDayStr by MMKVData("") // 当天
 
     fun checkCueDay(): Boolean {
-        if (isDebugMode) {//todo
+        if (isDebugMode) { //todo
             isCurDayStr = ""
         }
         val day = SimpleDateFormat("yyyy-MM-dd").format(Date())
@@ -27,9 +32,22 @@ object MMKVRepository {
             isCurDayStr = day
             isShowBackTips = true
             showOpenNotifDialogFlag = 30
+            AdUtils.allAdShowNum = 0
             return false
         }
         return true
+    }
+
+    private var mSphereAndroidId by MMKVData("")
+
+    val androidIdStr by lazy {
+        if (mSphereAndroidId.isEmpty()) {
+            mSphereAndroidId = Settings.Secure.getString(
+                mApp.contentResolver,
+                Settings.Secure.ANDROID_ID
+            ) ?: ""
+        }
+        mSphereAndroidId
     }
 
 }

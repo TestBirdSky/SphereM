@@ -31,9 +31,11 @@ import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.ad.UnlockPosition
 import com.sphere.shortvideos.helper.localEvent
+import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.showToast
 import com.sphere.shortvideos.toJson
 import com.sphere.shortvideos.unlockIndex
+import com.sphere.shortvideos.view.AnimViewHelper
 import com.sphere.shortvideos.view.SpineHelper
 import com.ss.ttvideoengine.Resolution
 import com.ss.ttvideoengine.TTVideoEngineInterface
@@ -385,12 +387,12 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
         binding.layoutTop.setOnClickListener {
             TaskInfoDialogFragment(this).show(supportFragmentManager, "task_fragment")
         }
-        registerMainViewModel()
+        registerLV()
     }
 
     private val spineHelper = SpineHelper()
 
-    private fun registerMainViewModel() {
+    private fun registerLV() {
         HelperRewardShow.numProgress.observe(this, {
             binding.progressPrice.progress = it
         })
@@ -408,8 +410,8 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                 }
             }
         })
-        HelperRewardShow.curGetMoneyStr.observe(this, {
-            binding.tvCurMoney.text = it.first
+        HelperRewardShow.curGetMoneyAnimLiveData.observe(this,{
+            binding.tvCurMoney.text = it
         })
         HelperRewardShow.registerConDialog(activity)
         HelperRewardShow.pauseVideoPlay.observe(this) { shouldPause ->
@@ -421,6 +423,15 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
             }
             HelperRewardShow.pauseVideoPlay.value = null
         }
+
+        HelperRewardShow.animAddMoneyDurationInMill.observe(this, {
+            logError("animAddMoney -->$it --$this")
+            if (it > 0) {
+                AnimViewHelper.playCoinFlyWithHitAnim(binding.ivIconAnim, binding.iv1, durationMs = it, scaleTo = 1.5f, end = {
+                    HelperRewardShow.animAddMoneyDurationInMill.value = 0
+                })
+            }
+        })
     }
 
 }

@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Color
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
@@ -13,9 +12,11 @@ import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.databinding.LayoutMoneyTopViewBinding
 import com.sphere.shortvideos.databinding.LayoutTaskChildBinding
 import com.sphere.shortvideos.adapter.SevenDayRewardAdapter
+import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.task.TaskHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
+import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.view.AnimViewHelper
 
 /**
@@ -23,7 +24,7 @@ import com.sphere.shortvideos.view.AnimViewHelper
  * Describe:
  */
 
-fun TextView.setColor(fullText: String, firStart: Int = 0, endIndex: Int = 5) {
+fun TextView.setColorText(fullText: String, firStart: Int = 0, endIndex: Int = 5) {
     val spannableString = SpannableString(fullText)
 
     // 3. 设置第一部分文本颜色（红色，索引0-4）
@@ -40,35 +41,52 @@ fun TextView.setColor(fullText: String, firStart: Int = 0, endIndex: Int = 5) {
     text = spannableString
 }
 
-fun LayoutMoneyTopViewBinding.refreshView(money: String, tagMoney: String, activity: MainActivity) {
-    tvCurMoney.text = money
-    val fullText = root.context.getString(R.string.withdraw_tips, tagMoney)
-    val start = fullText.indexOf(tagMoney)
+
+fun TextView.setColorText(fullText: String, tagString: String, color: Int) {
+    val start = fullText.indexOf(tagString)
     if (start >= 0) {
-        val end = start + tagMoney.length
+        val end = start + tagString.length
         val spannableString = SpannableString(fullText)
-        val highlightSpan = ForegroundColorSpan(Color.parseColor("#49F32B"))
+        val highlightSpan = ForegroundColorSpan(color)
         spannableString.setSpan(highlightSpan, start, end, SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE)
-        tvTips.text = spannableString
+        text = spannableString
     } else {
-        tvTips.text = fullText
+        text = fullText
     }
+}
+
+
+fun LayoutMoneyTopViewBinding.initView(activity: MainActivity) {
     ivPTag.setBackgroundResource(WithdrawAmountHelper.fetchMoneyBankIcon())
     layout.setOnClickListener {
         activity.showMyWalletFragment()
     }
 }
 
+fun LayoutMoneyTopViewBinding.refreshViewTagMoney(tagMoney: String) {
+    val fullText = root.context.getString(R.string.withdraw_tips, tagMoney)
+    tvTips.setColorText(fullText, tagMoney, Color.parseColor("#49F32B"))
+}
+
 fun LayoutTaskChildBinding.setTaskInfo(
     activity: GenericActivity,
     receiverMoneyEvent: (Double, ImageView) -> Unit,
 ) {
-    ivWatchAd.setOnClickListener { // todo 显示广告
-
+    ivWatchAd.setOnClickListener {
+        ivWatchAd.isClickable = false
+        AdUtils.showRvAd(activity, {
+            HelperRewardShow.addMoneyNotExChange(MoneyCacheHelper.fetchRvAdReward().first)
+        }, dismiss = {
+            ivWatchAd.isClickable = true
+        })
     }
     bgH5.setOnClickListener { // todo 显示H5
 
     }
+    val moneyWatchRv = MoneyCacheHelper.fetchRvAdReward()
+    val tagStr = moneyWatchRv.second
+    val fullText = root.context.getString(R.string.get_tips, tagStr)
+    tvAdGo.setColorText(fullText, tagStr, Color.parseColor("#F3CD0C"))
     AnimViewHelper.playClaimablePulseAnim(ivH51, true)
 
     isAnim = false

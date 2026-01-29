@@ -1,24 +1,23 @@
 package com.sphere.shortvideos.fragment
 
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.animation.ObjectAnimator
-import android.animation.PropertyValuesHolder
-import android.animation.ValueAnimator
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.bytedance.sdk.shortplay.api.EpisodeData
 import com.bytedance.sdk.shortplay.api.PSSDK
 import com.bytedance.sdk.shortplay.api.ShortPlay
@@ -28,28 +27,26 @@ import com.sphere.shortvideos.R
 import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.activity.PangleDramaPlayActivity
 import com.sphere.shortvideos.baseui.GenericFragment
-import com.sphere.shortvideos.baseui.refreshView
+import com.sphere.shortvideos.baseui.initView
+import com.sphere.shortvideos.baseui.refreshViewTagMoney
 import com.sphere.shortvideos.database
 import com.sphere.shortvideos.database.DramaCollectEntity
 import com.sphere.shortvideos.databinding.FragmentPangleVideoContainerBinding
-import com.sphere.shortvideos.dialogs.NormalCongratulateDialogFragment
 import com.sphere.shortvideos.helper.HelperRewardShow
-import com.sphere.shortvideos.helper.HelperRewardShow.showDialogType
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.nextView
 import com.sphere.shortvideos.showToast
 import com.sphere.shortvideos.toJson
+import com.sphere.shortvideos.view.AnimViewHelper
 import com.sphere.shortvideos.view.SpineHelper
 import com.sphere.shortvideos.vm.MainViewModel
 import com.ss.ttvideoengine.TTVideoEngineInterface
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.getValue
 
 class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContainerBinding>() {
     private val spineHelper = SpineHelper()
@@ -161,7 +158,9 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
                 showDramaFragment(item)
             }
         }
-
+        activity?.let {
+            binding.layoutMoney.initView(it as MainActivity)
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -348,6 +347,21 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
         viewModel.numProgress.observe(viewLifecycleOwner, numProgressObserver)
         viewModel.numTime.observe(viewLifecycleOwner, numTimeObserver)
         viewModel.nextRewordType.observe(viewLifecycleOwner, nextRewardObserver)
+        HelperRewardShow.curGetMoneyAnimLiveData.observe(this, {
+            binding.layoutMoney.tvCurMoney.text = it
+        })
+        HelperRewardShow.curMoneyNeedAnimLiveData.observe(this, {
+            binding.layoutMoney.refreshViewTagMoney(it)
+        })
+        HelperRewardShow.animAddMoneyDurationInMill.observe(this, {
+            if (it > 0) {
+                AnimViewHelper.playCoinFlyWithHitAnim(binding.ivIconAnim,
+                    binding.layoutMoney.ivPack,
+                    durationMs = it,
+                    scaleTo = 1.4f)
+                HelperRewardShow.animAddMoneyDurationInMill.value = 0
+            }
+        })
     }
 
 }

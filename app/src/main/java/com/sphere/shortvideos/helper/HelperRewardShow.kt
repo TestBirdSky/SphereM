@@ -34,7 +34,10 @@ object HelperRewardShow {
 
     fun init() {
         if (curGetMoneyStr.value == Pair("", "")) {
-            curGetMoneyStr.value = WithdrawAmountHelper.fetchCurMoneyAndWithdrawNeedMoney()
+            val pair = WithdrawAmountHelper.fetchCurMoneyAndWithdrawNeedMoney()
+            curGetMoneyStr.value = pair
+            curGetMoneyAnimLiveData.value = pair.first
+            curMoneyNeedAnimLiveData.value = pair.second
         }
     }
 
@@ -51,6 +54,10 @@ object HelperRewardShow {
                 var nextProgress = (numProgress.value ?: 0) + 1
                 if (nextProgress >= progressMax) {
                     nextProgress = 0
+                    if (num == 2) {
+
+                    } // todo test
+                    addMoneyInTwoWatchVideo(this)
                     num += 1
                     if (num > maxNum) {
                         num = 1
@@ -82,28 +89,54 @@ object HelperRewardShow {
 
     fun addMoneyNotExChange(d: Double) {
         MoneyCacheHelper.addNotExchangeMoney(d)
-        curGetMoneyStr.postValue(WithdrawAmountHelper.fetchCurMoneyAndWithdrawNeedMoney())
-        playMoneyIncreaseAnimAndSave(d)
+        playMoneyIncreaseAnimAndSave(d, {
+            curGetMoneyStr.postValue(WithdrawAmountHelper.fetchCurMoneyAndWithdrawNeedMoney())
+        })
     }
 
-    val moneyAnimLiveData = MutableLiveData<String>()
+    val curGetMoneyAnimLiveData = MutableLiveData<String>()
+    val curMoneyNeedAnimLiveData = MutableLiveData<String>() // 还差多少的钱体现的动画
+
+    val animAddMoneyDurationInMill = MutableLiveData<Long>(0)
 
     private var moneyAnimator: ValueAnimator? = null
+    private var moneyNeedAnimator: ValueAnimator? = null
 
 
-    private fun playMoneyIncreaseAnimAndSave(reward: Double) {
-        moneyAnimator?.cancel()
-        if (reward <= 0) {
-            return
+    private fun addMoneyInTwoWatchVideo(scope: CoroutineScope) {
+        scope.launch(Dispatchers.Main) {
+            val addReward = MoneyCacheHelper.fetchWatchVideoReward()
+            val animTime = 800L
+            animAddMoneyDurationInMill.value = animTime
+            delay(animTime)
+            addMoneyNotExChange(addReward)
         }
-        val endValue = MoneyCacheHelper.fetchCurMoney()
+    }
+
+    private fun playMoneyIncreaseAnimAndSave(reward: Double, end: () -> Unit) {
+        moneyAnimator?.cancel()
+        moneyNeedAnimator?.cancel()
+        if (reward <= 0) return
+        val endValue = MoneyCacheHelper.fetchCurMoney().coerceAtLeast(0.0)
         val startValue = (endValue - reward).coerceAtLeast(0.0)
+        val total = WithdrawAmountHelper.fetchCurMoneyAndGetMoneyMinValue().second
+        val startNeed = (total - startValue).coerceAtLeast(0.0)
+        val endNeed = (total - endValue).coerceAtLeast(0.0)
         moneyAnimator = ValueAnimator.ofFloat(startValue.toFloat(), endValue.toFloat()).apply {
             duration = 600L
             interpolator = AccelerateDecelerateInterpolator()
             addUpdateListener { animator ->
                 val value = (animator.animatedValue as Float).toDouble()
-                moneyAnimLiveData.postValue(WithdrawAmountHelper.moneyFormatAddUnit(value))
+                curGetMoneyAnimLiveData.postValue(WithdrawAmountHelper.moneyFormatAddUnit(value))
+            }
+            start()
+        }
+        moneyNeedAnimator = ValueAnimator.ofFloat(startNeed.toFloat(), endNeed.toFloat()).apply {
+            duration = 600L
+            interpolator = AccelerateDecelerateInterpolator()
+            addUpdateListener { animator ->
+                val value = (animator.animatedValue as Float).toDouble()
+                curMoneyNeedAnimLiveData.postValue(WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(value))
             }
             start()
         }
@@ -136,9 +169,12 @@ object HelperRewardShow {
                 0 -> {
                     postOnce(true)
                     NormalCongratulateDialogFragment().apply {
-                        onClaim = {
-                            postOnce(false)
-                            AdUtils.showRvAd(activity)
+                        onClaim = { reward ->
+                            AdUtils.showRvAd(activity, {
+                                addMoneyNotExChange(reward)
+                            }, dismiss = {
+                                postOnce(false)
+                            })
                         }
                         onClose = {
                             AdUtils.showRateAd(activity)
@@ -150,8 +186,10 @@ object HelperRewardShow {
                 1 -> {
                     postOnce(true)
                     LuckChallengeDialogFragment().apply {
-                        onResult = {
-                            AdUtils.showRvAd(activity)
+                        onResult = { reward ->
+                            AdUtils.showRvAd(activity, {
+                                addMoneyNotExChange(reward)
+                            })
                             postOnce(false)
                         }
                     }.show(activity.supportFragmentManager, "luck")

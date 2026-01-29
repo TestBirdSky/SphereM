@@ -11,6 +11,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.activity.LoadingActivity
 import com.sphere.shortvideos.logError
+import com.sphere.shortvideos.notification.NotificationHelper.NOTIFICATION_ID_KEY
 
 /**
  * Date：2026/1/21
@@ -39,14 +40,23 @@ class NotificationImpl(val notificationId: Int = 1000,
         }
     }
 
+    fun showNotification(context: Context, title: String, contextStr: String) {
+        if (NotificationHelper.hasNotificationPermission(context).not()) {
+            logError("no post permission")
+            return
+        }
+        show(context, title, contextStr)
+    }
+
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private fun show(context: Context, title: String, contextStr: String) {
         logError("show--->$title --$contextStr")
         val intent = Intent(context, LoadingActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra(NOTIFICATION_ID_KEY, notificationId)
         }
         val pendingIntent = PendingIntent.getActivity(context,
-            0,
+            notificationId,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
@@ -63,16 +73,11 @@ class NotificationImpl(val notificationId: Int = 1000,
             setOnClickPendingIntent(R.id.tv_btn, pendingIntent)
         }
 
-        val notification =
-            NotificationCompat.Builder(context, NotificationHelper.CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification_app)
-                .setContentTitle(title)
-                .setContentText(contextStr)
-                .setStyle(NotificationCompat.DecoratedCustomViewStyle())
-                .setCustomContentView(smallView)
-                .setCustomBigContentView(bigView)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(pendingIntent).setAutoCancel(true).build()
+        val notification = NotificationCompat.Builder(context, NotificationHelper.CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_notification_app).setContentTitle(title).setContentText(contextStr)
+            .setStyle(NotificationCompat.DecoratedCustomViewStyle()).setCustomContentView(smallView)
+            .setCustomBigContentView(bigView).setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent).setAutoCancel(true).build()
         try {
             NotificationManagerCompat.from(context).notify(notificationId, notification)
         } catch (e: Exception) {

@@ -44,6 +44,33 @@
     <string name="notification_screen_on_title4">Cinta terlarang terbongkar</string>
     <string name="notification_screen_on_des4">Nonton sebelum semuanya terungkap</string>
 
+    <string name="notification_local_23_title1">Nonton drama dapat uang</string>
+    <string name="notification_local_23_desc1">Setiap episode menambah saldo kamu.</string>
+    <string name="notification_local_23_title2">Setiap episode ada hasilnya</string>
+    <string name="notification_local_23_desc2">Nonton dan kumpulkan uang.</string>
+    <string name="notification_local_23_title3">Penarikan Rp720.000 dikonfirmasi</string>
+    <string name="notification_local_23_desc3">Kamu dapat hadiah tambahan.</string>
+    <string name="notification_local_23_title4">Rp720.000 siap ditarik</string>
+    <string name="notification_local_23_desc4">Saldo kamu sudah memenuhi syarat.</string>
+
+    <string name="notification_local_59_title1">Saldo naik sambil nonton</string>
+    <string name="notification_local_59_desc1">Lanjutkan sekarang.</string>
+    <string name="notification_local_59_title2">Tinggal selangkah ke penarikan</string>
+    <string name="notification_local_59_desc2">Lanjut nonton.</string>
+    <string name="notification_local_59_title3">Bonus kejutan diterima</string>
+    <string name="notification_local_59_desc3">Saldo kamu baru saja bertambah.</string>
+    <string name="notification_local_59_title4">Bonus tambahan terdeteksi</string>
+    <string name="notification_local_59_desc4">Masuk untuk melihat detail.</string>
+
+    <string name="notification_local_79_title1">Menantu menampar mertua di hari pertama</string>
+    <string name="notification_local_79_desc1">Drama ini bikin emosi.</string>
+    <string name="notification_local_79_title2">Suami berselingkuh dengan sahabat istri</string>
+    <string name="notification_local_79_desc2">Rahasia akhirnya terbongkar.</string>
+    <string name="notification_local_79_title3">Reward mendadak terbuka</string>
+    <string name="notification_local_79_desc3">Jangan lewatkan.</string>
+    <string name="notification_local_79_title4">Rp720.000 bisa ditarik sekarang</string>
+    <string name="notification_local_79_desc4">Masuk dan lakukan penarikan.</string>
+
     <string name="fortune_challenge">Tantangan Roda Keberuntungan</string>
     <string name="redeem">Klaim</string>
 </resources>

@@ -3,7 +3,6 @@ package com.sphere.shortvideos.fragment
 import android.text.format.Formatter
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
@@ -17,7 +16,8 @@ import com.sphere.shortvideos.activity.DramaHistoryActivity
 import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.activity.PangleDramaPlayActivity
 import com.sphere.shortvideos.baseui.GenericFragment
-import com.sphere.shortvideos.baseui.refreshView
+import com.sphere.shortvideos.baseui.initView
+import com.sphere.shortvideos.baseui.refreshViewTagMoney
 import com.sphere.shortvideos.databinding.FragmentProfileBinding
 import com.sphere.shortvideos.fragment.adapters.HistoryAdapter
 import com.sphere.shortvideos.fromJson
@@ -56,7 +56,7 @@ class ProfileFragment : GenericFragment<FragmentProfileBinding>() {
         viewModel.historyLiveData.observe(this) {
             mAdapter.submitList(it.take(3))
         }
-        registerViewModel()
+        registerLV()
     }
 
     private fun initHistoryAdapter() {
@@ -89,11 +89,13 @@ class ProfileFragment : GenericFragment<FragmentProfileBinding>() {
         return@runCatching totalSize
     }.getOrNull() ?: 0L
 
-    private fun registerViewModel() {
+    private fun registerLV() {
+        activity?.let {
+            binding.layoutMoney.initView(it as MainActivity)
+        }
         viewModel.curGetMoneyStr.observe(this) { pair ->
-            activity?.let {
-                binding.layoutMoney.refreshView(pair.first, pair.second, it as MainActivity)
-            }
+            binding.layoutMoney.tvCurMoney.text = pair.first
+            binding.layoutMoney.refreshViewTagMoney(pair.second)
         }
     }
 

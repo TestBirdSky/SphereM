@@ -39,7 +39,7 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
         binding.tvWithdraw.setOnClickListener {
             (activity as? MainActivity)?.jumpWallet()
         }
-        HelperRewardShow.moneyAnimLiveData.observe(viewLifecycleOwner) { moneyText ->
+        HelperRewardShow.curGetMoneyAnimLiveData.observe(viewLifecycleOwner) { moneyText ->
             binding.tvMoney.text = moneyText
         }
         binding.layoutPop1.setOnClickListener {
@@ -82,7 +82,6 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
             setupWatchCoins()
         }
         refreshMoney()
-        binding.tvMoney.text = viewModel.fetchCurMoney()
         startPopFloatAnim()
     }
 
@@ -97,7 +96,7 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
     private fun setupWatchCoins() {
         (activity as? MainActivity)?.let {
             binding.layoutTask.setTaskInfo(it, receiverMoneyEvent = { reward, sourceView ->
-                AnimViewHelper.playCoinFlyAnim(sourceView, binding.iv1)
+                AnimViewHelper.playCoinFlyCopyAnim(sourceView, binding.iv1)
             })
         }
     }

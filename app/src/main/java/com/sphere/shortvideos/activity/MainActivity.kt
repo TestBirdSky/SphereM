@@ -1,5 +1,6 @@
 package com.sphere.shortvideos.activity
 
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
@@ -29,6 +30,7 @@ import com.sphere.shortvideos.helper.HelperRewardShow.showDialogType
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.helper.permission.PermissionHelper
 import com.sphere.shortvideos.logError
+import com.sphere.shortvideos.notification.NotificationHelper
 import com.sphere.shortvideos.view.SpineHelper
 import com.sphere.shortvideos.vm.MainViewModel
 import kotlinx.coroutines.delay
@@ -182,4 +184,16 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         TaskInfoDialogFragment(this).show(supportFragmentManager, "task_fragment")
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        selectForYouIfFromNotification(intent)
+    }
+
+
+    private fun selectForYouIfFromNotification(intent: Intent) {
+        val notificationId = intent.getIntExtra(NotificationHelper.NOTIFICATION_ID_KEY, -1)
+        if (notificationId != -1) {
+            binding.bottomNav.selectedItemId = R.id.tab_video
+        }
+    }
 }

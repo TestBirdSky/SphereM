@@ -9,9 +9,9 @@ import com.sphere.shortvideos.bean.RiskBean
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.ad.DramaIntAdHelper
 import com.sphere.shortvideos.helper.reward.RewardHelper
+import com.sphere.shortvideos.helper.risk.RiskHelper
 import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.mFbAndAdjustHelper
-import com.sphere.shortvideos.riskBean
 import com.sphere.shortvideos.unlockIndex
 
 class RemoteConfHelper {
@@ -53,9 +53,8 @@ class RemoteConfHelper {
 
     private fun fetchRisk() {
         val str = getString("risk_control")
-        runCatching {
-            val bean = Gson().fromJson(str, RiskBean::class.java)
-            riskBean = bean
+        if (str.isNotEmpty()){
+            RiskHelper.refreshRiskBean(str)
         }
         val fbInfo = getString("drama_fb")
         mFbAndAdjustHelper.initFb(fbInfo)

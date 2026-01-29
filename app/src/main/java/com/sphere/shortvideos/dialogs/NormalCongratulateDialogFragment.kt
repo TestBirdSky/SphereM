@@ -18,7 +18,7 @@ import com.sphere.shortvideos.view.AnimViewHelper
  */
 class NormalCongratulateDialogFragment : DialogFragment() {
 
-    var onClaim: (() -> Unit)? = null
+    var onClaim: ((Double) -> Unit)? = null
     var onClose: (() -> Unit)? = null
 
     private var _binding: DialogCongratulateBinding? = null
@@ -43,9 +43,11 @@ class NormalCongratulateDialogFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         AnimViewHelper.playWelcomeBonusAnim(binding.ivAnim, binding.ivRewardBox)
         AnimViewHelper.slideInFromTop(binding.ivAnim2, 1200L)
-        val con = MoneyCacheHelper.fetchRvVideoReward()
+        val con = MoneyCacheHelper.fetchRvAdReward()
         val money = WithdrawAmountHelper.fetchCurMoneyAndGetMoneyMinValue()
-        val des = WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(money.first) + "/" + WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(money.second)
+        val des =
+            WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(money.first) + "/" + WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(
+                money.second)
         binding.tvPro.text = des
         binding.progressView.progress = WithdrawAmountHelper.fetchGetMoneyProgress()
         binding.tvRewardValue.text = con.second
@@ -57,7 +59,7 @@ class NormalCongratulateDialogFragment : DialogFragment() {
             binding.ivClose.performClick()
         }
         binding.btnClaim.setOnClickListener {
-            onClaim?.invoke()
+            onClaim?.invoke(money.first * 2)
             dismissAllowingStateLoss()
         }
     }

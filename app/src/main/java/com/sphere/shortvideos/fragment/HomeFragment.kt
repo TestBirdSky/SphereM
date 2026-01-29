@@ -3,7 +3,6 @@ package com.sphere.shortvideos.fragment
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -14,8 +13,10 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.baseui.GenericFragment
-import com.sphere.shortvideos.baseui.refreshView
+import com.sphere.shortvideos.baseui.initView
+import com.sphere.shortvideos.baseui.refreshViewTagMoney
 import com.sphere.shortvideos.databinding.FragmentHomeBinding
+import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.vm.MainViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,14 +53,13 @@ class HomeFragment : GenericFragment<FragmentHomeBinding>() {
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = categories.getOrNull(position)?.name ?: ""
         }.attach()
-        registerViewModel()
-        //        loadData()
+        registerLiveData() //        loadData()
     }
 
     override fun onResume() {
         super.onResume()
         loadData()
-
+        localEvent("list_page")
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -92,11 +92,13 @@ class HomeFragment : GenericFragment<FragmentHomeBinding>() {
             })
     }
 
-    private fun registerViewModel() {
+    private fun registerLiveData() {
+        activity?.let {
+            binding.layoutMoney.initView(it as MainActivity)
+        }
         viewModel.curGetMoneyStr.observe(this) { pair ->
-            activity?.let {
-                binding.layoutMoney.refreshView(pair.first, pair.second, it as MainActivity)
-            }
+            binding.layoutMoney.tvCurMoney.text = pair.first
+            binding.layoutMoney.refreshViewTagMoney(pair.second)
         }
     }
 

@@ -1,4 +1,4 @@
-package com.sphere.shortvideos.helper
+package com.sphere.shortvideos.helper.risk
 
 import android.content.Context
 import cn.shuzilm.core.Main
@@ -22,7 +22,9 @@ import java.io.IOException
  * Date：2026/1/20
  * Describe:
  */
-object HelperCheckTU {
+object HelperRiskNetCheck {
+    var checkIpStatus by MMKVData("")
+    private val mIpCheckHelper by lazy { IpCheckHelper() }
     var riskDevType by MMKVData(-1)
 
     private val scop = CoroutineScope(Dispatchers.IO)
@@ -40,7 +42,10 @@ object HelperCheckTU {
 
 
     fun requestHerUser(context: Context) {
-        // 必须先初始化，再调用其他方法
+        if (checkIpStatus.isEmpty()) {
+            mIpCheckHelper.netRequest()
+        } // 必须先初始化，再调用其他方法
+        logError("requestHerUser-->$checkIpStatus")
         init(context)
         Main.getQueryID(context, "", "", true) { p0 ->
             logError("requestHerUser--->$p0")

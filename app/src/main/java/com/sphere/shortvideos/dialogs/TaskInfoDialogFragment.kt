@@ -18,7 +18,8 @@ import com.sphere.shortvideos.view.AnimViewHelper
  * Date：2026/1/27
  * Describe: Task info dialog
  */
-class TaskInfoDialogFragment(val ac:GenericActivity) : DialogFragment() {
+class TaskInfoDialogFragment(val ac: GenericActivity) : DialogFragment() {
+    private val con by lazy { WithdrawAmountHelper.fetchCurMoneyAndGetMoneyMinValue().second }
 
     var onClose: (() -> Unit)? = null
 
@@ -44,7 +45,7 @@ class TaskInfoDialogFragment(val ac:GenericActivity) : DialogFragment() {
         }
         refreshMoney()
         binding.layoutTask.setTaskInfo(ac, receiverMoneyEvent = { m, sourceView ->
-            AnimViewHelper.playCoinFlyAnim(sourceView, binding.ivM)
+            AnimViewHelper.playCoinFlyCopyAnim(sourceView, binding.ivM)
             refreshMoney()
         })
     }

@@ -1,5 +1,6 @@
 package com.sphere.shortvideos.view
 
+import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.Keyframe
 import android.animation.ObjectAnimator
@@ -172,38 +173,51 @@ object AnimViewHelper {
 
     /**
      * 复制一个临时View做飞行动画，原View保持不动
-     * @param sourceView 要复制的View
+     * @param copyView 要复制的View
      * @param targetView 飞向的目标View
      * @param scaleTo 先缩放到该比例再飞，默认0.8
      * @param durationMs 动画时长，默认600毫秒
      * @param end 结束回调
      */
-    fun playCoinFlyAnim(
-        sourceView: ImageView,
+    fun playCoinFlyCopyAnim(
+        copyView: ImageView,
         targetView: View,
         scaleTo: Float = 0.8f,
         durationMs: Long = 800L,
         end: (() -> Unit)? = null
     ) {
-        val rootView = (sourceView.rootView as? ViewGroup) ?: return
-        val drawable = sourceView.drawable ?: return
-        val animView = ImageView(sourceView.context).apply {
+        val rootView = (copyView.rootView as? ViewGroup) ?: return
+        val drawable = copyView.drawable ?: copyView.background ?: return
+        val animView = ImageView(copyView.context).apply {
             setImageDrawable(drawable)
-            layoutParams = ViewGroup.LayoutParams(sourceView.width, sourceView.height)
+            layoutParams = ViewGroup.LayoutParams(copyView.width, copyView.height)
             visibility = View.INVISIBLE
             alpha = 0f
         }
         rootView.addView(animView)
+        playCoinFlyAnim(animView, copyView, targetView, durationMs, scaleTo, {
+            rootView.removeView(animView)
+            end?.invoke()
+        })
+    }
+
+    private fun playCoinFlyAnim(animView: ImageView,
+                                startView: ImageView,
+                                targetView: View,
+                                durationMs: Long,
+                                scaleTo: Float,
+                                end: (() -> Unit)?) {
+        val rootView = (startView.rootView as? ViewGroup) ?: return
         animView.post {
             val rootLocation = IntArray(2)
             val startLocation = IntArray(2)
             val endLocation = IntArray(2)
             rootView.getLocationInWindow(rootLocation)
-            sourceView.getLocationInWindow(startLocation)
+            startView.getLocationInWindow(startLocation)
             targetView.getLocationInWindow(endLocation)
 
-            val startX = startLocation[0] - rootLocation[0] + sourceView.width / 2f - animView.width / 2f
-            val startY = startLocation[1] - rootLocation[1] + sourceView.height / 2f - animView.height / 2f
+            val startX = startLocation[0] - rootLocation[0] + startView.width / 2f - animView.width / 2f
+            val startY = startLocation[1] - rootLocation[1] + startView.height / 2f - animView.height / 2f
             val endX = endLocation[0] - rootLocation[0] + targetView.width / 2f - animView.width / 2f
             val endY = endLocation[1] - rootLocation[1] + targetView.height / 2f - animView.height / 2f
 
@@ -245,11 +259,67 @@ object AnimViewHelper {
                 playTogether(xAnim, yAnim, alphaAnim)
                 play(xAnim).after(shrinkX)
                 addListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: android.animation.Animator) {
-                        rootView.removeView(animView)
+                    override fun onAnimationEnd(animation: Animator) {
                         end?.invoke()
                     }
                 })
+                start()
+            }
+        }
+    }
+
+    /**
+     * 复制一个临时View飞向目标，命中后给目标反馈动画
+     * 推荐：轻微放大回弹，反馈更明显且不突兀
+     */
+    fun playCoinFlyWithHitAnim(
+        animView: ImageView,
+        targetView: View,
+        scaleTo: Float = 0.8f,
+        durationMs: Long = 750L,
+        hitScale: Float = 1.2f,
+        hitDurationMs: Long = 350L,
+        end: (() -> Unit)? = null
+    ) {
+        animView.post {
+            val rootView = (animView.rootView as? ViewGroup) ?: return@post
+            val drawable = animView.drawable ?: animView.background ?: return@post
+            val width = animView.width.takeIf { it > 0 } ?: animView.measuredWidth
+            val height = animView.height.takeIf { it > 0 } ?: animView.measuredHeight
+            if (width <= 0 || height <= 0) return@post
+
+            val flyView = ImageView(animView.context).apply {
+                setImageDrawable(drawable)
+                layoutParams = ViewGroup.LayoutParams(width, height)
+                visibility = View.INVISIBLE
+                alpha = 0f
+            }
+            rootView.addView(flyView)
+            playCoinFlyAnim(flyView, animView, targetView, durationMs, scaleTo, {
+                rootView.removeView(flyView)
+                playHitPulseAnim(targetView, hitScale, hitDurationMs)
+                end?.invoke()
+            })
+        }
+    }
+
+    /**
+     * 被击中反馈动画：轻微放大回弹
+     */
+    fun playHitPulseAnim(
+        targetView: View,
+        hitScale: Float = 1.1f,
+        hitDurationMs: Long = 220L
+    ) {
+        targetView.post {
+            targetView.animate().cancel()
+            val scale = hitScale.coerceIn(1.0f, 1.3f)
+            val scaleX = ObjectAnimator.ofFloat(targetView, View.SCALE_X, 1f, scale, 1f)
+            val scaleY = ObjectAnimator.ofFloat(targetView, View.SCALE_Y, 1f, scale, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = hitDurationMs
+                interpolator = AccelerateDecelerateInterpolator()
                 start()
             }
         }

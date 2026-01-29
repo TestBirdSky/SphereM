@@ -4,12 +4,10 @@ import android.app.Application
 import com.bytedance.sdk.shortplay.api.PSSDK
 import com.google.android.gms.ads.MobileAds
 import com.sphere.shortvideos.helper.AppLifecycleManager
-import com.sphere.shortvideos.helper.OtherHelper
-import com.sphere.shortvideos.helper.HelperCheckTU
+import com.sphere.shortvideos.helper.AppHelper
+import com.sphere.shortvideos.helper.risk.HelperRiskNetCheck
 import com.sphere.shortvideos.helper.InstallReferrerManager
-import com.sphere.shortvideos.helper.LauageTools
 import com.sphere.shortvideos.helper.RemoteConfHelper
-import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.notification.NotificationHelper
@@ -32,9 +30,10 @@ class App : Application() {
         initPSSDK()
         InstallReferrerManager.fetch()
         initBackgroundActive()
-        HelperCheckTU.requestHerUser(this@App)
-        OtherHelper.registerInfo(this)
+        HelperRiskNetCheck.requestHerUser(this@App)
+        AppHelper.registerInfo(this)
         mFbAndAdjustHelper.initAdjust(this)
+        NotificationHelper.scheduleLocalNotifications(this)
     }
 
     private fun initBackgroundActive() {

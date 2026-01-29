@@ -12,13 +12,11 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.animation.doOnEnd
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.lifecycleScope
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.databinding.DialogLuckChallengeBinding
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.view.AnimViewHelper
-import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 /**
@@ -69,7 +67,7 @@ class LuckChallengeDialogFragment : DialogFragment() {
         AnimViewHelper.playWelcomeBonusAnim(binding.ivAnim, binding.ivRewardBox)
         AnimViewHelper.slideInFromTop(binding.ivAnim2, 1200L)
         binding.ivArrow.visibility = View.INVISIBLE
-        val reward = MoneyCacheHelper.fetchRvVideoReward()
+        val reward = MoneyCacheHelper.fetchRvAdReward()
         val money = WithdrawAmountHelper.fetchCurMoneyAndGetMoneyMinValue()
         val progressText = WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(money.first) +
                 "/" +

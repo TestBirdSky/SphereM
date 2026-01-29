@@ -16,6 +16,7 @@ import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.sphere.shortvideos.mApp
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.helper.RevenueHelper
+import com.sphere.shortvideos.helper.risk.RiskHelper
 import com.sphere.shortvideos.logError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -38,6 +39,24 @@ abstract class BaseController(val position: AdPosition, val adBean: AdItemBean) 
             dismissed()
         }
     }
+
+    fun showAdEvent(ad: Any) {
+        AdUtils.allAdShowNum++
+        when (adBean.format) {
+            AppOpenFormat -> {
+
+            }
+            InterstitialFormat -> {
+
+            }
+            RewardFormat -> {
+                RiskHelper.showRvEvent()
+            }
+        }
+
+    }
+
+    var onUserEarnedReward: (() -> Unit)? = null
 }
 
 class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(position, adBean) {
@@ -119,6 +138,7 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
 
                     override fun onAdShowedFullScreenContent() {
                         onAdShowed()
+                        showAdEvent(ad)
                     }
 
                     override fun onAdDismissedFullScreenContent() = onAdDismissed(activity, onDismissed)
@@ -138,6 +158,7 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
 
                     override fun onAdShowedFullScreenContent() {
                         onAdShowed()
+                        showAdEvent(ad)
                     }
 
                     override fun onAdDismissedFullScreenContent() = onAdDismissed(activity, onDismissed)
@@ -157,6 +178,7 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
 
                     override fun onAdShowedFullScreenContent() {
                         onAdShowed()
+                        showAdEvent(ad)
                     }
 
                     override fun onAdDismissedFullScreenContent() = onAdDismissed(activity, onDismissed)
@@ -167,6 +189,7 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                 }
                 ad.show(activity) { _: RewardItem ->
                     // reward callback handled by caller if needed
+                    onUserEarnedReward?.invoke()
                 }
             }
 
