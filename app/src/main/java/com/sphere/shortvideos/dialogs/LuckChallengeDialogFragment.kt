@@ -76,6 +76,7 @@ class LuckChallengeDialogFragment : DialogFragment() {
         binding.tvPro.text = progressText
         binding.progressView.progress = WithdrawAmountHelper.fetchGetMoneyProgress()
         binding.tvRewardValue.text = reward.second
+        AnimViewHelper.applyPressBounceEffect(binding.btnClaim)
         binding.btnClaim.setOnClickListener {
             localEvent("wheel_pop_c")
             onResult?.invoke(rate * reward.first)

@@ -23,6 +23,7 @@ import com.sphere.shortvideos.fragment.adapters.HistoryAdapter
 import com.sphere.shortvideos.fromJson
 import com.sphere.shortvideos.nextView
 import com.sphere.shortvideos.showToast
+import com.sphere.shortvideos.view.AnimViewHelper
 import com.sphere.shortvideos.vm.MainViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,6 +39,10 @@ class ProfileFragment : GenericFragment<FragmentProfileBinding>() {
     }
 
     override fun initUI() {
+        AnimViewHelper.applyPressGrayOverlay(binding.btnClearCache)
+        AnimViewHelper.applyPressGrayOverlay(binding.btnHistory)
+        AnimViewHelper.applyPressGrayOverlay(binding.btnCollection)
+        AnimViewHelper.applyPressGrayOverlay(binding.btnPrivacy)
         binding.btnClearCache.setOnClickListener {
             PSSDK.clearLocalCache()
             binding.textCacheSize.text = "0 B"

@@ -10,8 +10,11 @@ import com.google.android.ump.UserMessagingPlatform
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.helper.EventData
 import com.sphere.shortvideos.helper.ad.AdUtils
+import com.sphere.shortvideos.helper.ad.AdUtils.rewardHolder
+import com.sphere.shortvideos.helper.ad.AdUtils.unlockHolder
 import com.sphere.shortvideos.helper.ad.LaunchPosition
 import com.sphere.shortvideos.helper.localEvent
+import com.sphere.shortvideos.logError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -25,6 +28,7 @@ class LoadingViewModel : ViewModel() {
     val nextLiveData = MutableLiveData<Boolean>()
 
     fun waitAdLoading(activity: GenericActivity) {
+        logError("waitAdLoading--->")
         preload(true)
         waitLoadingJob?.cancel()
         waitLoadingJob = viewModelScope.launch(Dispatchers.IO) {
@@ -32,6 +36,8 @@ class LoadingViewModel : ViewModel() {
                 delay(100L)
                 if (activity.getActivityState() && num >= 20 && AdUtils.launchHolder.isAdHaveCache()) {
                     waitLoadingJob?.cancel()
+                    unlockHolder.preloadIfCan()
+                    rewardHolder.preloadIfCan()
                     AdUtils.launchHolder.showFullAd(activity, onAdDismissed = {
                         nextLiveData.postValue(true)
                     })
@@ -39,6 +45,8 @@ class LoadingViewModel : ViewModel() {
                     preload()
                 }
             }
+            unlockHolder.preloadIfCan()
+            rewardHolder.preloadIfCan()
             nextLiveData.postValue(true)
         }
     }
@@ -62,8 +70,6 @@ class LoadingViewModel : ViewModel() {
         if (needChance) localEvent("ad_chance", hashMapOf("ad_pos_id" to LaunchPosition.aliasName))
         AdUtils.run {
             launchHolder.preloadIfCan()
-            unlockHolder.preloadIfCan()
-            rewardHolder.preloadIfCan()
         }
     }
 

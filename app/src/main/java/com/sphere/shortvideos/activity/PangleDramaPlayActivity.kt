@@ -9,6 +9,8 @@ import android.widget.SeekBar
 import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import com.bytedance.sdk.shortplay.api.EpisodeData
 import com.bytedance.sdk.shortplay.api.PSSDK
@@ -71,12 +73,27 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
     private var isForceShowAd: Boolean = false
     private var lastIsEven: Boolean = false
 
+    private val dialogLifecycleCallbacks = object : FragmentManager.FragmentLifecycleCallbacks() {
+        override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
+            if (HelperRewardShow.isPauseFragment(f)) {
+                detailFragment?.pausePlay()
+            }
+        }
+
+        override fun onFragmentViewDestroyed(fm: FragmentManager, f: Fragment) {
+            if (HelperRewardShow.isPauseFragment(f)) {
+                detailFragment?.startPlay()
+            }
+        }
+    }
+
     override val binding by lazy { ActivityDramaPlayPangleBinding.inflate(layoutInflater) }
 
     @SuppressLint("SetTextI18n")
     override fun initUI() {
         initSeekbarAnim()
         bindClick()
+        supportFragmentManager.registerFragmentLifecycleCallbacks(dialogLifecycleCallbacks, true)
         lifecycleScope.launch(Dispatchers.Main) {
             AdUtils.unlockHolder.preloadIfCan()
             shortPlay?.let { item ->
@@ -383,6 +400,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
     }
 
     private fun bindClick() {
+        AnimViewHelper.applyPressBounceEffect(binding.layoutTop)
         binding.layoutTop.setOnClickListener {
             localEvent("earn_banner_c", hashMapOf("from" to "drama"))
             TaskInfoDialogFragment(this).show(supportFragmentManager, "task_fragment")
@@ -414,16 +432,6 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
             binding.tvCurMoney.text = it
         })
         HelperRewardShow.registerConDialog(activity)
-        HelperRewardShow.pauseVideoPlay.observe(this) { shouldPause ->
-            if (shouldPause == null) return@observe
-            if (shouldPause) {
-                detailFragment?.pausePlay()
-            } else {
-                detailFragment?.startPlay()
-            }
-            HelperRewardShow.pauseVideoPlay.value = null
-        }
-
         HelperRewardShow.animAddMoneyDurationInMill.observe(this, {
             logError("animAddMoney -->$it --$this")
             if (it > 0) {
@@ -447,4 +455,8 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
         }
     }
 
+    override fun onDestroy() {
+        supportFragmentManager.unregisterFragmentLifecycleCallbacks(dialogLifecycleCallbacks)
+        super.onDestroy()
+    }
 }

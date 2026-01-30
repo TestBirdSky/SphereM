@@ -19,7 +19,7 @@
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <FrameLayout
         android:id="@+id/iv_watch_ad"
         android:layout_width="0dp"
         android:layout_height="65dp"
@@ -27,9 +27,32 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="17dp"
         android:background="@drawable/ic_task_wath_ad_bg"
+        android:clipChildren="true"
+        android:clipToPadding="true"
         app:layout_constraintBottom_toBottomOf="@id/tv1"
         app:layout_constraintEnd_toStartOf="@id/bg_h5"
-        app:layout_constraintStart_toStartOf="@id/tv1" />
+        app:layout_constraintStart_toStartOf="@id/tv1">
+
+        <!-- 观看广告按钮高光扫光层（动画控制） -->
+        <View
+            android:id="@+id/view_watch_ad_shine"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start|center_vertical"
+            android:background="@drawable/bg_watch_ad_shine"
+            android:visibility="invisible" />
+
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/iv_anim_money"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_money"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/iv_watch_ad"
+        app:layout_constraintRight_toRightOf="@id/iv_watch_ad"
+        app:layout_constraintTop_toTopOf="@id/iv_watch_ad" />
 
     <ImageView
         android:id="@+id/iv_ad_tag"
@@ -76,8 +99,8 @@
         android:layout_height="64dp"
         android:layout_marginVertical="17dp"
         android:layout_marginEnd="16dp"
-        android:visibility="invisible"
         android:background="@drawable/shape_h5"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@id/tv1"
         app:layout_constraintEnd_toEndOf="@id/tv1"
         app:layout_constraintStart_toEndOf="@id/iv_watch_ad" />
@@ -86,9 +109,9 @@
         android:id="@+id/iv_h51"
         android:layout_width="31dp"
         android:layout_height="31dp"
-        android:visibility="gone"
         android:layout_marginHorizontal="6dp"
         android:src="@drawable/ic_h5_tag"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/bg_h5"
         app:layout_constraintStart_toStartOf="@id/bg_h5"
         app:layout_constraintTop_toTopOf="@id/bg_h5" />
@@ -96,12 +119,12 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_h5_tips"
         android:layout_width="0dp"
-        android:visibility="gone"
         android:layout_height="wrap_content"
         android:paddingHorizontal="6dp"
         android:text="@string/tv_join"
         android:textColor="#FFFFFF"
         android:textSize="10sp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/iv_h51"
         app:layout_constraintLeft_toRightOf="@id/iv_h51"
         app:layout_constraintRight_toRightOf="@id/bg_h5"

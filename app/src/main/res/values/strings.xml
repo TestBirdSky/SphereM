@@ -105,7 +105,8 @@
     <string name="withdrawal_amount">Withdrawal Amount</string>
     <string name="proud_to_cash_out">-Proud to Cash Out-</string>
     <string name="arrived_via">arrived via [%s]</string>
-    <string name="cant_with_tips">You have not reached the withdrawal threshold</string>
+    <string name="cant_with_tips">Insufficient withdrawal amount</string>
+    <string name="withdraw_wait_tips">Withdrawal is loading</string>
     <string name="get_tips">Get %s</string>
     <string name="ad_limit_reached">Ad Limit Reached</string>
     <string name="limit_tips_des">You’ve watched all available ads for today. Try again tomorrow.</string>

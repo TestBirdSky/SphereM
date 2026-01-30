@@ -27,8 +27,6 @@ object MMKVRepository {
         //        if (isDebugMode) { //
         //            isCurDayStr = ""
         //        }
-        // todo test
-        MoneyCacheHelper.addWatchVideoTime(60000 * 10)
         val day = SimpleDateFormat("yyyy-MM-dd").format(Date())
         if (isCurDayStr != day) {
             isCurDayStr = day

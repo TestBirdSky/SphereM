@@ -30,4 +30,13 @@
         <item name="android:windowIsFloating">true</item>
     </style>
 
+    <style name="TaskInfoDialogTheme" parent="TransparentMaterialDialog">
+        <item name="android:windowAnimationStyle">@style/TaskInfoDialogAnimation</item>
+    </style>
+
+    <style name="TaskInfoDialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/dialog_task_info_enter</item>
+        <item name="android:windowExitAnimation">@anim/dialog_task_info_exit</item>
+    </style>
+
 </resources>

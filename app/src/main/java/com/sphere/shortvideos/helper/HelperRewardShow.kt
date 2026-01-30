@@ -1,11 +1,18 @@
 package com.sphere.shortvideos.helper
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
+import android.os.SystemClock
 import android.view.animation.AccelerateDecelerateInterpolator
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
+import com.inmobi.media.Bo
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.dialogs.LuckChallengeDialogFragment
 import com.sphere.shortvideos.dialogs.NormalCongratulateDialogFragment
+import com.sphere.shortvideos.dialogs.TaskInfoDialogFragment
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.reward.RewardHelper
 import com.sphere.shortvideos.logError
@@ -23,7 +30,8 @@ object HelperRewardShow {
     val nextRewordType = MutableLiveData(-1) //0 普通奖励看插屏 1 倍率玩法看激励广告
     val curGetMoneyStr = MutableLiveData(Pair("", "")) //当前获取到的奖励和还差多少可领取奖励
     val showDialogType = MutableLiveData<Int>(-1) //0 普通奖励看插屏 1 倍率玩法看激励广告
-    val pauseVideoPlay = MutableLiveData<Boolean>(null)
+
+    //    val pauseVideoPlay = MutableLiveData<Boolean>(null)
     private var maxReachedCount = 0
     private var progressJob: Job? = null
     private val progressMax = 100
@@ -119,7 +127,7 @@ object HelperRewardShow {
         val durationMs = run {
             val minReward = 0.02
             val maxReward = 4.0
-            val steps = 5 // 300..800 step 100 => 6 levels
+            val steps = 4 // 300..700 step 100 => 5 levels
             val ratio = ((reward - minReward) / (maxReward - minReward)).coerceIn(0.0, 1.0)
             val stepIndex = kotlin.math.floor(ratio * steps).toInt().coerceIn(0, steps)
             300L + stepIndex * 100L
@@ -132,20 +140,40 @@ object HelperRewardShow {
         moneyAnimator = ValueAnimator.ofFloat(startValue.toFloat(), endValue.toFloat()).apply {
             duration = durationMs
             interpolator = AccelerateDecelerateInterpolator()
+            var lastUpdateTime = 0L
             addUpdateListener { animator ->
+                val now = SystemClock.uptimeMillis()
+                if (now - lastUpdateTime < 20L) return@addUpdateListener
+                lastUpdateTime = now
                 val value = (animator.animatedValue as Float).toDouble()
                 curGetMoneyAnimLiveData.postValue(WithdrawAmountHelper.moneyFormatAddUnit(value))
             }
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    curGetMoneyAnimLiveData.postValue(WithdrawAmountHelper.moneyFormatAddUnit(endValue))
+                    end.invoke()
+                }
+            })
             start()
-            end.invoke()
         }
         moneyNeedAnimator = ValueAnimator.ofFloat(startNeed.toFloat(), endNeed.toFloat()).apply {
             duration = durationMs
             interpolator = AccelerateDecelerateInterpolator()
+            var lastUpdateTime = 0L
             addUpdateListener { animator ->
+                val now = SystemClock.uptimeMillis()
+                if (now - lastUpdateTime < 60L) return@addUpdateListener
+                lastUpdateTime = now
                 val value = (animator.animatedValue as Float).toDouble()
                 curMoneyNeedAnimLiveData.postValue(WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(value))
             }
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    curMoneyNeedAnimLiveData.postValue(
+                        WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(endNeed)
+                    )
+                }
+            })
             start()
         }
     }
@@ -160,10 +188,6 @@ object HelperRewardShow {
         numIntervalIndex++
     }
 
-    private fun postOnce(isPause: Boolean) {
-        pauseVideoPlay.postValue(isPause)
-    }
-
     private fun postOnceDialogType(int: Int) {
         showDialogType.postValue(int)
     }
@@ -174,7 +198,6 @@ object HelperRewardShow {
             if (it == -1) return@observe
             when (it) {
                 0 -> {
-                    postOnce(true)
                     NormalCongratulateDialogFragment().apply {
                         onClaim = { reward ->
                             localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_video_rv"))
@@ -184,13 +207,11 @@ object HelperRewardShow {
                             AdUtils.showRateAd(activity, isRate = {
                                 localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_video_int"))
                             })
-                            postOnce(false)
                         }
                     }.show(activity.supportFragmentManager, "congratulation")
                 }
 
                 1 -> {
-                    postOnce(true)
                     LuckChallengeDialogFragment().apply {
                         onResult = { reward ->
                             localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_wheel_rv"))
@@ -203,16 +224,15 @@ object HelperRewardShow {
         }
     }
 
-    private var isFetchReward = false
     private fun showRvAd(activity: GenericActivity, reward: Double) {
-        isFetchReward = false
-        AdUtils.showRvAd(activity, {
-            isFetchReward = true
-        }, dismiss = {
+        AdUtils.showRvAd(activity, dismiss = { isFetchReward ->
             if (isFetchReward) {
                 addMoneyNotExChange(reward)
             }
-            postOnce(false)
         })
+    }
+
+    fun isPauseFragment(fragment: Fragment): Boolean {
+        return fragment is DialogFragment
     }
 }

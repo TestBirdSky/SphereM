@@ -2,9 +2,11 @@ package com.sphere.shortvideos.helper
 
 import android.content.Context
 import com.adjust.sdk.Adjust
+import com.adjust.sdk.AdjustAdRevenue
 import com.adjust.sdk.AdjustConfig
 import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
+import com.google.android.gms.ads.AdValue
 import com.sphere.shortvideos.mApp
 import org.json.JSONObject
 
@@ -16,7 +18,7 @@ class FbAndAdjustHelper {
     // todo add release fb
     private val facebookId = "1749622378999013"
     private val token = "edf43a4f06bcd5d32187c6a1bd91012f"
-    private val adjustKey = "ih2pm2dr3k74"
+    private val adjustKey = "4qedga65udq8"
 
     fun initFb(str: String) {
         JSONObject(str).apply {

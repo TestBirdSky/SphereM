@@ -8,8 +8,10 @@ import com.bytedance.sdk.shortplay.api.PSSDK.ErrorInfo
 import com.bytedance.sdk.shortplay.api.PSSDK.FeedListLoadResult
 import com.bytedance.sdk.shortplay.api.PSSDK.FeedListResultListener
 import com.bytedance.sdk.shortplay.api.ShortPlay
+import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.logError
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
@@ -23,6 +25,9 @@ class StreamViewModel : ViewModel() {
         logError("loadData")
         viewModelScope.launch(Dispatchers.IO) {
             val result = requestFeedListSuspend()
+            while (MMKVRepository.isNewUser) {
+                delay(200)
+            }
             if (null == result || result.dataList.isNullOrEmpty()) {
                 onErrorLiveData.postValue(true)
             } else {
@@ -31,17 +36,18 @@ class StreamViewModel : ViewModel() {
         }
     }
 
-    private suspend fun requestFeedListSuspend(): FeedListLoadResult<ShortPlay>? = suspendCancellableCoroutine { continuation ->
-        val resultListener = object : FeedListResultListener {
-            override fun onFail(errorInfo: ErrorInfo?) {
-                continuation.resume(null)
-            }
+    private suspend fun requestFeedListSuspend(): FeedListLoadResult<ShortPlay>? =
+        suspendCancellableCoroutine { continuation ->
+            val resultListener = object : FeedListResultListener {
+                override fun onFail(errorInfo: ErrorInfo?) {
+                    continuation.resume(null)
+                }
 
-            override fun onSuccess(result: FeedListLoadResult<ShortPlay>?) {
-                continuation.resume(result)
+                override fun onSuccess(result: FeedListLoadResult<ShortPlay>?) {
+                    continuation.resume(result)
+                }
             }
+            PSSDK.requestFeedList(1, 100, resultListener)
         }
-        PSSDK.requestFeedList(1, 100, resultListener)
-    }
 
 }

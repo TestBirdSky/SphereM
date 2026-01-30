@@ -108,7 +108,8 @@
     <string name="withdrawal_amount">Jumlah Penarikan</string>
     <string name="proud_to_cash_out">-Bangga Mencairkan-</string>
     <string name="arrived_via">datang melalui [%s]</string>
-    <string name="cant_with_tips">Anda belum mencapai batas penarikan</string>
+    <string name="cant_with_tips">Jumlah penarikan tidak mencukupi</string>
+    <string name="withdraw_wait_tips">Penarikan sedang diproses</string>
     <string name="get_tips">Dapatkan %s</string>
     <string name="ad_limit_reached">Batas Iklan Tercapai</string>
     <string name="limit_tips_des">Anda telah menonton semua iklan hari ini. Coba lagi besok.</string>

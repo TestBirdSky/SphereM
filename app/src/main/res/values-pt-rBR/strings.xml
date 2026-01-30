@@ -108,7 +108,8 @@
     <string name="withdrawal_method">Método de saque</string>
     <string name="withdrawal_amount">Valor do saque</string>
     <string name="arrived_via">chegou via [%s]</string>
-    <string name="cant_with_tips">Você ainda não atingiu o limite de saque</string>
+    <string name="cant_with_tips">Valor de saque insuficiente</string>
+    <string name="withdraw_wait_tips">Saque em processamento</string>
     <string name="get_tips">Ganhe %s</string>
     <string name="ad_limit_reached">Limite de anúncios atingido</string>
     <string name="limit_tips_des">Você já assistiu a todos os anúncios de hoje. Tente novamente amanhã.</string>

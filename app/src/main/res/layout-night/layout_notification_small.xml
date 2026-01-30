@@ -6,6 +6,11 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
+    <ImageView
+        android:layout_width="50dp"
+        android:src="@drawable/ic_notification_small_app_icon"
+        android:layout_height="50dp"/>
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"

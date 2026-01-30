@@ -20,6 +20,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.helper.localEvent
+import com.sphere.shortvideos.view.AnimViewHelper
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -43,13 +44,15 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
         setupWithdrawMethods()
         setupWithdrawAmounts()
         setupUserInfoMarquee()
+        AnimViewHelper.applyPressBounceEffect(binding.tvWithdraw)
         binding.tvWithdraw.setOnClickListener {
             val cur = MoneyCacheHelper.fetchCurMoney()
             val m = amountAdapter.fetchWithdrawMoney()
             localEvent("withdraw_withdraw")
             if (cur < m) {
                 Toast.makeText(context, getString(R.string.cant_with_tips), Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+            } else {
+                Toast.makeText(context, getString(R.string.withdraw_wait_tips), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -121,7 +124,7 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
     }
 
     private fun buildMaskedName(): String {
-        val pool = "abcdefghijklmnopqrstuvwxyz0123456789"
+        val pool = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         val raw = buildString {
             repeat(10) {
                 append(pool[Random.nextInt(pool.length)])

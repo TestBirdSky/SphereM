@@ -56,6 +56,7 @@ class NormalCongratulateDialogFragment : DialogFragment() {
             binding.ivClose.performClick()
             localEvent("money_pop_1x")
         }
+        AnimViewHelper.applyPressBounceEffect(binding.btnClaim)
         binding.btnClaim.setOnClickListener {
             localEvent("money_pop_2x")
             onClaim?.invoke(adRvReward.first * 2)

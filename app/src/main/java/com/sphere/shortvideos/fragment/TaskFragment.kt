@@ -27,7 +27,6 @@ import kotlin.random.Random
  */
 class TaskFragment : GenericFragment<FragmentTaskBinding>() {
     private var curPopMoney = 0.0
-    private var isInit = true
     private val viewModel by activityViewModels<MainViewModel>()
     private var popAnimator1: ObjectAnimator? = null
     private var popAnimator2: ObjectAnimator? = null

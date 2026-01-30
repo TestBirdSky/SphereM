@@ -1,5 +1,8 @@
 package com.sphere.shortvideos.activity
 
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.view.View
@@ -25,6 +28,7 @@ import com.sphere.shortvideos.fragment.VideoStreamFragment
 import com.sphere.shortvideos.fragment.WithdrawFragment
 import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.ad.AdUtils
+import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.helper.permission.PermissionHelper
 import com.sphere.shortvideos.notification.NotificationHelper
@@ -115,15 +119,10 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         }
         binding.bottomNav.selectedItemId = R.id.tab_video
         h.addViewWallet(binding.centerWallet, this)
-        if (MMKVRepository.isNewUser) {
-            binding.ivFirstGuide.visibility = View.VISIBLE
-            binding.ivFirstGuide.setOnClickListener {}
-            viewModel.newUserProgress()
-        } else {
-            lifecycleScope.launch {
-                delay(Random.nextLong(1500, 3000))
-                showNotificationOpen()
-            }
+        showNewUser()
+        lifecycleScope.launch {
+            delay(Random.nextLong(1500, 3000))
+            showNotificationOpen()
         }
         registerViewModel()
     }
@@ -142,11 +141,11 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         return ContextCompat.getDrawable(this@MainActivity, this)
     }
 
-    fun showWelcomDialog(dis: () -> Unit) {
+    private fun showWelcomDialog() {
         binding.ivFirstGuide.visibility = View.GONE
         WelcomeBonusDialogFragment().apply {
             onDismissCall = {
-                dis.invoke()
+                MMKVRepository.isNewUser = false
                 showNotificationOpen()
             }
         }.show(supportFragmentManager, "welcome")
@@ -182,9 +181,6 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         binding.bottomNav.selectedItemId = R.id.tab_wallet
     }
 
-    fun showMyWalletFragment() {
-        TaskInfoDialogFragment(this).show(supportFragmentManager, "task_fragment")
-    }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -208,6 +204,56 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         AdUtils.run {
             unlockHolder.preloadIfCan()
             rewardHolder.preloadIfCan()
+            launchHolder.preloadIfCan()
         }
+    }
+
+    private var fingerAnimator: ObjectAnimator? = null
+    private fun hide() {
+        showWelcomDialog()
+        setGuideVisibility(View.GONE)
+        stopFingerAnim()
+    }
+
+    private fun showNewUser(): Boolean {
+        if (MMKVRepository.isNewUser) {
+            setGuideVisibility(View.VISIBLE)
+            localEvent("new_guide")
+            SpineHelper().addViewMoney1(binding.layoutAnim, this)
+            startFingerAnim()
+            binding.ivFirstGuide.setOnClickListener {
+                localEvent("new_guide_c", hashMapOf("type" to "mask_2"))
+                hide()
+            }
+            binding.ivFingerAnim.setOnClickListener {
+                hide()
+                localEvent("new_guide_c", hashMapOf("type" to "mask_1"))
+            }
+            return true
+        }
+        return false
+    }
+
+    private fun setGuideVisibility(sta: Int) {
+        binding.guideLayout.visibility = sta
+    }
+
+    private fun startFingerAnim() {
+        if (fingerAnimator != null) return
+        binding.ivFingerAnim.scaleX = 0.8f
+        binding.ivFingerAnim.scaleY = 0.8f
+        val scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 0.8f, 1.3f)
+        val scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.8f, 1.3f)
+        fingerAnimator = ObjectAnimator.ofPropertyValuesHolder(binding.ivFingerAnim, scaleX, scaleY).apply {
+            duration = 1000
+            repeatCount = ValueAnimator.INFINITE
+            repeatMode = ValueAnimator.REVERSE
+            start()
+        }
+    }
+
+    private fun stopFingerAnim() {
+        fingerAnimator?.cancel()
+        fingerAnimator = null
     }
 }

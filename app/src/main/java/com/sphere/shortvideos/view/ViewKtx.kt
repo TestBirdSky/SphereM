@@ -19,6 +19,8 @@ import com.sphere.shortvideos.helper.task.TaskHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.localEvent
+import androidx.core.graphics.toColorInt
+import com.sphere.shortvideos.dialogs.TaskInfoDialogFragment
 
 /**
  * Date：2026/1/21
@@ -57,40 +59,46 @@ fun TextView.setColorText(fullText: String, tagString: String, color: Int) {
 }
 
 
-fun LayoutMoneyTopViewBinding.initView(activity: MainActivity, tag: String) {
+fun LayoutMoneyTopViewBinding.initView(activity: MainActivity, tag: String, wallClose: () -> Unit = {}) {
     ivPTag.setBackgroundResource(WithdrawAmountHelper.fetchMoneyBankIcon())
+    AnimViewHelper.applyPressBounceEffect(layout)
     layout.setOnClickListener {
         localEvent("earn_banner_c", hashMapOf("from" to tag))
-        activity.showMyWalletFragment()
+        TaskInfoDialogFragment(activity).run {
+            onClose = wallClose
+            show(activity.supportFragmentManager, "task_fragment")
+        }
     }
 }
 
 fun LayoutMoneyTopViewBinding.refreshViewTagMoney(tagMoney: String) {
     val fullText = root.context.getString(R.string.withdraw_tips, tagMoney)
-    tvTips.setColorText(fullText, tagMoney, Color.parseColor("#49F32B"))
+    tvTips.setColorText(fullText, tagMoney, "#49F32B".toColorInt())
 }
 
 fun LayoutTaskChildBinding.setTaskInfo(
     activity: GenericActivity,
     receiverMoneyEvent: (Double, ImageView) -> Unit,
 ) {
+    AnimViewHelper.applyPressGrayOverlay(ivWatchAd)
     ivWatchAd.setOnClickListener {
         localEvent("billetera_pm_ad")
         ivWatchAd.isClickable = false
-        AdUtils.showRvAd(activity, {
-            HelperRewardShow.addMoneyNotExChange(MoneyCacheHelper.fetchRvAdReward().first)
-        }, dismiss = {
+        AdUtils.showRvAd(activity, dismiss = { isRewardSuccess ->
             ivWatchAd.isClickable = true
+            if (isRewardSuccess) {
+                receiverMoneyEvent.invoke(MoneyCacheHelper.fetchRvAdReward().first, ivAnimMoney)
+            }
         })
     }
-//    bgH5.setOnClickListener {
-//
-//    }
+    AnimViewHelper.playClaimablePulseAnim(tvAdGo, true, 0.95f, 1.05f) //    bgH5.setOnClickListener {
+    //
+    //    }
     val moneyWatchRv = MoneyCacheHelper.fetchRvAdReward()
     val tagStr = moneyWatchRv.second
     val fullText = root.context.getString(R.string.get_tips, tagStr)
-    tvAdGo.setColorText(fullText, tagStr, Color.parseColor("#F3CD0C"))
-//    AnimViewHelper.playClaimablePulseAnim(ivH51, true)
+    tvAdGo.setColorText(fullText, tagStr, Color.parseColor("#F3CD0C")) // 观看广告按钮：高光扫光动画（1-2秒间隔，400ms扫过）
+    AnimViewHelper.startWatchAdShineAnim(ivWatchAd, viewWatchAdShine)
 
     isAnim = false
     setWatchLayout(activity, receiverMoneyEvent)

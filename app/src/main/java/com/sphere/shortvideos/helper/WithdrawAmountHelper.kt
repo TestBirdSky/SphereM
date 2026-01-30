@@ -80,6 +80,11 @@ object WithdrawAmountHelper {
         return Pair(mo, total.toDouble())
     }
 
+    fun fetchWithdrawMinMoney(): String {
+        val total = defLow.fetWithdraw()
+        return moneyFormatAddUnitWithNoSpace(total)
+    }
+
     fun fetchWithdrawAmounts(): List<Double> {
         return tiers.map { it.fetWithdraw() }
     }

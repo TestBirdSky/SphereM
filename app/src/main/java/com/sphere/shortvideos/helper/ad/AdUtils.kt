@@ -77,21 +77,23 @@ object AdUtils {
         }
     }
 
-    fun showRvAd(activity: GenericActivity, rewardCall: (() -> Unit) = { }, dismiss: () -> Unit = {}) {
+    fun showRvAd(activity: GenericActivity,
+                 dismiss: (isRewardSuccess: Boolean) -> Unit = {}) {
         if (RiskHelper.isAdLimit()) {
             ShowAdLimitDialogFragment({
-                dismiss.invoke()
+                dismiss.invoke(false)
             }).show(activity.supportFragmentManager, "limit_ad")
             return
         }
+        var isRewardCall = false
         val dis = {
-            dismiss.invoke()
+            dismiss.invoke(isRewardCall)
             rewardHolder.preloadIfCan()
             unlockHolder.preloadIfCan()
         }
         if (rewardHolder.isAdHaveCache()) {
             var showRVAdTime = 0L
-            rewardHolder.showFullAd(activity, rewardCall = rewardCall, onAdDismissed = {
+            rewardHolder.showFullAd(activity, rewardCall = { isRewardCall = true }, onAdDismissed = {
                 RiskHelper.closeRvEvent(System.currentTimeMillis() - showRVAdTime)
                 dis.invoke()
             }, onAdShowed = {
@@ -103,7 +105,7 @@ object AdUtils {
                 val time = System.currentTimeMillis()
                 unlockHolder.showFullAd(activity, onAdDismissed = {
                     if (System.currentTimeMillis() - time > 5000) {
-                        rewardCall.invoke()
+                        isRewardCall = true
                     }
                     dis.invoke()
                 })

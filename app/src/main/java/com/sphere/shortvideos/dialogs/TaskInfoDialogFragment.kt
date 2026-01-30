@@ -30,7 +30,7 @@ class TaskInfoDialogFragment(val ac: GenericActivity) : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(STYLE_NO_TITLE, R.style.TransparentMaterialDialog)
+        setStyle(STYLE_NO_TITLE, R.style.TaskInfoDialogTheme)
         isCancelable = true
     }
 
@@ -46,23 +46,20 @@ class TaskInfoDialogFragment(val ac: GenericActivity) : DialogFragment() {
             onClose?.invoke()
             dismissAllowingStateLoss()
         }
-        refreshMoney()
+        HelperRewardShow.curGetMoneyAnimLiveData.observe(this, {
+            refreshMoney(it.replace("\t", ""), WithdrawAmountHelper.fetchWithdrawMinMoney())
+        })
         binding.layoutTask.setTaskInfo(ac, receiverMoneyEvent = { reward, sourceView ->
             AnimViewHelper.playCoinFlyCopyAnim(sourceView, binding.ivM, end = {
                 if (reward > 0) {
                     HelperRewardShow.addMoneyNotExChange(reward)
                 }
             })
-            refreshMoney()
         })
     }
 
-    private fun refreshMoney() {
-        val progressText = WithdrawAmountHelper.fetchCurMoneyAndGetMoneyMinValue().let { pair ->
-            "${WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(pair.first)}/${
-                WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(pair.second)
-            }"
-        }
+    private fun refreshMoney(moneyCur: String, minWithMoney: String) {
+        val progressText = "$moneyCur/$minWithMoney"
         binding.tvProgress.text = progressText
         binding.progressView.setProgress(WithdrawAmountHelper.fetchGetMoneyProgress(), true)
     }

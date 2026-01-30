@@ -174,8 +174,8 @@ object NotificationHelper {
     fun scheduleLocalNotifications(context: Context) {
         initChannel(context)
         enqueueLocalWorker(context, WORK_NAME_23, LOCAL_TYPE_23, if (isDebugMode) 1 else 23)
-        enqueueLocalWorker(context, WORK_NAME_59, LOCAL_TYPE_59, if (isDebugMode) 5 else 59)
-        enqueueLocalWorker(context, WORK_NAME_79, LOCAL_TYPE_79, if (isDebugMode) 7 else 79)
+        enqueueLocalWorker(context, WORK_NAME_59, LOCAL_TYPE_59, 59)
+        enqueueLocalWorker(context, WORK_NAME_79, LOCAL_TYPE_79, 79)
     }
 
     fun showLocalNotification(context: Context, type: Int) {

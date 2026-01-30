@@ -7,14 +7,19 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.bytedance.sdk.shortplay.api.ShortPlay
 import com.sphere.shortvideos.baseui.GenericFragment
 import com.sphere.shortvideos.databinding.FragmentVideoStreamBinding
+import com.sphere.shortvideos.dialogs.TaskInfoDialogFragment
 import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.localEvent
+import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.vm.StreamViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
 
@@ -51,15 +56,7 @@ class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
         }
         initAdapter()
         autoRefresh()
-        HelperRewardShow.pauseVideoPlay.observe(viewLifecycleOwner) { shouldPause ->
-            if (shouldPause == null) return@observe
-            if (shouldPause) {
-                pauseCurrentVideo()
-            } else {
-                resumeCurrentVideo()
-            }
-            HelperRewardShow.pauseVideoPlay.value = null
-        }
+        activity?.supportFragmentManager?.registerFragmentLifecycleCallbacks(dialogLifecycleCallbacks, true)
     }
 
     private fun initAdapter() {
@@ -76,7 +73,7 @@ class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
     private fun autoRefresh() {
         if (!initialized) {
             initialized = true
-            binding.refreshLayout.isRefreshing = true
+            binding.refreshLayout.isRefreshing = MMKVRepository.isNewUser.not()
             viewModel.loadData()
         }
     }
@@ -124,6 +121,25 @@ class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
         }
 
         fun getItemData(position: Int) = datas.getOrNull(position)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        activity?.supportFragmentManager?.unregisterFragmentLifecycleCallbacks(dialogLifecycleCallbacks)
+    }
+
+    private val dialogLifecycleCallbacks = object : FragmentManager.FragmentLifecycleCallbacks() {
+        override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
+            if (HelperRewardShow.isPauseFragment(f)) {
+                pauseCurrentVideo()
+            }
+        }
+
+        override fun onFragmentViewDestroyed(fm: FragmentManager, f: Fragment) {
+            if (HelperRewardShow.isPauseFragment(f)) {
+                resumeCurrentVideo()
+            }
+        }
     }
 
 }

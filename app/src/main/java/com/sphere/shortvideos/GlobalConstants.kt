@@ -14,13 +14,12 @@ object GlobalConstants {
     const val PRIVACY_POLICY = "https://www.google.com" // todo
 
     const val RISK_URL = "https://ip-prod.dramasphere.net/api/cbird"
-//    const val RISK_URL = "https://ip-test.dramasphere.com/api/cbird"// todo
 
 
     val NEW_DEFAULT_AD_LOCAL_JSON = """
         {
           "dlmsf_switch": false,
-          "ds_launch":[
+          "dlmsf_launch":[
               {
                  "byfxjhld":"ca-app-pub-3940256099942544/9257395921",
                  "dmhytwql":"admob",
@@ -50,27 +49,27 @@ object GlobalConstants {
         }
     """.trimIndent()
 
-    val DEFAULT_JSON = """
-        {
-           "ds_launch":[
-              {
-                 "dsid":"ca-app-pub-3940256099942544/9257395921",
-                 "amtt":"admob",
-                 "dsty":"op",
-                 "dsad":13800,
-                 "dsei":3
-              }
-           ],
-           "ds_unlock_int":[
-              {
-                 "dsid":"ca-app-pub-3940256099942544/1033173712",
-                 "amtt":"admob",
-                 "dsty":"int",
-                 "dsad":3000,
-                 "dsei":3
-              }
-           ]
-        }
-    """.trimIndent()
+//    val DEFAULT_JSON = """
+//        {
+//           "ds_launch":[
+//              {
+//                 "dsid":"ca-app-pub-3940256099942544/9257395921",
+//                 "amtt":"admob",
+//                 "dsty":"op",
+//                 "dsad":13800,
+//                 "dsei":3
+//              }
+//           ],
+//           "ds_unlock_int":[
+//              {
+//                 "dsid":"ca-app-pub-3940256099942544/1033173712",
+//                 "amtt":"admob",
+//                 "dsty":"int",
+//                 "dsad":3000,
+//                 "dsei":3
+//              }
+//           ]
+//        }
+//    """.trimIndent()
 
 }

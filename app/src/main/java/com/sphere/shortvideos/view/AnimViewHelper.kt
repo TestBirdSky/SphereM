@@ -5,13 +5,163 @@ import android.animation.AnimatorSet
 import android.animation.Keyframe
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
+import android.animation.ValueAnimator
 import android.animation.AnimatorListenerAdapter
+import android.graphics.drawable.ColorDrawable
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.OvershootInterpolator
+import com.sphere.shortvideos.R
+import kotlin.random.Random
 
 object AnimViewHelper {
+
+    // ========== 常见 App 按钮按压样式（参考） ==========
+    // 1. iOS/微信：按下仅透明度 0.6~0.7，松手恢复。代码少，复用高，无缩放。
+    // 2. Material/抖音：按下 scale 0.96 + alpha 0.9，松手回弹。代码中，复用高，手感好。
+    // 3. 淘宝/支付宝：按下 scale 0.95，松手快速回弹。代码少，复用高。
+    // 4. 游戏类：按下 scale 0.9，松手明显回弹 1.05→1.0。代码中，复用高，反馈强。
+    // 下面实现「按压透明度 + 松手回弹」，一种写法全局复用，任意 View 一行绑定。
+
+    private data class PressBounceHolder(
+        var pressAnim: Animator? = null,
+        var releaseAnim: Animator? = null
+    )
+
+    private data class PressGrayOverlayHolder(
+        val overlayDrawable: ColorDrawable,
+        var animator: Animator? = null
+    )
+
+    private data class ShineAnimHolder(
+        val animator: Animator?,
+        val runnable: Runnable,
+        val attachListener: View.OnAttachStateChangeListener
+    )
+
+    /**
+     * 给任意 View 加上「按压变透明 + 松手回弹」的点击反馈，不拦截点击事件。
+     * @param view 目标 View（Button、ImageView、布局等）
+     * @param pressAlpha 按下时透明度，默认 0.85f
+     * @param pressScale 按下时缩放，默认 0.96f
+     * @param pressDurationMs 按下动画时长
+     * @param releaseDurationMs 松手回弹动画时长（回弹由 Overshoot 实现）
+     */
+    @JvmOverloads
+    fun applyPressBounceEffect(
+        view: View,
+        pressAlpha: Float = 0.85f,
+        pressScale: Float = 0.96f,
+        pressDurationMs: Long = 80L,
+        releaseDurationMs: Long = 120L
+    ) {
+        val holder = (view.tag as? PressBounceHolder) ?: PressBounceHolder().also { view.tag = it }
+        fun cancelRunning() {
+            holder.pressAnim?.cancel()
+            holder.releaseAnim?.cancel()
+        }
+        view.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    cancelRunning()
+                    val scaleX = ObjectAnimator.ofFloat(v, View.SCALE_X, v.scaleX, pressScale).apply {
+                        duration = pressDurationMs
+                        interpolator = AccelerateDecelerateInterpolator()
+                    }
+                    val scaleY = ObjectAnimator.ofFloat(v, View.SCALE_Y, v.scaleY, pressScale).apply {
+                        duration = pressDurationMs
+                        interpolator = AccelerateDecelerateInterpolator()
+                    }
+                    val alpha = ObjectAnimator.ofFloat(v, View.ALPHA, v.alpha, pressAlpha).apply {
+                        duration = pressDurationMs
+                        interpolator = AccelerateDecelerateInterpolator()
+                    }
+                    holder.pressAnim = AnimatorSet().apply {
+                        playTogether(scaleX, scaleY, alpha)
+                        start()
+                    }
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    cancelRunning()
+                    val scaleX = ObjectAnimator.ofFloat(v, View.SCALE_X, v.scaleX, 1f).apply {
+                        duration = releaseDurationMs
+                        interpolator = OvershootInterpolator(1.8f)
+                    }
+                    val scaleY = ObjectAnimator.ofFloat(v, View.SCALE_Y, v.scaleY, 1f).apply {
+                        duration = releaseDurationMs
+                        interpolator = OvershootInterpolator(1.8f)
+                    }
+                    val alpha = ObjectAnimator.ofFloat(v, View.ALPHA, v.alpha, 1f).apply {
+                        duration = releaseDurationMs
+                        interpolator = AccelerateDecelerateInterpolator()
+                    }
+                    holder.releaseAnim = AnimatorSet().apply {
+                        playTogether(scaleX, scaleY, alpha)
+                        start()
+                    }
+                }
+            }
+            false
+        }
+    }
+
+    /**
+     * 给任意 View 加上「按下时灰色蒙层」的点击反馈，不拦截点击事件。
+     * 按下时在 View 上叠一层半透明灰蒙层，松手后淡出并移除。
+     * @param view 目标 View
+     * @param overlayColor 蒙层颜色（含透明度），默认半透明黑 #50000000
+     * @param pressDurationMs 蒙层出现时长
+     * @param releaseDurationMs 蒙层消失时长
+     */
+    @JvmOverloads
+    fun applyPressGrayOverlay(
+        view: View,
+        overlayColor: Int = 0x50814FC9,
+        pressDurationMs: Long = 80L,
+        releaseDurationMs: Long = 120L
+    ) {
+        val holder = view.getTag(R.id.press_gray_overlay_holder) as? PressGrayOverlayHolder
+            ?: PressGrayOverlayHolder(ColorDrawable(overlayColor))
+                .also { view.setTag(R.id.press_gray_overlay_holder, it) }
+        val overlayDrawable = holder.overlayDrawable
+        view.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    holder.animator?.cancel()
+                    if (v.width <= 0 || v.height <= 0) return@setOnTouchListener false
+                    overlayDrawable.setBounds(0, 0, v.width, v.height)
+                    overlayDrawable.alpha = 0
+                    v.overlay.add(overlayDrawable)
+                    holder.animator = ValueAnimator.ofInt(0, 255).apply {
+                        duration = pressDurationMs
+                        interpolator = AccelerateDecelerateInterpolator()
+                        addUpdateListener { overlayDrawable.alpha = it.animatedValue as Int }
+                        start()
+                    }
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    holder.animator?.cancel()
+                    holder.animator = ValueAnimator.ofInt(overlayDrawable.alpha, 0).apply {
+                        duration = releaseDurationMs
+                        interpolator = AccelerateDecelerateInterpolator()
+                        addUpdateListener { overlayDrawable.alpha = it.animatedValue as Int }
+                        addListener(object : AnimatorListenerAdapter() {
+                            override fun onAnimationEnd(animation: Animator) {
+                                v.overlay.remove(overlayDrawable)
+                                holder.animator = null
+                            }
+                        })
+                        start()
+                    }
+                }
+            }
+            false
+        }
+    }
+
     fun playWelcomeBonusAnim(animView: View, rewardView: View) {
         animView.alpha = 0.3f
         animView.scaleX = 0.1f
@@ -176,6 +326,102 @@ object AnimViewHelper {
         }
         view.tag = newAnimator
         newAnimator.start()
+    }
+
+    /**
+     * 观看广告按钮：从左到右流水感扫光（封装调用）
+     * @param targetView 需要扫光的容器
+     * @param shineView 高光层View（放在容器内部）
+     */
+    fun startWatchAdShineAnim(
+        targetView: View,
+        shineView: View,
+        minDelayMs: Long = 2000L,
+        maxDelayMs: Long = 4500L,
+        durationMs: Long = 400L
+    ) {
+        stopWatchAdShineAnim(shineView)
+        val safeMinDelay = minDelayMs.coerceAtLeast(0L)
+        val safeMaxDelay = maxDelayMs.coerceAtLeast(safeMinDelay)
+
+        lateinit var repeatRunnable: Runnable
+        val attachListener = object : View.OnAttachStateChangeListener {
+            override fun onViewAttachedToWindow(v: View) = Unit
+            override fun onViewDetachedFromWindow(v: View) {
+                stopWatchAdShineAnim(shineView)
+            }
+        }
+
+        repeatRunnable = Runnable {
+            if (targetView.width == 0 || shineView.width == 0) {
+                targetView.post(repeatRunnable)
+                return@Runnable
+            }
+            if (!targetView.isShown) {
+                shineView.visibility = View.INVISIBLE
+                shineView.postDelayed(repeatRunnable, safeMaxDelay)
+                return@Runnable
+            }
+
+            val startX = -shineView.width.toFloat()
+            val endX = targetView.width.toFloat()
+            shineView.translationX = startX
+            shineView.translationY = 0f
+            shineView.rotation = 0f
+            shineView.visibility = View.VISIBLE
+
+            // 从左到右水平流动
+            val moveX = ObjectAnimator.ofFloat(shineView, View.TRANSLATION_X, startX, endX).apply {
+                duration = durationMs
+                interpolator = AccelerateDecelerateInterpolator()
+            }
+            // 轻微上下波动，模拟流水起伏
+            val wavePx = (2.5f * shineView.resources.displayMetrics.density).toFloat()
+            val moveY = ObjectAnimator.ofFloat(shineView, View.TRANSLATION_Y, 0f, wavePx, -wavePx * 0.6f, 0f).apply {
+                duration = durationMs
+                interpolator = AccelerateDecelerateInterpolator()
+            }
+            // 透明度：流入 → 保持亮 → 流出
+            val alphaAnim = ObjectAnimator.ofFloat(shineView, View.ALPHA, 0f, 0.92f, 0.92f, 0f).apply {
+                duration = durationMs
+                interpolator = AccelerateDecelerateInterpolator()
+            }
+            // 轻微变宽再收，像水流过
+            val scaleXAnim = ObjectAnimator.ofFloat(shineView, View.SCALE_X, 0.92f, 1.05f, 0.98f).apply {
+                duration = durationMs
+                interpolator = AccelerateDecelerateInterpolator()
+            }
+            val animator = AnimatorSet().apply {
+                playTogether(moveX, moveY, alphaAnim, scaleXAnim)
+                addListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator) {
+                        shineView.visibility = View.INVISIBLE
+                        shineView.alpha = 1f
+                        shineView.scaleX = 1f
+                        shineView.translationY = 0f
+                        val nextDelay = Random.nextLong(safeMinDelay, safeMaxDelay + 1)
+                        shineView.postDelayed(repeatRunnable, nextDelay)
+                    }
+                })
+            }
+            shineView.tag = ShineAnimHolder(animator, repeatRunnable, attachListener)
+            animator.start()
+        }
+
+        shineView.tag = ShineAnimHolder(null, repeatRunnable, attachListener)
+        shineView.addOnAttachStateChangeListener(attachListener)
+        targetView.postDelayed(repeatRunnable, safeMinDelay)
+    }
+
+    fun stopWatchAdShineAnim(shineView: View) {
+        val holder = shineView.tag as? ShineAnimHolder ?: return
+        shineView.removeCallbacks(holder.runnable)
+        holder.animator?.cancel()
+        shineView.removeOnAttachStateChangeListener(holder.attachListener)
+        shineView.translationX = 0f
+        shineView.translationY = 0f
+        shineView.visibility = View.INVISIBLE
+        shineView.tag = null
     }
 
     /**

@@ -17,8 +17,10 @@ import com.sphere.shortvideos.helper.mmkv.MMKVData
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.helper.permission.PostPermission
 import com.sphere.shortvideos.helper.session
+import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.nextView
 import com.sphere.shortvideos.notification.NotificationHelper
+import com.sphere.shortvideos.view.AnimViewHelper
 import com.sphere.shortvideos.vm.LoadingViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -50,9 +52,13 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
         } else {
             viewModel.umpCompletedLiveData.postValue(true)
         }
+        logError("isFirstGoLoadingPage--->$isFirstGoLoadingPage")
         if (isFirstGoLoadingPage) {
+            binding.progressHorizontal.visibility = View.INVISIBLE
             binding.tvStart.visibility = View.VISIBLE
             binding.tvPp.visibility = View.VISIBLE
+            // 启动按钮提醒：复用已有的呼吸脉冲动画
+            AnimViewHelper.playClaimablePulseAnim(binding.tvStart, true, 0.98f, 1.06f)
             binding.tvStart.setOnClickListener {
                 localEvent("launch_start")
                 openMain()
@@ -66,6 +72,7 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
     }
 
     private fun openMain() {
+        isFirstGoLoadingPage = false
         nextView<MainActivity> {
             if (lastNotificationId > 0) putExtra(NotificationHelper.NOTIFICATION_ID_KEY, lastNotificationId)
         }
@@ -77,7 +84,6 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
     override fun onDestroy() {
         super.onDestroy()
         AppHelper.isNeedFetch = true
-        isFirstGoLoadingPage = false
     }
 
     override fun onResume() {
