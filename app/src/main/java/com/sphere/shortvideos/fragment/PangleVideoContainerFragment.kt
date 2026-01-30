@@ -342,6 +342,7 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
 
     private fun showNewUser(): Boolean {
         if (MMKVRepository.isNewUser) {
+            detailFragment?.pausePlay()
             setGuideVisibility(View.VISIBLE)
             (activity as? MainActivity)?.hideOrShowGuide()
             localEvent("new_guide")
@@ -361,7 +362,7 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
 
     private fun setGuideVisibility(sta: Int) {
         binding.ivFirstGuide.visibility = sta
-        binding.ivFirstGuide.visibility = sta
+        binding.ivFingerAnim.visibility = sta
         binding.tvTipsUser.visibility = sta
     }
 

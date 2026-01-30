@@ -5,8 +5,47 @@ import com.sphere.shortvideos.helper.MoneyCacheHelper.fetchCurMoney
 
 /**
  * 提现金额档位与货币换算
+ * 提现平台按地区显示：巴西 PIX/PagBank/PayPal，美国 PayPal/Cash App/Google Pay，印尼 DANA/OVO/GoPay
  */
 object WithdrawAmountHelper {
+
+    /** 单个提现方式：展示名 + 选中/未选中图标 */
+    data class WithdrawPaymentMethod(
+        val name: String,
+        val iconSelected: Int,
+        val iconNormal: Int
+    )
+
+    /**
+     * 按当前地区返回提现平台列表（用于横向列表与跑马灯文案）
+     * 巴西：PIX，PagBank，PayPal
+     * 美国（英语）：PayPal，Cash App，Google Pay
+     * 印尼：DANA，OVO，GoPay
+     */
+    fun fetchWithdrawPaymentMethods(): List<WithdrawPaymentMethod> {
+        return when {
+            LauageTools.isBrazil() -> listOf(
+                WithdrawPaymentMethod("PIX", R.drawable.ic_pix_w, R.drawable.ic_pix_b),
+                WithdrawPaymentMethod("PagBank", R.drawable.ic_pagbank_w, R.drawable.ic_pagbank_b),
+                WithdrawPaymentMethod("PayPal", R.drawable.ic_paypal_white, R.drawable.ic_paypal_black)
+            )
+            LauageTools.isEnglish() -> listOf(
+                WithdrawPaymentMethod("PayPal", R.drawable.ic_paypal_white, R.drawable.ic_paypal_black),
+                WithdrawPaymentMethod("Cash App", R.drawable.ic_cashapp_w, R.drawable.ic_cashapp_b),
+                WithdrawPaymentMethod("Google Pay", R.drawable.ic_pay_w, R.drawable.ic_pay_b)
+            )
+            LauageTools.isIndonesia() -> listOf(
+                WithdrawPaymentMethod("DANA", R.drawable.ic_daa_w, R.drawable.ic_daa_b),
+                WithdrawPaymentMethod("OVO", R.drawable.ic_ovo_w, R.drawable.ic_ovo_b),
+                WithdrawPaymentMethod("GoPay", R.drawable.ic_gopay_w, R.drawable.ic_gopay_b)
+            )
+            else -> listOf(
+                WithdrawPaymentMethod("PayPal", R.drawable.ic_paypal_white, R.drawable.ic_paypal_black),
+                WithdrawPaymentMethod("Cash App", R.drawable.ic_cashapp_w, R.drawable.ic_cashapp_b),
+                WithdrawPaymentMethod("Google Pay", R.drawable.ic_pay_w, R.drawable.ic_pay_b)
+            )
+        }
+    }
     private val defLow = WithdrawTier(brl = 240, usd = 48, idr = 720_000)
     private val tiers = listOf(defLow,
         WithdrawTier(brl = 360, usd = 72, idr = 1_080_000),
@@ -43,11 +82,13 @@ object WithdrawAmountHelper {
         return "${resolveMoneyUnit()}${formatMoney(double)}"
     }
 
+    /** 顶部/其他处展示的“当前地区默认提现方式”图标 */
     fun fetchMoneyBankIcon(isBlack: Boolean = false): Int {
         return when {
             LauageTools.isIndonesia() -> if (isBlack) R.drawable.ic_ovo_b else R.drawable.ic_ovo_w
             LauageTools.isBrazil() -> if (isBlack) R.drawable.ic_pix_b else R.drawable.ic_pix_w
-            else -> if (isBlack) R.drawable.ic_pix_b else R.drawable.ic_pix_w
+            LauageTools.isEnglish() -> if (isBlack) R.drawable.ic_cashapp_b else R.drawable.ic_cashapp_w
+            else -> if (isBlack) R.drawable.ic_cashapp_b else R.drawable.ic_cashapp_w
         }
     }
 

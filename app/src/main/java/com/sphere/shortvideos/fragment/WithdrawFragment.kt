@@ -31,7 +31,9 @@ import kotlin.random.Random
  * Describe:
  */
 class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
-    private val listPayInfo = arrayListOf("Paypal", "PayBank", "OVO", "DANA", "PIX")
+    /** 当前地区提现方式名称列表（用于跑马灯“到账方式”文案） */
+    private val listPayInfo: List<String>
+        get() = WithdrawAmountHelper.fetchWithdrawPaymentMethods().map { it.name }
     private val methodAdapter = WithdrawMethodAdapter()
     private val amountAdapter = WithdrawAmountAdapter()
     private var marqueeAnimator: ValueAnimator? = null
@@ -59,8 +61,8 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
 
     private fun setupWithdrawMethods() {
         binding.rvWithdraw.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        methodAdapter.setMethods(WithdrawAmountHelper.fetchWithdrawPaymentMethods())
         binding.rvWithdraw.adapter = methodAdapter
-
     }
 
     private fun setupWithdrawAmounts() {

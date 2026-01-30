@@ -9,6 +9,7 @@ import androidx.fragment.app.DialogFragment
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.databinding.DialogCongratulateBinding
 import com.sphere.shortvideos.helper.MoneyCacheHelper
+import com.sphere.shortvideos.helper.SoundHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.view.AnimViewHelper
@@ -38,8 +39,9 @@ class NormalCongratulateDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        SoundHelper.playDialogAppear(requireContext()) // 弹窗出现音效
         AnimViewHelper.playWelcomeBonusAnim(binding.ivAnim, binding.ivRewardBox)
-        AnimViewHelper.slideInFromTop(binding.ivAnim2, 1200L)
+        AnimViewHelper.playCelebrateAnim(binding.ivAnim2, 1000L)
         val adRvReward = MoneyCacheHelper.fetchRvAdReward()
         val curMoney = WithdrawAmountHelper.fetchCurMoneyAndGetMoneyMinValue()
         val des =

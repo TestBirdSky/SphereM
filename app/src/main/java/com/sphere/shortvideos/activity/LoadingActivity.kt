@@ -54,7 +54,8 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
         logError("isFirstGoLoadingPage--->$isFirstGoLoadingPage")
         if (isFirstGoLoadingPage) {
             binding.progressHorizontal.visibility = View.INVISIBLE
-            binding.tvStart.visibility = View.VISIBLE
+            binding.tvDes2.visibility = View.INVISIBLE
+            binding.firstLayout.visibility = View.VISIBLE
             binding.tvPp.visibility = View.VISIBLE
             // 启动按钮提醒：复用已有的呼吸脉冲动画
             AnimViewHelper.playClaimablePulseAnim(binding.tvStart, true, 0.98f, 1.06f)
@@ -68,8 +69,6 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
         }
         session()
         MMKVRepository.checkCueDay()
-        // todo test
-        openMain()
     }
 
     private fun openMain() {

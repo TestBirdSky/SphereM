@@ -59,7 +59,7 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
             AnimViewHelper.flyToTarget(view, binding.iv1, end = {
                 lifecycleScope.launch {
                     delay(Random.nextLong(6000, 16000))
-                    view.visibility = View.VISIBLE
+                    AnimViewHelper.playShowScaleAlphaAnim(view)
                 }
             })
             (activity as? MainActivity)?.let {

@@ -113,7 +113,7 @@ private fun LayoutTaskChildBinding.set7DayReword(daySignSuccess: (Double, ImageV
     val items = states.map { state ->
         val reward = state.reward
         val rewardText = if (reward > 0) {
-            "+${WithdrawAmountHelper.formatMoney(reward)}"
+            "+${WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(reward)}"
         } else {
             "--"
         }

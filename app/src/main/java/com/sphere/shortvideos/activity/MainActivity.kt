@@ -37,7 +37,7 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
     private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (PermissionHelper.areNotificationsEnabled(this)) {
             if (moneyGe > 0) {
-                viewModel.addMoneyNotExChange(moneyGe)
+                HelperRewardShow.addMoneyNotExChangeFlyAnim(moneyGe, 500)
             }
         }
     }
@@ -114,10 +114,7 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         binding.bottomNav.selectedItemId = R.id.tab_video
         h.addViewWallet(binding.centerWallet, this)
         if (MMKVRepository.isNewUser.not()) {
-            lifecycleScope.launch {
-                delay(Random.nextLong(1500, 3000))
-                showNotificationOpen()
-            }
+            showNotificationOpen()
         }
         registerViewModel()
     }
@@ -145,16 +142,19 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         }
     }
 
-    fun showNotificationOpen(isHome: Boolean = true) {
-        val isShow = if (isHome) PermissionHelper.isShowNotificationDialogHome(this@MainActivity)
-        else PermissionHelper.isShowNotificationDialogAfterRv(this)
-        if (isShow) {
-            val notificationDialogFragment = OpenNotificationDialogFragment()
-            notificationDialogFragment.onClaim = {
-                moneyGe = it
-                startForResult.launch(GoSettingAndCheckActivity.fetchIntent(activity, 0))
+    fun showNotificationOpen(isHome: Boolean = true, delTime: Long = 2000) {
+        lifecycleScope.launch {
+            delay(Random.nextLong(1500, delTime))
+            val isShow = if (isHome) PermissionHelper.isShowNotificationDialogHome(this@MainActivity)
+            else PermissionHelper.isShowNotificationDialogAfterRv(this@MainActivity)
+            if (isShow) {
+                val notificationDialogFragment = OpenNotificationDialogFragment()
+                notificationDialogFragment.onClaim = {
+                    moneyGe = it
+                    startForResult.launch(GoSettingAndCheckActivity.fetchIntent(activity, 0))
+                }
+                notificationDialogFragment.show(supportFragmentManager, "")
             }
-            notificationDialogFragment.show(supportFragmentManager, "")
         }
     }
 

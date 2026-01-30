@@ -36,7 +36,7 @@ object HelperRewardShow {
     private var maxReachedCount = 0
     private var progressJob: Job? = null
     private val progressMax = 100
-    private val roundDurationMs = 5000L //15_000L // todo test
+    private val roundDurationMs = 15000L //15_000L //
 
     private var numIntervalIndex = 0 // 目标
     private var tagGam = -1
@@ -104,7 +104,7 @@ object HelperRewardShow {
     }
 
 
-    fun addMoneyNotExChangeFlyAnim(d: Double) { //  添加飞的动画在加钱
+    fun addMoneyNotExChangeFlyAnim(d: Double, animTime: Long = 800) { //  添加飞的动画在加钱
         scopMain.launch {
             val animTime = 800L
             animAddMoneyDurationInMill.postValue(animTime)
@@ -233,12 +233,10 @@ object HelperRewardShow {
     private fun showRvAd(activity: GenericActivity, reward: Double) {
         AdUtils.showRvAd(activity, dismiss = { isFetchReward ->
             if (isFetchReward) {
-                addMoneyNotExChange(reward)
+                addMoneyNotExChangeFlyAnim(reward)
+
                 if (activity is MainActivity) {
-                    activity.lifecycleScope.launch {
-                        delay(1500)
-                        activity.showNotificationOpen(false)
-                    }
+                    activity.showNotificationOpen(false)
                 }
             }
         })

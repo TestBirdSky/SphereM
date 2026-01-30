@@ -36,11 +36,9 @@ data class RewardConfig(@SerializedName("money_newuser_gift") val moneyNewuserGi
         return Pair(moneyNewuserGift.reward, "+${WithdrawAmountHelper.moneyFormatAddUnit(moneyNewuserGift.reward)}")
     }
 
-    // 传进来的是换算后的钱
+    // 传进来的是换算后的钱；money 为 0 时使用列表中 min 最小的区间
     fun getNotificationRewardMoney(money: Double): Pair<Double, String> {
-        val m = moneyPush.firstOrNull {
-            it.isInRange(money)
-        }?.reward?.random() ?: 0.0
+        val m = pickRewardFromRanges(moneyPush, money)
         return Pair(m, WithdrawAmountHelper.moneyFormatAddUnit(m))
     }
 
@@ -49,12 +47,9 @@ data class RewardConfig(@SerializedName("money_newuser_gift") val moneyNewuserGi
         return buildReward(rvVideo, money, withPlus)
     }
 
-    // 网赚纸钞挂件 、  - 每两次现金加载，自动给用户累加，需有现金收缩动画不展示弹窗
+    // 网赚纸钞挂件：每两次现金加载自动累加；money 为 0 时使用 min 最小的区间
     fun getMoneyVideoIconReward(money: Double): Double {
-        val m = moneyVideoIcon.firstOrNull {
-            it.isInRange(money)
-        }?.reward?.random() ?: 0.0
-        return m
+        return pickRewardFromRanges(moneyVideoIcon, money)
     }
 
     fun getDramaTime1Reward(moneyBr: Double): Pair<Double, String> {
@@ -82,19 +77,15 @@ data class RewardConfig(@SerializedName("money_newuser_gift") val moneyNewuserGi
     }
 
     fun getTaskPopReward(moneyBr: Double): Pair<Double, String> {
-        val m = taskPop.firstOrNull {
-            it.isInRange(moneyBr)
-        }?.reward?.random() ?: 0.0
-        return Pair(m, "+${WithdrawAmountHelper.formatMoney(m)}")
+        val m = pickRewardFromRanges(taskPop, moneyBr)
+        return Pair(m, "+${WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(m)}")
     }
 
     private fun buildReward(list: List<RewardRange>,
                             moneyBr: Double,
                             withPlus: Boolean,
                             withSpace: Boolean = true): Pair<Double, String> {
-        val m = list.firstOrNull {
-            it.isInRange(moneyBr)
-        }?.reward?.random() ?: 0.0
+        val m = pickRewardFromRanges(list, moneyBr)
         val formatted = if (withSpace) {
             WithdrawAmountHelper.moneyFormatAddUnit(m)
         } else {
@@ -116,4 +107,10 @@ data class RewardRange(
         val maxVal = max ?: Double.MAX_VALUE
         return num < maxVal
     }
+}
+
+/** 从区间列表中选取奖励：money 为 0 时取 min 最小的区间，否则取包含 money 的区间 */
+private fun pickRewardFromRanges(list: List<RewardRange>, money: Double): Double {
+    val range = if (money == 0.0) list.minByOrNull { it.min } else list.firstOrNull { it.isInRange(money) }
+    return range?.reward?.random() ?: 0.0
 }

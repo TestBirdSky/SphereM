@@ -13,10 +13,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.os.Handler
 import android.os.Looper
 import com.sphere.shortvideos.R
+import com.sphere.shortvideos.helper.SoundHelper
 import kotlin.random.Random
 
 object AnimViewHelper {
@@ -86,6 +88,7 @@ object AnimViewHelper {
                         start()
                     }
                 }
+
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     cancelRunning()
                     val scaleX = ObjectAnimator.ofFloat(v, View.SCALE_X, v.scaleX, 1f).apply {
@@ -144,6 +147,7 @@ object AnimViewHelper {
                         start()
                     }
                 }
+
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     holder.animator?.cancel()
                     holder.animator = ValueAnimator.ofInt(overlayDrawable.alpha, 0).apply {
@@ -169,7 +173,7 @@ object AnimViewHelper {
      * @param animView 第一个 View（进场动画 + 结束后慢速旋转）
      * @param rewardView 第二个 View（从 0 放大到 1 + 结束后呼吸放大）
      */
-    fun playWelcomeBonusAnim(animView: View, rewardView: View) {
+    fun playWelcomeBonusAnim(animView: View, rewardView: View, end: (() -> Unit)?=null) {
         animView.alpha = 0.3f
         animView.scaleX = 0.1f
         animView.scaleY = 0.1f
@@ -218,20 +222,116 @@ object AnimViewHelper {
                     rotationAnim.start()
                     // 第二个 View：不停呼吸放大，透明度 0.9～1
                     playClaimablePulseAnim(rewardView, true, 0.96f, 1.08f, 0.9f, 1f)
+                    end?.invoke()
                 }
             })
             start()
         }
     }
 
-    fun slideInFromTop(view: View, durationMs: Long = 1200L) {
+    /**
+     * 庆祝动画1：弹跳进入（Bounce In）
+     * 从上方弹跳下来，带弹性回弹效果
+     */
+    private fun playCelebrateBounceIn(view: View, durationMs: Long = 1000L) {
         view.post {
             val startY = -view.height.toFloat()
             view.translationY = startY
-            ObjectAnimator.ofFloat(view, View.TRANSLATION_Y, startY, 0f).apply {
-                duration = durationMs
+            view.alpha = 0f
+            view.scaleX = 0.8f
+            view.scaleY = 0.8f
+            val translateY = ObjectAnimator.ofFloat(view, View.TRANSLATION_Y, startY, 0f).apply {
+                interpolator = OvershootInterpolator(2.5f)
+            }
+            val alpha = ObjectAnimator.ofFloat(view, View.ALPHA, 0f, 1f)
+            val scaleX = ObjectAnimator.ofFloat(view, View.SCALE_X, 0.8f, 1f).apply {
+                interpolator = OvershootInterpolator(1.8f)
+            }
+            val scaleY = ObjectAnimator.ofFloat(view, View.SCALE_Y, 0.8f, 1f).apply {
+                interpolator = OvershootInterpolator(1.8f)
+            }
+            AnimatorSet().apply {
+                playTogether(translateY, alpha, scaleX, scaleY)
+                this.duration = durationMs
                 start()
             }
+        }
+    }
+
+    /**
+     * 庆祝动画2：烟花绽放（Fireworks）
+     * 缩放 + 透明度 + 轻微旋转，像烟花绽放
+     */
+    private fun playCelebrateFireworks(view: View, durationMs: Long = 1000L) {
+        view.post {
+            view.alpha = 0f
+            view.scaleX = 0f
+            view.scaleY = 0f
+            view.rotation = -15f
+            val scaleX = ObjectAnimator.ofFloat(view, View.SCALE_X, 0f, 1.2f, 1f).apply {
+                interpolator = OvershootInterpolator(1.5f)
+            }
+            val scaleY = ObjectAnimator.ofFloat(view, View.SCALE_Y, 0f, 1.2f, 1f).apply {
+                interpolator = OvershootInterpolator(1.5f)
+            }
+            val alpha = ObjectAnimator.ofFloat(view, View.ALPHA, 0f, 1f).apply {
+                interpolator = DecelerateInterpolator()
+            }
+            val rotation = ObjectAnimator.ofFloat(view, View.ROTATION, -15f, 5f, 0f).apply {
+                interpolator = DecelerateInterpolator()
+            }
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY, alpha, rotation)
+                this.duration = durationMs
+                start()
+            }
+        }
+    }
+
+    /**
+     * 庆祝动画：随机选择弹跳进入或烟花绽放
+     * @param view 目标 View
+     * @param durationMs 动画时长，默认 1000ms
+     */
+    fun playCelebrateAnim(view: View, durationMs: Long = 1000L) {
+        when (Random.nextBoolean()) {
+            true -> playCelebrateBounceIn(view, durationMs)
+            false -> playCelebrateFireworks(view, durationMs)
+        }
+    }
+
+    /**
+     * 显示动画：缩放 0→1，透明度 0.8→1
+     * @param view 目标 View
+     * @param durationMs 动画时长，默认 280ms
+     * @param end 动画结束回调，可为 null
+     */
+    @JvmOverloads
+    fun playShowScaleAlphaAnim(
+        view: View,
+        durationMs: Long = 480L,
+        end: (() -> Unit)? = null
+    ) {
+        view.visibility = View.VISIBLE
+        view.scaleX = 0f
+        view.scaleY = 0f
+        view.alpha = 0.8f
+        val scaleX = ObjectAnimator.ofFloat(view, View.SCALE_X, 0f, 1f).apply {
+            interpolator = AccelerateDecelerateInterpolator()
+        }
+        val scaleY = ObjectAnimator.ofFloat(view, View.SCALE_Y, 0f, 1f).apply {
+            interpolator = AccelerateDecelerateInterpolator()
+        }
+        val alpha = ObjectAnimator.ofFloat(view, View.ALPHA, 0.8f, 1f).apply {
+            interpolator = AccelerateDecelerateInterpolator()
+        }
+        AnimatorSet().apply {
+            playTogether(scaleX, scaleY, alpha)
+            this.duration = durationMs
+            if (end != null) addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) { end.invoke() }
+            })
+            start()
         }
     }
 
@@ -502,7 +602,8 @@ object AnimViewHelper {
             targetView.getLocationInWindow(endLocation)
 
             val startX = startLocation[0] - rootLocation[0] + startView.width / 2f - animView.width / 2f + startOffsetX
-            val startY = startLocation[1] - rootLocation[1] + startView.height / 2f - animView.height / 2f + startOffsetY
+            val startY =
+                startLocation[1] - rootLocation[1] + startView.height / 2f - animView.height / 2f + startOffsetY
             val endX = endLocation[0] - rootLocation[0] + targetView.width / 2f - animView.width / 2f
             val endY = endLocation[1] - rootLocation[1] + targetView.height / 2f - animView.height / 2f
 
@@ -580,6 +681,7 @@ object AnimViewHelper {
             val height = animView.height.takeIf { it > 0 } ?: animView.measuredHeight
             if (width <= 0 || height <= 0) return@post
 
+            SoundHelper.playCoinShrink(animView.context) // 金币收缩音效
             val count = Random.nextInt(4) + 3 // 3～6 枚
             val flyViews = mutableListOf<ImageView>()
             for (i in 0 until count) {
@@ -602,10 +704,10 @@ object AnimViewHelper {
                 val startDelayMs = index * stepMs
                 handler.postDelayed({
                     playCoinFlyAnim(flyView, animView, targetView, durationMs, scaleTo, {
+                        playHitPulseAnim(targetView, hitScale, hitDurationMs) // 每枚到达都触发撞击效果
                         completed++
                         if (completed == count) {
                             flyViews.forEach { rootView.removeView(it) }
-                            playHitPulseAnim(targetView, hitScale, hitDurationMs)
                             end?.invoke()
                         }
                     }, 0f, 0f)

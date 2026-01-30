@@ -25,9 +25,6 @@ class StreamViewModel : ViewModel() {
         logError("loadData")
         viewModelScope.launch(Dispatchers.IO) {
             val result = requestFeedListSuspend()
-            while (MMKVRepository.isNewUser) {
-                delay(200)
-            }
             if (null == result || result.dataList.isNullOrEmpty()) {
                 onErrorLiveData.postValue(true)
             } else {

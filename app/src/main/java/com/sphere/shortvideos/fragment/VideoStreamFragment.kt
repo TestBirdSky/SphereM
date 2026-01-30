@@ -73,7 +73,7 @@ class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
     private fun autoRefresh() {
         if (!initialized) {
             initialized = true
-            binding.refreshLayout.isRefreshing = MMKVRepository.isNewUser.not()
+            binding.refreshLayout.isRefreshing = true
             viewModel.loadData()
         }
     }

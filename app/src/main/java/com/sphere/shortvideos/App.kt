@@ -5,6 +5,7 @@ import com.bytedance.sdk.shortplay.api.PSSDK
 import com.google.android.gms.ads.MobileAds
 import com.sphere.shortvideos.helper.AppLifecycleManager
 import com.sphere.shortvideos.helper.AppHelper
+import com.sphere.shortvideos.helper.SoundHelper
 import com.sphere.shortvideos.helper.risk.HelperRiskNetCheck
 import com.sphere.shortvideos.helper.InstallReferrerManager
 import com.sphere.shortvideos.helper.RemoteConfHelper
@@ -32,6 +33,7 @@ class App : Application() {
         initBackgroundActive()
         HelperRiskNetCheck.requestHerUser(this@App)
         AppHelper.registerInfo(this)
+        SoundHelper.init(this)
         mFbAndAdjustHelper.initAdjust(this)
         NotificationHelper.scheduleLocalNotifications(this)
     }

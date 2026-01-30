@@ -33,7 +33,7 @@ object DramaIntAdHelper {
         return when {
             LauageTools.isIndonesia() -> config.idIntAd
             LauageTools.isBrazil() -> config.brIntAd
-            else -> (config.usIntAd?.takeIf { it.isNotEmpty() } ?: config.brIntAd)
+            else -> config.usIntAd
         }
     }
 
@@ -44,7 +44,7 @@ object DramaIntAdHelper {
             it.isInRange(moneyCur)
         }?.point ?: 0
         val randomResult = Random.nextInt(1, 100)
-        logError("fetchIsShowRateAd-->$rate --$randomResult")
+        logError("fetchIsShowRateAd-->$rate --$randomResult --$conL")
         return rate >= randomResult
     }
 
