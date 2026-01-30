@@ -30,7 +30,11 @@ object DramaIntAdHelper {
 
     fun getRangesByLanguage(): List<DramaIntAdRange> {
         val config = getConfig()
-        return if (LauageTools.isIndonesia()) config.idIntAd else config.brIntAd
+        return when {
+            LauageTools.isIndonesia() -> config.idIntAd
+            LauageTools.isBrazil() -> config.brIntAd
+            else -> (config.usIntAd?.takeIf { it.isNotEmpty() } ?: config.brIntAd)
+        }
     }
 
     fun fetchIsShowRateAd(): Boolean {

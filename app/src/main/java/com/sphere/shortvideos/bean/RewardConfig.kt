@@ -32,29 +32,27 @@ data class RewardConfig(@SerializedName("money_newuser_gift") val moneyNewuserGi
                         @SerializedName("rv_video") val rvVideo: List<RewardRange>,
 
                         @SerializedName("ad_interval") val adInterval: List<Int>) {
-    var moneyRate = 1.0 //价钱换算默认巴西币
-
     fun getRewardNewUser(): Pair<Double, String> {
         return Pair(moneyNewuserGift.reward, "+${WithdrawAmountHelper.moneyFormatAddUnit(moneyNewuserGift.reward)}")
     }
 
-    // 传进来的是巴西币
-    fun getNotificationRewardMoney(moneyBr: Double): Pair<Double, String> {
+    // 传进来的是换算后的钱
+    fun getNotificationRewardMoney(money: Double): Pair<Double, String> {
         val m = moneyPush.firstOrNull {
-            it.isInRange(moneyBr * moneyRate)
+            it.isInRange(money)
         }?.reward?.random() ?: 0.0
         return Pair(m, WithdrawAmountHelper.moneyFormatAddUnit(m))
     }
 
     // getVideo
-    fun getRvRewardMoney(moneyBr: Double, withPlus: Boolean = true): Pair<Double, String> {
-        return buildReward(rvVideo, moneyBr, withPlus)
+    fun getRvRewardMoney(money: Double, withPlus: Boolean = true): Pair<Double, String> {
+        return buildReward(rvVideo, money, withPlus)
     }
 
     // 网赚纸钞挂件 、  - 每两次现金加载，自动给用户累加，需有现金收缩动画不展示弹窗
-    fun getMoneyVideoIconReward(moneyBr: Double): Double {
+    fun getMoneyVideoIconReward(money: Double): Double {
         val m = moneyVideoIcon.firstOrNull {
-            it.isInRange(moneyBr * moneyRate)
+            it.isInRange(money)
         }?.reward?.random() ?: 0.0
         return m
     }
@@ -85,7 +83,7 @@ data class RewardConfig(@SerializedName("money_newuser_gift") val moneyNewuserGi
 
     fun getTaskPopReward(moneyBr: Double): Pair<Double, String> {
         val m = taskPop.firstOrNull {
-            it.isInRange(moneyBr * moneyRate)
+            it.isInRange(moneyBr)
         }?.reward?.random() ?: 0.0
         return Pair(m, "+${WithdrawAmountHelper.formatMoney(m)}")
     }
@@ -95,7 +93,7 @@ data class RewardConfig(@SerializedName("money_newuser_gift") val moneyNewuserGi
                             withPlus: Boolean,
                             withSpace: Boolean = true): Pair<Double, String> {
         val m = list.firstOrNull {
-            it.isInRange(moneyBr * moneyRate)
+            it.isInRange(moneyBr)
         }?.reward?.random() ?: 0.0
         val formatted = if (withSpace) {
             WithdrawAmountHelper.moneyFormatAddUnit(m)
@@ -108,19 +106,14 @@ data class RewardConfig(@SerializedName("money_newuser_gift") val moneyNewuserGi
 
 data class RewardValue(@SerializedName("reward") val reward: Double)
 
-data class RewardRange(@SerializedName("min") val min: Int,
-
-                       @SerializedName("max") val max: Int?,
-
-                       @SerializedName("reward") val reward: List<Double>) {
-
+data class RewardRange(
+    @SerializedName("min") val min: Double,
+    @SerializedName("max") val max: Double?,
+    @SerializedName("reward") val reward: List<Double>
+) {
     fun isInRange(num: Double): Boolean {
-        if (num >= min) {
-            if (num < (max ?: Int.MAX_VALUE)) {
-                return true
-            }
-        }
-        return false
+        if (num < min) return false
+        val maxVal = max ?: Double.MAX_VALUE
+        return num < maxVal
     }
-
 }

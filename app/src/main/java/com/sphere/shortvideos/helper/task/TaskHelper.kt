@@ -48,7 +48,7 @@ object TaskHelper {
     }
 
     fun fetchTaskPopReward(): Pair<Double, String> {
-        return RewardHelper.getConfigByLanguage().getTaskPopReward(MoneyCacheHelper.fetchCurMoneyBr())
+        return RewardHelper.getConfigByLanguage().getTaskPopReward(MoneyCacheHelper.fetchCurMoney())
     }
 
 
@@ -100,7 +100,7 @@ object TaskHelper {
         if (singIn7Day.isEmpty()) {
             if (lastSingInIndex == -1) {
                 RewardHelper.getConfigByLanguage().signIn.forEachIndexed { index, range ->
-                    if (range.isInRange(MoneyCacheHelper.fetchCurMoneyBr())) {
+                    if (range.isInRange(MoneyCacheHelper.fetchCurMoney())) {
                         lastSingInIndex = index
                     }
                 }

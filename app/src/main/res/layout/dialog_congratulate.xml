@@ -25,7 +25,8 @@
             android:fontFamily="@font/noto_sans"
             android:text="@string/congratulate"
             android:textColor="#F5C91A"
-            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textSize="30sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

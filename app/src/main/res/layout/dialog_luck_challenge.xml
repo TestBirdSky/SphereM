@@ -25,7 +25,8 @@
             android:fontFamily="@font/noto_sans"
             android:text="@string/fortune_challenge"
             android:textColor="#F5C91A"
-            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

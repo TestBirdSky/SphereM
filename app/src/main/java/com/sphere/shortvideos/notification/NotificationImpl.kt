@@ -64,11 +64,9 @@ class NotificationImpl(val notificationId: Int = 1000,
 
         val smallView = RemoteViews(context.packageName, R.layout.layout_notification_small).apply {
             setTextViewText(R.id.tv_title, title)
-            setTextViewText(R.id.tv_des, contextStr)
             setOnClickPendingIntent(R.id.layout_root, pendingIntent)
         }
         val bigView = RemoteViews(context.packageName, R.layout.layout_notification_big).apply {
-            setTextViewText(R.id.tv_title, title)
             setTextViewText(R.id.tv_des, contextStr)
             setTextViewText(R.id.tv_btn, context.getString(R.string.start))
             setOnClickPendingIntent(R.id.layout_root, pendingIntent)

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="press_gray_overlay_holder" type="id" />
+    <item name="welcome_bonus_rotation_holder" type="id" />
 </resources>

@@ -1,0 +1,145 @@
+package com.sphere.shortvideos.helper.reward
+
+/**
+ * 英语(USD)奖励配置默认 JSON，Remote Config key: us_reward
+ */
+const val DEFAULT_US_JSON = """
+{
+  "money_newuser_gift": {
+    "reward": 20
+  },
+  "money_video_icon": [
+    { "min": 20, "max": 22, "reward": [0.4, 0.6] },
+    { "min": 22, "max": 26, "reward": [0.26, 0.5] },
+    { "min": 26, "max": 30, "reward": [0.2, 0.34] },
+    { "min": 30, "max": 42, "reward": [0.1, 0.3] },
+    { "min": 42, "max": 45, "reward": [0.02, 0.14] },
+    { "min": 45, "max": 46, "reward": [0.01, 0.04] },
+    { "min": 46, "max": 47, "reward": [0.01, 0.02] },
+    { "min": 47, "max": 47.4, "reward": [0.01, 0.01] },
+    { "min": 47.4, "max": 47.8, "reward": [0.01, 0.01] },
+    { "min": 47.8, "max": null, "reward": [0.01, 0.01] }
+  ],
+  "money_push": [
+    { "min": 20, "max": 22, "reward": [2] },
+    { "min": 22, "max": 26, "reward": [1.6] },
+    { "min": 26, "max": 30, "reward": [1] },
+    { "min": 30, "max": 42, "reward": [0.6] },
+    { "min": 42, "max": 45, "reward": [0.4] },
+    { "min": 45, "max": 46, "reward": [0.2] },
+    { "min": 46, "max": 47, "reward": [0.1] },
+    { "min": 47, "max": 47.4, "reward": [0.06] },
+    { "min": 47.4, "max": 47.8, "reward": [0.01] },
+    { "min": 47.8, "max": null, "reward": [0.01] }
+  ],
+  "drama_time_1": [
+    { "min": 20, "max": 22, "reward": [0.8, 1] },
+    { "min": 22, "max": 26, "reward": [0.4, 0.6] },
+    { "min": 26, "max": 30, "reward": [0.1, 0.2] },
+    { "min": 30, "max": 42, "reward": [0.02, 0.06] },
+    { "min": 42, "max": 45, "reward": [0.01, 0.02] },
+    { "min": 45, "max": 46, "reward": [0.01, 0.01] },
+    { "min": 46, "max": 47, "reward": [0.01, 0.01] },
+    { "min": 47, "max": 47.4, "reward": [0.01, 0.01] },
+    { "min": 47.4, "max": 47.8, "reward": [0.01, 0.01] },
+    { "min": 47.8, "max": null, "reward": [0.01, 0.01] }
+  ],
+  "drama_time_2": [
+    { "min": 20, "max": 22, "reward": [0.8, 1] },
+    { "min": 22, "max": 26, "reward": [0.4, 0.6] },
+    { "min": 26, "max": 30, "reward": [0.1, 0.2] },
+    { "min": 30, "max": 42, "reward": [0.02, 0.06] },
+    { "min": 42, "max": 45, "reward": [0.01, 0.02] },
+    { "min": 45, "max": 46, "reward": [0.01, 0.01] },
+    { "min": 46, "max": 47, "reward": [0.01, 0.01] },
+    { "min": 47, "max": 47.4, "reward": [0.01, 0.01] },
+    { "min": 47.4, "max": 47.8, "reward": [0.01, 0.01] },
+    { "min": 47.8, "max": null, "reward": [0.01, 0.01] }
+  ],
+  "drama_time_3": [
+    { "min": 20, "max": 22, "reward": [1.1, 1.2] },
+    { "min": 22, "max": 26, "reward": [0.7, 0.8] },
+    { "min": 26, "max": 30, "reward": [0.22, 0.3] },
+    { "min": 30, "max": 42, "reward": [0.08, 0.12] },
+    { "min": 42, "max": 45, "reward": [0.01, 0.02] },
+    { "min": 45, "max": 46, "reward": [0.01, 0.01] },
+    { "min": 46, "max": 47, "reward": [0.01, 0.01] },
+    { "min": 47, "max": 47.4, "reward": [0.01, 0.01] },
+    { "min": 47.4, "max": 47.8, "reward": [0.01, 0.01] },
+    { "min": 47.8, "max": null, "reward": [0.01, 0.01] }
+  ],
+  "drama_time_4": [
+    { "min": 20, "max": 22, "reward": [1.1, 1.2] },
+    { "min": 22, "max": 26, "reward": [0.7, 0.8] },
+    { "min": 26, "max": 30, "reward": [0.22, 0.3] },
+    { "min": 30, "max": 42, "reward": [0.08, 0.12] },
+    { "min": 42, "max": 45, "reward": [0.01, 0.02] },
+    { "min": 45, "max": 46, "reward": [0.01, 0.01] },
+    { "min": 46, "max": 47, "reward": [0.01, 0.01] },
+    { "min": 47, "max": 47.4, "reward": [0.01, 0.01] },
+    { "min": 47.4, "max": 47.8, "reward": [0.01, 0.01] },
+    { "min": 47.8, "max": null, "reward": [0.01, 0.01] }
+  ],
+  "drama_time_5": [
+    { "min": 20, "max": 22, "reward": [1.3, 1.6] },
+    { "min": 22, "max": 26, "reward": [0.9, 1] },
+    { "min": 26, "max": 30, "reward": [0.32, 0.4] },
+    { "min": 30, "max": 42, "reward": [0.14, 0.16] },
+    { "min": 42, "max": 45, "reward": [0.01, 0.02] },
+    { "min": 45, "max": 46, "reward": [0.01, 0.01] },
+    { "min": 46, "max": 47, "reward": [0.01, 0.01] },
+    { "min": 47, "max": 47.4, "reward": [0.01, 0.01] },
+    { "min": 47.4, "max": 47.8, "reward": [0.01, 0.01] },
+    { "min": 47.8, "max": null, "reward": [0.01, 0.01] }
+  ],
+  "drama_time_6": [
+    { "min": 20, "max": 22, "reward": [1.3, 1.6] },
+    { "min": 22, "max": 26, "reward": [0.9, 1] },
+    { "min": 26, "max": 30, "reward": [0.32, 0.4] },
+    { "min": 30, "max": 42, "reward": [0.14, 0.16] },
+    { "min": 42, "max": 45, "reward": [0.01, 0.02] },
+    { "min": 45, "max": 46, "reward": [0.01, 0.01] },
+    { "min": 46, "max": 47, "reward": [0.01, 0.01] },
+    { "min": 47, "max": 47.4, "reward": [0.01, 0.01] },
+    { "min": 47.4, "max": 47.8, "reward": [0.01, 0.01] },
+    { "min": 47.8, "max": null, "reward": [0.01, 0.01] }
+  ],
+  "task_pop": [
+    { "min": 20, "max": 22, "reward": [0.3] },
+    { "min": 22, "max": 26, "reward": [0.18] },
+    { "min": 26, "max": 30, "reward": [0.12] },
+    { "min": 30, "max": 42, "reward": [0.03] },
+    { "min": 42, "max": 45, "reward": [0.02] },
+    { "min": 45, "max": 46, "reward": [0.01] },
+    { "min": 46, "max": 47, "reward": [0.01] },
+    { "min": 47, "max": 47.4, "reward": [0.01] },
+    { "min": 47.4, "max": 47.8, "reward": [0.01] },
+    { "min": 47.8, "max": null, "reward": [0.01] }
+  ],
+  "sign_in": [
+    { "min": 20, "max": 22, "reward": [1, 1, 2, 2, 3, 3, 4] },
+    { "min": 22, "max": 26, "reward": [0.6, 0.6, 1.2, 1.2, 1.8, 1.8, 2.4] },
+    { "min": 26, "max": 30, "reward": [0.4, 0.4, 0.8, 0.8, 1.2, 1.2, 2] },
+    { "min": 30, "max": 42, "reward": [0.2, 0.2, 0.4, 0.4, 0.6, 0.6, 1] },
+    { "min": 42, "max": 45, "reward": [0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02] },
+    { "min": 45, "max": 46, "reward": [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01] },
+    { "min": 46, "max": 47, "reward": [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01] },
+    { "min": 47, "max": 47.4, "reward": [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01] },
+    { "min": 47.4, "max": 47.8, "reward": [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01] },
+    { "min": 47.8, "max": null, "reward": [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01] }
+  ],
+  "rv_video": [
+    { "min": 20, "max": 22, "reward": [0.3] },
+    { "min": 22, "max": 26, "reward": [0.18] },
+    { "min": 26, "max": 30, "reward": [0.12] },
+    { "min": 30, "max": 42, "reward": [0.06] },
+    { "min": 42, "max": 45, "reward": [0.02] },
+    { "min": 45, "max": 46, "reward": [0.01] },
+    { "min": 46, "max": 47, "reward": [0.01] },
+    { "min": 47, "max": 47.4, "reward": [0.01] },
+    { "min": 47.4, "max": 47.8, "reward": [0.01] },
+    { "min": 47.8, "max": null, "reward": [0.01] }
+  ],
+  "ad_interval": [2, 4, 2, 1]
+}
+"""

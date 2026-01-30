@@ -14,6 +14,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.OvershootInterpolator
+import android.os.Handler
+import android.os.Looper
 import com.sphere.shortvideos.R
 import kotlin.random.Random
 
@@ -162,6 +164,11 @@ object AnimViewHelper {
         }
     }
 
+    /**
+     * 播放欢迎奖励进场动画，结束后：第一个 View 慢慢持续旋转，第二个 View 不停呼吸放大。
+     * @param animView 第一个 View（进场动画 + 结束后慢速旋转）
+     * @param rewardView 第二个 View（从 0 放大到 1 + 结束后呼吸放大）
+     */
     fun playWelcomeBonusAnim(animView: View, rewardView: View) {
         animView.alpha = 0.3f
         animView.scaleX = 0.1f
@@ -199,6 +206,20 @@ object AnimViewHelper {
 
         AnimatorSet().apply {
             playTogether(alphaAnim, scaleAnim, rewardScaleX, rewardScaleY)
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    // 第一个 View：慢慢持续旋转
+                    val rotationAnim = ObjectAnimator.ofFloat(animView, View.ROTATION, 0f, 360f).apply {
+                        duration = 4000L
+                        repeatCount = ObjectAnimator.INFINITE
+                        interpolator = AccelerateDecelerateInterpolator()
+                    }
+                    animView.setTag(R.id.welcome_bonus_rotation_holder, rotationAnim)
+                    rotationAnim.start()
+                    // 第二个 View：不停呼吸放大，透明度 0.9～1
+                    playClaimablePulseAnim(rewardView, true, 0.96f, 1.08f, 0.9f, 1f)
+                }
+            })
             start()
         }
     }
@@ -289,12 +310,17 @@ object AnimViewHelper {
      * 可领取状态的呼吸闪动动画（作用在任意View上）
      * @param view 需要展示动画的View
      * @param isClaimable 是否可领取，false 会停止并重置动画
+     * @param minAlpha 透明度最小值（呼吸时最低 alpha），默认 0.6f
+     * @param maxAlpha 透明度最大值，默认 1f
      */
+    @JvmOverloads
     fun playClaimablePulseAnim(
         view: View,
         isClaimable: Boolean,
         minScale: Float = 1f,
-        maxScale: Float = 1.15f
+        maxScale: Float = 1.15f,
+        minAlpha: Float = 0.6f,
+        maxAlpha: Float = 1f
     ) {
         val animator = view.tag as? AnimatorSet
         if (!isClaimable) {
@@ -316,7 +342,9 @@ object AnimViewHelper {
             repeatCount = ObjectAnimator.INFINITE
             repeatMode = ObjectAnimator.RESTART
         }
-        val alphaAnim = ObjectAnimator.ofFloat(view, View.ALPHA, 1f, 0.6f, 1f).apply {
+        val safeAlphaMin = minAlpha.coerceIn(0f, 1f)
+        val safeAlphaMax = maxAlpha.coerceIn(0f, 1f).coerceAtLeast(safeAlphaMin)
+        val alphaAnim = ObjectAnimator.ofFloat(view, View.ALPHA, safeAlphaMax, safeAlphaMin, safeAlphaMax).apply {
             duration = 1200L
             repeatCount = ObjectAnimator.INFINITE
             repeatMode = ObjectAnimator.RESTART
@@ -454,12 +482,16 @@ object AnimViewHelper {
         })
     }
 
-    private fun playCoinFlyAnim(animView: ImageView,
-                                startView: ImageView,
-                                targetView: View,
-                                durationMs: Long,
-                                scaleTo: Float,
-                                end: (() -> Unit)?) {
+    private fun playCoinFlyAnim(
+        animView: ImageView,
+        startView: ImageView,
+        targetView: View,
+        durationMs: Long,
+        scaleTo: Float,
+        end: (() -> Unit)?,
+        startOffsetX: Float = 0f,
+        startOffsetY: Float = 0f
+    ) {
         val rootView = (startView.rootView as? ViewGroup) ?: return
         animView.post {
             val rootLocation = IntArray(2)
@@ -469,8 +501,8 @@ object AnimViewHelper {
             startView.getLocationInWindow(startLocation)
             targetView.getLocationInWindow(endLocation)
 
-            val startX = startLocation[0] - rootLocation[0] + startView.width / 2f - animView.width / 2f
-            val startY = startLocation[1] - rootLocation[1] + startView.height / 2f - animView.height / 2f
+            val startX = startLocation[0] - rootLocation[0] + startView.width / 2f - animView.width / 2f + startOffsetX
+            val startY = startLocation[1] - rootLocation[1] + startView.height / 2f - animView.height / 2f + startOffsetY
             val endX = endLocation[0] - rootLocation[0] + targetView.width / 2f - animView.width / 2f
             val endY = endLocation[1] - rootLocation[1] + targetView.height / 2f - animView.height / 2f
 
@@ -521,9 +553,17 @@ object AnimViewHelper {
         }
     }
 
+    /** drawable-hdpi 中 4 张飞钱图，用于多枚硬币飞行动画 */
+    private val FLY_COIN_DRAWABLE_IDS = intArrayOf(
+        R.drawable.ic_fly_money1,
+        R.drawable.ic_fly_money2,
+        R.drawable.ic_fly_money3,
+        R.drawable.ic_fly_money4
+    )
+
     /**
-     * 复制一个临时View飞向目标，命中后给目标反馈动画
-     * 推荐：轻微放大回弹，反馈更明显且不突兀
+     * 多枚硬币（3～6 张）一张一张飞向目标，命中后给目标反馈动画。
+     * 硬币从 4 张图随机选取，按序错开起飞，避免飞得太集中。
      */
     fun playCoinFlyWithHitAnim(
         animView: ImageView,
@@ -531,28 +571,46 @@ object AnimViewHelper {
         scaleTo: Float = 0.8f,
         durationMs: Long = 750L,
         hitScale: Float = 1.2f,
-        hitDurationMs: Long = 350L,
+        hitDurationMs: Long = 250L,
         end: (() -> Unit)? = null
     ) {
         animView.post {
             val rootView = (animView.rootView as? ViewGroup) ?: return@post
-            val drawable = animView.drawable ?: animView.background ?: return@post
             val width = animView.width.takeIf { it > 0 } ?: animView.measuredWidth
             val height = animView.height.takeIf { it > 0 } ?: animView.measuredHeight
             if (width <= 0 || height <= 0) return@post
 
-            val flyView = ImageView(animView.context).apply {
-                setImageDrawable(drawable)
-                layoutParams = ViewGroup.LayoutParams(width, height)
-                visibility = View.INVISIBLE
-                alpha = 0f
+            val count = Random.nextInt(4) + 3 // 3～6 枚
+            val flyViews = mutableListOf<ImageView>()
+            for (i in 0 until count) {
+                val resId = FLY_COIN_DRAWABLE_IDS.random()
+                val flyView = ImageView(animView.context).apply {
+                    setImageResource(resId)
+                    layoutParams = ViewGroup.LayoutParams(width, height)
+                    visibility = View.INVISIBLE
+                    alpha = 0f
+                }
+                rootView.addView(flyView)
+                flyViews.add(flyView)
             }
-            rootView.addView(flyView)
-            playCoinFlyAnim(flyView, animView, targetView, durationMs, scaleTo, {
-                rootView.removeView(flyView)
-                playHitPulseAnim(targetView, hitScale, hitDurationMs)
-                end?.invoke()
-            })
+
+            // 一张一张飞：按序号错开起飞，间隔约 durationMs/4，避免扎堆
+            val stepMs = (durationMs / 4).coerceAtLeast(120L)
+            var completed = 0
+            val handler = Handler(Looper.getMainLooper())
+            for ((index, flyView) in flyViews.withIndex()) {
+                val startDelayMs = index * stepMs
+                handler.postDelayed({
+                    playCoinFlyAnim(flyView, animView, targetView, durationMs, scaleTo, {
+                        completed++
+                        if (completed == count) {
+                            flyViews.forEach { rootView.removeView(it) }
+                            playHitPulseAnim(targetView, hitScale, hitDurationMs)
+                            end?.invoke()
+                        }
+                    }, 0f, 0f)
+                }, startDelayMs)
+            }
         }
     }
 

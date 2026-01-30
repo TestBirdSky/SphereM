@@ -3,53 +3,47 @@ package com.sphere.shortvideos.helper
 import com.sphere.shortvideos.helper.mmkv.MMKVData
 import com.sphere.shortvideos.helper.reward.RewardHelper
 import com.sphere.shortvideos.logError
+import com.sphere.shortvideos.mApp
+import com.sphere.shortvideos.notification.NotificationHelper
 
 /**
  * Date：2026/1/22
- * Describe:
+ * Describe: 沿用原 key 存金额，现为美元(USD)，巴西/印尼按汇率换算
  */
 object MoneyCacheHelper {
-    var userFetchMoneyBr by MMKVData(0.0) //用户现在有多少钱默认存的是巴西币,需要去兑换
-
+    /** 当前余额，沿用原 key，存的是美元(USD) */
+    private var userFetchMoneyUSD by MMKVData(0.0)
 
     fun fetchPushReward(): Pair<Double, String> {
-        return RewardHelper.getConfigByLanguage().getNotificationRewardMoney(userFetchMoneyBr)
+        return RewardHelper.getConfigByLanguage().getNotificationRewardMoney(fetchCurMoney())
     }
 
     fun fetchRvAdReward(): Pair<Double, String> {
-        return RewardHelper.getConfigByLanguage().getRvRewardMoney(userFetchMoneyBr)
+        return RewardHelper.getConfigByLanguage().getRvRewardMoney(fetchCurMoney())
     }
 
     fun fetchWatchVideoReward(): Double {
-        return RewardHelper.getConfigByLanguage().getMoneyVideoIconReward(userFetchMoneyBr)
+        return RewardHelper.getConfigByLanguage().getMoneyVideoIconReward(fetchCurMoney())
     }
 
-
+    /** 当前余额（展示用）：英语=USD，巴西=BRL，印尼=IDR */
     fun fetchCurMoney(): Double {
-        var mo = userFetchMoneyBr
-        if (LauageTools.isIndonesia()) {
-            mo *= WithdrawAmountHelper.IDR_PER_BRL
+        val usd = userFetchMoneyUSD
+        return when {
+            LauageTools.isIndonesia() -> usd * WithdrawAmountHelper.IDR_PER_USD
+            LauageTools.isBrazil() -> usd * WithdrawAmountHelper.BRL_PER_USD
+            else -> usd
         }
-        return mo
-    }
-
-    fun fetchCurMoneyBr(): Double {
-        return userFetchMoneyBr
-    }
-
-    // 存储是巴西币，进来后需要进行换算
-    @Synchronized
-    fun addMoney(value: Double) {
-        userFetchMoneyBr += value
     }
 
     @Synchronized
     fun addNotExchangeMoney(value: Double) {
         logError("000>addNotExchangeMoney$value")
-        if (LauageTools.isIndonesia()) {
-            userFetchMoneyBr += value / WithdrawAmountHelper.IDR_PER_BRL
-        } else {
-            userFetchMoneyBr += value
+        NotificationHelper.showOrUpdateNotificationService(mApp)
+        userFetchMoneyUSD += when {
+            LauageTools.isIndonesia() -> value / WithdrawAmountHelper.IDR_PER_USD
+            LauageTools.isBrazil() -> value / WithdrawAmountHelper.BRL_PER_USD
+            else -> value
         }
     }
 
@@ -81,7 +75,7 @@ object MoneyCacheHelper {
 
     fun fetchAllWatchReword(): List<Pair<Double, String>> {
         if (listWatchValue.isEmpty()) {
-            val mo = userFetchMoneyBr
+            val mo = fetchCurMoney()
             val conf = RewardHelper.getConfigByLanguage()
             listWatchValue.add(conf.getDramaTime1Reward(mo))
             listWatchValue.add(conf.getDramaTime2Reward(mo))

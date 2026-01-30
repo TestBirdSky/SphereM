@@ -18,7 +18,7 @@ import com.sphere.shortvideos.view.AnimViewHelper
  * Describe: Welcome bonus dialog
  */
 class WelcomeBonusDialogFragment : DialogFragment() {
-    lateinit var onDismissCall: (() -> Unit)
+    lateinit var onDismissCall: ((Double) -> Unit)
 
     private var _binding: DialogWelcomeBonusBinding? = null
     private val binding get() = _binding!!
@@ -41,8 +41,7 @@ class WelcomeBonusDialogFragment : DialogFragment() {
         val r = config.getRewardNewUser()
         binding.tvRewardValue.text = r.second
         binding.btnClaim.setOnClickListener {
-            HelperRewardShow.addMoneyNotExChange(r.first)
-            onDismissCall.invoke()
+            onDismissCall.invoke(r.first)
             dismissAllowingStateLoss()
         }
     }

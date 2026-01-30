@@ -251,7 +251,7 @@ object NotificationHelper {
         localEvent("all_noti_c", hashMapOf("type" to type))
     }
 
-    fun showNotificationService(context: Context) {
+    fun showOrUpdateNotificationService(context: Context) {
         if (hasNotificationPermission(context).not()) {
             return
         }
@@ -297,7 +297,6 @@ object NotificationHelper {
             val remoteView = RemoteViews(packageName, R.layout.layout_notification_fix).apply {
                 setTextViewText(R.id.tv_title, title)
                 setTextViewText(R.id.tv_des, desc)
-                setTextViewText(R.id.tv_withdraw, getString(R.string.withdraw))
                 setOnClickPendingIntent(R.id.layout_root, pendingIntent)
                 setOnClickPendingIntent(R.id.tv_withdraw, pendingIntent)
             }

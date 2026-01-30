@@ -45,6 +45,12 @@ const val DEFAULT_DRAMA_INT_AD_JSON = """
       "point": 100,
       "end_number": null
     }
+  ],
+  "us_int_ad": [
+    { "first_number": 0, "point": 0, "end_number": 40 },
+    { "first_number": 40, "point": 60, "end_number": 60 },
+    { "first_number": 60, "point": 80, "end_number": 80 },
+    { "first_number": 96, "point": 100, "end_number": null }
   ]
 }
 """

@@ -29,17 +29,6 @@
             android:textStyle="bold"
             tools:text="xxxxxxxxxxxxxxxxxxxx" />
 
-
-        <TextView
-            android:id="@+id/tv_des"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            tools:text="xxxxxxxxxxxxxxxxxxxx" />
-
     </LinearLayout>
 
 

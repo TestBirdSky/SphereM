@@ -6,7 +6,7 @@ import java.util.Locale
 
 /**
  * Date：2026/1/20
- * Describe: 语言工具类，主要用于判断巴西和印尼国家
+ * Describe: 语言工具类，支持英语（默认）、巴西葡语、印尼语
  */
 object LauageTools {
 
@@ -16,12 +16,14 @@ object LauageTools {
     object CountryCode {
         const val BRAZIL = "BR"
         const val INDONESIA = "ID"
+        const val US = "US"
     }
 
     /**
      * 语言代码常量
      */
     object LanguageCode {
+        const val ENGLISH = "en"
         const val PORTUGUESE = "pt"
         const val INDONESIAN = "id"
     }
@@ -74,6 +76,13 @@ object LauageTools {
                 locale.language == LanguageCode.INDONESIAN
     }
 
+    /**
+     * 判断是否为英语用户（默认，非巴西/印尼即视为英语）
+     * @return true 是英语用户，false 不是
+     */
+    fun isEnglish(): Boolean {
+        return !isBrazil() && !isIndonesia()
+    }
 
     /**
      * 判断是否为葡萄牙语用户（包括巴西和其他葡萄牙语国家）
@@ -93,17 +102,27 @@ object LauageTools {
 
 
     /**
-     * 根据国家获取对应的语言环境
-     * @param countryCode 国家代码
-     * @return Locale 对象
+     * 根据国家/语言获取对应的 Locale
+     * @param countryCode 国家代码（BR/ID/US）或语言代码（en/pt/id）
+     * @return Locale 对象，未匹配时返回英语（默认）
      */
     fun getLocaleByCountry(countryCode: String): Locale {
         return when (countryCode) {
             CountryCode.BRAZIL -> Locale(LanguageCode.PORTUGUESE, CountryCode.BRAZIL)
             CountryCode.INDONESIA -> Locale(LanguageCode.INDONESIAN, CountryCode.INDONESIA)
-            else -> Locale.getDefault()
+            CountryCode.US, LanguageCode.ENGLISH -> Locale.ENGLISH
+            else -> Locale.ENGLISH
         }
     }
 
-
+    /**
+     * 获取当前业务语言对应的 Locale（英语 / 巴西葡语 / 印尼语）
+     */
+    fun getAppLocale(): Locale {
+        return when {
+            isIndonesia() -> getLocaleByCountry(CountryCode.INDONESIA)
+            isBrazil() -> getLocaleByCountry(CountryCode.BRAZIL)
+            else -> Locale.ENGLISH
+        }
+    }
 }

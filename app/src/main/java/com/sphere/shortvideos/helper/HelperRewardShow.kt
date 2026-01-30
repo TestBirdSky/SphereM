@@ -8,17 +8,18 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
-import com.inmobi.media.Bo
+import androidx.lifecycle.lifecycleScope
+import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.dialogs.LuckChallengeDialogFragment
 import com.sphere.shortvideos.dialogs.NormalCongratulateDialogFragment
-import com.sphere.shortvideos.dialogs.TaskInfoDialogFragment
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.reward.RewardHelper
 import com.sphere.shortvideos.logError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -35,10 +36,11 @@ object HelperRewardShow {
     private var maxReachedCount = 0
     private var progressJob: Job? = null
     private val progressMax = 100
-    private val roundDurationMs = 15000L //15_000L
+    private val roundDurationMs = 5000L //15_000L // todo test
 
     private var numIntervalIndex = 0 // 目标
     private var tagGam = -1
+    private val scopMain = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     fun init() {
         if (curGetMoneyStr.value == Pair("", "")) {
@@ -101,6 +103,17 @@ object HelperRewardShow {
         })
     }
 
+
+    fun addMoneyNotExChangeFlyAnim(d: Double) { //  添加飞的动画在加钱
+        scopMain.launch {
+            val animTime = 800L
+            animAddMoneyDurationInMill.postValue(animTime)
+            delay(animTime)
+            addMoneyNotExChange(d)
+            animAddMoneyDurationInMill.postValue(0)
+        }
+    }
+
     val curGetMoneyAnimLiveData = MutableLiveData<String>()
     val curMoneyNeedAnimLiveData = MutableLiveData<String>() // 还差多少的钱体现的动画
 
@@ -111,13 +124,8 @@ object HelperRewardShow {
 
 
     private fun addMoneyInTwoWatchVideo(scope: CoroutineScope) {
-        scope.launch(Dispatchers.Main) {
-            val addReward = MoneyCacheHelper.fetchWatchVideoReward()
-            val animTime = 800L
-            animAddMoneyDurationInMill.value = animTime
-            delay(animTime)
-            addMoneyNotExChange(addReward)
-        }
+        val addReward = MoneyCacheHelper.fetchWatchVideoReward()
+        addMoneyNotExChangeFlyAnim(addReward)
     }
 
     private fun playMoneyIncreaseAnimAndSave(reward: Double, end: () -> Unit) {
@@ -169,9 +177,7 @@ object HelperRewardShow {
             }
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
-                    curMoneyNeedAnimLiveData.postValue(
-                        WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(endNeed)
-                    )
+                    curMoneyNeedAnimLiveData.postValue(WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(endNeed))
                 }
             })
             start()
@@ -228,6 +234,12 @@ object HelperRewardShow {
         AdUtils.showRvAd(activity, dismiss = { isFetchReward ->
             if (isFetchReward) {
                 addMoneyNotExChange(reward)
+                if (activity is MainActivity) {
+                    activity.lifecycleScope.launch {
+                        delay(1500)
+                        activity.showNotificationOpen(false)
+                    }
+                }
             }
         })
     }

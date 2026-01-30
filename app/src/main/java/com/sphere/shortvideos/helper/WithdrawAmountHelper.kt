@@ -16,9 +16,17 @@ object WithdrawAmountHelper {
     const val BRL_UNIT = "R$"
     const val IDR_UNIT = "Rp"
     const val DEFAULT_UNIT = "$"
-    const val USD_PER_BRL = 0.2
-    const val IDR_PER_BRL = 3000.0
-    const val BRL = 1.0
+    /** 美元为 1 倍率（基准） */
+    const val USD_BASE = 1.0
+    /** 1 USD 换算成 BRL 的倍率 */
+    const val BRL_PER_USD = 5.0
+    /** 1 USD 换算成 IDR 的倍率 */
+    const val IDR_PER_USD = 15000.0
+
+    /** 1 BRL = x USD（由倍率反推） */
+    const val USD_PER_BRL = USD_BASE / BRL_PER_USD
+    /** 1 BRL = x IDR（由倍率反推） */
+    const val IDR_PER_BRL = IDR_PER_USD / BRL_PER_USD
 
     fun fetchCurMoneyAndWithdrawNeedMoney(): Pair<String, String> {
         val curMoney = fetchCurMoney()
@@ -36,19 +44,15 @@ object WithdrawAmountHelper {
     }
 
     fun fetchMoneyBankIcon(isBlack: Boolean = false): Int {
-        if (LauageTools.isIndonesia()) {
-            return if (isBlack) R.drawable.ic_ovo_b else R.drawable.ic_ovo_w
-        } else {
-            return if (isBlack) R.drawable.ic_pix_b else R.drawable.ic_pix_w
+        return when {
+            LauageTools.isIndonesia() -> if (isBlack) R.drawable.ic_ovo_b else R.drawable.ic_ovo_w
+            LauageTools.isBrazil() -> if (isBlack) R.drawable.ic_pix_b else R.drawable.ic_pix_w
+            else -> if (isBlack) R.drawable.ic_pix_b else R.drawable.ic_pix_w
         }
     }
 
     fun formatMoney(value: Double): String {
-        val locale = if (LauageTools.isIndonesia()) { //99999 -> 99.999
-            LauageTools.getLocaleByCountry(LauageTools.CountryCode.INDONESIA)
-        } else { //2999.99 --> 2.999,99
-            LauageTools.getLocaleByCountry(LauageTools.CountryCode.BRAZIL)
-        }
+        val locale = LauageTools.getAppLocale()
         val formatter = java.text.NumberFormat.getNumberInstance(locale).apply {
             maximumFractionDigits = 2
             minimumFractionDigits = 0
@@ -57,15 +61,15 @@ object WithdrawAmountHelper {
     }
 
     private fun resolveMoneyUnit(): String {
-        val locale = if (LauageTools.isIndonesia()) {
-            LauageTools.getLocaleByCountry(LauageTools.CountryCode.INDONESIA)
-        } else {
-            LauageTools.getLocaleByCountry(LauageTools.CountryCode.BRAZIL)
-        }
+        val locale = LauageTools.getAppLocale()
         return runCatching {
             java.util.Currency.getInstance(locale).getSymbol(locale)
         }.getOrElse {
-            if (LauageTools.isIndonesia()) IDR_UNIT else BRL_UNIT
+            when {
+                LauageTools.isIndonesia() -> IDR_UNIT
+                LauageTools.isBrazil() -> BRL_UNIT
+                else -> DEFAULT_UNIT
+            }
         }
     }
 
@@ -91,7 +95,11 @@ object WithdrawAmountHelper {
 
     data class WithdrawTier(val brl: Long, val usd: Long, val idr: Long) {
         fun fetWithdraw(): Double {
-            return (if (LauageTools.isIndonesia()) idr else brl).toDouble()
+            return when {
+                LauageTools.isIndonesia() -> idr.toDouble()
+                LauageTools.isBrazil() -> brl.toDouble()
+                else -> usd.toDouble()
+            }
         }
     }
 

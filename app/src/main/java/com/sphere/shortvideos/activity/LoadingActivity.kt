@@ -10,7 +10,6 @@ import com.sphere.shortvideos.GlobalConstants
 
 import com.sphere.shortvideos.baseui.GenericBindActivity
 import com.sphere.shortvideos.databinding.ActivityLoadingBinding
-import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.AppHelper
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.mmkv.MMKVData
@@ -69,6 +68,8 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
         }
         session()
         MMKVRepository.checkCueDay()
+        // todo test
+        openMain()
     }
 
     private fun openMain() {
@@ -92,7 +93,7 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
         localEvent("launch_page")
         lifecycleScope.launch {
             delay(1000)
-            NotificationHelper.showNotificationService(this@LoadingActivity)
+            NotificationHelper.showOrUpdateNotificationService(this@LoadingActivity)
         }
     }
 

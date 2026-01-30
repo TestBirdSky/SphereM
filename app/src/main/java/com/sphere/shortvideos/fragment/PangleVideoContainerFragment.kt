@@ -1,5 +1,8 @@
 package com.sphere.shortvideos.fragment
 
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -27,6 +30,7 @@ import com.sphere.shortvideos.baseui.GenericFragment
 import com.sphere.shortvideos.database
 import com.sphere.shortvideos.database.DramaCollectEntity
 import com.sphere.shortvideos.databinding.FragmentPangleVideoContainerBinding
+import com.sphere.shortvideos.dialogs.WelcomeBonusDialogFragment
 import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.localEvent
@@ -41,7 +45,6 @@ import com.sphere.shortvideos.view.refreshViewTagMoney
 import com.sphere.shortvideos.vm.MainViewModel
 import com.ss.ttvideoengine.TTVideoEngineInterface
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -80,18 +83,10 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
     override fun initUI() {
         initSeekbarAnim()
         spineHelper.addViewMoney1(binding.layoutAnim, requireContext())
-        val isNew = MMKVRepository.isNewUser
         lifecycleScope.launch(Dispatchers.Main) {
             shortPlay?.let { item ->
                 withContext(Dispatchers.IO) {
                     shortPlayCollect = database.collectDao().getItemById(item.id.toString())
-                }
-                if (isNew) {
-                    withContext(Dispatchers.IO) {
-                        while (MMKVRepository.isNewUser) {
-                            delay(200)
-                        }
-                    }
                 }
                 var isCollected = shortPlayCollect != null
                 binding.imageCollect.imageTintList = ColorStateList.valueOf(if (isCollected) ContextCompat.getColor(
@@ -216,6 +211,7 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
                 override fun onVideoPlayStateChanged(shortPlay: ShortPlay?, index: Int, playbackState: Int) {
                     when (playbackState) {
                         PSSDK.PLAYBACK_STATE_PLAY -> {
+                            videoStart()
                             MoneyCacheHelper.startWatchVideo()
                             viewModel.playMoneyProgress()
                         }
@@ -268,6 +264,13 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
         detailFragment?.startPlay()
     }
 
+    private var isGo = false
+    private fun videoStart() {
+        if (isGo) return
+        isGo = true
+        showNewUser()
+    }
+
     override fun onPause() {
         super.onPause()
         MoneyCacheHelper.stopWatchVideo()
@@ -280,6 +283,7 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
     }
 
     override fun onDestroyView() {
+        stopFingerAnim()
         super.onDestroyView()
     }
 
@@ -320,5 +324,66 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
             }
         })
     }
+
+    private var fingerAnimator: ObjectAnimator? = null
+    private fun hide() {
+        (activity as? MainActivity)?.run {
+            WelcomeBonusDialogFragment().apply {
+                onDismissCall = {
+                    MMKVRepository.isNewUser = false
+                    HelperRewardShow.addMoneyNotExChangeFlyAnim(it)
+                    hideOrShowGuide(false)
+                }
+            }.show(supportFragmentManager, "welcome")
+        }
+        setGuideVisibility(View.GONE)
+        stopFingerAnim()
+    }
+
+    private fun showNewUser(): Boolean {
+        if (MMKVRepository.isNewUser) {
+            setGuideVisibility(View.VISIBLE)
+            (activity as? MainActivity)?.hideOrShowGuide()
+            localEvent("new_guide")
+            startFingerAnim()
+            binding.ivFirstGuide.setOnClickListener {
+                localEvent("new_guide_c", hashMapOf("type" to "mask_2"))
+                hide()
+            }
+            binding.ivFingerAnim.setOnClickListener {
+                hide()
+                localEvent("new_guide_c", hashMapOf("type" to "mask_1"))
+            }
+            return true
+        }
+        return false
+    }
+
+    private fun setGuideVisibility(sta: Int) {
+        binding.ivFirstGuide.visibility = sta
+        binding.ivFirstGuide.visibility = sta
+        binding.tvTipsUser.visibility = sta
+    }
+
+    private fun startFingerAnim() {
+        if (fingerAnimator != null) return
+        binding.ivFingerAnim.scaleX = 0.8f
+        binding.ivFingerAnim.scaleY = 0.8f
+        val scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 0.8f, 1.3f)
+        val scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.8f, 1.3f)
+        fingerAnimator = ObjectAnimator.ofPropertyValuesHolder(binding.ivFingerAnim, scaleX, scaleY).apply {
+            duration = 1000
+            repeatCount = ValueAnimator.INFINITE
+            repeatMode = ValueAnimator.REVERSE
+            start()
+        }
+    }
+
+
+    private fun stopFingerAnim() {
+        fingerAnimator?.cancel()
+        fingerAnimator = null
+    }
+
 
 }

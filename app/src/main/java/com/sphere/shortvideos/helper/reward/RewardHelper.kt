@@ -13,9 +13,11 @@ import com.sphere.shortvideos.helper.WithdrawAmountHelper
 object RewardHelper {
     private var lastRemoteConfigure = ""
     private var lastRemoteConfigureId = ""
+    private var lastRemoteConfigureUsd = ""
 
     private const val REMOTE_KEY = "br_reward"
     private const val REMOTE_ID_KEY = "id_reward"
+    private const val REMOTE_US_KEY = "us_reward"
 
     private val gson = Gson()
 
@@ -24,6 +26,9 @@ object RewardHelper {
 
     @Volatile
     private var cachedConfigId: RewardConfig? = null
+
+    @Volatile
+    private var cachedConfigUsd: RewardConfig? = null
 
     private fun getBrConfig(): RewardConfig {
         cachedConfig?.let { return it }
@@ -47,15 +52,22 @@ object RewardHelper {
         return config
     }
 
+    private fun getEnConfig(): RewardConfig {
+        cachedConfigUsd?.let { return it }
+        val remoteJson = RemoteConfHelper().getString(REMOTE_US_KEY)
+        if (remoteJson.isNotBlank()) {
+            lastRemoteConfigureUsd = remoteJson
+        }
+        val config = parseConfig(remoteJson) ?: parseConfig(DEFAULT_US_JSON)
+        updateEnConfigure(config!!)
+        return config
+    }
+
     fun getConfigByLanguage(): RewardConfig {
         return when {
-            LauageTools.isIndonesia() -> {
-                getIdConfig()
-            }
-
-            else -> {
-                getBrConfig()
-            }
+            LauageTools.isIndonesia() -> getIdConfig()
+            LauageTools.isBrazil() -> getBrConfig()
+            else -> getEnConfig()
         }
     }
 
@@ -64,26 +76,29 @@ object RewardHelper {
         val remoteJson = RemoteConfHelper().getString(REMOTE_KEY)
         if (remoteJson.isNotBlank() && lastRemoteConfigure != remoteJson) {
             lastRemoteConfigure = remoteJson
-            parseConfig(remoteJson)?.let {
-                updateBrAndDefaultConfigure(it)
-            }
+            parseConfig(remoteJson)?.let { updateBrAndDefaultConfigure(it) }
         }
         val remoteIdJson = RemoteConfHelper().getString(REMOTE_ID_KEY)
         if (remoteIdJson.isNotBlank() && lastRemoteConfigureId != remoteIdJson) {
             lastRemoteConfigureId = remoteIdJson
-            parseConfig(remoteIdJson)?.let {
-                updateIdConfigure(it)
-            }
+            parseConfig(remoteIdJson)?.let { updateIdConfigure(it) }
+        }
+        val remoteUsJson = RemoteConfHelper().getString(REMOTE_US_KEY)
+        if (remoteUsJson.isNotBlank() && lastRemoteConfigureUsd != remoteUsJson) {
+            lastRemoteConfigureUsd = remoteUsJson
+            parseConfig(remoteUsJson)?.let { updateEnConfigure(it) }
         }
     }
 
     private fun updateIdConfigure(config: RewardConfig) {
-        config.moneyRate = WithdrawAmountHelper.IDR_PER_BRL
         cachedConfigId = config
     }
 
+    private fun updateEnConfigure(config: RewardConfig) {
+        cachedConfigUsd = config
+    }
+
     private fun updateBrAndDefaultConfigure(config: RewardConfig) {
-        config.moneyRate = WithdrawAmountHelper.BRL
         cachedConfig = config
     }
 

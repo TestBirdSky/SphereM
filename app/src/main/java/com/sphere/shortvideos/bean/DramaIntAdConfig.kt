@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class DramaIntAdConfig(
     @SerializedName("br_int_ad") val brIntAd: List<DramaIntAdRange>,
     @SerializedName("id_int_ad") val idIntAd: List<DramaIntAdRange>,
+    @SerializedName("us_int_ad") val usIntAd: List<DramaIntAdRange>,
 )
 
 data class DramaIntAdRange(

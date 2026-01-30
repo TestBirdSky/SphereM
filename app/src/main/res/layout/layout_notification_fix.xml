@@ -14,7 +14,8 @@
         android:layout_height="match_parent"
         android:layout_weight="7"
         android:gravity="center|end"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingEnd="8dp">
 
         <TextView
             android:id="@+id/tv_title"
@@ -22,7 +23,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textColor="#FFD500"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             tools:text="$xx" />
 
@@ -33,23 +34,9 @@
             android:layout_marginHorizontal="5dp"
             android:gravity="center"
             android:textColor="#FFFFFF"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:textStyle="bold"
             tools:text="@string/wi_notification_tips" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/tv_withdraw"
-        android:layout_width="0dp"
-        android:layout_height="25dp"
-        android:layout_marginHorizontal="4dp"
-        android:layout_weight="3"
-        android:background="@drawable/shape_bg_ye"
-        android:gravity="center"
-        android:text="@string/withdraw"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_money" />
 
 </LinearLayout>
