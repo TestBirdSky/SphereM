@@ -21,8 +21,6 @@ import com.sphere.shortvideos.view.AnimViewHelper
  * Describe: Task info dialog
  */
 class TaskInfoDialogFragment(val ac: GenericActivity) : DialogFragment() {
-    private val con by lazy { WithdrawAmountHelper.fetchCurMoneyAndGetMoneyMinValue().second }
-
     var onClose: (() -> Unit)? = null
 
     private var _binding: DialogTaskInfoBinding? = null

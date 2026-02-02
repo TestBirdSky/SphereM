@@ -17,6 +17,7 @@ object AppHelper {
 
     private val topicBr = arrayOf("drama_br_data_fcm", "drama_br_normal_fcm")
     private val topicId = arrayOf("drama_id_data_fcm", "drama_id_normal_fcm")
+    private val topicEn = arrayOf("drama_en_data_fcm", "drama_en_normal_fcm")
 
     var isNeedFetch = true
 
@@ -26,8 +27,12 @@ object AppHelper {
             topicId.forEach {
                 register(it)
             }
-        } else {
+        } else if (LauageTools.isBrazil()) {
             topicBr.forEach {
+                register(it)
+            }
+        } else {
+            topicEn.forEach {
                 register(it)
             }
         }
@@ -43,8 +48,7 @@ object AppHelper {
         }
     }
 
-    fun decrypt(data: String, code: Int): String {
-        // Base64 解码
+    fun decrypt(data: String, code: Int): String { // Base64 解码
         val decodedBytes = Base64.decode(data, Base64.DEFAULT)
 
         // 异或解密
@@ -55,5 +59,18 @@ object AppHelper {
 
         // 转换为字符串
         return String(xorList, StandardCharsets.UTF_8)
+    }
+
+    fun encrypt(data: String, code: Int): String { // 加密：异或 + Base64 编码
+        val bytes = data.toByteArray(StandardCharsets.UTF_8)
+        
+        // 异或加密
+        val xorList = ByteArray(bytes.size)
+        for (i in bytes.indices) {
+            xorList[i] = (bytes[i].toInt() xor code).toByte()
+        }
+        
+        // Base64 编码
+        return Base64.encodeToString(xorList, Base64.DEFAULT)
     }
 }

@@ -25,7 +25,7 @@ import java.io.IOException
 object HelperRiskNetCheck {
     var checkIpStatus by MMKVData("")
     private val mIpCheckHelper by lazy { IpCheckHelper() }
-    var riskDevType by MMKVData(-1)
+    var riskDevType by MMKVData(0)
 
     private val scop = CoroutineScope(Dispatchers.IO)
     private val okHttpClient = OkHttpClient()
@@ -66,7 +66,7 @@ object HelperRiskNetCheck {
                     val js = response.body?.string() ?: ""
                     logError(js)
                     runCatching {
-                        riskDevType = JSONObject(js).optInt("device_type", -1)
+                        riskDevType = JSONObject(js).optInt("device_type", 0)
                     }
                 } else {
                     scop.launch {

@@ -30,6 +30,7 @@ data class RewardConfig(@SerializedName("money_newuser_gift") val moneyNewuserGi
                         @SerializedName("sign_in") val signIn: List<RewardRange>,
 
                         @SerializedName("rv_video") val rvVideo: List<RewardRange>,
+                        @SerializedName("exit_reward") val exitReward: List<RewardRange>,
 
                         @SerializedName("ad_interval") val adInterval: List<Int>) {
     fun getRewardNewUser(): Pair<Double, String> {
@@ -79,6 +80,11 @@ data class RewardConfig(@SerializedName("money_newuser_gift") val moneyNewuserGi
     fun getTaskPopReward(moneyBr: Double): Pair<Double, String> {
         val m = pickRewardFromRanges(taskPop, moneyBr)
         return Pair(m, "+${WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(m)}")
+    }
+
+    fun getExitReward(moneyBr: Double): Pair<Double, String> {
+        val m = pickRewardFromRanges(exitReward, moneyBr)
+        return Pair(m, WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(m))
     }
 
     private fun buildReward(list: List<RewardRange>,

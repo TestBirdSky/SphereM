@@ -11,6 +11,7 @@ import com.sphere.shortvideos.helper.InstallReferrerManager
 import com.sphere.shortvideos.helper.RemoteConfHelper
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
+import com.sphere.shortvideos.helper.risk.RiskHelper
 import com.sphere.shortvideos.notification.NotificationHelper
 import com.tencent.mmkv.MMKV
 import kotlinx.coroutines.CoroutineScope
@@ -36,6 +37,7 @@ class App : Application() {
         SoundHelper.init(this)
         mFbAndAdjustHelper.initAdjust(this)
         NotificationHelper.scheduleLocalNotifications(this)
+        RiskHelper.eventSession(this)
     }
 
     private fun initBackgroundActive() {

@@ -32,7 +32,6 @@ object HelperRewardShow {
     val curGetMoneyStr = MutableLiveData(Pair("", "")) //当前获取到的奖励和还差多少可领取奖励
     val showDialogType = MutableLiveData<Int>(-1) //0 普通奖励看插屏 1 倍率玩法看激励广告
 
-    //    val pauseVideoPlay = MutableLiveData<Boolean>(null)
     private var maxReachedCount = 0
     private var progressJob: Job? = null
     private val progressMax = 100

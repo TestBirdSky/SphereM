@@ -20,6 +20,9 @@ object MMKVRepository {
 
     var isNewUser by MMKVData(true)
     var isShowBackTips by MMKVData(true)
+    
+    // 用户类型：true 为黑名单用户（Organic），false 为买量用户
+    var isBlacklistUser by MMKVData(false)
 
     private var isCurDayStr by MMKVData("") // 当天
 

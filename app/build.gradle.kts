@@ -6,8 +6,10 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("com.google.devtools.ksp")
     id("kotlin-parcelize")
-    id("stringfog") //id("com.google.gms.google-services")
-    //id("com.google.firebase.crashlytics")
+    id("stringfog")
+    // todo test
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 apply(plugin = "stringfog")
@@ -29,11 +31,12 @@ android {
         minSdk = 24
         targetSdk = 35
         versionCode = 1
-        versionName = "1.0.0"
+        versionName = "1.0.2"
 
         ndk { //noinspection ChromeOsAbiSupport
             abiFilters += setOf("arm64-v8a", "armeabi-v7a")
         }
+        setProperty("archivesBaseName", "${rootProject.name}_v${versionName}")
     }
 
     buildTypes {

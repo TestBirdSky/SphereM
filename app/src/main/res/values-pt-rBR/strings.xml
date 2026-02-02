@@ -92,10 +92,10 @@
     <string name="dram_short_tips_dialog"><![CDATA[Assista e ganhe! Veja primeiro os melhores dramas curtos!]]></string>
     <string name="allow_get"><![CDATA[Permitir e ganhar]]></string>
 
-    <string name="back_tips_title">Não perca as recompensas!</string>
-    <string name="back_tips_desc">Seu progresso e recompensas serão pausados se você sair.</string>
-    <string name="back_tips_exit">Sair</string>
-    <string name="back_tips_stay">Ficar</string>
+    <string name="back_tips_title">Espere! Não saia ainda!</string>
+    <string name="back_tips_desc">Fique conosco e ganhe %s de bônus instantaneamente!</string>
+    <string name="back_tips_exit">Sair mesmo assim</string>
+    <string name="back_tips_stay">Ficar e ganhar %s</string>
     <string name="congratulate">Parabéns</string>
     <string name="withdrawal_progress">Progresso de Saque</string>
     <string name="withdraw_tips">Faltam apenas %s para sacar! Aproveite!</string>
@@ -115,6 +115,8 @@
     <string name="limit_tips_des">Você já assistiu a todos os anúncios de hoje. Tente novamente amanhã.</string>
     <string name="ok">Ok</string>
     <string name="wi_notification_tips">Está esperando na sua carteira.</string>
+    <string name="splash_open_first">Seu momento favorito para filmes</string>
+    <string name="sp_tips">Estamos preparando seu conteúdo...</string>
 
 
 </resources>

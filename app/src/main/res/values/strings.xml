@@ -89,10 +89,10 @@
     <string name="dram_short_tips_dialog"><![CDATA[Watch &Earn！Catch hot short dramas first！]]></string>
     <string name="allow_get"><![CDATA[Allow & Get]]></string>
 
-    <string name="back_tips_title">Don’t Miss Rewards!</string>
-    <string name="back_tips_desc">Your Progress And Rewards Will Be Paused If You Leave.</string>
-    <string name="back_tips_exit">Exit</string>
-    <string name="back_tips_stay">Stay</string>
+    <string name="back_tips_title">Wait! Don’t Leave Yet!</string>
+    <string name="back_tips_desc">Stay with us and get %s bonus instantly!</string>
+    <string name="back_tips_exit">Leave Anyway</string>
+    <string name="back_tips_stay">Stay &amp; Get %s</string>
     <string name="congratulate">Congratulate</string>
     <string name="withdrawal_progress">Withdrawal Progress</string>
     <string name="withdraw_tips">Only %s more to withdraw! Act fast!</string>
@@ -112,7 +112,7 @@
     <string name="limit_tips_des">You’ve watched all available ads for today. Try again tomorrow.</string>
     <string name="ok">Ok</string>
     <string name="wi_notification_tips">Is Waiting In Your Wallet.</string>
-    <string name="splash_open_first">Favorite time movies time</string>
+    <string name="splash_open_first">Your favorite time for movies</string>
     <string name="sp_tips">We\'re preparing your content...</string>
 
 

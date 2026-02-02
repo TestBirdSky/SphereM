@@ -60,7 +60,7 @@ fun TextView.setColorText(fullText: String, tagString: String, color: Int) {
 
 
 fun LayoutMoneyTopViewBinding.initView(activity: MainActivity, tag: String, wallClose: () -> Unit = {}) {
-    ivPTag.setBackgroundResource(WithdrawAmountHelper.fetchMoneyBankIcon())
+    ivPTag.setImageResource(WithdrawAmountHelper.fetchMoneyBankIcon())
     AnimViewHelper.applyPressBounceEffect(layout)
     layout.setOnClickListener {
         localEvent("earn_banner_c", hashMapOf("from" to tag))

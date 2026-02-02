@@ -81,6 +81,7 @@ object AdUtils {
                  dismiss: (isRewardSuccess: Boolean) -> Unit = {}) {
         if (RiskHelper.isAdLimit()) {
             ShowAdLimitDialogFragment({
+                localEvent("see_you_tommorow")
                 dismiss.invoke(false)
             }).show(activity.supportFragmentManager, "limit_ad")
             return

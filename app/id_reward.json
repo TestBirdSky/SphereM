@@ -134,5 +134,12 @@
     { "min": 711000, "max": 717000, "reward": [30] },
     { "min": 717000, "max": null, "reward": [30] }
   ],
+  "exit_reward": [
+    { "min": 300000, "max": 450000, "reward": [6000] },
+    { "min": 450000, "max": 540000, "reward": [4500] },
+    { "min": 540000, "max": 690000, "reward": [3000] },
+    { "min": 690000, "max": 717000, "reward": [1500] },
+    { "min": 717000, "max": null, "reward": [300] }
+  ],
   "ad_interval": [2,4,2,1]
 }

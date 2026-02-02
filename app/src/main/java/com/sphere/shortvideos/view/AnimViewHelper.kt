@@ -20,6 +20,7 @@ import android.os.Looper
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.helper.SoundHelper
 import kotlin.random.Random
+import androidx.core.graphics.drawable.toDrawable
 
 object AnimViewHelper {
 
@@ -129,7 +130,7 @@ object AnimViewHelper {
         releaseDurationMs: Long = 120L
     ) {
         val holder = view.getTag(R.id.press_gray_overlay_holder) as? PressGrayOverlayHolder
-            ?: PressGrayOverlayHolder(ColorDrawable(overlayColor))
+            ?: PressGrayOverlayHolder(overlayColor.toDrawable())
                 .also { view.setTag(R.id.press_gray_overlay_holder, it) }
         val overlayDrawable = holder.overlayDrawable
         view.setOnTouchListener { v, event ->
@@ -464,8 +465,8 @@ object AnimViewHelper {
     fun startWatchAdShineAnim(
         targetView: View,
         shineView: View,
-        minDelayMs: Long = 2000L,
-        maxDelayMs: Long = 4500L,
+        minDelayMs: Long = 5000L,
+        maxDelayMs: Long = 8500L,
         durationMs: Long = 400L
     ) {
         stopWatchAdShineAnim(shineView)

@@ -1,6 +1,7 @@
 package com.sphere.shortvideos.helper
 
 import android.content.Context
+import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.mApp
 import java.util.Locale
 
@@ -57,13 +58,50 @@ object LauageTools {
     }
 
     /**
+     * 获取当前设备对应的国家代码
+     * 优先根据语言判断，语言确定了就返回对应国家
+     * 如果语言不匹配，再根据国家代码判断
+     * @return 国家代码（BR/ID/US），默认返回 US
+     */
+    fun getCurrentCountry(): String {
+        val locale = getDeviceLanguage(mApp)
+        val language = locale.language.lowercase()
+        val country = locale.country
+        val languageTag = locale.toLanguageTag().lowercase()
+        
+        // 优先语言判断：语言确定了国家就确定了
+        val countryByLanguage = when (language) {
+            LanguageCode.PORTUGUESE -> CountryCode.BRAZIL
+            LanguageCode.INDONESIAN, "in" -> CountryCode.INDONESIA  // 兼容非标准的 in 语言代码
+            LanguageCode.ENGLISH -> CountryCode.US
+            else -> null
+        }
+        
+        // 如果通过语言确定了国家，直接返回
+        if (countryByLanguage != null) {
+            return countryByLanguage
+        }
+        
+        // 兼容语言标签格式（如 in-ID, id-ID）
+        when {
+            languageTag.startsWith("in-") || languageTag.startsWith("id-") -> return CountryCode.INDONESIA
+            languageTag.startsWith("pt-") -> return CountryCode.BRAZIL
+        }
+        
+        // 语言都没有匹配，再根据国家代码判断
+        return when (country) {
+            CountryCode.BRAZIL -> CountryCode.BRAZIL
+            CountryCode.INDONESIA -> CountryCode.INDONESIA
+            else -> CountryCode.US  // 默认返回美国
+        }
+    }
+
+    /**
      * 判断是否为巴西用户
      * @return true 是巴西用户，false 不是
      */
     fun isBrazil(): Boolean {
-        val locale = getDeviceLanguage(mApp)
-        return locale.country == CountryCode.BRAZIL ||
-                locale.language == LanguageCode.PORTUGUESE
+        return getCurrentCountry() == CountryCode.BRAZIL
     }
 
     /**
@@ -71,9 +109,7 @@ object LauageTools {
      * @return true 是印尼用户，false 不是
      */
     fun isIndonesia(): Boolean {
-        val locale = getDeviceLanguage(mApp)
-        return locale.country == CountryCode.INDONESIA ||
-                locale.language == LanguageCode.INDONESIAN
+        return getCurrentCountry() == CountryCode.INDONESIA
     }
 
     /**
@@ -94,10 +130,12 @@ object LauageTools {
 
     /**
      * 判断是否为印尼语用户
+     * 兼容非标准的 "in" 语言代码
      * @return true 是印尼语用户，false 不是
      */
     fun isIndonesianUser(context: Context): Boolean {
-        return getDeviceLanguageCode(context) == LanguageCode.INDONESIAN
+        val languageCode = getDeviceLanguageCode(context).lowercase()
+        return languageCode == LanguageCode.INDONESIAN || languageCode == "in"
     }
 
 

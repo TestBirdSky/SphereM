@@ -141,6 +141,13 @@ const val DEFAULT_JSON = """
     { "min": 237, "max": 239, "reward": [0.01] },
     { "min": 239, "max": null, "reward": [0.01] }
   ],
+    "exit_reward": [
+    { "min": 100, "max": 150, "reward": [2] },
+    { "min": 150, "max": 180, "reward": [1.5] },
+    { "min": 180, "max": 230, "reward": [1] },
+    { "min": 230, "max": 239, "reward": [0.5] },
+    { "min": 239, "max": null, "reward": [0.01] }
+  ],
   "ad_interval": [2, 4, 2, 1]
 }
 """

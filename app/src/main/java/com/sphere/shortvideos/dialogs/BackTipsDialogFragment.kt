@@ -9,7 +9,11 @@ import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.databinding.DialogBackTipsBinding
+import com.sphere.shortvideos.helper.HelperRewardShow
+import com.sphere.shortvideos.helper.MoneyCacheHelper
+import com.sphere.shortvideos.helper.RemoteConfHelper
 import com.sphere.shortvideos.helper.localEvent
+import com.sphere.shortvideos.helper.reward.RewardHelper
 
 /**
  * Date：2026/1/23
@@ -34,6 +38,11 @@ class BackTipsDialogFragment(val onExit: () -> Unit) : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         localEvent("exit_pop")
+        val info = RewardHelper.getConfigByLanguage().getExitReward(MoneyCacheHelper.fetchCurMoney())
+        val textDex = getString(R.string.back_tips_desc, info.second)
+        val text2 = getString(R.string.back_tips_stay, info.second)
+        binding.tvDesc.text = textDex
+        binding.btnStay.text = text2
         binding.btnExit.setOnClickListener {
             onExit.invoke()
             dismissAllowingStateLoss()
@@ -41,6 +50,7 @@ class BackTipsDialogFragment(val onExit: () -> Unit) : DialogFragment() {
         binding.btnStay.setOnClickListener {
             localEvent("exit_pop_c")
             dismissAllowingStateLoss()
+            HelperRewardShow.addMoneyNotExChangeFlyAnim(info.first,600)
         }
     }
 

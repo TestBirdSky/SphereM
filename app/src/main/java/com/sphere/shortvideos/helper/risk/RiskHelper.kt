@@ -9,8 +9,13 @@ import android.telephony.TelephonyManager
 import com.google.gson.Gson
 import com.sphere.shortvideos.bean.BehaviorConfig
 import com.sphere.shortvideos.bean.RiskBean
+import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.mmkv.MMKVData
 import com.sphere.shortvideos.mApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
@@ -69,7 +74,10 @@ object RiskHelper {
     }
 
     fun isAdLimit(): Boolean {
-        if (checkNumberUnion()) return true
+        if (checkNumberUnion()) {
+            localEvent("risk_chance", hashMapOf("risk_from" to "number"))
+            return true
+        }
         if (isBehaviorLimit()) return true
         if (checkDeviceIsRisk()) return true
         return false
@@ -90,12 +98,15 @@ object RiskHelper {
         if (fetchRiskBean().ui.behavior == 0) return false
         val bean = fetchBehavior()
         if (sphereAdShortCloseNum >= bean.adShortClose.value) {
+            localEvent("risk_chance", hashMapOf("risk_from" to "ad_short_close"))
             return true
         }
         if (sphereAdShortShowNum >= bean.adShortShow.value) {
+            localEvent("risk_chance", hashMapOf("risk_from" to "ad_short_show"))
             return true
         }
         if (numRvShow < bean.wrongDeemAdLess) {
+            localEvent("risk_chance", hashMapOf("risk_from" to "wrong_deem_ad_less"))
             return true
         } //        if (numRvShow > bean.wrongDeemAdMore) {
         //            return true
@@ -119,16 +130,35 @@ object RiskHelper {
     private fun checkDeviceRisk(context: Context, riskTypes: List<String>): Boolean { // 检查 UI 配置中设备检测是否开启
         if (riskBean?.ui?.device != 1) return false
         return riskTypes.any { type ->
-            when (type.lowercase()) {
+            val status = when (type.lowercase()) {
                 "vpn" -> checkVpn(context)
                 "root" -> checkRoot()
                 "sim" -> checkSim(context)
                 "simulator" -> checkSimulator()
-                "googleplay" -> checkGooglePlay(context).not()
+                "googleplay" -> checkNotGooglePlay(context)
                 "developer" -> checkDeveloperMode(context)
                 "ip" -> checkIpRisk()
                 else -> false
             }
+            if (status){
+                localEvent("risk_chance", hashMapOf("risk_from" to type.lowercase()))
+            }
+            status
+        }
+    }
+
+    fun eventSession(context: Context) {
+        CoroutineScope(Dispatchers.IO).launch {
+            delay(1000)
+            localEvent("session_custom",
+                hashMapOf(
+                    "vpn" to if (checkVpn(context)) 1 else 0,
+                    "root" to if (checkRoot()) 1 else 0,
+                    "sim" to if (checkSim(context)) 1 else 0,
+                    "simulator" to if (checkSimulator()) 1 else 0,
+                    "googleplay" to if (checkNotGooglePlay(context)) 0 else 1,
+                    "developer" to if (checkDeveloperMode(context)) 1 else 0,
+                ))
         }
     }
 
@@ -197,15 +227,16 @@ object RiskHelper {
 
     /**
      * 检测 Google Play 安装来源
+     * 返回true则不是googlepaly安装
      */
-    private fun checkGooglePlay(context: Context): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            return false // Android 11+ 无法获取安装来源
+    private fun checkNotGooglePlay(context: Context): Boolean {
+        runCatching {
+            val packageManager = context.packageManager
+            @Suppress("DEPRECATION") val installerPackageName =
+                packageManager.getInstallerPackageName(context.packageName)
+            return installerPackageName != "com.android.vending" && installerPackageName != "com.google.android.gms"
         }
-        val packageManager = context.packageManager
-
-        @Suppress("DEPRECATION") val installerPackageName = packageManager.getInstallerPackageName(context.packageName)
-        return installerPackageName != "com.android.vending" && installerPackageName != "com.google.android.gms"
+        return false
     }
 
     /**

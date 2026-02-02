@@ -276,8 +276,9 @@ object NotificationHelper {
     }
 
     fun updateFixedNotification(context: Context) {
-        runCatching {
+        try {
             NotificationManagerCompat.from(context).notify(NOTI_ID_FIXED, createFixNotification(context))
+        } catch (t: Throwable) {
         }
     }
 
