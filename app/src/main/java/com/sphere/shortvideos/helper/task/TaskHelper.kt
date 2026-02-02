@@ -1,5 +1,6 @@
 package com.sphere.shortvideos.helper.task
 
+import com.sphere.shortvideos.bean.RewardRange
 import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.mmkv.MMKVData
@@ -25,16 +26,10 @@ object TaskHelper {
     private var signInRewardRecord by MMKVData("")
 
     enum class SignInStatus {
-        CLAIMED,
-        CLAIMABLE,
-        UNCLAIMED
+        CLAIMED, CLAIMABLE, UNCLAIMED
     }
 
-    data class SignInDayState(
-        val day: Int,
-        val reward: Double,
-        val status: SignInStatus
-    )
+    data class SignInDayState(val day: Int, val reward: Double, val status: SignInStatus)
 
     private fun getClaimedSet(): MutableSet<Int> {
         if (havaAddWatchIndex.isBlank()) return mutableSetOf()
@@ -99,8 +94,12 @@ object TaskHelper {
     fun fetchSignReword(): List<Double> {
         if (singIn7Day.isEmpty()) {
             if (lastSingInIndex == -1) {
+                var money = MoneyCacheHelper.fetchCurMoney()
+                if (money == 0.0) {
+                    money = RewardHelper.getConfigByLanguage().getRewardNewUser().first
+                }
                 RewardHelper.getConfigByLanguage().signIn.forEachIndexed { index, range ->
-                    if (range.isInRange(MoneyCacheHelper.fetchCurMoney())) {
+                    if (range.isInRange(money)) {
                         lastSingInIndex = index
                     }
                 }
@@ -111,6 +110,12 @@ object TaskHelper {
             singIn7Day = RewardHelper.getConfigByLanguage().signIn[lastSingInIndex].reward
         }
         return singIn7Day
+    }
+
+
+    fun pickRewardFromRanges(list: List<RewardRange>, money: Double): Double {
+        val range = if (money == 0.0) list.minByOrNull { it.min } else list.firstOrNull { it.isInRange(money) }
+        return range?.reward?.random() ?: 0.0
     }
 
     fun fetchSignInStates(): List<SignInDayState> {
@@ -170,9 +175,7 @@ object TaskHelper {
 
     private fun getSignInRewardRecord(): MutableList<Double> {
         if (signInRewardRecord.isBlank()) return mutableListOf()
-        return signInRewardRecord.split(",")
-            .filter { it.isNotBlank() }
-            .mapNotNull { it.toDoubleOrNull() }
+        return signInRewardRecord.split(",").filter { it.isNotBlank() }.mapNotNull { it.toDoubleOrNull() }
             .toMutableList()
     }
 

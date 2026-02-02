@@ -47,20 +47,20 @@
     {
       "first_number": 0,
       "point": 0,
+      "end_number": 20
+    },
+    {
+      "first_number": 20,
+      "point": 60,
+      "end_number": 30
+    },
+    {
+      "first_number": 30,
+      "point": 80,
       "end_number": 40
     },
     {
-      "first_number": 40,
-      "point": 60,
-      "end_number": 60
-    },
-    {
-      "first_number": 60,
-      "point": 80,
-      "end_number": 80
-    },
-    {
-      "first_number": 96,
+      "first_number": 48,
       "point": 100,
       "end_number": null
     }

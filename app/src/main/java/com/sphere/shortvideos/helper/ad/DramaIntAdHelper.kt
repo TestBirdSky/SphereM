@@ -44,7 +44,7 @@ object DramaIntAdHelper {
             it.isInRange(moneyCur)
         }?.point ?: 0
         val randomResult = Random.nextInt(1, 100)
-        logError("fetchIsShowRateAd-->$rate --$randomResult --$conL")
+        logError("fetchIsShowRateAd-->$rate --$randomResult --$conL --$moneyCur")
         return rate >= randomResult
     }
 

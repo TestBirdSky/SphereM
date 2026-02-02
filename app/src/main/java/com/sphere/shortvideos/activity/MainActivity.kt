@@ -135,6 +135,7 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
 
     fun hideOrShowGuide(show: Boolean = true) {
         if (show) {
+            binding.ivFirstGuide.setOnClickListener { }
             binding.ivFirstGuide.visibility = View.VISIBLE
         } else {
             showNotificationOpen()
