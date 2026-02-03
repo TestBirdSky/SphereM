@@ -46,7 +46,7 @@ class FbAndAdjustHelper {
             logError("setOnAttributionChangedListener--->$attribution")
             // 判断用户类型：如果 network 包含 "Organic" 则为黑名单用户，否则为买量用户
             val network = attribution.network ?: ""
-            val isBlacklist = network.contains("Organic", ignoreCase = true)
+            val isBlacklist = network.contains("Organic", ignoreCase = false)
             MMKVRepository.isBlacklistUser = isBlacklist
             logError(": network=$network, isBlacklistUser=$isBlacklist")
             localEvent("adjust_suc",hashMapOf("adjust_user" to  if (isBlacklist) 0 else 1))

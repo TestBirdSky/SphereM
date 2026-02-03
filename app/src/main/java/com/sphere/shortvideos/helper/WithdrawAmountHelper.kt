@@ -74,7 +74,7 @@ object WithdrawAmountHelper {
     }
 
     fun moneyFormatAddUnit(double: Double): String {
-        logError("moneyFormatAddUnit-->${resolveMoneyUnit()}")
+//        logError("moneyFormatAddUnit-->${resolveMoneyUnit()}")
         return "${resolveMoneyUnit()}\t${formatMoney(double)}"
     }
 
