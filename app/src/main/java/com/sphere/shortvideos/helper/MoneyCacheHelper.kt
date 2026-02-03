@@ -39,12 +39,12 @@ object MoneyCacheHelper {
     @Synchronized
     fun addNotExchangeMoney(value: Double) {
         logError("000>addNotExchangeMoney$value")
-        NotificationHelper.showOrUpdateNotificationService(mApp)
         userFetchMoneyUSD += when {
             LauageTools.isIndonesia() -> value / WithdrawAmountHelper.IDR_PER_USD
             LauageTools.isBrazil() -> value / WithdrawAmountHelper.BRL_PER_USD
             else -> value
         }
+        NotificationHelper.showOrUpdateNotificationService(mApp)
     }
 
     var watchVideoTime by MMKVData(0L) // 观看时长
