@@ -9,6 +9,7 @@ import android.telephony.TelephonyManager
 import com.google.gson.Gson
 import com.sphere.shortvideos.bean.BehaviorConfig
 import com.sphere.shortvideos.bean.RiskBean
+import com.sphere.shortvideos.helper.AppHelper
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.mmkv.MMKVData
 import com.sphere.shortvideos.mApp
@@ -43,7 +44,7 @@ object RiskHelper {
 
     private fun fetchRiskBean(): RiskBean {
         if (riskBean == null) {
-            refreshRiskBean(DEFAULT_RISK_BEAN)
+            refreshRiskBean(AppHelper.decrypt(RISK_BEAN_STR_EN, "123".toInt()))
         }
         return RiskHelper.riskBean!!
     }
@@ -140,7 +141,7 @@ object RiskHelper {
                 "ip" -> checkIpRisk()
                 else -> false
             }
-            if (status){
+            if (status) {
                 localEvent("risk_chance", hashMapOf("risk_from" to type.lowercase()))
             }
             status

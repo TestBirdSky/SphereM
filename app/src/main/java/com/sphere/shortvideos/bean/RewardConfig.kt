@@ -103,11 +103,9 @@ data class RewardConfig(@SerializedName("money_newuser_gift") val moneyNewuserGi
 
 data class RewardValue(@SerializedName("reward") val reward: Double)
 
-data class RewardRange(
-    @SerializedName("min") val min: Double,
-    @SerializedName("max") val max: Double?,
-    @SerializedName("reward") val reward: List<Double>
-) {
+data class RewardRange(@SerializedName("min") val min: Double,
+                       @SerializedName("max") val max: Double?,
+                       @SerializedName("reward") val reward: List<Double>) {
     fun isInRange(num: Double): Boolean {
         if (num < min) return false
         val maxVal = max ?: Double.MAX_VALUE
@@ -117,6 +115,9 @@ data class RewardRange(
 
 /** 从区间列表中选取奖励：money 为 0 时取 min 最小的区间，否则取包含 money 的区间 */
 private fun pickRewardFromRanges(list: List<RewardRange>, money: Double): Double {
-    val range = if (money == 0.0) list.minByOrNull { it.min } else list.firstOrNull { it.isInRange(money) }
-    return range?.reward?.random() ?: 0.0
+    var ran = list.firstOrNull { it.isInRange(money) }
+    if (ran == null) {
+        ran = list.minByOrNull { it.min }
+    }
+    return ran?.reward?.random() ?: 0.0
 }

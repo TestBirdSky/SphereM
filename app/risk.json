@@ -1,30 +1,30 @@
 {
   "ui": {
-    "number": 0,//数字联盟是否生效,"0"代表不生效（关），“1”代表生效（开）
-    "behavior": 0,//用户异常行为是否生效,"0"代表不生效，“1”代表生效
-    "device": 0// 设备异常是否生效,"0"代表不生效，“1”代表生效
+    "number": 0,
+    "behavior": 0,
+    "device": 0
   },
   "behavior": {
     "ad_short_show": {
-      "duration": 30,//两次rv间隔时间小于30s，3次以上
+      "duration": 30,
       "value": 3
     },
-    "ad_short_close": {//RV 从播放到收到关闭回调时间小于20s，3次以上
+    "ad_short_close": {
       "duration": 20,
       "value": 3
     },
-    "wrong_deem_ad_less": 3,//现金金额达到提现门槛,视频数少于3次
-    "wrong_deem_ad_more": 90,//  用户观看90次RV(不包含插屏)，未到提现门槛
-    "no_install": 1,//暂时用不到，tba暂时无法归因
-    "ad_daily_show": 60//每日广告观看数上限
+    "wrong_deem_ad_less": 3,
+    "wrong_deem_ad_more": 90,
+    "no_install": 1,
+    "ad_daily_show": 60
   },
   "device": [
-    "vpn",//是否开通VPN检测
-    "root",//是否开通root检测
-    "sim",//是否开通sim卡检测
-    "simulator",//是否开通模拟器检测
-    "googleplay",//是否开通googeplay安装来源检测
-    "developer"//是否开通开发者模式检测
-    "ip"//是否开通后台ip检测
+    "vpn",
+    "root",
+    "sim",
+    "simulator",
+    "googleplay",
+    "developer",
+    "ip"
   ]
 }

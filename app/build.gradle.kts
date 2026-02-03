@@ -9,7 +9,7 @@ plugins {
     id("stringfog")
     // todo test
     id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
+//    id("com.google.firebase.crashlytics")
 }
 
 apply(plugin = "stringfog")
@@ -138,7 +138,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-config")
     implementation("com.google.firebase:firebase-messaging")
-    implementation("com.google.firebase:firebase-crashlytics-ndk")
+//    implementation("com.google.firebase:firebase-crashlytics-ndk")
 
     // pangle 短剧sdk
     implementation("com.bytedance.dramaverse:pssdk:1.8.0.1")
@@ -149,4 +149,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-ads-identifier:18.0.1")
 
     implementation("com.esotericsoftware.spine:spine-android:4.2.10")
+    
+    // 测试依赖
+    testImplementation("junit:junit:4.13.2")
 }

@@ -1,7 +1,5 @@
 package com.sphere.shortvideos.helper.task
 
-import com.sphere.shortvideos.bean.RewardRange
-import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.mmkv.MMKVData
 import com.sphere.shortvideos.helper.reward.RewardHelper
@@ -112,11 +110,6 @@ object TaskHelper {
         return singIn7Day
     }
 
-
-    fun pickRewardFromRanges(list: List<RewardRange>, money: Double): Double {
-        val range = if (money == 0.0) list.minByOrNull { it.min } else list.firstOrNull { it.isInRange(money) }
-        return range?.reward?.random() ?: 0.0
-    }
 
     fun fetchSignInStates(): List<SignInDayState> {
         val today = getTodayString()

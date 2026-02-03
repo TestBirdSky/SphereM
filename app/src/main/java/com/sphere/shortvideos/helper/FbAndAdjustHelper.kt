@@ -49,6 +49,7 @@ class FbAndAdjustHelper {
             val isBlacklist = network.contains("Organic", ignoreCase = true)
             MMKVRepository.isBlacklistUser = isBlacklist
             logError(": network=$network, isBlacklistUser=$isBlacklist")
+            localEvent("adjust_suc",hashMapOf("adjust_user" to  if (isBlacklist) 0 else 1))
         }
 
         localEvent("adjust_req")

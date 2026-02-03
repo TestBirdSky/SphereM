@@ -4,8 +4,6 @@ import com.google.firebase.Firebase
 import com.google.firebase.remoteconfig.get
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
-import com.google.gson.Gson
-import com.sphere.shortvideos.bean.RiskBean
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.ad.DramaIntAdHelper
 import com.sphere.shortvideos.helper.reward.RewardHelper
