@@ -90,7 +90,8 @@
                 android:gravity="center"
                 android:text="@string/allow_get"
                 android:textColor="@color/white"
-                android:textSize="14sp" />
+                android:textStyle="bold"
+                android:textSize="18sp" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="33dp"

@@ -57,6 +57,10 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
             delay(1000)
             NotificationHelper.showOrUpdateNotificationService(this@MainActivity)
         }
+        if (MMKVRepository.isNewUser) {
+            binding.ivFirstGuide.setOnClickListener { }
+            binding.ivFirstGuide.visibility = View.VISIBLE
+        }
     }
 
     private fun setupBottomNav() {

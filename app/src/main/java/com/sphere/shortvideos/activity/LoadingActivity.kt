@@ -25,6 +25,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
+    private var isReq = true
     private var isFirstGoLoadingPage by MMKVData(true)
     private val mPostPermission = PostPermission(this)
     private val viewModel by viewModels<LoadingViewModel>()
@@ -88,7 +89,10 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
 
     override fun onResume() {
         super.onResume()
-        mPostPermission.requestPermission {}
+        if (isReq) {
+            isReq = false
+            mPostPermission.requestPermission {}
+        }
         localEvent("launch_page")
         lifecycleScope.launch {
             delay(1000)
@@ -100,9 +104,9 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
         val notificationId = intent.getIntExtra(NotificationHelper.NOTIFICATION_ID_KEY, -1)
         lastNotificationId = notificationId
         if (notificationId != -1) {
-            runCatching {
-                NotificationManagerCompat.from(this).cancel(notificationId)
-            }
+            //            runCatching {
+            //                NotificationManagerCompat.from(this).cancel(notificationId)
+            //            }
             NotificationHelper.clickNotiEvent(notificationId)
         }
     }

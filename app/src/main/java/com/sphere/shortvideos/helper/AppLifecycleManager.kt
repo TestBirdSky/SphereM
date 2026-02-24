@@ -9,6 +9,7 @@ import com.sphere.shortvideos.activity.LoadingActivity
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.isInteractive
 import com.sphere.shortvideos.logError
+import com.sphere.shortvideos.notification.NotificationHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -30,6 +31,7 @@ object AppLifecycleManager : Application.ActivityLifecycleCallbacks {
     override fun onActivityStarted(activity: Activity) {
         logError("onActivityStarted-->$activity")
         foregroundCounts++
+        NotificationHelper.isInApp = true
         backgroundJob?.cancel()
         if (!restart) return
         restart = false
@@ -50,6 +52,7 @@ object AppLifecycleManager : Application.ActivityLifecycleCallbacks {
         runCatching {
             backgroundJob?.cancel()
             if (--foregroundCounts <= 0) {
+                NotificationHelper.isInApp = false
                 backgroundJob = CoroutineScope(Dispatchers.IO).launch {
                     delay(3000L)
                     runCatching {
@@ -61,6 +64,7 @@ object AppLifecycleManager : Application.ActivityLifecycleCallbacks {
                             }
                         }
                     }
+                    NotificationHelper.onBackShowNotif()
                     restart = true
                 }
             }

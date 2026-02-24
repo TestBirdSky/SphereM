@@ -24,8 +24,15 @@ import com.sphere.shortvideos.helper.mmkv.MMKVData
 import com.sphere.shortvideos.helper.permission.PermissionHelper
 import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.logError
+import com.sphere.shortvideos.mApp
 import com.sphere.shortvideos.service.SphereService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 
 /**
  * Date：2026/1/21
@@ -33,9 +40,14 @@ import java.util.concurrent.TimeUnit
  * 功能：注册用户解锁广播，间隔 30 分钟弹出通知
  */
 object NotificationHelper {
+    var isInApp = false
     private const val NOTI_ID_UNLOCK = 1002
+    private const val NOTI_ID_UNLOCK2 = 1003
     private const val NOTI_ID_TIMER = 1111
-    const val NOTI_ID_FCM_DATA = 1092
+    private const val NOTI_ID_TIMER2 = 1112
+    private const val NOTI_ID_TIMER3 = 1113
+    const val NOTI_ID_MEDIA = 18900
+    const val NOTI_ID_FCM_DATA = 1221
     const val NOTI_ID_FIXED = 10091
 
     const val NOTIFICATION_ID_KEY = "notification_id"
@@ -106,8 +118,10 @@ object NotificationHelper {
         R.string.notification_local_79_desc4,
     )
 
-    const val CHANNEL_ID = "unlock_notification_channel"
-    private const val CHANNEL_NAME = "notification_unlock"
+    const val CHANNEL_ID = "ser_notification_channel"
+    private const val CHANNEL_NAME = "notification_ser"
+    const val CHANNEL_ID_LOCAL = "local_notification_channel"  // 本地定时通知渠道（用于弹窗显示）
+    private const val CHANNEL_NAME_LOCAL = "notification_local"
     private val notificationImplUU by lazy {
         NotificationImpl(NOTI_ID_UNLOCK, listUserUnlockTitle, listUserUnlockContent)
     }
@@ -124,29 +138,51 @@ object NotificationHelper {
     /**
      * 初始化通知渠道
      */
-    fun initChannel(context: Context) {
-        NotificationManagerCompat.from(context).createNotificationChannel(NotificationChannelCompat.Builder(CHANNEL_ID,
-            NotificationManagerCompat.IMPORTANCE_DEFAULT).setSound(null, null).setLightsEnabled(false)
-            .setVibrationEnabled(false).setShowBadge(false).setName(CHANNEL_NAME).build())
+    fun initChannel(context: Context) { // 解锁通知渠道（静默）
+        NotificationManagerCompat.from(context)
+            .createNotificationChannel(NotificationChannelCompat.Builder(CHANNEL_ID,
+                NotificationManagerCompat.IMPORTANCE_DEFAULT)
+                .setSound(null, null).setLightsEnabled(false)
+                .setVibrationEnabled(false).setShowBadge(false).setName(CHANNEL_NAME).build())
     }
+
+    fun initHighNotification(context: Context) {
+        NotificationManagerCompat.from(context).createNotificationChannel(NotificationChannelCompat.Builder(
+            CHANNEL_ID_LOCAL,
+            NotificationManagerCompat.IMPORTANCE_MAX)
+            .setLightsEnabled(true).setVibrationEnabled(true)
+            .setShowBadge(true).setName(CHANNEL_NAME_LOCAL).build())
+    }
+
+    private var job: Job? = null
 
     /**
      * 注册解锁广播
      */
     fun registerScreenUnlockReceiver(context: Context) {
         if (isRegistered) return
-        initChannel(context)
         screenUnlockReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 logError("registerScreenUnlockReceiver-->${intent?.action}")
                 context?.let {
                     when (intent?.action) {
                         Intent.ACTION_USER_PRESENT -> {
-                            notificationImplUU.showNotification(it)
+                            job?.cancel()
+                            job = CoroutineScope(Dispatchers.Main).launch {
+                                delay(1000)
+                                notificationImplUU.showNotification(it)
+                            }
                         }
 
                         Intent.ACTION_SCREEN_ON -> {
-                            notificationImplSU.showNotification(it)
+                            if (hasNotificationPermission(context).not()) {
+                                return
+                            }
+                            job?.cancel()
+                            job = CoroutineScope(Dispatchers.Main).launch {
+                                delay(3000)
+                                notificationImplSU.showNotification(it)
+                            }
                         }
                     }
                 }
@@ -172,17 +208,17 @@ object NotificationHelper {
      * 本地定时通知（23/59/79分钟轮询）
      */
     fun scheduleLocalNotifications(context: Context) {
-        initChannel(context)
+        initHighNotification(context)
         enqueueLocalWorker(context, WORK_NAME_23, LOCAL_TYPE_23, if (isDebugMode) 1 else 23)
-        enqueueLocalWorker(context, WORK_NAME_59, LOCAL_TYPE_59, 59)
+        enqueueLocalWorker(context, WORK_NAME_59, LOCAL_TYPE_59, if (isDebugMode) 2 else 59)
         enqueueLocalWorker(context, WORK_NAME_79, LOCAL_TYPE_79, 79)
     }
 
     fun showLocalNotification(context: Context, type: Int) {
         val (titles, descs, index, notificationId) = when (type) {
             LOCAL_TYPE_59 -> Quad(listLocal59Title, listLocal59Content, localIndex59, NOTI_ID_TIMER)
-            LOCAL_TYPE_79 -> Quad(listLocal79Title, listLocal79Content, localIndex79, NOTI_ID_TIMER)
-            else -> Quad(listLocal23Title, listLocal23Content, localIndex23, NOTI_ID_TIMER)
+            LOCAL_TYPE_79 -> Quad(listLocal79Title, listLocal79Content, localIndex79, NOTI_ID_TIMER2)
+            else -> Quad(listLocal23Title, listLocal23Content, localIndex23, NOTI_ID_TIMER3)
         }
         if (titles.isEmpty() || descs.isEmpty()) return
         val safeIndex = index.coerceAtLeast(0) % titles.size
@@ -193,6 +229,7 @@ object NotificationHelper {
             LOCAL_TYPE_79 -> localIndex79 = (safeIndex + 1) % titles.size
             else -> localIndex23 = (safeIndex + 1) % titles.size
         }
+        // 使用专门的通知渠道显示弹窗通知
         NotificationImpl(notificationId, arrayListOf(), arrayListOf(), 0).showNotification(context, title, desc)
     }
 
@@ -230,25 +267,23 @@ object NotificationHelper {
                             val notificationId: Int)
 
     fun showNotiEvent(id: Int) {
-        val type = when (id) {
-            NOTI_ID_TIMER -> "noti"
-            NOTI_ID_UNLOCK -> "unlock"
-            NOTI_ID_FCM_DATA -> "fcm"
-            NOTI_ID_FIXED -> "fixed"
-            else -> "unKnown"
-        }
-        localEvent("all_noti_t", hashMapOf("type" to type))
+
+        localEvent("all_noti_t", hashMapOf("type" to getType(id)))
     }
 
     fun clickNotiEvent(id: Int) {
-        val type = when (id) {
-            NOTI_ID_TIMER -> "noti"
-            NOTI_ID_UNLOCK -> "unlock"
+        localEvent("all_noti_c", hashMapOf("type" to getType(id)))
+    }
+
+    private fun getType(id: Int): String {
+        return when (id) {
+            NOTI_ID_TIMER, NOTI_ID_TIMER2, NOTI_ID_TIMER3 -> "noti"
+            NOTI_ID_UNLOCK, NOTI_ID_UNLOCK2 -> "unlock"
             NOTI_ID_FCM_DATA -> "fcm"
             NOTI_ID_FIXED -> "fixed"
+            NOTI_ID_MEDIA -> "media"
             else -> "unKnown"
         }
-        localEvent("all_noti_c", hashMapOf("type" to type))
     }
 
     fun showOrUpdateNotificationService(context: Context) {
@@ -271,7 +306,6 @@ object NotificationHelper {
             logError("no post permission")
             return
         }
-        initChannel(context)
         NotificationImpl(NOTI_ID_FCM_DATA, arrayListOf(), arrayListOf(), 0).showNotification(context, title, desc)
     }
 
@@ -303,11 +337,28 @@ object NotificationHelper {
             }
 
             NotificationCompat.Builder(this, NotificationHelper.CHANNEL_ID).setSmallIcon(R.drawable.ic_notification_app)
-                .setGroupSummary(false).setSound(null).setGroup("Sphere").setContentTitle(title + desc)
-                .setContentText(title + desc).setStyle(NotificationCompat.DecoratedCustomViewStyle())
-                .setCustomContentView(remoteView).setCustomBigContentView(remoteView).setOngoing(true)
-                .setOnlyAlertOnce(true).setContentIntent(pendingIntent).build()
+                .setGroupSummary(false).setSound(null)
+                .setGroup("Sphere")
+                .setContentTitle(title).setContentText(desc)
+                .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+                .setCustomContentView(remoteView)
+                .setCustomBigContentView(remoteView)
+                .setOngoing(true)
+                .setOnlyAlertOnce(true)
+                .setContentIntent(pendingIntent).build()
         }
         return buildFixedNotification()
+    }
+
+    fun isCanShowNotif(): Boolean {
+        if (NotificationHelper.isInApp) return false
+        return true
+    }
+
+    private var time = 0L
+    fun onBackShowNotif() {
+        if (System.currentTimeMillis() - time < Random.nextLong(60000, 90000)) return
+        time = System.currentTimeMillis()
+        showLocalNotification(mApp, arrayListOf(LOCAL_TYPE_23, LOCAL_TYPE_59, LOCAL_TYPE_79).random())
     }
 }

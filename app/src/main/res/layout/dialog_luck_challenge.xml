@@ -25,8 +25,8 @@
             android:fontFamily="@font/noto_sans"
             android:text="@string/fortune_challenge"
             android:textColor="#F5C91A"
-            android:textStyle="bold"
             android:textSize="21sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -114,7 +114,8 @@
                 android:gravity="center"
                 android:text="@string/get_re"
                 android:textColor="@color/white"
-                android:textSize="14sp"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
@@ -145,8 +146,8 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginTop="23dp"
-            android:visibility="gone"
             android:src="@drawable/ic_selected_icon"
+            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="@id/iv_anim_parent"
             app:layout_constraintRight_toRightOf="@id/iv_anim_parent"
             app:layout_constraintTop_toTopOf="@id/iv_anim_parent" />

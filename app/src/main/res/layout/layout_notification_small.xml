@@ -8,28 +8,21 @@
 
     <ImageView
         android:layout_width="50dp"
-        android:src="@drawable/ic_notification_small_app_icon"
-        android:layout_height="50dp"/>
+        android:layout_height="50dp"
+        android:src="@drawable/ic_notification_small_app_icon" />
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/tv_title"
         android:layout_width="0dp"
+        android:background="@color/white"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="center|start"
-        android:orientation="vertical"
-        android:paddingHorizontal="10dp">
-
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="#2B1962"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            tools:text="xxxxxxxxxxxxxxxxxxxx" />
-
-    </LinearLayout>
+        android:paddingHorizontal="6dp"
+        android:textColor="#2B1962"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:text="xxxxxxxxxxxxxxxxxxxx" />
 
 
 </LinearLayout>

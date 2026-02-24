@@ -90,7 +90,8 @@
                 android:gravity="center"
                 android:text="@string/ok"
                 android:textColor="@color/white"
-                android:textSize="16sp" />
+                android:textStyle="bold"
+                android:textSize="18sp" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -82,7 +82,8 @@
             android:gravity="center"
             android:text="@string/back_tips_stay"
             android:textColor="@color/white"
-            android:textSize="12sp" />
+            android:textStyle="bold"
+            android:textSize="14sp" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

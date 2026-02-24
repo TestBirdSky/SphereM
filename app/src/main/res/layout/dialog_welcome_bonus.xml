@@ -15,8 +15,8 @@
             android:id="@+id/iv_anim2"
             android:layout_width="match_parent"
             android:layout_height="311dp"
-            app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/ic_dialog_congratulate" />
+            android:src="@drawable/ic_dialog_congratulate"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_title"
@@ -103,7 +103,8 @@
             android:gravity="center"
             android:text="@string/bonus_welcome_action"
             android:textColor="@color/white"
-            android:textSize="14sp"
+            android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/iv_dialog_bg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
