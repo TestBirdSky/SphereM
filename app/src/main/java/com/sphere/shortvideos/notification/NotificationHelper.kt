@@ -29,6 +29,7 @@ import com.sphere.shortvideos.service.SphereService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
@@ -121,7 +122,9 @@ object NotificationHelper {
     const val CHANNEL_ID = "ser_notification_channel"
     private const val CHANNEL_NAME = "notification_ser"
     const val CHANNEL_ID_LOCAL = "local_notification_channel"  // 本地定时通知渠道（用于弹窗显示）
+    const val CHANNEL_ID_LOCAL_MAX = "local_notification_channel_max"  // 本地定时通知渠道（用于弹窗显示）
     private const val CHANNEL_NAME_LOCAL = "notification_local"
+    private const val CHANNEL_NAME_LOCAL_MAX = "notification_local_max"
     private val notificationImplUU by lazy {
         NotificationImpl(NOTI_ID_UNLOCK, listUserUnlockTitle, listUserUnlockContent)
     }
@@ -139,19 +142,27 @@ object NotificationHelper {
      * 初始化通知渠道
      */
     fun initChannel(context: Context) { // 解锁通知渠道（静默）
-        NotificationManagerCompat.from(context)
-            .createNotificationChannel(NotificationChannelCompat.Builder(CHANNEL_ID,
-                NotificationManagerCompat.IMPORTANCE_DEFAULT)
-                .setSound(null, null).setLightsEnabled(false)
-                .setVibrationEnabled(false).setShowBadge(false).setName(CHANNEL_NAME).build())
+        NotificationManagerCompat.from(context).createNotificationChannel(NotificationChannelCompat.Builder(CHANNEL_ID,
+            NotificationManagerCompat.IMPORTANCE_DEFAULT).setSound(null, null).setLightsEnabled(false)
+            .setVibrationEnabled(false).setShowBadge(false).setName(CHANNEL_NAME).build())
     }
 
-    fun initHighNotification(context: Context) {
-        NotificationManagerCompat.from(context).createNotificationChannel(NotificationChannelCompat.Builder(
-            CHANNEL_ID_LOCAL,
-            NotificationManagerCompat.IMPORTANCE_MAX)
-            .setLightsEnabled(true).setVibrationEnabled(true)
-            .setShowBadge(true).setName(CHANNEL_NAME_LOCAL).build())
+    fun initNotificationChannel(context: Context, isShowN: Boolean = isInApp.not()): String {
+        var channelIdStr: String
+        if (isShowN) {
+            channelIdStr = CHANNEL_ID_LOCAL_MAX
+            NotificationManagerCompat.from(context).createNotificationChannel(NotificationChannelCompat.Builder(
+                CHANNEL_ID_LOCAL_MAX,
+                NotificationManagerCompat.IMPORTANCE_MAX).setLightsEnabled(true).setVibrationEnabled(true)
+                .setShowBadge(true).setName(CHANNEL_NAME_LOCAL_MAX).build())
+        } else {
+            channelIdStr = CHANNEL_ID_LOCAL
+            NotificationManagerCompat.from(context).createNotificationChannel(NotificationChannelCompat.Builder(
+                CHANNEL_ID_LOCAL,
+                NotificationManagerCompat.IMPORTANCE_LOW).setLightsEnabled(false).setVibrationEnabled(false)
+                .setName(CHANNEL_NAME_LOCAL).build())
+        }
+        return channelIdStr
     }
 
     private var job: Job? = null
@@ -208,13 +219,27 @@ object NotificationHelper {
      * 本地定时通知（23/59/79分钟轮询）
      */
     fun scheduleLocalNotifications(context: Context) {
-        initHighNotification(context)
-        enqueueLocalWorker(context, WORK_NAME_23, LOCAL_TYPE_23, if (isDebugMode) 1 else 23)
-        enqueueLocalWorker(context, WORK_NAME_59, LOCAL_TYPE_59, if (isDebugMode) 2 else 59)
-        enqueueLocalWorker(context, WORK_NAME_79, LOCAL_TYPE_79, 79)
+        launcherScope(if (isDebugMode) 2 else 79, {
+            showLocalNotification(context, LOCAL_TYPE_79)
+        })
+        launcherScope(if (isDebugMode) 1 else 23, {
+            showLocalNotification(context, LOCAL_TYPE_23)
+        })
+        enqueueLocalWorker(context, WORK_NAME_59, LOCAL_TYPE_59, if (isDebugMode) 3 else 59)
+    }
+
+    private val workScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private fun launcherScope(time: Int, timeCall: () -> Unit) {
+        workScope.launch {
+            while (true) {
+                delay(time * 60000L)
+                timeCall.invoke()
+            }
+        }
     }
 
     fun showLocalNotification(context: Context, type: Int) {
+        logError("showLocalNotification--->$type")
         val (titles, descs, index, notificationId) = when (type) {
             LOCAL_TYPE_59 -> Quad(listLocal59Title, listLocal59Content, localIndex59, NOTI_ID_TIMER)
             LOCAL_TYPE_79 -> Quad(listLocal79Title, listLocal79Content, localIndex79, NOTI_ID_TIMER2)
@@ -228,8 +253,7 @@ object NotificationHelper {
             LOCAL_TYPE_59 -> localIndex59 = (safeIndex + 1) % titles.size
             LOCAL_TYPE_79 -> localIndex79 = (safeIndex + 1) % titles.size
             else -> localIndex23 = (safeIndex + 1) % titles.size
-        }
-        // 使用专门的通知渠道显示弹窗通知
+        } // 使用专门的通知渠道显示弹窗通知
         NotificationImpl(notificationId, arrayListOf(), arrayListOf(), 0).showNotification(context, title, desc)
     }
 
@@ -337,27 +361,18 @@ object NotificationHelper {
             }
 
             NotificationCompat.Builder(this, NotificationHelper.CHANNEL_ID).setSmallIcon(R.drawable.ic_notification_app)
-                .setGroupSummary(false).setSound(null)
-                .setGroup("Sphere")
-                .setContentTitle(title).setContentText(desc)
-                .setStyle(NotificationCompat.DecoratedCustomViewStyle())
-                .setCustomContentView(remoteView)
-                .setCustomBigContentView(remoteView)
-                .setOngoing(true)
-                .setOnlyAlertOnce(true)
+                .setGroupSummary(false).setSound(null).setGroup("Sphere").setContentTitle(title).setContentText(desc)
+                .setStyle(NotificationCompat.DecoratedCustomViewStyle()).setCustomContentView(remoteView)
+                .setCustomBigContentView(remoteView).setOngoing(true).setOnlyAlertOnce(true)
                 .setContentIntent(pendingIntent).build()
         }
         return buildFixedNotification()
     }
 
-    fun isCanShowNotif(): Boolean {
-        if (NotificationHelper.isInApp) return false
-        return true
-    }
 
     private var time = 0L
     fun onBackShowNotif() {
-        if (System.currentTimeMillis() - time < Random.nextLong(60000, 90000)) return
+        if (System.currentTimeMillis() - time < Random.nextLong(10000, 20000)) return
         time = System.currentTimeMillis()
         showLocalNotification(mApp, arrayListOf(LOCAL_TYPE_23, LOCAL_TYPE_59, LOCAL_TYPE_79).random())
     }

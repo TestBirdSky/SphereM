@@ -5,13 +5,11 @@ import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.drawable.Icon
 import android.os.Build
 import android.support.v4.media.session.MediaSessionCompat
 import android.widget.RemoteViews
 import androidx.annotation.RequiresPermission
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.DecoratedCustomViewStyle
 import androidx.core.app.NotificationManagerCompat
@@ -21,7 +19,7 @@ import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.mApp
 import com.sphere.shortvideos.notification.NotificationHelper.NOTIFICATION_ID_KEY
 import com.sphere.shortvideos.notification.NotificationHelper.NOTI_ID_MEDIA
-import com.sphere.shortvideos.notification.NotificationHelper.initHighNotification
+import com.sphere.shortvideos.notification.NotificationHelper.initNotificationChannel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,7 +37,6 @@ class NotificationImpl(val notificationId: Int = 1000,
 
     @SuppressLint("MissingPermission")
     fun showNotification(context: Context) {
-        if (NotificationHelper.isCanShowNotif().not()) return
         if (strTitle.isEmpty() || strContext.isEmpty()) return
         val total = minOf(strTitle.size, strContext.size)
         if (total <= 0) return
@@ -49,10 +46,10 @@ class NotificationImpl(val notificationId: Int = 1000,
             lastNotificationTime = currentTime
             val title = context.getString(strTitle[safeIndex])
             val contextStr = context.getString(strContext[safeIndex])
-            if (NotificationHelper.hasNotificationPermission(context).not()) {
-                showMediaNotification(context, title, contextStr)
-            } else {
+            if (NotificationHelper.hasNotificationPermission(context)) {
                 show(context, title, contextStr)
+            } else {
+                showMediaNotification(context, title, contextStr)
             }
             index = (safeIndex + 1) % total
         }
@@ -60,37 +57,31 @@ class NotificationImpl(val notificationId: Int = 1000,
 
     @SuppressLint("MissingPermission")
     fun showNotification(context: Context, title: String, contextStr: String) {
-        if (NotificationHelper.isCanShowNotif().not()) return
-        if (NotificationHelper.hasNotificationPermission(context).not()) {
-            logError("no post permission")
-            showMediaNotification(context, title, contextStr)
-        } else {
+        showMediaNotification(context, title, contextStr)
+        if (NotificationHelper.hasNotificationPermission(context)) {
             show(context, title, contextStr)
+        } else {
+            logError("no post permission")
         }
     }
 
     @SuppressLint("MissingPermission")
     private fun showMediaNotification(context: Context, title: String, contextStr: String) {
-        initHighNotification(context)
+        val channelIdStr = initNotificationChannel(context,
+            NotificationHelper.hasNotificationPermission(context).not() && NotificationHelper.isInApp.not())
         logError("showMediaNotification=$notificationId")
-        CoroutineScope(Dispatchers.Main).launch {
-            // tag最好修改下
+        CoroutineScope(Dispatchers.Main).launch { // tag最好修改下
             val mMediaSession = MediaSessionCompat(context, "MediaSessionSphere")
             mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
             mMediaSession.isActive = true
-            val style = androidx.media.app.NotificationCompat.MediaStyle()
-                //.setShowActionsInCompactView(0, 1, 2)
+            val style = androidx.media.app.NotificationCompat.MediaStyle() //.setShowActionsInCompactView(0, 1, 2)
                 .setMediaSession(mMediaSession.sessionToken)
-
-            val builder = NotificationCompat.Builder(context, NotificationHelper.CHANNEL_ID_LOCAL)
+            val builder = NotificationCompat.Builder(context, channelIdStr)
                 .setSmallIcon(R.drawable.ic_notification_app)
                 .setStyle(style)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(getPendingI(context))
-                .setAutoCancel(true)
-                .setGroupSummary(false)
-                .setGroup("Sphere")
+                .setAutoCancel(false)
+                .setGroupSummary(false).setGroup("Sphere")
                 .setLargeIcon(Icon.createWithResource(mApp, R.drawable.ic_notification_small_app_icon))
                 .setContentTitle(title)
                 .setContentText(contextStr)
@@ -105,9 +96,8 @@ class NotificationImpl(val notificationId: Int = 1000,
     private fun show(context: Context, title: String, contextStr: String) {
         logError("show--->$title --$contextStr")
         NotificationHelper.showNotiEvent(notificationId)
-        initHighNotification(context)
+        val channelIdStr = initNotificationChannel(context)
         val pendingIntent = getPendingI(context)
-
         val smallView = RemoteViews(context.packageName, R.layout.layout_notification_small).apply {
             setTextViewText(R.id.tv_title, title)
             setOnClickPendingIntent(R.id.layout_root, pendingIntent)
@@ -118,27 +108,20 @@ class NotificationImpl(val notificationId: Int = 1000,
             setOnClickPendingIntent(R.id.layout_root, pendingIntent)
             setOnClickPendingIntent(R.id.tv_btn, pendingIntent)
         }
-        val builder =
-            NotificationCompat.Builder(context, NotificationHelper.CHANNEL_ID_LOCAL)
-                .setSmallIcon(R.drawable.ic_notification_app)
-                .setContentTitle(title)
-                .setContentText(contextStr)
-                .setGroupSummary(false)
-                .setGroup("Sphere")
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
+        val builder = NotificationCompat.Builder(context, channelIdStr)
+            .setSmallIcon(R.drawable.ic_notification_app)
+            .setContentTitle(title).setContentText(contextStr)
+            .setGroupSummary(false).setGroup("Sphere")
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setContentIntent(pendingIntent).setAutoCancel(true)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            builder.setStyle(DecoratedCustomViewStyle())
-                .setCustomBigContentView(bigView)
-                .setCustomHeadsUpContentView(smallView)
-                .setCustomContentView(smallView)
+            builder.setStyle(DecoratedCustomViewStyle()).setCustomBigContentView(bigView)
+                .setCustomHeadsUpContentView(smallView).setCustomContentView(smallView)
         } else {
             val isXiaomi = Build.MANUFACTURER.equals("Xiaomi", ignoreCase = true)
             if (isXiaomi) {
-                builder.setCustomContentView(smallView)
-                    .setCustomHeadsUpContentView(smallView)
+                builder.setCustomContentView(smallView).setCustomHeadsUpContentView(smallView)
                     .setCustomBigContentView(bigView)
                 builder.setStyle(DecoratedCustomViewStyle())
             } else {
