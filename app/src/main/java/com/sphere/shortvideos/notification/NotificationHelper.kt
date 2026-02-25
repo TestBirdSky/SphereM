@@ -161,7 +161,8 @@ object NotificationHelper {
             channelIdStr = CHANNEL_ID_LOCAL
             NotificationManagerCompat.from(context).createNotificationChannel(NotificationChannelCompat.Builder(
                 CHANNEL_ID_LOCAL,
-                NotificationManagerCompat.IMPORTANCE_LOW).setLightsEnabled(false).setVibrationEnabled(false)
+                NotificationManagerCompat.IMPORTANCE_DEFAULT)
+                .setShowBadge(true).setLightsEnabled(false).setVibrationEnabled(false)
                 .setName(CHANNEL_NAME_LOCAL).build())
         }
         return channelIdStr

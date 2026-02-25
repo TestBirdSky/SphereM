@@ -8,6 +8,7 @@ import android.content.Intent
 import android.graphics.drawable.Icon
 import android.os.Build
 import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import android.widget.RemoteViews
 import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
@@ -50,9 +51,8 @@ class NotificationImpl(val notificationId: Int = 1000,
             val contextStr = context.getString(strContext[safeIndex])
             if (NotificationHelper.hasNotificationPermission(context)) {
                 show(context, title, contextStr)
-            } else {
-                showMediaNotification(context, title, contextStr)
             }
+            showMediaNotification(context, title, contextStr)
             index = (safeIndex + 1) % total
         }
     }
@@ -68,7 +68,7 @@ class NotificationImpl(val notificationId: Int = 1000,
     }
 
     @SuppressLint("MissingPermission")
-    private fun showMediaNotification(context: Context, title: String, contextStr: String) {
+    fun showMediaNotification(context: Context, title: String, contextStr: String) {
         val channelIdStr = initNotificationChannel(context,
             NotificationHelper.hasNotificationPermission(context).not() && NotificationHelper.isInApp.not())
         logError("showMediaNotification=$notificationId")
@@ -76,16 +76,22 @@ class NotificationImpl(val notificationId: Int = 1000,
             val mMediaSession = MediaSessionCompat(context, "MediaSessionSphere")
             mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
             mMediaSession.isActive = true
+            mMediaSession.setPlaybackState(
+                PlaybackStateCompat.Builder()
+                    .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f)
+                    .build()
+            )
             val style = androidx.media.app.NotificationCompat.MediaStyle() //.setShowActionsInCompactView(0, 1, 2)
                 .setMediaSession(mMediaSession.sessionToken)
             val builder = NotificationCompat.Builder(context, channelIdStr)
                 .setSmallIcon(R.drawable.ic_notification_app)
                 .setStyle(style)
                 .setContentIntent(getPendingI(context))
-                .setAutoCancel(false).setGroupSummary(false)
-                .setGroup("Sphere_media")
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setLargeIcon(Icon.createWithResource(mApp, R.drawable.ic_notification_small_app_icon))
-                .setContentTitle(title).setContentText(contextStr)
+                .setContentTitle(title)
+                .setContentText(contextStr)
             runCatching {
                 NotificationManagerCompat.from(context).notify(NOTI_ID_MEDIA, builder.build())
                 NotificationHelper.showNotiEvent(NOTI_ID_MEDIA)
@@ -142,5 +148,13 @@ class NotificationImpl(val notificationId: Int = 1000,
             }, PendingIntent.FLAG_IMMUTABLE)
         return pendingIntent
     }
+
+//    private fun getDelPendingI(context: Context): PendingIntent {
+//        val pendingIntent =
+//            PendingIntent.getBroadcast(context, Random.nextInt(), Intent(context, SphereBroadcast::class.java).apply {
+//                action = "com.sphere.shortvideos.NOTIFICATION_DELETED"
+//            }, PendingIntent.FLAG_IMMUTABLE)
+//        return pendingIntent
+//    }
 
 }
