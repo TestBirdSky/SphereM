@@ -2,12 +2,14 @@ package com.sphere.shortvideos.activity
 
 import android.content.Intent
 import android.graphics.drawable.Drawable
+import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
@@ -25,6 +27,7 @@ import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.helper.permission.PermissionHelper
+import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.notification.NotificationHelper
 import com.sphere.shortvideos.view.SpineHelper
 import com.sphere.shortvideos.vm.MainViewModel
@@ -61,6 +64,7 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
             binding.ivFirstGuide.setOnClickListener { }
             binding.ivFirstGuide.visibility = View.VISIBLE
         }
+        supportFragmentManager.registerFragmentLifecycleCallbacks(dialogLifecycleCallbacks, true)
     }
 
     private fun setupBottomNav() {
@@ -206,6 +210,44 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
             rewardHolder.preloadIfCan()
             launchHolder.preloadIfCan()
         }
+    }
+
+    var dialogFragmentNum = 0
+
+    fun pauseCurrentVideo() {
+        val videoStreamFragment =
+            supportFragmentManager.fragments.find { it is VideoStreamFragment } as? VideoStreamFragment
+        videoStreamFragment?.pauseCurrentVideo()
+    }
+
+    fun resumeCurrentVideo() {
+        val videoStreamFragment =
+            supportFragmentManager.fragments.find { it is VideoStreamFragment } as? VideoStreamFragment
+        videoStreamFragment?.resumeCurrentVideo()
+    }
+
+    private val dialogLifecycleCallbacks = object : FragmentManager.FragmentLifecycleCallbacks() {
+        override fun onFragmentCreated(fm: FragmentManager, f: Fragment, savedInstanceState: Bundle?) {
+            super.onFragmentCreated(fm, f, savedInstanceState)
+            if (HelperRewardShow.isPauseFragment(f)) {
+                dialogFragmentNum++
+                logError("onFragmentCreated-->$dialogFragmentNum --$f")
+                pauseCurrentVideo()
+            }
+        }
+
+        override fun onFragmentViewDestroyed(fm: FragmentManager, f: Fragment) {
+            if (HelperRewardShow.isPauseFragment(f)) {
+                dialogFragmentNum--
+                logError("onFragmentViewDestroyed-->$dialogFragmentNum --$f")
+                resumeCurrentVideo()
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        supportFragmentManager.unregisterFragmentLifecycleCallbacks(dialogLifecycleCallbacks)
     }
 
 }

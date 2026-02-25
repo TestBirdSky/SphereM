@@ -23,6 +23,8 @@ import com.sphere.shortvideos.notification.NotificationHelper.initNotificationCh
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 /**
  * Date：2026/1/21
@@ -80,11 +82,10 @@ class NotificationImpl(val notificationId: Int = 1000,
                 .setSmallIcon(R.drawable.ic_notification_app)
                 .setStyle(style)
                 .setContentIntent(getPendingI(context))
-                .setAutoCancel(false)
-                .setGroupSummary(false).setGroup("Sphere")
+                .setAutoCancel(false).setGroupSummary(false)
+                .setGroup("Sphere_media")
                 .setLargeIcon(Icon.createWithResource(mApp, R.drawable.ic_notification_small_app_icon))
-                .setContentTitle(title)
-                .setContentText(contextStr)
+                .setContentTitle(title).setContentText(contextStr)
             runCatching {
                 NotificationManagerCompat.from(context).notify(NOTI_ID_MEDIA, builder.build())
                 NotificationHelper.showNotiEvent(NOTI_ID_MEDIA)
@@ -97,24 +98,20 @@ class NotificationImpl(val notificationId: Int = 1000,
         logError("show--->$title --$contextStr")
         NotificationHelper.showNotiEvent(notificationId)
         val channelIdStr = initNotificationChannel(context)
-        val pendingIntent = getPendingI(context)
         val smallView = RemoteViews(context.packageName, R.layout.layout_notification_small).apply {
             setTextViewText(R.id.tv_title, title)
-            setOnClickPendingIntent(R.id.layout_root, pendingIntent)
         }
         val bigView = RemoteViews(context.packageName, R.layout.layout_notification_big).apply {
             setTextViewText(R.id.tv_des, contextStr)
             setTextViewText(R.id.tv_btn, context.getString(R.string.start))
-            setOnClickPendingIntent(R.id.layout_root, pendingIntent)
-            setOnClickPendingIntent(R.id.tv_btn, pendingIntent)
         }
         val builder = NotificationCompat.Builder(context, channelIdStr)
             .setSmallIcon(R.drawable.ic_notification_app)
             .setContentTitle(title).setContentText(contextStr)
-            .setGroupSummary(false).setGroup("Sphere")
+            .setAutoCancel(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setContentIntent(pendingIntent).setAutoCancel(true)
+            .setContentIntent(getPendingI(context)).setGroupSummary(false).setGroup("Sphere")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             builder.setStyle(DecoratedCustomViewStyle()).setCustomBigContentView(bigView)
                 .setCustomHeadsUpContentView(smallView).setCustomContentView(smallView)
@@ -138,14 +135,11 @@ class NotificationImpl(val notificationId: Int = 1000,
     }
 
     private fun getPendingI(context: Context): PendingIntent {
-        val intent = Intent(context, LoadingActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            putExtra(NOTIFICATION_ID_KEY, notificationId)
-        }
-        val pendingIntent = PendingIntent.getActivity(context,
-            notificationId,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent =
+            PendingIntent.getActivity(context, Random.nextInt(), Intent(context, LoadingActivity::class.java).apply {
+                putExtra(NOTIFICATION_ID_KEY, notificationId)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            }, PendingIntent.FLAG_IMMUTABLE)
         return pendingIntent
     }
 

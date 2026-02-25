@@ -56,7 +56,6 @@ class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
         }
         initAdapter()
         autoRefresh()
-        activity?.supportFragmentManager?.registerFragmentLifecycleCallbacks(dialogLifecycleCallbacks, true)
     }
 
     private fun initAdapter() {
@@ -125,21 +124,6 @@ class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
 
     override fun onDestroy() {
         super.onDestroy()
-        activity?.supportFragmentManager?.unregisterFragmentLifecycleCallbacks(dialogLifecycleCallbacks)
-    }
-
-    private val dialogLifecycleCallbacks = object : FragmentManager.FragmentLifecycleCallbacks() {
-        override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
-            if (HelperRewardShow.isPauseFragment(f)) {
-                pauseCurrentVideo()
-            }
-        }
-
-        override fun onFragmentViewDestroyed(fm: FragmentManager, f: Fragment) {
-            if (HelperRewardShow.isPauseFragment(f)) {
-                resumeCurrentVideo()
-            }
-        }
     }
 
 }

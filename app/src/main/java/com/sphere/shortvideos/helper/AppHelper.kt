@@ -2,22 +2,11 @@ package com.sphere.shortvideos.helper
 
 import android.content.Context
 import android.util.Base64
-import com.adjust.sdk.Adjust
-import com.adjust.sdk.AdjustAdRevenue
-import com.facebook.appevents.AppEventsLogger
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
 import com.sphere.shortvideos.helper.mmkv.MMKVData
-import com.sphere.shortvideos.isDebugMode
-import com.sphere.shortvideos.logError
-import com.sphere.shortvideos.mApp
 import com.sphere.shortvideos.notification.NotificationHelper
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.nio.charset.StandardCharsets
-import java.util.Currency
 
 /**
  * Date：2026/1/20

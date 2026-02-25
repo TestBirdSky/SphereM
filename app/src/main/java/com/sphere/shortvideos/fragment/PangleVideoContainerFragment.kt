@@ -22,6 +22,7 @@ import com.bytedance.sdk.shortplay.api.EpisodeData
 import com.bytedance.sdk.shortplay.api.PSSDK
 import com.bytedance.sdk.shortplay.api.ShortPlay
 import com.bytedance.sdk.shortplay.api.ShortPlayFragment
+import com.chartboost.sdk.impl.fa
 import com.sphere.shortvideos.GlobalConstants
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.activity.MainActivity
@@ -261,7 +262,19 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
     }
 
     fun resumePlay() {
-        detailFragment?.startPlay()
+        (activity as? MainActivity)?.let {
+            if (it.dialogFragmentNum > 0) {
+                return
+            }
+        }
+        if (isResume) {
+            detailFragment?.startPlay()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        pausePlay()
     }
 
     private var isGo = false
@@ -280,6 +293,7 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
     override fun onResume() {
         super.onResume()
         registerMainViewModel()
+        resumePlay()
     }
 
     override fun onDestroyView() {

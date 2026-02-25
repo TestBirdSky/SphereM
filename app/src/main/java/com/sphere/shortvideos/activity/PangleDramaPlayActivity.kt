@@ -3,6 +3,7 @@ package com.sphere.shortvideos.activity
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
 import android.widget.SeekBar
@@ -72,17 +73,23 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
     private val speedArr = arrayOf(0.75f, 1.0f, 1.25f, 1.5f, 2.0f)
     private var isForceShowAd: Boolean = false
     private var lastIsEven: Boolean = false
+    private var dialogNum = 0
 
     private val dialogLifecycleCallbacks = object : FragmentManager.FragmentLifecycleCallbacks() {
-        override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
+        override fun onFragmentCreated(fm: FragmentManager, f: Fragment, savedInstanceState: Bundle?) {
+            super.onFragmentCreated(fm, f, savedInstanceState)
             if (HelperRewardShow.isPauseFragment(f)) {
+                logError("onFragmentResumed-->$f")
+                dialogNum++
                 detailFragment?.pausePlay()
             }
         }
 
         override fun onFragmentViewDestroyed(fm: FragmentManager, f: Fragment) {
             if (HelperRewardShow.isPauseFragment(f)) {
-                detailFragment?.startPlay()
+                logError("onFragmentViewDestroyed-->$f")
+                dialogNum--
+                reStartPlay()
             }
         }
     }
@@ -305,7 +312,9 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                     } else {
                         episodeEntity?.let { updateEpisodeData(shortPlay, it, index) }
                         AdUtils.unlockHolder.preloadIfCan()
-                        isForceShowAd = true
+                        if (index >= unlockIndex) {
+                            isForceShowAd = true
+                        }
                     }
                 }
 
@@ -453,10 +462,22 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
             unlockHolder.preloadIfCan()
             rewardHolder.preloadIfCan()
         }
+        reStartPlay()
+    }
+
+    private fun reStartPlay() {
+        if (getActivityState() && dialogNum <= 0) {
+            detailFragment?.startPlay()
+        }
     }
 
     override fun onDestroy() {
         supportFragmentManager.unregisterFragmentLifecycleCallbacks(dialogLifecycleCallbacks)
         super.onDestroy()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        detailFragment?.pausePlay()
     }
 }

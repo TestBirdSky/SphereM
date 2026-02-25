@@ -18,11 +18,13 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.activity.LoadingActivity
+import com.sphere.shortvideos.helper.AppHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.mmkv.MMKVData
 import com.sphere.shortvideos.helper.permission.PermissionHelper
 import com.sphere.shortvideos.isDebugMode
+import com.sphere.shortvideos.isInteractive
 import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.mApp
 import com.sphere.shortvideos.service.SphereService
@@ -147,7 +149,7 @@ object NotificationHelper {
             .setVibrationEnabled(false).setShowBadge(false).setName(CHANNEL_NAME).build())
     }
 
-    fun initNotificationChannel(context: Context, isShowN: Boolean = isInApp.not()): String {
+    fun initNotificationChannel(context: Context, isShowN: Boolean = true): String {
         var channelIdStr: String
         if (isShowN) {
             channelIdStr = CHANNEL_ID_LOCAL_MAX
@@ -166,6 +168,7 @@ object NotificationHelper {
     }
 
     private var job: Job? = null
+    private var lastBroadEventTime = 0L
 
     /**
      * 注册解锁广播
@@ -178,20 +181,21 @@ object NotificationHelper {
                 context?.let {
                     when (intent?.action) {
                         Intent.ACTION_USER_PRESENT -> {
+                            if (System.currentTimeMillis() - lastBroadEventTime < 20000) return
                             job?.cancel()
                             job = CoroutineScope(Dispatchers.Main).launch {
                                 delay(1000)
+                                lastBroadEventTime = System.currentTimeMillis()
                                 notificationImplUU.showNotification(it)
                             }
                         }
 
                         Intent.ACTION_SCREEN_ON -> {
-                            if (hasNotificationPermission(context).not()) {
-                                return
-                            }
+                            if (System.currentTimeMillis() - lastBroadEventTime < 20000) return
+                            lastBroadEventTime = System.currentTimeMillis()
                             job?.cancel()
                             job = CoroutineScope(Dispatchers.Main).launch {
-                                delay(3000)
+                                delay(1000)
                                 notificationImplSU.showNotification(it)
                             }
                         }
@@ -219,13 +223,13 @@ object NotificationHelper {
      * 本地定时通知（23/59/79分钟轮询）
      */
     fun scheduleLocalNotifications(context: Context) {
-        launcherScope(if (isDebugMode) 2 else 79, {
+        launcherScope(if (isDebugMode) 3 else 79, {
             showLocalNotification(context, LOCAL_TYPE_79)
         })
-        launcherScope(if (isDebugMode) 1 else 23, {
+        launcherScope(if (isDebugMode) 2 else 23, {
             showLocalNotification(context, LOCAL_TYPE_23)
         })
-        enqueueLocalWorker(context, WORK_NAME_59, LOCAL_TYPE_59, if (isDebugMode) 3 else 59)
+        enqueueLocalWorker(context, WORK_NAME_59, LOCAL_TYPE_59, if (isDebugMode) 4 else 59)
     }
 
     private val workScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
@@ -372,6 +376,7 @@ object NotificationHelper {
 
     private var time = 0L
     fun onBackShowNotif() {
+        if (isInteractive().not()) return
         if (System.currentTimeMillis() - time < Random.nextLong(10000, 20000)) return
         time = System.currentTimeMillis()
         showLocalNotification(mApp, arrayListOf(LOCAL_TYPE_23, LOCAL_TYPE_59, LOCAL_TYPE_79).random())

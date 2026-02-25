@@ -6,10 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
+import com.chartboost.sdk.impl.fa
+import com.sphere.shortvideos.logError
 
 abstract class GenericFragment<VB : ViewBinding> : Fragment() {
 
     lateinit var binding: VB
+    protected var isResume = false
+
 
     abstract fun bindView(inflater: LayoutInflater, container: ViewGroup?): VB
 
@@ -23,5 +27,17 @@ abstract class GenericFragment<VB : ViewBinding> : Fragment() {
     }
 
     abstract fun initUI()
+
+    override fun onPause() {
+        super.onPause()
+        logError("onPause-->$this")
+        isResume = false
+    }
+
+    override fun onResume() {
+        super.onResume()
+        logError("onResume-->$this")
+        isResume = true
+    }
 
 }
