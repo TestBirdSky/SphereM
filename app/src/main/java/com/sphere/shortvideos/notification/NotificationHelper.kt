@@ -1,5 +1,6 @@
 package com.sphere.shortvideos.notification
 
+import android.app.Application
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -161,9 +162,8 @@ object NotificationHelper {
             channelIdStr = CHANNEL_ID_LOCAL
             NotificationManagerCompat.from(context).createNotificationChannel(NotificationChannelCompat.Builder(
                 CHANNEL_ID_LOCAL,
-                NotificationManagerCompat.IMPORTANCE_DEFAULT)
-                .setShowBadge(true).setLightsEnabled(false).setVibrationEnabled(false)
-                .setName(CHANNEL_NAME_LOCAL).build())
+                NotificationManagerCompat.IMPORTANCE_DEFAULT).setShowBadge(true).setLightsEnabled(false)
+                .setVibrationEnabled(false).setName(CHANNEL_NAME_LOCAL).build())
         }
         return channelIdStr
     }
@@ -316,16 +316,21 @@ object NotificationHelper {
     }
 
     fun showOrUpdateNotificationService(context: Context) {
-        if (hasNotificationPermission(context).not()) {
-            return
-        }
-        if (SphereService.isOpenService) {
-            updateFixedNotification(context)
-        } else {
-            try {
-                ContextCompat.startForegroundService(context, Intent(context, SphereService::class.java))
-            } catch (_: Throwable) {
-
+        runCatching {
+            if (hasNotificationPermission(context).not()) {
+                return
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && context is Application) {
+                updateFixedNotification(context)
+                return
+            }
+            if (SphereService.isOpenService || NotificationHelper.isInApp.not()) {
+                updateFixedNotification(context)
+            } else {
+                try {
+                    ContextCompat.startForegroundService(context, Intent(context, SphereService::class.java))
+                } catch (_: Throwable) {
+                }
             }
         }
     }

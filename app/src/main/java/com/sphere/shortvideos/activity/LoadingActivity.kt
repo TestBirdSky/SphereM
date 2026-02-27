@@ -91,13 +91,14 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
         super.onResume()
         if (isReq) {
             isReq = false
-            mPostPermission.requestPermission {}
+            mPostPermission.requestPermission {
+                lifecycleScope.launch {
+                    delay(500)
+                    NotificationHelper.showOrUpdateNotificationService(this@LoadingActivity)
+                }
+            }
         }
         localEvent("launch_page")
-        lifecycleScope.launch {
-            delay(1000)
-            NotificationHelper.showOrUpdateNotificationService(this@LoadingActivity)
-        }
     }
 
     private fun checkNotification() {

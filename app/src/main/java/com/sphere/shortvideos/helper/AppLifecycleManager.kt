@@ -17,7 +17,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 object AppLifecycleManager : Application.ActivityLifecycleCallbacks {
-
     private val activityList = mutableListOf<Activity>()
     private var restart = false
     private var backgroundJob: Job? = null

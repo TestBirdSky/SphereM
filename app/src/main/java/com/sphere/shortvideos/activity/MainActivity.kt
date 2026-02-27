@@ -23,10 +23,12 @@ import com.sphere.shortvideos.fragment.ProfileFragment
 import com.sphere.shortvideos.fragment.TaskFragment
 import com.sphere.shortvideos.fragment.VideoStreamFragment
 import com.sphere.shortvideos.fragment.WithdrawFragment
+import com.sphere.shortvideos.helper.AppHelper
 import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.helper.permission.PermissionHelper
+import com.sphere.shortvideos.helper.permission.PostPermission
 import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.notification.NotificationHelper
 import com.sphere.shortvideos.view.SpineHelper
