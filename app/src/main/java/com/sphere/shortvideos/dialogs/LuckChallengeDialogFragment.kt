@@ -129,8 +129,9 @@ class LuckChallengeDialogFragment : DialogFragment() {
 
     private fun startRateRoll() {
         rollAnimator?.cancel()
+        val currentBinding = _binding ?: return
         SoundHelper.playDoubleRoll(requireContext()) // 翻倍滚动音效
-        binding.ivArrow.apply {
+        currentBinding.ivArrow.apply {
             visibility = View.VISIBLE
             alpha = 0.6f
             scaleX = 1f
@@ -142,11 +143,13 @@ class LuckChallengeDialogFragment : DialogFragment() {
             duration = 3200L // 整体放慢，开始不会太冲
             interpolator = AccelerateDecelerateInterpolator() // 开始慢、中间快、结束慢，更流畅
             addUpdateListener { animator ->
+                val binding = _binding ?: return@addUpdateListener
                 val index = (animator.animatedValue as Int) % rates.size
                 highlightIndex(index)
                 moveArrowToIndex(index)
             }
             doOnEnd {
+                val binding = _binding ?: return@doOnEnd
                 val finalIndex = Random.nextInt(rates.size)
                 highlightIndex(finalIndex)
                 rate = rates[finalIndex]
@@ -157,6 +160,7 @@ class LuckChallengeDialogFragment : DialogFragment() {
                 binding.tvRewardValue.text = str
                 // 箭头平滑滑到最终位置，避免突然定住
                 smoothMoveArrowToIndex(finalIndex) {
+                    val binding = _binding ?: return@smoothMoveArrowToIndex
                     binding.ivArrow.animate().alpha(1f).setDuration(150L).start()
                     showClaimButtonWithAnim()
                 }
@@ -172,7 +176,15 @@ class LuckChallengeDialogFragment : DialogFragment() {
             onEnd()
             return
         }
-        binding.ivAnimParent.post {
+        val currentBinding = _binding ?: run {
+            onEnd()
+            return
+        }
+        currentBinding.ivAnimParent.post {
+            val binding = _binding ?: run {
+                onEnd()
+                return@post
+            }
             val container = binding.ivAnimParent.getChildAt(0) ?: run {
                 moveArrowToIndex(index)
                 onEnd()
@@ -192,6 +204,7 @@ class LuckChallengeDialogFragment : DialogFragment() {
 
     /** 转盘结束后显示领取按钮：淡入 + 缩放弹入 */
     private fun showClaimButtonWithAnim() {
+        val binding = _binding ?: return
         binding.btnClaim.visibility = View.VISIBLE
         binding.btnClaim.alpha = 0f
         binding.btnClaim.scaleX = 0.8f
@@ -214,6 +227,7 @@ class LuckChallengeDialogFragment : DialogFragment() {
     }
 
     private fun highlightIndex(index: Int) {
+        if (_binding == null) return
         rateViews.forEachIndexed { i, view ->
             val selected = i == index
             view.background = requireContext().getDrawable(if (selected) selectedBg[i] else normalBg[i])
@@ -222,7 +236,9 @@ class LuckChallengeDialogFragment : DialogFragment() {
 
     private fun moveArrowToIndex(index: Int) {
         val child = rateViews.getOrNull(index) ?: return
-        binding.ivAnimParent.post {
+        val currentBinding = _binding ?: return
+        currentBinding.ivAnimParent.post {
+            val binding = _binding ?: return@post
             val container = binding.ivAnimParent.getChildAt(0) ?: return@post
             val parentCenter = binding.ivAnimParent.width / 2f
             val childCenter = container.left + child.left + child.width / 2f
@@ -255,6 +271,8 @@ class LuckChallengeDialogFragment : DialogFragment() {
     override fun onDestroyView() {
         rollAnimator?.cancel()
         rollAnimator = null
+        // 清除所有 Handler 回调，防止在 View 销毁后执行
+        _binding?.ivAnimParent?.removeCallbacks(null)
         rateViews.clear()
         super.onDestroyView()
         _binding = null

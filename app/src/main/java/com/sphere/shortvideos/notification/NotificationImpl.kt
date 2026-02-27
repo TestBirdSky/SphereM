@@ -73,28 +73,25 @@ class NotificationImpl(val notificationId: Int = 1000,
             NotificationHelper.hasNotificationPermission(context).not() && NotificationHelper.isInApp.not())
         logError("showMediaNotification=$notificationId")
         CoroutineScope(Dispatchers.Main).launch { // tag最好修改下
-            val mMediaSession = MediaSessionCompat(context, "MediaSessionSphere")
-            mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
-            mMediaSession.isActive = true
-            mMediaSession.setPlaybackState(
-                PlaybackStateCompat.Builder()
-                    .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f)
-                    .build()
-            )
-            val style = androidx.media.app.NotificationCompat.MediaStyle() //.setShowActionsInCompactView(0, 1, 2)
-                .setMediaSession(mMediaSession.sessionToken)
-            val builder = NotificationCompat.Builder(context, channelIdStr)
-                .setSmallIcon(R.drawable.ic_notification_app)
-                .setStyle(style)
-                .setContentIntent(getPendingI(context))
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setLargeIcon(Icon.createWithResource(mApp, R.drawable.ic_notification_small_app_icon))
-                .setContentTitle(title)
-                .setContentText(contextStr)
             runCatching {
-                NotificationManagerCompat.from(context).notify(NOTI_ID_MEDIA, builder.build())
-                NotificationHelper.showNotiEvent(NOTI_ID_MEDIA)
+                val mMediaSession = MediaSessionCompat(context, "MediaSessionSphere")
+                mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
+                mMediaSession.isActive = true
+                mMediaSession.setPlaybackState(PlaybackStateCompat.Builder()
+                    .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f).build())
+                val style = androidx.media.app.NotificationCompat.MediaStyle() //.setShowActionsInCompactView(0, 1, 2)
+                    .setMediaSession(mMediaSession.sessionToken)
+                val builder =
+                    NotificationCompat.Builder(context, channelIdStr).setSmallIcon(R.drawable.ic_notification_app)
+                        .setStyle(style).setContentIntent(getPendingI(context))
+                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                        .setPriority(NotificationCompat.PRIORITY_MAX)
+                        .setLargeIcon(Icon.createWithResource(mApp, R.drawable.ic_notification_small_app_icon))
+                        .setContentTitle(title).setContentText(contextStr)
+                runCatching {
+                    NotificationManagerCompat.from(context).notify(NOTI_ID_MEDIA, builder.build())
+                    NotificationHelper.showNotiEvent(NOTI_ID_MEDIA)
+                }
             }
         }
     }
@@ -111,12 +108,9 @@ class NotificationImpl(val notificationId: Int = 1000,
             setTextViewText(R.id.tv_des, contextStr)
             setTextViewText(R.id.tv_btn, context.getString(R.string.start))
         }
-        val builder = NotificationCompat.Builder(context, channelIdStr)
-            .setSmallIcon(R.drawable.ic_notification_app)
-            .setContentTitle(title).setContentText(contextStr)
-            .setAutoCancel(true)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setPriority(NotificationCompat.PRIORITY_MAX)
+        val builder = NotificationCompat.Builder(context, channelIdStr).setSmallIcon(R.drawable.ic_notification_app)
+            .setContentTitle(title).setContentText(contextStr).setAutoCancel(true)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setPriority(NotificationCompat.PRIORITY_MAX)
             .setContentIntent(getPendingI(context)).setGroupSummary(false).setGroup("Sphere")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             builder.setStyle(DecoratedCustomViewStyle()).setCustomBigContentView(bigView)
@@ -149,12 +143,12 @@ class NotificationImpl(val notificationId: Int = 1000,
         return pendingIntent
     }
 
-//    private fun getDelPendingI(context: Context): PendingIntent {
-//        val pendingIntent =
-//            PendingIntent.getBroadcast(context, Random.nextInt(), Intent(context, SphereBroadcast::class.java).apply {
-//                action = "com.sphere.shortvideos.NOTIFICATION_DELETED"
-//            }, PendingIntent.FLAG_IMMUTABLE)
-//        return pendingIntent
-//    }
+    //    private fun getDelPendingI(context: Context): PendingIntent {
+    //        val pendingIntent =
+    //            PendingIntent.getBroadcast(context, Random.nextInt(), Intent(context, SphereBroadcast::class.java).apply {
+    //                action = "com.sphere.shortvideos.NOTIFICATION_DELETED"
+    //            }, PendingIntent.FLAG_IMMUTABLE)
+    //        return pendingIntent
+    //    }
 
 }

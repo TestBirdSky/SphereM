@@ -395,8 +395,15 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
             showToast(R.string.play_failed_please_try_again)
             return
         }
-        supportFragmentManager.beginTransaction().add(R.id.fragment_container, detailFragment!!).show(detailFragment!!)
-            .commit()
+        // 可能在 Activity 状态已保存（onSaveInstanceState 之后）时被调用，直接 commit() 会抛 IllegalStateException
+        // 先检查 Activity 状态，再使用 commitAllowingStateLoss 防止崩溃
+        if (isFinishing || isDestroyed) {
+            return
+        }
+        supportFragmentManager.beginTransaction()
+            .add(R.id.fragment_container, detailFragment!!)
+            .show(detailFragment!!)
+            .commitAllowingStateLoss()
     }
 
     override fun onPause() {

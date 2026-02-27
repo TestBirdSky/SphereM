@@ -84,12 +84,16 @@ class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
     }
 
     fun pauseCurrentVideo() {
+        // Fragment 可能已经从 Activity 分离，这时不能再通过 childFragmentManager 查找子 Fragment
+        if (!isAdded || isDetached || view == null) return
         val currentIndex = binding.viewPager.currentItem
         val current = childFragmentManager.findFragmentByTag("f$currentIndex")
         (current as? PangleVideoContainerFragment)?.pausePlay()
     }
 
     fun resumeCurrentVideo() {
+        // 防御性判断：只有在 Fragment 已经 attach 且 View 存在时，才访问 childFragmentManager
+        if (!isAdded || isDetached || view == null) return
         val currentIndex = binding.viewPager.currentItem
         val current = childFragmentManager.findFragmentByTag("f$currentIndex")
         (current as? PangleVideoContainerFragment)?.resumePlay()
@@ -116,7 +120,16 @@ class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
         fun submitData(data: List<Any>) {
             datas.clear()
             datas.addAll(data)
-            binding.viewPager.adapter = feedListAdapter
+            // 通知 ViewPager2 / RecyclerView 数据已更新，避免出现 “Invalid view holder adapter position” 异常
+            notifyDataSetChanged()
+            // 如果当前选中的 position 超出新数据范围，重置到最后一个有效 position
+            val current = binding.viewPager.currentItem
+            val lastIndex = (datas.size - 1).coerceAtLeast(0)
+            if (current > lastIndex) {
+                binding.viewPager.post {
+                    binding.viewPager.setCurrentItem(lastIndex, false)
+                }
+            }
         }
 
         fun getItemData(position: Int) = datas.getOrNull(position)
