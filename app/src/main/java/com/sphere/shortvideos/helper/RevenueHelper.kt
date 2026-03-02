@@ -10,6 +10,7 @@ import com.sphere.shortvideos.helper.ad.AdItemBean
 import com.sphere.shortvideos.helper.ad.AdPosition
 import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.mApp
+import com.thinkup.core.api.TUAdInfo
 import org.json.JSONObject
 import java.util.Currency
 
@@ -36,19 +37,85 @@ object RevenueHelper {
         })
         fun postAdmobRevenueAdjust() { //v5
             val adjustAdRevenue = AdjustAdRevenue("admob_sdk")
-            adjustAdRevenue.setRevenue(revenue, adValue.currencyCode)
-            //可选配置
-            adjustAdRevenue.adRevenueUnit = adValue.currencyCode //货币单位
+            adjustAdRevenue.setRevenue(revenue, adValue.currencyCode) //可选配置
+//            adjustAdRevenue.adRevenueUnit = adValue.currencyCode //货币单位
             adjustAdRevenue.adRevenueNetwork = loadedSource?.adSourceName ?: "admob" //广告来源
             adjustAdRevenue.adRevenuePlacement = position.aliasName //广告位
             //发送收益数据
             Adjust.trackAdRevenue(adjustAdRevenue)
             runCatching { //fb purchase
-                AppEventsLogger.newLogger(mApp).logPurchase((revenue).toBigDecimal(), Currency.getInstance(adValue.currencyCode))
+                AppEventsLogger.newLogger(mApp)
+                    .logPurchase((revenue).toBigDecimal(), Currency.getInstance(adValue.currencyCode))
             }
         }
         postAdmobRevenueAdjust()
 
+    }
+
+    fun onToponRevenueCallback(ad: TUAdInfo, adBean: AdItemBean, position: AdPosition) {
+        runCatching { // TopOn 广告价值获取
+            val revenue: Double = ad.publisherRevenue
+            val currencyCode: String = "USD"
+            val adSourceName: String = adBean.source
+            firebaseEvent("ad_impression_revenue",
+                hashMapOf(FirebaseAnalytics.Param.VALUE to revenue, FirebaseAnalytics.Param.CURRENCY to currencyCode))
+
+            adImpression(JSONObject().apply {
+                put("ontario", revenue * 1000000) // 转换为微单位
+                put("ghoulish", currencyCode)
+                put("auxin", adSourceName)
+                put("friable", adBean.source)
+                put("boniface", adBean.adId)
+                put("hadamard", position.aliasName)
+                put("neva", adBean.format.aliasName)
+            })
+
+            // Adjust 上报
+            val adjustAdRevenue = AdjustAdRevenue("topon_sdk")
+            adjustAdRevenue.setRevenue(revenue, currencyCode)
+            adjustAdRevenue.adRevenueUnit = ad.adsourceId
+            adjustAdRevenue.adRevenueNetwork = adSourceName
+            adjustAdRevenue.adRevenuePlacement = position.aliasName
+            Adjust.trackAdRevenue(adjustAdRevenue)
+
+            // Facebook 上报
+            runCatching {
+                AppEventsLogger.newLogger(mApp).logPurchase(revenue.toBigDecimal(), Currency.getInstance(currencyCode))
+            }
+        }
+    }
+
+    fun onMaxRevenueCallback(maxAd: com.applovin.mediation.MaxAd, adBean: AdItemBean, position: AdPosition) {
+        runCatching { // MAX 广告价值获取
+            val revenue: Double = maxAd.revenue
+            val currencyCode: String = "USD"
+            val networkName: String = maxAd.networkName ?: "max"
+            firebaseEvent("ad_impression_revenue",
+                hashMapOf(FirebaseAnalytics.Param.VALUE to revenue, FirebaseAnalytics.Param.CURRENCY to currencyCode))
+
+            adImpression(JSONObject().apply {
+                put("ontario", revenue * 1000000) // 转换为微单位
+                put("ghoulish", currencyCode)
+                put("auxin", networkName)
+                put("friable", adBean.source)
+                put("boniface", adBean.adId)
+                put("hadamard", position.aliasName)
+                put("neva", adBean.format.aliasName)
+            })
+
+            // Adjust 上报
+            val adjustAdRevenue = AdjustAdRevenue("applovin_max_sdk")
+            adjustAdRevenue.setRevenue(revenue, currencyCode)
+            adjustAdRevenue.adRevenueUnit = maxAd.adUnitId
+            adjustAdRevenue.adRevenueNetwork = networkName
+            adjustAdRevenue.adRevenuePlacement = position.aliasName
+            Adjust.trackAdRevenue(adjustAdRevenue)
+
+            // Facebook 上报
+            runCatching {
+                AppEventsLogger.newLogger(mApp).logPurchase(revenue.toBigDecimal(), Currency.getInstance(currencyCode))
+            }
+        }
     }
 
 }

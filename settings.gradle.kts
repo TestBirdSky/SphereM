@@ -42,11 +42,57 @@ dependencyResolutionManagement {
 
         //Chartboost
         maven {
-            url =uri("https://cboost.jfrog.io/artifactory/chartboost-ads")
+            url = uri("https://cboost.jfrog.io/artifactory/chartboost-ads")
         }
         maven {
-            url =uri("https://cboost.jfrog.io/artifactory/chartboost-mediation")
+            url = uri("https://cboost.jfrog.io/artifactory/chartboost-mediation")
         }
+
+        // MAX
+        maven { url = uri("https://artifacts.applovin.com/android") }
+
+        maven { url = uri("https://artifactory.bidmachine.io/bidmachine") }
+        maven { url = uri("https://cboost.jfrog.io/artifactory/chartboost-ads/") }
+        maven { url = uri("https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea") }
+        maven { url = uri("https://artifact.bytedance.com/repository/pangle") }
+        // MAX
+
+        // topon
+        flatDir {
+            dirs("libs")
+        }
+        //TU(Core)
+        maven {
+            url = uri("https://jfrog.anythinktech.com/artifactory/overseas_sdk")
+        }
+
+        //Ironsource
+        maven {
+            url = uri("https://android-sdk.is.com/")
+        }
+
+        //Pangle
+        maven {
+            url = uri("https://artifact.bytedance.com/repository/pangle")
+        }
+
+        //Mintegral
+        maven {
+            url = uri("https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea")
+        }
+
+        //Chartboost
+        maven {
+            url = uri("https://cboost.jfrog.io/artifactory/chartboost-ads")
+        }
+        maven {
+            url = uri("https://cboost.jfrog.io/artifactory/chartboost-mediation")
+        }
+        maven {
+            url = uri("https://cboost.jfrog.io/artifactory/chartboost-core")
+        }
+
+
     }
 }
 

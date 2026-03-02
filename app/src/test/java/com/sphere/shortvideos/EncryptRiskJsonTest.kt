@@ -20,10 +20,8 @@ import java.nio.charset.StandardCharsets
 class EncryptRiskJsonTest {
 
     @Test
-    fun encryptRiskJson() {
-        // ========== 配置参数 ==========
-        val code = 123  // 异或加密密钥，可以根据需要修改
-        // =============================
+    fun encryptRiskJson() { // ========== 配置参数 ==========
+        val code = 123  // 异或加密密钥，可以根据需要修改 // =============================
 
         // 查找 risk.json 文件
         val currentDir = File("").absolutePath
@@ -115,10 +113,21 @@ class EncryptRiskJsonTest {
 
     @Test
     fun test2() {
-        val st=
+        val st =
             "AHFbW1kOEllBWwBxW1tbW1kVDhYZHglZQVtLV3FbW1tbWRkeExoNEhQJWUFbS1dxW1tbW1kfHg0SGB5ZQVtLcVtbBldxW1tZGR4TGg0SFAlZQVsAcVtbW1tZGh8kCBMUCQ8kCBMUDFlBWwBxW1tbW1tbWR8OCRoPEhQVWUFbSEtXcVtbW1tbW1kNGhcOHllBW0hxW1tbWwZXcVtbW1tZGh8kCBMUCQ8kGBcUCB5ZQVsAcVtbW1tbW1kfDgkaDxIUFVlBW0lLV3FbW1tbW1tZDRoXDh5ZQVtIcVtbW1sGV3FbW1tbWQwJFBUcJB8eHhYkGh8kFx4ICFlBW0hXcVtbW1tZDAkUFRwkHx4eFiQaHyQWFAkeWUFbQktXcVtbW1tZFRQkEhUIDxoXF1lBW0pXcVtbW1tZGh8kHxoSFwIkCBMUDFlBW01LcVtbBldxW1tZHx4NEhgeWUFbIHFbW1tbWQ0LFVlXcVtbW1tZCRQUD1lXcVtbW1tZCBIWWVdxW1tbW1kIEhYOFxoPFAlZV3FbW1tbWRwUFBwXHgsXGgJZV3FbW1tbWR8eDR4XFAseCVlXcVtbW1tZEgtZcVtbJnEG"
-        val result=decrypt(st,123)
+        val result = decrypt(st, 123)
         println("result:= $result")
+    }
+
+
+    @Test
+    fun test3() {
+        val st = "MWJzhnEPtKqxLKRLAlVrTyQfO2VxWZWtVx_SzTWC_MgoZL7kTKNt9t3M_OgIZ24nBXRXxVd9ogQEp7616TWf3C"
+        val de = encrypt(st, 124)
+        val deS =
+            "JElITysaPTQrECRPBU4rFDdITz0bEBQwTzg3GwgpTEk9UQQzFx0wCSg6Jg8jTggXJiwTOEwoMkQ0LRozHh0zNg4aEDZRCAssGzI1NCtFMAo6MBcjCBk="
+        val result = decrypt(deS, 124)
+        println("result:= $result --de=$de")
     }
 
     private fun decrypt(data: String, code: Int): String { // Base64 解码

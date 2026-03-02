@@ -9,6 +9,7 @@ import com.sphere.shortvideos.helper.SoundHelper
 import com.sphere.shortvideos.helper.risk.HelperRiskNetCheck
 import com.sphere.shortvideos.helper.InstallReferrerManager
 import com.sphere.shortvideos.helper.RemoteConfHelper
+import com.sphere.shortvideos.helper.ad.AdSdkHelper
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.helper.risk.RiskHelper
@@ -55,6 +56,7 @@ class App : Application() {
         CoroutineScope(Dispatchers.IO).launch {
             MobileAds.initialize(this@App) {}
         }
+        AdSdkHelper.initMaxAndTopon(this)
     }
 
     private fun initPSSDK() {

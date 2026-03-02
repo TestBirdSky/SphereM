@@ -33,7 +33,7 @@ class AdHolder(private val position: AdPosition) {
             logError("ad limit-->")
         }
         AdUtils.adScope.launch {
-            if (!isAdmobReady() || sourceList.isEmpty()) return@launch
+            if (sourceList.isEmpty()) return@launch
             removeExpiredAd()
             if (cacheList.isNotEmpty() || loading) return@launch
             loading = true
@@ -78,8 +78,7 @@ class AdHolder(private val position: AdPosition) {
 
     private fun loadAd(index: Int) {
         val adItem = sourceList.getOrNull(index)
-        val adEntity = adItem?.buildController(position)
-        if (null == adEntity) {
+        if (null == adItem) {
             loading = false
             onAdLoaded(false) // 加载完成
             if (position != LaunchPosition && isAdHaveCache().not()) {
@@ -90,6 +89,15 @@ class AdHolder(private val position: AdPosition) {
             }
             return
         }
+        
+        // 在 preload 之前判断平台是否就绪
+        if (!isPlatformReady(adItem.source)) {
+            // 平台未就绪，跳过当前广告项，继续下一个
+            loadAd(index + 1)
+            return
+        }
+        
+        val adEntity = adItem.buildController(position)
         adEntity.preload { success ->
             if (success) {
                 localEvent("ad_return",
@@ -104,6 +112,26 @@ class AdHolder(private val position: AdPosition) {
             } else loadAd(index + 1)
         }
     }
+    
+    private fun isPlatformReady(source: String): Boolean {
+        val sourceLower = source.lowercase()
+        
+        return when (sourceLower) {
+            "topon" -> {
+                true
+            }
+            in listOf("max", "applovin") -> {
+                runCatching {
+                    com.applovin.sdk.AppLovinSdk.getInstance(mApp).isInitialized
+                }.getOrElse { false }
+            }
+            else -> {
+                // Admob 或其他平台
+                val status = MobileAds.getInitializationStatus()
+                status?.adapterStatusMap?.isNotEmpty() == true
+            }
+        }
+    }
 
     private fun showAdDialog(activity: Activity): AlertDialog? {
         val binding = LayoutProgressbarBinding.inflate(LayoutInflater.from(activity),
@@ -112,9 +140,6 @@ class AdHolder(private val position: AdPosition) {
         return MaterialAlertDialogBuilder(activity).setView(binding.root).setCancelable(false).show()
     }
 
-    private fun isAdmobReady(): Boolean {
-        val status = MobileAds.getInitializationStatus()
-        return status?.adapterStatusMap?.isNotEmpty() == true
-    }
+    private val mApp = com.sphere.shortvideos.mApp
 
 }

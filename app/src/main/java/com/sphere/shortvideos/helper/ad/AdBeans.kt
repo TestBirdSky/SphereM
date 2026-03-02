@@ -9,9 +9,15 @@ data class AdItemBean(
     val timeout: Int,
     val weight: Int,
 ) {
-    fun buildController(position: AdPosition): AdmobFullAd {
+    fun buildController(position: AdPosition): BaseController {
         return when (format) {
-            AppOpenFormat, InterstitialFormat, RewardFormat -> AdmobFullAd(position, this)
+            AppOpenFormat, InterstitialFormat, RewardFormat -> {
+                when (source.lowercase()) {
+                    "topon" -> ToponFullAd(position, this)
+                    "max", "applovin" -> MaxFullAd(position, this)
+                    else -> AdmobFullAd(position, this)
+                }
+            }
         }
     }
 }

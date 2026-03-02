@@ -49,6 +49,8 @@
         tools:ignore="LockedOrientationActivity,DiscouragedApi"
         tools:replace="android:supportsRtl,android:usesCleartextTraffic">
 
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+
         <activity
             android:name=".activity.LoadingActivity"
             android:configChanges="keyboardHidden|screenSize|orientation"
