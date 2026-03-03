@@ -141,12 +141,17 @@ object NotificationHelper {
     private var screenUnlockReceiver: BroadcastReceiver? = null
     private var isRegistered = false
 
+    fun isGoogleDevice() = Build.MANUFACTURER.equals("Google", ignoreCase = true)
+
     /**
      * 初始化通知渠道
      */
     fun initChannel(context: Context) { // 解锁通知渠道（静默）
-        NotificationManagerCompat.from(context).createNotificationChannel(NotificationChannelCompat.Builder(CHANNEL_ID,
-            NotificationManagerCompat.IMPORTANCE_DEFAULT).setSound(null, null).setLightsEnabled(false)
+        val importance =
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.VANILLA_ICE_CREAM && isGoogleDevice()) NotificationManagerCompat.IMPORTANCE_MIN else NotificationManagerCompat.IMPORTANCE_DEFAULT
+        NotificationManagerCompat.from(context)
+            .createNotificationChannel(NotificationChannelCompat.Builder(CHANNEL_ID, importance)
+                .setSound(null, null).setLightsEnabled(false)
             .setVibrationEnabled(false).setShowBadge(false).setName(CHANNEL_NAME).build())
     }
 

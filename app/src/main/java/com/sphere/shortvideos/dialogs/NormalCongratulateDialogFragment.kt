@@ -21,7 +21,8 @@ import com.sphere.shortvideos.view.AnimViewHelper
 class NormalCongratulateDialogFragment : DialogFragment() {
 
     var onClaim: ((Double) -> Unit)? = null
-    var onClose: (() -> Unit)? = null
+    var onClose: ((Double) -> Unit)? = null
+    var onNormalClick: ((Double) -> Unit)? = null
 
     private var _binding: DialogCongratulateBinding? = null
     private val binding get() = _binding!!
@@ -51,11 +52,13 @@ class NormalCongratulateDialogFragment : DialogFragment() {
         binding.progressView.progress = WithdrawAmountHelper.fetchGetMoneyProgress()
         binding.tvRewardValue.text = adRvReward.second
         binding.ivClose.setOnClickListener {
-            onClose?.invoke()
+            onClose?.invoke(adRvReward.first)
+            localEvent("money_pop_close")
             dismissAllowingStateLoss()
         }
         binding.btnNormal.setOnClickListener {
-            binding.ivClose.performClick()
+            onNormalClick?.invoke(adRvReward.first)
+            dismissAllowingStateLoss()
             localEvent("money_pop_1x")
         }
         AnimViewHelper.applyPressBounceEffect(binding.btnClaim)

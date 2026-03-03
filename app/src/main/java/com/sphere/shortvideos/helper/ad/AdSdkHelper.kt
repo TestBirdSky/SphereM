@@ -44,7 +44,8 @@ object AdSdkHelper {
 
         if (isDebugMode) { // todo del
             TUSDK.setNetworkLogDebug(isDebugMode)
-            AppLovinSdk.getInstance(context).showMediationDebugger()
+//            AppLovinSdk.getInstance(context).showMediationDebugger()
+//            com.thinkup.debug.api.TUDebuggerUITest.showDebuggerUI(context);
         }
     }
 

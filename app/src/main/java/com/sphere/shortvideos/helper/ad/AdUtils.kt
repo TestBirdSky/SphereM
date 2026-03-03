@@ -6,6 +6,7 @@ import com.sphere.shortvideos.dialogs.ShowAdLimitDialogFragment
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.mmkv.MMKVData
 import com.sphere.shortvideos.helper.risk.RiskHelper
+import com.sphere.shortvideos.logError
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -68,6 +69,7 @@ object AdUtils {
                    adPositionName: String,
                    isRate: () -> Unit = {}) {
         if (DramaIntAdHelper.fetchIsShowRateAd().not()) {
+            logError("fetchIsShowRateAd failed-->")
             dismiss.invoke()
             return
         }

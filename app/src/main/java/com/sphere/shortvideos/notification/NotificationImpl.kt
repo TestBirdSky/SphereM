@@ -108,9 +108,13 @@ class NotificationImpl(val notificationId: Int = 1000,
             setTextViewText(R.id.tv_des, contextStr)
             setTextViewText(R.id.tv_btn, context.getString(R.string.start))
         }
-        val builder = NotificationCompat.Builder(context, channelIdStr).setSmallIcon(R.drawable.ic_notification_app)
-            .setContentTitle(title).setContentText(contextStr).setAutoCancel(true)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setPriority(NotificationCompat.PRIORITY_MAX)
+        val builder = NotificationCompat.Builder(context, channelIdStr)
+            .setSmallIcon(R.drawable.ic_notification_app)
+            .setContentTitle(title)
+            .setContentText(contextStr)
+            .setAutoCancel(true)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
             .setContentIntent(getPendingI(context)).setGroupSummary(false).setGroup("Sphere")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             builder.setStyle(DecoratedCustomViewStyle()).setCustomBigContentView(bigView)
@@ -127,6 +131,9 @@ class NotificationImpl(val notificationId: Int = 1000,
             }
         }
         try {
+            val notificationId =
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.VANILLA_ICE_CREAM && NotificationHelper.isGoogleDevice()) 12980
+                else notificationId
             NotificationManagerCompat.from(context).notify(notificationId, builder.build())
         } catch (e: Exception) {
             logError("show error--->$e")

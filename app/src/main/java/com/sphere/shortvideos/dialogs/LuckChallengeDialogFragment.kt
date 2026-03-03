@@ -140,7 +140,7 @@ class LuckChallengeDialogFragment : DialogFragment() {
         moveArrowToIndex(0)
         val totalSteps = rates.size * 12
         rollAnimator = ValueAnimator.ofInt(0, totalSteps).apply {
-            duration = 3200L // 整体放慢，开始不会太冲
+            duration = 2800L // 整体放慢，开始不会太冲
             interpolator = AccelerateDecelerateInterpolator() // 开始慢、中间快、结束慢，更流畅
             addUpdateListener { animator ->
                 val binding = _binding ?: return@addUpdateListener

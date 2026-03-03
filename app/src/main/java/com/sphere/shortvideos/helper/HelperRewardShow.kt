@@ -15,6 +15,7 @@ import com.sphere.shortvideos.dialogs.LuckChallengeDialogFragment
 import com.sphere.shortvideos.dialogs.NormalCongratulateDialogFragment
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.reward.RewardHelper
+import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.logError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,12 +31,12 @@ object HelperRewardShow {
     val numProgress = MutableLiveData<Int>(1)
     val nextRewordType = MutableLiveData(-1) //0 普通奖励看插屏 1 倍率玩法看激励广告
     val curGetMoneyStr = MutableLiveData(Pair("", "")) //当前获取到的奖励和还差多少可领取奖励
-    val showDialogType = MutableLiveData<Int>(-1) //0 普通奖励看插屏 1 倍率玩法看激励广告
+    val showDialogType = MutableLiveData<Int>() //0 普通奖励看插屏 1 倍率玩法看激励广告
 
     private var maxReachedCount = 0
     private var progressJob: Job? = null
     private val progressMax = 100
-    private val roundDurationMs = 15000L //15_000L //
+    private val roundDurationMs = if (isDebugMode) 5000L else 15000L //15_000L //
 
     private var numIntervalIndex = 0 // 目标
     private var tagGam = -1
@@ -208,10 +209,15 @@ object HelperRewardShow {
                             localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_video_rv"))
                             showRvAd(activity, reward, adPositionName = "dlmsf_video_rv")
                         }
-                        onClose = {
-                            AdUtils.showRateAd(activity, isRate = {
-                                localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_video_int"))
-                            }, adPositionName = "dlmsf_video_int")
+                        onClose = { reward ->
+                            localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_video_close_int"))
+                            AdUtils.showRateAd(activity, isRate = {}, adPositionName = "dlmsf_video_close_int")
+                        }
+                        onNormalClick = { reward ->
+                            localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_video_int"))
+                            AdUtils.showRateAd(activity, adPositionName = "dlmsf_video_int", dismiss = {
+                                addMoneyNotExChangeFlyAnim(reward)
+                            })
                         }
                     }.show(activity.supportFragmentManager, "congratulation")
                 }
