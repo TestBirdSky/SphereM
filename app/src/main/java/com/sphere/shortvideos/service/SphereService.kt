@@ -23,11 +23,9 @@ class SphereService : Service() {
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (!NotificationHelper.hasNotificationPermission(this)) {
-            stopSelf()
-            return START_NOT_STICKY
+        runCatching {
+            startForeground(NotificationHelper.NOTI_ID_FIXED, NotificationHelper.createFixNotification(this))
         }
-        startForeground(NotificationHelper.NOTI_ID_FIXED, NotificationHelper.createFixNotification(this))
         return START_STICKY
     }
 

@@ -128,7 +128,7 @@ dependencies {
     // admob
 //    implementation("com.google.android.libraries.ads.mobile.sdk:ads-mobile-sdk:0.20.0-beta01")
     implementation("com.google.android.gms:play-services-ads:24.9.0")
-    implementation("com.google.ads.mediation:applovin:13.5.1.0")
+    implementation("com.google.ads.mediation:applovin:13.5.0.0")
     implementation("com.google.ads.mediation:chartboost:9.11.0.0")
     implementation("com.google.ads.mediation:fyber:8.4.2.0")
     implementation("com.google.ads.mediation:inmobi:11.1.0.0")
@@ -226,7 +226,7 @@ dependencies {
     api("com.google.android.gms:play-services-ads:24.9.0")
     //Inmobi
     api("com.thinkup.sdk:adapter-tpn-inmobi:11.1.1.1.0")
-    api("com.inmobi.monetization:inmobi-ads-kotlin:11.1.1")
+    api("com.inmobi.monetization:inmobi-ads-kotlin:11.1.0")
     //TU Adx SDK(Necessary)
     api("com.thinkup.sdk:adapter-tpn-sdm:6.5.54.1.0")
     api("com.smartdigimkttech.sdk:smartdigimkttech-sdk:6.5.54")

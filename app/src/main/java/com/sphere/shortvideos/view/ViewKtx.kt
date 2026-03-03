@@ -84,12 +84,13 @@ fun LayoutTaskChildBinding.setTaskInfo(
     ivWatchAd.setOnClickListener {
         localEvent("billetera_pm_ad")
         ivWatchAd.isClickable = false
+        localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_task_rv"))
         AdUtils.showRvAd(activity, dismiss = { isRewardSuccess ->
             ivWatchAd.isClickable = true
             if (isRewardSuccess) {
                 receiverMoneyEvent.invoke(MoneyCacheHelper.fetchRvAdReward().first, ivAnimMoney)
             }
-        })
+        }, adPositionName = "dlmsf_task_rv")
     }
     AnimViewHelper.playClaimablePulseAnim(tvAdGo, true, 0.95f, 1.05f) //    bgH5.setOnClickListener {
     //

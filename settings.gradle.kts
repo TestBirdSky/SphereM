@@ -92,7 +92,10 @@ dependencyResolutionManagement {
             url = uri("https://cboost.jfrog.io/artifactory/chartboost-core")
         }
 
-
+        // debug
+        maven {
+            url = uri("https://jfrog.anythinktech.com/artifactory/debugger")
+        }
     }
 }
 

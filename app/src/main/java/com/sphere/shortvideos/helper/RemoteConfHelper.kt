@@ -37,6 +37,7 @@ class RemoteConfHelper {
         fetchRisk()
         RewardHelper.updateConfigure()
         DramaIntAdHelper.updateConfigure()
+        fetchFbCon()
     }
 
     private fun fetchAdRemote() {
@@ -51,9 +52,12 @@ class RemoteConfHelper {
 
     private fun fetchRisk() {
         val str = getString("drama_risk_control")
-        if (str.isNotEmpty()){
+        if (str.isNotEmpty()) {
             RiskHelper.refreshRiskBean(str)
         }
+    }
+
+    private fun fetchFbCon() {
         val fbInfo = getString("drama_fb")
         mFbAndAdjustHelper.initFb(fbInfo)
     }

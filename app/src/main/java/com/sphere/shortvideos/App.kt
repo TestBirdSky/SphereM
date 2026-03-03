@@ -10,6 +10,7 @@ import com.sphere.shortvideos.helper.risk.HelperRiskNetCheck
 import com.sphere.shortvideos.helper.InstallReferrerManager
 import com.sphere.shortvideos.helper.RemoteConfHelper
 import com.sphere.shortvideos.helper.ad.AdSdkHelper
+import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.helper.risk.RiskHelper

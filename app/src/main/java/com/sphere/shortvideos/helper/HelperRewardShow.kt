@@ -206,12 +206,12 @@ object HelperRewardShow {
                     NormalCongratulateDialogFragment().apply {
                         onClaim = { reward ->
                             localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_video_rv"))
-                            showRvAd(activity, reward)
+                            showRvAd(activity, reward, adPositionName = "dlmsf_video_rv")
                         }
                         onClose = {
                             AdUtils.showRateAd(activity, isRate = {
                                 localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_video_int"))
-                            })
+                            }, adPositionName = "dlmsf_video_int")
                         }
                     }.show(activity.supportFragmentManager, "congratulation")
                 }
@@ -220,7 +220,7 @@ object HelperRewardShow {
                     LuckChallengeDialogFragment().apply {
                         onResult = { reward ->
                             localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_wheel_rv"))
-                            showRvAd(activity, reward)
+                            showRvAd(activity, reward, adPositionName = "dlmsf_wheel_rv")
                         }
                     }.show(activity.supportFragmentManager, "luck")
                 }
@@ -229,8 +229,8 @@ object HelperRewardShow {
         }
     }
 
-    private fun showRvAd(activity: GenericActivity, reward: Double) {
-        AdUtils.showRvAd(activity, dismiss = { isFetchReward ->
+    private fun showRvAd(activity: GenericActivity, reward: Double, adPositionName: String) {
+        AdUtils.showRvAd(activity, adPositionName = adPositionName, dismiss = { isFetchReward ->
             if (isFetchReward) {
                 addMoneyNotExChangeFlyAnim(reward)
 

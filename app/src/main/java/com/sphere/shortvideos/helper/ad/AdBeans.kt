@@ -23,19 +23,28 @@ data class AdItemBean(
 }
 
 sealed class AdPosition {
-    abstract val aliasName: String
+    abstract var aliasName: String // ad_pos_id
+    abstract val adSense: String
 }
 
 data object LaunchPosition : AdPosition() {
-    override val aliasName: String get() = "dlmsf_launch"
+    override var aliasName: String = "dlmsf_launch"
+
+    override val adSense: String
+        get() = "Launch"
+
 }
 
 data object UnlockPosition : AdPosition() {
-    override val aliasName: String get() = "dlmsf_int"
+    override var aliasName: String = "dlmsf_int"
+    override val adSense: String
+        get() = "Interstitial"
 }
 
 data object RewardPosition : AdPosition() {
-    override val aliasName: String get() = "dlmsf_rv"
+    override var aliasName: String = "dlmsf_rv"
+    override val adSense: String
+        get() ="Reward"
 }
 
 sealed class AdFormat {

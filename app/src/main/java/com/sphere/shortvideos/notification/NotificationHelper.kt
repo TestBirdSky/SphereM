@@ -383,7 +383,7 @@ object NotificationHelper {
     private var time = 0L
     fun onBackShowNotif() {
         if (isInteractive().not()) return
-        if (System.currentTimeMillis() - time < Random.nextLong(10000, 20000)) return
+        if (System.currentTimeMillis() - time < Random.nextLong(60000, 120000)) return
         time = System.currentTimeMillis()
         showLocalNotification(mApp, arrayListOf(LOCAL_TYPE_23, LOCAL_TYPE_59, LOCAL_TYPE_79).random())
     }

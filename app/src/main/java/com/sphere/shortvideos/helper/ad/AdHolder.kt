@@ -35,13 +35,17 @@ class AdHolder(private val position: AdPosition) {
         AdUtils.adScope.launch {
             if (sourceList.isEmpty()) return@launch
             removeExpiredAd()
-            if (cacheList.isNotEmpty() || loading) return@launch
+            if (cacheList.isNotEmpty()) return@launch
+            if (loading) {
+                logError("ad is loading $position")
+                return@launch
+            }
             loading = true
             loadAd(0)
         }
     }
 
-    fun showFullAd(activity: GenericActivity, eventName: String = position.aliasName, canShowAd: () -> Boolean = {
+    fun showFullAd(activity: GenericActivity, adPositionName: String = "", canShowAd: () -> Boolean = {
         RiskHelper.isAdLimit().not()
     }, onAdDismissed: () -> Unit = {}, onAdShowed: () -> Unit = {}, rewardCall: (() -> Unit)? = null) {
         AdUtils.adScope.launch {
@@ -60,8 +64,9 @@ class AdHolder(private val position: AdPosition) {
                 delay(1000L)
                 dialog?.dismiss()
                 ad.onUserEarnedReward = rewardCall
+                position.aliasName = adPositionName.ifBlank { position.aliasName }
                 ad.showFullScreenAd(activity, onAdDismissed, onAdShowed)
-                localEvent("ds_ad_impression", hashMapOf("ad_pos_id" to eventName))
+                localEvent("ds_ad_impression", hashMapOf("ad_pos_id" to adPositionName))
                 onAdLoaded = {}
                 preloadIfCan()
             }
@@ -89,22 +94,23 @@ class AdHolder(private val position: AdPosition) {
             }
             return
         }
-        
+
         // 在 preload 之前判断平台是否就绪
         if (!isPlatformReady(adItem.source)) {
             // 平台未就绪，跳过当前广告项，继续下一个
             loadAd(index + 1)
             return
         }
-        
+
         val adEntity = adItem.buildController(position)
         adEntity.preload { success ->
             if (success) {
                 localEvent("ad_return",
                     hashMapOf(
                         "ad_code_id" to adEntity.adBean.adId,
-                        "ad_format" to adEntity.adBean.format,
+                        "ad_format" to adEntity.adBean.format.aliasName,
                         "ad_platform" to adEntity.adBean.source,
+                        "ad_sense" to position.adSense,
                     ))
                 cacheList.add(adEntity)
                 loading = false
@@ -112,19 +118,21 @@ class AdHolder(private val position: AdPosition) {
             } else loadAd(index + 1)
         }
     }
-    
+
     private fun isPlatformReady(source: String): Boolean {
         val sourceLower = source.lowercase()
-        
+
         return when (sourceLower) {
             "topon" -> {
                 true
             }
+
             in listOf("max", "applovin") -> {
                 runCatching {
                     com.applovin.sdk.AppLovinSdk.getInstance(mApp).isInitialized
                 }.getOrElse { false }
             }
+
             else -> {
                 // Admob 或其他平台
                 val status = MobileAds.getInitializationStatus()

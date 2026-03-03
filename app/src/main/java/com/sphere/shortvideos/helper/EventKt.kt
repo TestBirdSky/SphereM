@@ -40,6 +40,7 @@ fun adImpression(obj: JSONObject) {
 }
 
 fun localEvent(eventName: String, params: HashMap<String, Any?> = hashMapOf()) {
+    logError("tba -->event $eventName -=-$params")
     val root = EventData.buildBody().apply {
         put("calypso", eventName)
     }

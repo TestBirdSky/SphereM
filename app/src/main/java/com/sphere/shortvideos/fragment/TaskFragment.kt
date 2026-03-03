@@ -63,7 +63,7 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
                 }
             })
             (activity as? MainActivity)?.let {
-                AdUtils.showRateAd(it)
+                AdUtils.showRateAd(it, adPositionName = "dlmsf_task_int")
             }
         }
     }

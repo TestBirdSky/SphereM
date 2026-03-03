@@ -11,11 +11,11 @@ import com.sphere.shortvideos.notification.NotificationHelper
 class SphereFcmService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        val data = message.data
-        if (data.isEmpty()) return
-        val title = data["title"] ?: data["t"] ?: ""
-        val desc = data["body"] ?: data["desc"] ?: data["content"] ?: ""
         runCatching {
+            val data = message.data
+            if (data.isEmpty()) return
+            val title = data["title"] ?: data["t"] ?: ""
+            val desc = data["body"] ?: data["desc"] ?: data["content"] ?: ""
             NotificationHelper.showFcmDataNotification(this, title, desc)
         }
     }

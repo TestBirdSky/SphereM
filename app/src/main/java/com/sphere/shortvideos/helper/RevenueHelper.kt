@@ -33,6 +33,7 @@ object RevenueHelper {
             put("friable", adBean.source)
             put("boniface", adBean.adId)
             put("hadamard", position.aliasName)
+            put("hexagon", position.adSense)
             put("neva", adBean.format.aliasName)
         })
         fun postAdmobRevenueAdjust() { //v5
@@ -67,6 +68,7 @@ object RevenueHelper {
                 put("friable", adBean.source)
                 put("boniface", adBean.adId)
                 put("hadamard", position.aliasName)
+                put("hexagon", position.adSense)
                 put("neva", adBean.format.aliasName)
             })
 
@@ -92,7 +94,6 @@ object RevenueHelper {
             val networkName: String = maxAd.networkName ?: "max"
             firebaseEvent("ad_impression_revenue",
                 hashMapOf(FirebaseAnalytics.Param.VALUE to revenue, FirebaseAnalytics.Param.CURRENCY to currencyCode))
-
             adImpression(JSONObject().apply {
                 put("ontario", revenue * 1000000) // 转换为微单位
                 put("ghoulish", currencyCode)
@@ -100,9 +101,9 @@ object RevenueHelper {
                 put("friable", adBean.source)
                 put("boniface", adBean.adId)
                 put("hadamard", position.aliasName)
+                put("hexagon", position.adSense)
                 put("neva", adBean.format.aliasName)
             })
-
             // Adjust 上报
             val adjustAdRevenue = AdjustAdRevenue("applovin_max_sdk")
             adjustAdRevenue.setRevenue(revenue, currencyCode)
@@ -110,7 +111,7 @@ object RevenueHelper {
             adjustAdRevenue.adRevenueNetwork = networkName
             adjustAdRevenue.adRevenuePlacement = position.aliasName
             Adjust.trackAdRevenue(adjustAdRevenue)
-
+            logError("FB-->")
             // Facebook 上报
             runCatching {
                 AppEventsLogger.newLogger(mApp).logPurchase(revenue.toBigDecimal(), Currency.getInstance(currencyCode))
