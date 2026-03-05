@@ -157,6 +157,7 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
     fun showNotificationOpen(isHome: Boolean = true, delTime: Long = 2000) {
         lifecycleScope.launch {
             delay(Random.nextLong(1500, delTime))
+            if (isFinishing || isDestroyed) return@launch
             val isShow = if (isHome) PermissionHelper.isShowNotificationDialogHome(this@MainActivity)
             else PermissionHelper.isShowNotificationDialogAfterRv(this@MainActivity)
             if (isShow) {

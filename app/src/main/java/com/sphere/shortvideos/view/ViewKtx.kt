@@ -64,7 +64,7 @@ fun LayoutMoneyTopViewBinding.initView(activity: MainActivity, tag: String, wall
     AnimViewHelper.applyPressBounceEffect(layout)
     layout.setOnClickListener {
         localEvent("earn_banner_c", hashMapOf("from" to tag))
-        TaskInfoDialogFragment(activity).run {
+        TaskInfoDialogFragment().run {
             onClose = wallClose
             show(activity.supportFragmentManager, "task_fragment")
         }

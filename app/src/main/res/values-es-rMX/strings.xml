@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Drama Sphere</string>
+    <string name="splash_title" translatable="false">DramaSphere.</string>
+    <string name="category_hot">Tendencias</string>
+    <string name="category_new">Nuevo</string>
+    <string name="home">Inicio</string>
+    <string name="profile">Perfil</string>
+    <string name="for_you">Para ti</string>
+    <string name="no_more_data">No hay más contenido</string>
+    <string name="network_abnormality">Problema de red, inténtalo de nuevo más tarde</string>
+    <string name="speed">Velocidad</string>
+    <string name="collect">Coleccionar</string>
+    <string name="episodes">Episodios</string>
+    <string name="play_failed_please_try_again">La reproducción falló, inténtalo de nuevo.</string>
+    <string name="resolution">Resolución</string>
+    <string name="completed">Completado</string>
+    <string name="watching_in_order">¡Ver los episodios en orden es aún mejor!</string>
+    <string name="settings">Ajustes</string>
+    <string name="watch_history">Historial de reproducción</string>
+    <string name="collection">Colección</string>
+    <string name="privacy_policy">Política de privacidad</string>
+    <string name="clear_cache">Borrar caché</string>
+    <string name="cache_cleared">Caché borrada</string>
+    <string name="no_data">Sin datos</string>
+    <string name="preparing_ads">Preparando anuncios…</string>
+
+    <string name="notification_checkin_title">Recompensa diaria desbloqueada</string>
+    <string name="notification_checkin_desc">Entra ahora para recogerla.</string>
+    <string name="notification_drama_title">Actividad diaria disponible</string>
+    <string name="notification_drama_desc">Gana más hoy.</string>
+    <string name="notification_reward_title">$48 esperando a ser retirados</string>
+    <string name="notification_reward_desc">Acabas de recibir un bono sorpresa.</string>
+    <string name="notification_almost_title">Casi listo: $48</string>
+    <string name="notification_almost_desc">Completa las tareas para desbloquear el retiro.</string>
+
+    <string name="notification_screen_on_title1">Cada episodio paga</string>
+    <string name="notification_screen_on_des1">Te lo estás perdiendo</string>
+    <string name="notification_screen_on_title2">Tu retiro está cerca</string>
+    <string name="notification_screen_on_des2">Solo unos episodios más.</string>
+    <string name="notification_screen_on_title3">Dinero casi desbloqueado</string>
+    <string name="notification_screen_on_des3">No te detengas, vas muy bien.</string>
+    <string name="notification_screen_on_title4">Amor prohibido revelado</string>
+    <string name="notification_screen_on_des4">Mira antes de que se sepa la verdad.</string>
+
+    <string name="notification_local_23_title1">Mira y retira dinero</string>
+    <string name="notification_local_23_desc1">Cada episodio aumenta tu saldo. Empieza ahora.</string>
+    <string name="notification_local_23_title2">Drama que sí paga</string>
+    <string name="notification_local_23_desc2">Mira ahora y gana dinero real.</string>
+    <string name="notification_local_23_title3">Ella fue infiel el día de la boda</string>
+    <string name="notification_local_23_desc3">Lo que pasó después sorprendió a todos.</string>
+    <string name="notification_local_23_title4">$48 casi tuyos</string>
+    <string name="notification_local_23_desc4">Completa tareas para retirar.</string>
+
+    <string name="notification_local_59_title1">Más episodios, más ganancias</string>
+    <string name="notification_local_59_desc1">El retiro está cada vez más cerca.</string>
+    <string name="notification_local_59_title2">Él volvió rico para vengarse</string>
+    <string name="notification_local_59_desc2">Toda la familia se quedó en shock.</string>
+    <string name="notification_local_59_title3">La echaron… y volvió millonaria</string>
+    <string name="notification_local_59_desc3">Mira ahora.</string>
+    <string name="notification_local_59_title4">La amante era su mejor amiga</string>
+    <string name="notification_local_59_desc4">El drama está en su punto más alto.</string>
+
+    <string name="notification_local_79_title1">Tu dinero crece con cada episodio</string>
+    <string name="notification_local_79_desc1">Mira uno más.</string>
+    <string name="notification_local_79_title2">Una bofetada lo cambió todo</string>
+    <string name="notification_local_79_desc2">Este episodio está que arde.</string>
+    <string name="notification_local_79_title3">Recompensa sorpresa desbloqueada</string>
+    <string name="notification_local_79_desc3">Un bono inesperado llegó a tu saldo.</string>
+    <string name="notification_local_79_title4">Suerte diaria activada</string>
+    <string name="notification_local_79_desc4">Se ha añadido una recompensa.</string>
+    <string name="bonus_welcome_title">Bono de bienvenida</string>
+    <string name="bonus_welcome_action">Recibir recompensas</string>
+    <string name="tips_info">¡Mira dramas y gana grandes recompensas!</string>
+    <string name="v_pri">Bono doble</string>
+    <string name="watch_basic_ad"><u>Solo lo básico</u></string>
+
+    <string name="start">EMPEZAR</string>
+    <string name="task">Tarea</string>
+    <string name="wallet">Billetera</string>
+    <string name="withdraw">Retirar</string>
+    <string name="daily_rewards">Recompensas diarias</string>
+    <string name="watch_an_ad">Ver un anuncio</string>
+    <string name="tv_go">Ir</string>
+    <string name="tv_join">Unirse a la comunidad</string>
+    <string name="watch_earn_coins"><![CDATA[Mira y gana monedas]]></string>
+    <string name="day_grand_prize">Gran premio de 7 días</string>
+
+    <string name="turn_on_push_notifications">Activar notificaciones push</string>
+    <string name="dram_short_tips_dialog"><![CDATA[¡Mira y gana! ¡Disfruta primero los dramas cortos más calientes!]]></string>
+    <string name="allow_get"><![CDATA[Permitir y obtener]]></string>
+
+    <string name="back_tips_title">¡Espera! ¡No te vayas aún!</string>
+    <string name="back_tips_desc">¡Quédate con nosotros y recibe al instante un bono de %s!</string>
+    <string name="back_tips_exit">Salir de todos modos</string>
+    <string name="back_tips_stay">Quedarse y obtener %s</string>
+    <string name="congratulate">Felicidades</string>
+    <string name="withdrawal_progress">Progreso de retiro</string>
+    <string name="withdraw_tips">¡Solo faltan %s para retirar! ¡Aprovéchalo!</string>
+    <string name="claim">Canjear</string>
+    <string name="my_wallet">Mi billetera</string>
+    <string name="fortune_challenge">Reto de la rueda de la fortuna</string>
+    <string name="get_re">Obtener</string>
+    <string name="my_balance">Mi saldo</string>
+    <string name="withdrawal_method">Método de retiro</string>
+    <string name="withdrawal_amount">Monto de retiro</string>
+    <string name="proud_to_cash_out">-Orgulloso de retirar-</string>
+    <string name="arrived_via">llegó vía [%s]</string>
+    <string name="cant_with_tips">Monto de retiro insuficiente</string>
+    <string name="withdraw_wait_tips">Retiro en proceso</string>
+    <string name="get_tips">Obtén %s</string>
+    <string name="ad_limit_reached">Límite de anuncios alcanzado</string>
+    <string name="limit_tips_des">Ya has visto todos los anuncios de hoy. Inténtalo de nuevo mañana.</string>
+    <string name="ok">Ok</string>
+    <string name="wi_notification_tips">Te está esperando en tu billetera.</string>
+    <string name="splash_open_first">Tu momento favorito para ver películas</string>
+    <string name="sp_tips">Estamos preparando tu contenido...</string>
+</resources>

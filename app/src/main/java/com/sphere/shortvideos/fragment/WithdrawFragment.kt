@@ -136,11 +136,15 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
     }
 
     private fun dpToPx(value: Float): Float {
-        return value * resources.displayMetrics.density
+        // Fragment 可能已经从 Activity 分离，此时直接访问 resources 会抛
+        val res = context?.resources ?: return value
+        return value * res.displayMetrics.density
     }
 
     private fun startMarquee(scrollView: HorizontalScrollView, track: LinearLayout, step: Int, count: Int) {
         track.post {
+            // 视图或 Fragment 已经销毁时不再启动跑马灯，避免 IllegalStateException
+            if (!isAdded || view == null || context == null) return@post
             if (step <= 0) return@post
             val totalWidth = step * count
             val speedPxPerSec = dpToPx(40f)

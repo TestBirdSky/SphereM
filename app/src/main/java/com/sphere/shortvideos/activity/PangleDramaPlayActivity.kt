@@ -419,7 +419,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
         AnimViewHelper.applyPressBounceEffect(binding.layoutTop)
         binding.layoutTop.setOnClickListener {
             localEvent("earn_banner_c", hashMapOf("from" to "drama"))
-            TaskInfoDialogFragment(this).show(supportFragmentManager, "task_fragment")
+            TaskInfoDialogFragment().show(supportFragmentManager, "task_fragment")
         }
         registerLV()
     }

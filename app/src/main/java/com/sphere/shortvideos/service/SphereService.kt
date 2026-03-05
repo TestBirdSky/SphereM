@@ -18,15 +18,22 @@ class SphereService : Service() {
     override fun onCreate() {
         super.onCreate()
         isOpenService = true
+        // 确保通知渠道在启动前台服务之前已初始化
         NotificationHelper.initChannel(this)
     }
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        runCatching {
-            startForeground(NotificationHelper.NOTI_ID_FIXED, NotificationHelper.createFixNotification(this))
+        return try {
+            // Android 要求：通过 startForegroundService 启动后，必须在 5s 内调用 startForeground
+            val notification = NotificationHelper.createFixNotification(this)
+            startForeground(NotificationHelper.NOTI_ID_FIXED, notification)
+            START_STICKY
+        } catch (t: Throwable) {
+            // 如果因为任何原因拉起前台失败，立刻停止服务，避免 RemoteServiceException 崩溃
+            stopSelf(startId)
+            START_NOT_STICKY
         }
-        return START_STICKY
     }
 
     override fun onBind(p0: Intent?): IBinder? {

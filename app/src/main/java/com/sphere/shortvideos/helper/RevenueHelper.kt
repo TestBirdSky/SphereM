@@ -1,7 +1,9 @@
 package com.sphere.shortvideos.helper
 
+import android.os.Bundle
 import com.adjust.sdk.Adjust
 import com.adjust.sdk.AdjustAdRevenue
+import com.facebook.appevents.AppEventsConstants
 import com.facebook.appevents.AppEventsLogger
 import com.google.android.gms.ads.AdValue
 import com.google.android.gms.ads.ResponseInfo
@@ -39,14 +41,13 @@ object RevenueHelper {
         fun postAdmobRevenueAdjust() { //v5
             val adjustAdRevenue = AdjustAdRevenue("admob_sdk")
             adjustAdRevenue.setRevenue(revenue, adValue.currencyCode) //可选配置
-//            adjustAdRevenue.adRevenueUnit = adValue.currencyCode //货币单位
+            //            adjustAdRevenue.adRevenueUnit = adValue.currencyCode //货币单位
             adjustAdRevenue.adRevenueNetwork = loadedSource?.adSourceName ?: "admob" //广告来源
             adjustAdRevenue.adRevenuePlacement = position.aliasName //广告位
             //发送收益数据
             Adjust.trackAdRevenue(adjustAdRevenue)
             runCatching { //fb purchase
-                AppEventsLogger.newLogger(mApp)
-                    .logPurchase((revenue).toBigDecimal(), Currency.getInstance(adValue.currencyCode))
+                logFbAdImpression(revenue, adValue.currencyCode)
             }
         }
         postAdmobRevenueAdjust()
@@ -82,7 +83,7 @@ object RevenueHelper {
 
             // Facebook 上报
             runCatching {
-                AppEventsLogger.newLogger(mApp).logPurchase(revenue.toBigDecimal(), Currency.getInstance(currencyCode))
+                logFbAdImpression(revenue, currencyCode)
             }
         }
     }
@@ -114,9 +115,20 @@ object RevenueHelper {
             logError("FB-->")
             // Facebook 上报
             runCatching {
-                AppEventsLogger.newLogger(mApp).logPurchase(revenue.toBigDecimal(), Currency.getInstance(currencyCode))
+                logFbAdImpression(revenue, currencyCode)
             }
         }
     }
 
+    /** 向 Facebook SDK 上报 AD_IMPRESSION（Meta 广告收入标准事件），与 logPurchase 并存 */
+    private fun logFbAdImpression(revenue: Double, currencyCode: String) {
+        runCatching {
+            val logger = AppEventsLogger.newLogger(mApp)
+            val params = Bundle().apply {
+                putString(AppEventsConstants.EVENT_PARAM_CURRENCY, currencyCode)
+            }
+            logger.logEvent(AppEventsConstants.EVENT_NAME_AD_IMPRESSION, revenue, params)
+            logger.logPurchase((revenue).toBigDecimal(), Currency.getInstance(currencyCode))
+        }
+    }
 }

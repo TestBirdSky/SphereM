@@ -7,19 +7,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.bytedance.sdk.shortplay.api.ShortPlay
 import com.sphere.shortvideos.baseui.GenericFragment
 import com.sphere.shortvideos.databinding.FragmentVideoStreamBinding
-import com.sphere.shortvideos.dialogs.TaskInfoDialogFragment
-import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.localEvent
-import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.vm.StreamViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
 
@@ -120,13 +114,16 @@ class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
         fun submitData(data: List<Any>) {
             datas.clear()
             datas.addAll(data)
-            // 通知 ViewPager2 / RecyclerView 数据已更新，避免出现 “Invalid view holder adapter position” 异常
-            notifyDataSetChanged()
-            // 如果当前选中的 position 超出新数据范围，重置到最后一个有效 position
-            val current = binding.viewPager.currentItem
-            val lastIndex = (datas.size - 1).coerceAtLeast(0)
-            if (current > lastIndex) {
-                binding.viewPager.post {
+            binding.viewPager.post {
+                if (!this@VideoStreamFragment.isAdded) return@post
+                try {
+                    notifyDataSetChanged()
+                } catch (e: Exception) {
+                    (binding.viewPager.adapter as? FragmentStateAdapter)?.notifyDataSetChanged()
+                }
+                val lastIndex = (datas.size - 1).coerceAtLeast(0)
+                val current = binding.viewPager.currentItem
+                if (current > lastIndex) {
                     binding.viewPager.setCurrentItem(lastIndex, false)
                 }
             }

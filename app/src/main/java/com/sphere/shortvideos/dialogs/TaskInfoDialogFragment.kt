@@ -19,12 +19,13 @@ import com.sphere.shortvideos.view.AnimViewHelper
 /**
  * Date：2026/1/27
  * Describe: Task info dialog
+ *
+ * 注意：必须保留无参构造函数，避免 Fragment 重建时反射失败。
  */
-class TaskInfoDialogFragment(val ac: GenericActivity) : DialogFragment() {
+class TaskInfoDialogFragment : DialogFragment() {
     var onClose: (() -> Unit)? = null
 
-    private var _binding: DialogTaskInfoBinding? = null
-    private val binding get() = _binding!!
+    private var mBinding: DialogTaskInfoBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,22 +34,29 @@ class TaskInfoDialogFragment(val ac: GenericActivity) : DialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = DialogTaskInfoBinding.inflate(inflater, container, false)
-        return binding.root
+        mBinding = DialogTaskInfoBinding.inflate(inflater, container, false)
+        return mBinding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // 使用局部变量缓存 binding，避免在回调中访问已被置空的 mBinding 导致 NPE
+        val binding = mBinding ?: return
+        val hostActivity = activity as? GenericActivity ?: return
+
         localEvent("billetera_pop")
         binding.ivClose.setOnClickListener {
             onClose?.invoke()
             dismissAllowingStateLoss()
         }
-        HelperRewardShow.curGetMoneyAnimLiveData.observe(this, {
+        // 绑定到 viewLifecycleOwner，防止在 onDestroyView 之后仍然回调导致 mBinding 为 null
+        HelperRewardShow.curGetMoneyAnimLiveData.observe(viewLifecycleOwner) {
+            val currentBinding = mBinding ?: return@observe
             refreshMoney(it.replace("\t", ""), WithdrawAmountHelper.fetchWithdrawMinMoney())
-        })
-        binding.layoutTask.setTaskInfo(ac, receiverMoneyEvent = { reward, sourceView ->
-            AnimViewHelper.playCoinFlyCopyAnim(sourceView, binding.ivM, end = {
+        }
+        binding.layoutTask.setTaskInfo(hostActivity, receiverMoneyEvent = { reward, sourceView ->
+            val currentBinding = mBinding ?: return@setTaskInfo
+            AnimViewHelper.playCoinFlyCopyAnim(sourceView, currentBinding.ivM, end = {
                 if (reward > 0) {
                     HelperRewardShow.addMoneyNotExChange(reward)
                 }
@@ -57,6 +65,7 @@ class TaskInfoDialogFragment(val ac: GenericActivity) : DialogFragment() {
     }
 
     private fun refreshMoney(moneyCur: String, minWithMoney: String) {
+        val binding = mBinding ?: return
         val progressText = "$moneyCur/$minWithMoney"
         binding.tvProgress.text = progressText
         binding.progressView.setProgress(WithdrawAmountHelper.fetchGetMoneyProgress(), true)
@@ -73,6 +82,6 @@ class TaskInfoDialogFragment(val ac: GenericActivity) : DialogFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        mBinding = null
     }
 }
