@@ -352,8 +352,10 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
         (activity as? MainActivity)?.run {
             WelcomeBonusDialogFragment().apply {
                 onDismissCall = {
+                    if (MMKVRepository.isNewUser) {
+                        HelperRewardShow.addMoneyNotExChangeFlyAnim(it)
+                    }
                     MMKVRepository.isNewUser = false
-                    HelperRewardShow.addMoneyNotExChangeFlyAnim(it)
                     hideOrShowGuide(false)
                 }
             }.show(supportFragmentManager, "welcome")
