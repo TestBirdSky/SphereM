@@ -20,6 +20,7 @@ class AdHolder(private val position: AdPosition) {
     private val cacheList = mutableListOf<BaseController>()
     private var loading = false
     private var onAdLoaded: (Boolean) -> Unit = {}
+    private var loadingTime = 0L
 
     fun isAdHaveCache() = cacheList.isNotEmpty()
 
@@ -36,10 +37,11 @@ class AdHolder(private val position: AdPosition) {
             if (sourceList.isEmpty()) return@launch
             removeExpiredAd()
             if (cacheList.isNotEmpty()) return@launch
-            if (loading) {
+            if (loading && System.currentTimeMillis() - loadingTime < 60000 * 4) {
                 logError("ad is loading $position")
                 return@launch
             }
+            loadingTime = System.currentTimeMillis()
             loading = true
             loadAd(0)
         }
@@ -85,6 +87,7 @@ class AdHolder(private val position: AdPosition) {
         val adItem = sourceList.getOrNull(index)
         if (null == adItem) {
             loading = false
+            loadingTime = 0
             onAdLoaded(false) // 加载完成
             if (position != LaunchPosition && isAdHaveCache().not()) {
                 AdUtils.adScope.launch {
@@ -114,6 +117,7 @@ class AdHolder(private val position: AdPosition) {
                     ))
                 cacheList.add(adEntity)
                 loading = false
+                loadingTime = 0
                 onAdLoaded(true)
             } else loadAd(index + 1)
         }

@@ -81,11 +81,13 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_des"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="12dp"
             android:fontFamily="@font/noto_sans_semibold"
+            android:gravity="center"
+            android:paddingHorizontal="16dp"
             android:text="@string/splash_open_first"
             android:textColor="@color/white"
             android:textSize="20sp"
