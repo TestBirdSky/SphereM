@@ -5,14 +5,10 @@ import com.applovin.sdk.AppLovinMediationProvider
 import com.applovin.sdk.AppLovinPrivacySettings
 import com.applovin.sdk.AppLovinSdk
 import com.applovin.sdk.AppLovinSdkInitializationConfiguration
-import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.sphere.shortvideos.helper.AppHelper
 import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.logError
 import com.thinkup.core.api.TUSDK
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 /**
  * Date：2026/3/2
@@ -31,11 +27,6 @@ object AdSdkHelper {
         AppLovinSdk.getInstance(context).initialize(initConfig) { sdkConfig ->
             // Start loading ads
             logError("initMaxAndTopon-->AppLovinSdk success")
-            AdUtils.apply {
-                launchHolder.preloadIfCan()
-                unlockHolder.preloadIfCan()
-                rewardHolder.preloadIfCan()
-            }
         }
 
         AppLovinPrivacySettings.setHasUserConsent(true)
