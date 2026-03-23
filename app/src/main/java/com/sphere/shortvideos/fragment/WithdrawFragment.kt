@@ -20,6 +20,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.helper.localEvent
+import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 import com.sphere.shortvideos.view.AnimViewHelper
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -44,7 +45,7 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
 
     override fun initUI() {
         setupWithdrawMethods()
-        setupWithdrawAmounts()
+        setupWithdrawalAmountSection()
         setupUserInfoMarquee()
         AnimViewHelper.applyPressBounceEffect(binding.tvWithdraw)
         binding.tvWithdraw.setOnClickListener {
@@ -69,6 +70,19 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
         binding.rvWithdrawMoney.layoutManager = GridLayoutManager(requireContext(), 3)
         binding.rvWithdrawMoney.adapter = amountAdapter
         amountAdapter.submitList(WithdrawAmountHelper.fetchWithdrawAmounts())
+    }
+
+    private fun setupWithdrawalAmountSection() {
+        val openWithdrawAction = WithdrawalActionHelper.getConfig().isOpenWithdraw()
+        if (openWithdrawAction) {
+            binding.layoutWa.visibility = View.GONE
+            binding.viewParent.removeAllViews()
+            layoutInflater.inflate(R.layout.layout_withdrawal_action, binding.viewParent, true)
+            return
+        }
+        binding.layoutWa.visibility = View.VISIBLE
+        binding.viewParent.removeAllViews()
+        setupWithdrawAmounts()
     }
 
     private fun setupUserInfoMarquee() {

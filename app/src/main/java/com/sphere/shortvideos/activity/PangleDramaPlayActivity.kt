@@ -30,6 +30,7 @@ import com.sphere.shortvideos.databinding.ActivityDramaPlayPangleBinding
 import com.sphere.shortvideos.dialogs.TaskInfoDialogFragment
 import com.sphere.shortvideos.dialogs.showIndexSelectorDialog
 import com.sphere.shortvideos.helper.HelperRewardShow
+import com.sphere.shortvideos.helper.HelperRewardShow.showBubbleTips
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.ad.UnlockPosition
@@ -427,6 +428,10 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
     private val spineHelper = SpineHelper()
 
     private fun registerLV() {
+        showBubbleTips.observe(this, { pair ->
+            if (System.currentTimeMillis() - pair.second < 2000) return@observe
+            binding.tipsBubble.setTextAndDismiss(pair)
+        })
         HelperRewardShow.numProgress.observe(this, {
             binding.progressPrice.progress = it
         })

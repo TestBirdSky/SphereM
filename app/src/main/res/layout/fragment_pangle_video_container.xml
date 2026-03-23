@@ -138,6 +138,22 @@
         android:layout_marginTop="45dp"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.sphere.shortvideos.view.BubbleTextView
+        android:id="@+id/tv_tis"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="9dp"
+        android:gravity="center"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="10dp"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_money"
+        tools:text="you can cash out now!"
+        tools:visibility="visible" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_first_guide"

@@ -33,9 +33,12 @@ import com.sphere.shortvideos.database.DramaCollectEntity
 import com.sphere.shortvideos.databinding.FragmentPangleVideoContainerBinding
 import com.sphere.shortvideos.dialogs.WelcomeBonusDialogFragment
 import com.sphere.shortvideos.helper.HelperRewardShow
+import com.sphere.shortvideos.helper.HelperRewardShow.isShowCanCash
+import com.sphere.shortvideos.helper.HelperRewardShow.showBubbleTips
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
+import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.nextView
 import com.sphere.shortvideos.showToast
 import com.sphere.shortvideos.toJson
@@ -345,6 +348,12 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
                 HelperRewardShow.animAddMoneyDurationInMill.value = 0
             }
         })
+
+        showBubbleTips.observe(this, { pair ->
+            logError("showBubbleTips-->$pair")
+            if (System.currentTimeMillis() - pair.second < 2000) return@observe
+            binding.tvTis.setTextAndDismiss(pair)
+        })
     }
 
     private var fingerAnimator: ObjectAnimator? = null
@@ -353,6 +362,7 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
             WelcomeBonusDialogFragment().apply {
                 onDismissCall = {
                     if (MMKVRepository.isNewUser) {
+                        HelperRewardShow.showFirstTips(it)
                         HelperRewardShow.addMoneyNotExChangeFlyAnim(it)
                     }
                     MMKVRepository.isNewUser = false

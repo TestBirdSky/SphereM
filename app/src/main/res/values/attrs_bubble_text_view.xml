@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="BubbleTextView">
+        <!-- 气泡填充色，默认 #653AA2 -->
+        <attr name="bubbleFillColor" format="color" />
+        <!-- 气泡描边色，默认白色 -->
+        <attr name="bubbleStrokeColor" format="color" />
+        <!-- 描边宽度，默认 1dp -->
+        <attr name="bubbleStrokeWidth" format="dimension" />
+        <!-- 箭头位置：center(0) / start(1)，默认 center -->
+        <attr name="bubbleArrowGravity" format="enum">
+            <enum name="center" value="0" />
+            <enum name="start" value="1" />
+        </attr>
+    </declare-styleable>
+</resources>

@@ -81,81 +81,125 @@
         app:layout_constraintEnd_toEndOf="@id/iv_bg_top"
         app:layout_constraintTop_toTopOf="@id/iv_bg_top" />
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="0dp"
+        android:layout_height="25dp"
+        android:background="@drawable/ic_account_bg"
+        app:layout_constraintEnd_toEndOf="@id/tv_account"
+        app:layout_constraintStart_toStartOf="@id/tv_account"
+        app:layout_constraintTop_toTopOf="@id/tv_account" />
+
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_wm"
+        android:id="@+id/tv_account"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:fontFamily="@font/noto_sans"
-        android:text="@string/withdrawal_method"
+        android:layout_height="25dp"
+        android:layout_marginTop="25dp"
+        android:gravity="center|end"
+        android:paddingHorizontal="10dp"
+        android:text="@string/my_account"
         android:textColor="@color/white"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@id/iv_bg_top"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:textSize="11sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_money" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_withdraw"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="5dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@id/tv_wm" />
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_user_title"
+        app:layout_constraintTop_toBottomOf="@id/iv_bg_top">
 
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/layout_wa"
-        android:layout_width="match_parent"
-        android:layout_height="189dp"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="26dp"
-        android:background="@drawable/shape_g1a0_12"
-        android:orientation="vertical"
-        android:paddingHorizontal="9dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rv_withdraw">
-
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_withdraw_money"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/noto_sans"
-            android:text="@string/withdrawal_amount"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_withdraw_money"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="10dp"
-            android:layout_weight="1"
-            app:layout_constraintTop_toBottomOf="@id/tv_withdraw_money" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_wm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:fontFamily="@font/noto_sans"
+                android:text="@string/withdrawal_method"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_withdraw"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="5dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/tv_wm" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/layout_wa"
+                android:layout_width="match_parent"
+                android:layout_height="189dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="26dp"
+                android:background="@drawable/shape_g1a0_12"
+                android:orientation="vertical"
+                android:paddingHorizontal="9dp"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rv_withdraw"
+                tools:visibility="invisible">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_withdraw_money"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/noto_sans"
+                    android:text="@string/withdrawal_amount"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_withdraw_money"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    app:layout_constraintTop_toBottomOf="@id/tv_withdraw_money" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <FrameLayout
+                android:id="@+id/view_parent"
+                app:layout_constraintTop_toBottomOf="@id/rv_withdraw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_user_title"
         android:layout_width="match_parent"
         android:layout_height="28dp"
         android:layout_marginTop="6.5dp"
+        android:layout_marginBottom="7dp"
         android:fontFamily="@font/noto_sans"
         android:gravity="center"
         android:text="@string/proud_to_cash_out"
         android:textColor="#AD74FF"
         android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@id/layout_wa" />
+        app:layout_constraintBottom_toTopOf="@id/layout_with_user_info" />
+
 
     <FrameLayout
         android:id="@+id/layout_with_user_info"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:layout_marginBottom="15dp"
         android:paddingHorizontal="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/tv_withdraw"
-        app:layout_constraintTop_toBottomOf="@id/tv_user_title">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
     </FrameLayout>
 
@@ -165,6 +209,7 @@
         android:layout_height="46dp"
         android:layout_marginHorizontal="21dp"
         android:layout_marginTop="7dp"
+        android:layout_marginBottom="15dp"
         android:background="@drawable/shape_bg_ye"
         android:fontFamily="@font/noto_sans"
         android:gravity="center"
@@ -172,7 +217,6 @@
         android:textColor="@color/black"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_with_user_info" />
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

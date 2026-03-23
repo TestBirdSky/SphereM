@@ -8,6 +8,7 @@ import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.ad.DramaIntAdHelper
 import com.sphere.shortvideos.helper.reward.RewardHelper
 import com.sphere.shortvideos.helper.risk.RiskHelper
+import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.mFbAndAdjustHelper
 import com.sphere.shortvideos.unlockIndex
@@ -37,6 +38,7 @@ class RemoteConfHelper {
         fetchRisk()
         RewardHelper.updateConfigure()
         DramaIntAdHelper.updateConfigure()
+        WithdrawalActionHelper.updateConfigure()
         fetchFbCon()
     }
 

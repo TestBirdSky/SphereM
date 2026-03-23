@@ -4,25 +4,34 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.os.SystemClock
+import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
+import com.chartboost.sdk.impl.fa
+import com.chartboost.sdk.impl.pa
+import com.sphere.shortvideos.R
 import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.dialogs.LuckChallengeDialogFragment
 import com.sphere.shortvideos.dialogs.NormalCongratulateDialogFragment
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.reward.RewardHelper
+import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.logError
+import com.sphere.shortvideos.mApp
+import com.sphere.shortvideos.view.BubbleTextView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 object HelperRewardShow {
     private var num = 1
@@ -33,10 +42,18 @@ object HelperRewardShow {
     val curGetMoneyStr = MutableLiveData(Pair("", "")) //当前获取到的奖励和还差多少可领取奖励
     val showDialogType = MutableLiveData<Int>() //0 普通奖励看插屏 1 倍率玩法看激励广告
 
+    private var lastShowTipsMoneyTime = System.currentTimeMillis()
+    private var showTipsPeriod = if (isDebugMode) 60000 else 60000 * 5
+    private val showTime get() = Random.nextLong(2000, 3100)
+
+    val showBubbleTips = MutableLiveData<Triple<Int, Long, String>>() // 显示的词条 显示时间
+
+    var isShowCanCash = false
+
     private var maxReachedCount = 0
     private var progressJob: Job? = null
     private val progressMax = 100
-    private val roundDurationMs = if (isDebugMode) 5000L else 15000L //15_000L //
+    private val roundDurationMs = /*if (isDebugMode) 5000L else */ 15000L //15_000L //
 
     private var numIntervalIndex = 0 // 目标
     private var tagGam = -1
@@ -79,6 +96,8 @@ object HelperRewardShow {
                         } else {
                             postOnceDialogType(0)
                         }
+                    } else {
+                        checkNextTips()
                     }
                     numTime.postValue("$num/$maxNum")
                 }
@@ -98,6 +117,7 @@ object HelperRewardShow {
 
     fun addMoneyNotExChange(d: Double) {
         MoneyCacheHelper.addNotExchangeMoney(d)
+        isArriveMinMoney()
         playMoneyIncreaseAnimAndSave(d, {
             curGetMoneyStr.postValue(WithdrawAmountHelper.fetchCurMoneyAndWithdrawNeedMoney())
         })
@@ -249,5 +269,33 @@ object HelperRewardShow {
 
     fun isPauseFragment(fragment: Fragment): Boolean {
         return fragment is DialogFragment
+    }
+
+    fun showFirstTips(dub: Double) {
+        if (WithdrawalActionHelper.getConfig().isOpenWithdraw().not()) return
+        lastShowTipsMoneyTime = System.currentTimeMillis()
+        showBubbleTips.postValue(Triple(0,
+            System.currentTimeMillis() + showTime,
+            mApp.getString(R.string.add_money_info_tips1, WithdrawAmountHelper.moneyFormatAddUnit(dub))))
+    }
+
+    fun isArriveMinMoney() {
+        if (WithdrawalActionHelper.getConfig().isOpenWithdraw().not()) return
+        if (isShowCanCash) return
+        if (WithdrawAmountHelper.isCanWithdraw()) {
+            showBubbleTips.postValue(Triple(2, System.currentTimeMillis() + showTime, ""))
+        }
+    }
+
+    fun checkNextTips() {
+        logError("checkNextTips-->${WithdrawalActionHelper.getConfig()}")
+        if (WithdrawalActionHelper.getConfig().isOpenWithdraw().not()) return
+        if (WithdrawAmountHelper.isCanWithdraw()) return
+        if (System.currentTimeMillis() - lastShowTipsMoneyTime > showTipsPeriod) {
+            lastShowTipsMoneyTime = System.currentTimeMillis()
+            showBubbleTips.postValue(Triple(1,
+                System.currentTimeMillis() + showTime,
+                curMoneyNeedAnimLiveData.value ?: ""))
+        }
     }
 }

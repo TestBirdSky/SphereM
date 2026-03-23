@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="125dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/shape_g1a0_12"
+        android:backgroundTint="#1A0E2C"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="6dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/noto_sans"
+            android:text="@string/withdrawal_amount"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/et_money"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="70dp"
+            android:background="@drawable/shape_h5"
+            android:backgroundTint="#332548"
+            android:gravity="center|start"
+            android:hint="@string/enter_withdrawal_amount"
+            android:inputType="number"
+            android:paddingHorizontal="28dp"
+            android:textColorHint="#665C75"
+            android:textSize="11sp"
+            app:layout_constraintEnd_toEndOf="@id/btn_with_all"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/btn_with_all" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_unit"
+            android:layout_width="25dp"
+            android:layout_height="wrap_content"
+            android:gravity="center|end"
+            android:textColor="#FFD000"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/btn_with_all"
+            app:layout_constraintStart_toStartOf="@id/et_money"
+            app:layout_constraintTop_toTopOf="@id/btn_with_all"
+            tools:text="P$" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/btn_with_all"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_h5"
+            android:backgroundTint="#5B32A7"
+            android:fontFamily="@font/noto_sans_semibold"
+            android:gravity="center"
+            android:paddingHorizontal="8dp"
+            android:text="@string/withdraw_all"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv2" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/noto_sans_semibold"
+            android:text="@string/for_security_the_min_with"
+            android:textColor="#685D78"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/et_money"
+            app:layout_constraintTop_toBottomOf="@id/et_money" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

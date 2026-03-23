@@ -2,8 +2,10 @@ package com.sphere.shortvideos.helper.mmkv
 
 import android.provider.Settings
 import com.sphere.shortvideos.helper.MoneyCacheHelper
+import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.permission.PermissionHelper.showOpenNotifDialogFlag
+import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 import com.sphere.shortvideos.mApp
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -20,7 +22,7 @@ object MMKVRepository {
 
     var isNewUser by MMKVData(true)
     var isShowBackTips by MMKVData(true)
-    
+
     // 用户类型：true 为黑名单用户（Organic），false 为买量用户
     var isBlacklistUser by MMKVData(false)
 
@@ -36,6 +38,7 @@ object MMKVRepository {
             isShowBackTips = true
             showOpenNotifDialogFlag = 30
             AdUtils.allAdShowNum = 0
+            WithdrawalActionHelper.showLock2NumCurDay = 0
             return false
         }
         return true

@@ -1,5 +1,6 @@
 package com.sphere.shortvideos.helper
 
+import com.chartboost.sdk.impl.fa
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.helper.MoneyCacheHelper.fetchCurMoney
 import com.sphere.shortvideos.logError
@@ -73,8 +74,7 @@ object WithdrawAmountHelper {
         return Pair(curMoneyStr, needTagMoney)
     }
 
-    fun moneyFormatAddUnit(double: Double): String {
-//        logError("moneyFormatAddUnit-->${resolveMoneyUnit()}")
+    fun moneyFormatAddUnit(double: Double): String { //        logError("moneyFormatAddUnit-->${resolveMoneyUnit()}")
         return "${resolveMoneyUnit()}\t${formatMoney(double)}"
     }
 
@@ -102,15 +102,14 @@ object WithdrawAmountHelper {
     }
 
     private fun resolveMoneyUnit(): String {
-        val locale = LauageTools.getAppLocale()
-        return runCatching {
-            java.util.Currency.getInstance(locale).getSymbol(locale)
-        }.getOrElse {
-            when {
-                LauageTools.isIndonesia() -> IDR_UNIT
-                LauageTools.isBrazil() -> BRL_UNIT
-                else -> DEFAULT_UNIT
-            }
+//        val locale = LauageTools.getAppLocale()
+//        runCatching {
+//            java.util.Currency.getInstance(locale).getSymbol(locale)
+//        }.getOrElse {
+        return when {
+            LauageTools.isIndonesia() -> IDR_UNIT
+            LauageTools.isBrazil() -> BRL_UNIT
+            else -> DEFAULT_UNIT
         }
     }
 
@@ -128,6 +127,13 @@ object WithdrawAmountHelper {
     fun fetchWithdrawMinMoney(): String {
         val total = defLow.fetWithdraw()
         return moneyFormatAddUnitWithNoSpace(total)
+    }
+
+    fun isCanWithdraw(): Boolean {
+        if (fetchCurMoney() >= defLow.fetWithdraw()) {
+            return true
+        }
+        return false
     }
 
     fun fetchWithdrawAmounts(): List<Double> {

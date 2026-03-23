@@ -19,6 +19,7 @@ import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.helper.RevenueHelper
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.risk.RiskHelper
+import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.mApp
 import com.thinkup.core.api.TUAdInfo
@@ -50,6 +51,7 @@ abstract class BaseController(val position: AdPosition, val adBean: AdItemBean) 
 
     fun showAdEvent(ad: Any) {
         AdUtils.allAdShowNum++
+        WithdrawalActionHelper.addShowAdNum()
         when (adBean.format) {
             AppOpenFormat -> {
 
