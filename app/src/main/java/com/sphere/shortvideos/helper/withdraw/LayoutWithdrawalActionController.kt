@@ -6,7 +6,6 @@ import android.text.SpannableString
 import android.text.TextWatcher
 import android.text.style.AbsoluteSizeSpan
 import android.view.View
-import android.widget.Toast
 import androidx.core.graphics.toColorInt
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -15,10 +14,11 @@ import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.databinding.LayoutWithdrawalActionBinding
 import com.sphere.shortvideos.dialogs.withdraw.InsufficientRevDialogFragment
 import com.sphere.shortvideos.dialogs.withdraw.MakingMoneyDialogFragment
+import com.sphere.shortvideos.dialogs.withdraw.PaymentInformationDialogFragment
+import com.sphere.shortvideos.dialogs.withdraw.WithdrawalInfoDialogFragment
 import com.sphere.shortvideos.helper.LauageTools
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
-import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.view.setColorText
 
 /**
@@ -122,8 +122,23 @@ class LayoutWithdrawalActionController(
             return true
         }
 
-
+        WithdrawalActionHelper.withdrawalValue = amount
+        if (WithdrawalActionHelper.havaBaseInfo()) {
+            showInfoDialog(fragmentManager)
+        } else {
+            PaymentInformationDialogFragment().apply {
+                subClick = {
+                    showInfoDialog(fragmentManager)
+                }
+            }.show(fragmentManager, "sss")
+        }
         return true
+    }
+
+    private fun showInfoDialog(fragmentManager: FragmentManager) {
+        WithdrawalInfoDialogFragment().apply {
+            onAction = {}
+        }.show(fragmentManager, "info_show")
     }
 
     private fun updateMainWithdrawButton(mainWithdrawButton: View) {

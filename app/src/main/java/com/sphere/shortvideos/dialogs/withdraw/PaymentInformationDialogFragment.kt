@@ -14,6 +14,7 @@ import com.sphere.shortvideos.adapter.WithdrawMethodAdapter
 import com.sphere.shortvideos.databinding.DialogPaymentInformationBinding
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.withdraw.WithdrawPaymentAccountHints
+import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 
 /**
  * 收款信息弹窗：横向提现方式与钱包页 [fragment_wallte] 同源（[com.sphere.shortvideos.helper.WithdrawAmountHelper.fetchWithdrawPaymentMethods]）。
@@ -21,6 +22,8 @@ import com.sphere.shortvideos.helper.withdraw.WithdrawPaymentAccountHints
  * 提交后的持久化请在类内 [binding.btnSubmit] 点击处自行实现。
  */
 class PaymentInformationDialogFragment : DialogFragment() {
+
+    var subClick: (() -> Unit)? = null
 
     private var _binding: DialogPaymentInformationBinding? = null
     private val binding get() = _binding!!
@@ -68,7 +71,9 @@ class PaymentInformationDialogFragment : DialogFragment() {
             val method = methodAdapter.getSelectedMethod() ?: return@setOnClickListener
             val account = binding.etAccount.text?.toString()?.trim().orEmpty()
             if (account.isEmpty()) return@setOnClickListener
-            // TODO: 在此保存 method（含 name / 图标资源）与 account
+            WithdrawalActionHelper.accountWithdrawal = account
+            WithdrawalActionHelper.withdrawalMethodId = method.id
+            subClick?.invoke()
             dismissAllowingStateLoss()
         }
 

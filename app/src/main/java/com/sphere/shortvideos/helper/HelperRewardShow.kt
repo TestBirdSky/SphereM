@@ -123,6 +123,15 @@ object HelperRewardShow {
         })
     }
 
+    fun reduceMoney(d: Double) {
+        if (d <= 0.0) return
+        MoneyCacheHelper.reduceNotExchangeMoney(d)
+        val pair = WithdrawAmountHelper.fetchCurMoneyAndWithdrawNeedMoney()
+        curGetMoneyStr.postValue(pair)
+        curGetMoneyAnimLiveData.postValue(pair.first)
+        curMoneyNeedAnimLiveData.postValue(pair.second)
+    }
+
 
     fun addMoneyNotExChangeFlyAnim(d: Double, animTime: Long = 800) { //  添加飞的动画在加钱
         scopMain.launch {

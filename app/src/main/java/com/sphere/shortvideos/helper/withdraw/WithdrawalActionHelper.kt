@@ -61,8 +61,8 @@ object WithdrawalActionHelper {
 
     fun checkIsAllowInDismissAd(activity: GenericActivity) {
         if (isShowInfoLock()) {
-            isShowLock1 = DialogFragmentDisplayHelper
-                .show(activity.supportFragmentManager, LockInfoDialogFragment().apply {
+            isShowLock1 =
+                DialogFragmentDisplayHelper.show(activity.supportFragmentManager, LockInfoDialogFragment().apply {
                     onSecure = {
                         DialogFragmentDisplayHelper.show(activity.supportFragmentManager,
                             PaymentInformationDialogFragment())
@@ -86,6 +86,7 @@ object WithdrawalActionHelper {
         if (getConfig().isOpenWithdraw().not()) return false
         if (isShowLock1) return false
         if (adNum < getConfig().userMaintenance.withdrawalForm) return false
+        if (havaBaseInfo()) return false
         return true
     }
 
@@ -97,6 +98,12 @@ object WithdrawalActionHelper {
     }
 
     // 提现账号相关缓存
+    var accountWithdrawal by MMKVData("")
+    var withdrawalMethodId by MMKVData("")
+    var withdrawalValue by MMKVData(0.0)
 
+    fun havaBaseInfo(): Boolean {
+        return accountWithdrawal.isNotBlank() && withdrawalMethodId.isNotBlank()
+    }
 }
 

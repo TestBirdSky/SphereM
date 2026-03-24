@@ -162,6 +162,24 @@
     <string name="withdraw_ready_message">Your effort has paid off! You\'ve earned %s and are ready to withdraw.</string>
     <string name="withdraw_ready_later">Later On</string>
     <string name="withdraw_ready_claim">Claim My Reward</string>
+    <string name="withdraw_info_title_prefix">Please Verify Your </string>
+    <string name="withdraw_info_title_highlight">Payout Account!</string>
+    <string name="withdraw_info_platform">Payout Platform</string>
+    <string name="withdraw_info_instruction">Payout Instructions</string>
+    <string name="withdraw_info_creation_time">Creation Time</string>
+    <string name="withdraw_info_estimated_time">Estimated Payment Time</string>
+    <string name="withdraw_info_payment_method">Payment Method</string>
+    <string name="withdraw_info_confirm">Confirm</string>
+    <string name="withdraw_info_default_platform">App Name</string>
+    <string name="withdraw_info_default_instruction">Drama Reward</string>
+    <string name="withdraw_info_default_estimated_time">7-14 Work Days</string>
+    <string name="withdraw_info_default_method">PayPal</string>
+    <string name="flip_card_title">Reveal Your Withdrawl Card\nAnd Keep Going</string>
+    <string name="flip_card_back_text">Withdrawl\nCard</string>
+    <string name="flip_card_result_instantly">Withdrawal Instantly</string>
+    <string name="flip_card_result_invite">Invite 20 New Users To Withdraw</string>
+    <string name="flip_card_result_failed">Withdrawl Failed</string>
+    <string name="flip_card_next_countdown">Next (%ds)</string>
 
 
- </resources>
+</resources>

@@ -11,8 +11,13 @@ import com.sphere.shortvideos.logError
  */
 object WithdrawAmountHelper {
 
-    /** 单个提现方式：展示名 + 选中/未选中图标 */
-    data class WithdrawPaymentMethod(val name: String, val iconSelected: Int, val iconNormal: Int)
+    /** 单个提现方式：唯一 id + 展示名 + 选中/未选中图标 */
+    data class WithdrawPaymentMethod(
+        val id: String,
+        val name: String,
+        val iconSelected: Int,
+        val iconNormal: Int,
+    )
 
     /**
      * 按当前地区返回提现平台列表（用于横向列表与跑马灯文案）
@@ -22,24 +27,36 @@ object WithdrawAmountHelper {
      */
     fun fetchWithdrawPaymentMethods(): List<WithdrawPaymentMethod> {
         return when {
-            LauageTools.isBrazil() -> listOf(WithdrawPaymentMethod("PIX", R.drawable.ic_pix_w, R.drawable.ic_pix_b),
-                WithdrawPaymentMethod("PagBank", R.drawable.ic_pagbank_w, R.drawable.ic_pagbank_b),
-                WithdrawPaymentMethod("PayPal", R.drawable.ic_paypal_w, R.drawable.ic_paypal_b))
+            LauageTools.isBrazil() -> listOf(
+                WithdrawPaymentMethod("pix", "PIX", R.drawable.ic_pix_w, R.drawable.ic_pix_b),
+                WithdrawPaymentMethod("pagbank", "PagBank", R.drawable.ic_pagbank_w, R.drawable.ic_pagbank_b),
+                WithdrawPaymentMethod("paypal", "PayPal", R.drawable.ic_paypal_w, R.drawable.ic_paypal_b),
+            )
 
-            LauageTools.isEnglish() -> listOf(WithdrawPaymentMethod("PayPal",
-                R.drawable.ic_paypal_w,
-                R.drawable.ic_paypal_b),
-                WithdrawPaymentMethod("Cash App", R.drawable.ic_cashapp_w, R.drawable.ic_cashapp_b),
-                WithdrawPaymentMethod("Google Pay", R.drawable.ic_pay_w, R.drawable.ic_pay_b))
+            LauageTools.isEnglish() -> listOf(
+                WithdrawPaymentMethod("paypal", "PayPal", R.drawable.ic_paypal_w, R.drawable.ic_paypal_b),
+                WithdrawPaymentMethod("cash_app", "Cash App", R.drawable.ic_cashapp_w, R.drawable.ic_cashapp_b),
+                WithdrawPaymentMethod("google_pay", "Google Pay", R.drawable.ic_pay_w, R.drawable.ic_pay_b),
+            )
 
-            LauageTools.isIndonesia() -> listOf(WithdrawPaymentMethod("DANA", R.drawable.ic_daa_w, R.drawable.ic_daa_b),
-                WithdrawPaymentMethod("OVO", R.drawable.ic_ovo_w, R.drawable.ic_ovo_b),
-                WithdrawPaymentMethod("GoPay", R.drawable.ic_gopay_w, R.drawable.ic_gopay_b))
+            LauageTools.isIndonesia() -> listOf(
+                WithdrawPaymentMethod("dana", "DANA", R.drawable.ic_daa_w, R.drawable.ic_daa_b),
+                WithdrawPaymentMethod("ovo", "OVO", R.drawable.ic_ovo_w, R.drawable.ic_ovo_b),
+                WithdrawPaymentMethod("gopay", "GoPay", R.drawable.ic_gopay_w, R.drawable.ic_gopay_b),
+            )
 
-            else -> listOf(WithdrawPaymentMethod("PayPal", R.drawable.ic_paypal_w, R.drawable.ic_paypal_b),
-                WithdrawPaymentMethod("Cash App", R.drawable.ic_cashapp_w, R.drawable.ic_cashapp_b),
-                WithdrawPaymentMethod("Google Pay", R.drawable.ic_pay_w, R.drawable.ic_pay_b))
+            else -> listOf(
+                WithdrawPaymentMethod("paypal", "PayPal", R.drawable.ic_paypal_w, R.drawable.ic_paypal_b),
+                WithdrawPaymentMethod("cash_app", "Cash App", R.drawable.ic_cashapp_w, R.drawable.ic_cashapp_b),
+                WithdrawPaymentMethod("google_pay", "Google Pay", R.drawable.ic_pay_w, R.drawable.ic_pay_b),
+            )
         }
+    }
+
+    /** 按 id 查找当前地区可用的提现方式（id 不区分大小写） */
+    fun findWithdrawPaymentMethodById(id: String): WithdrawPaymentMethod {
+        return fetchWithdrawPaymentMethods().firstOrNull { it.id.equals(id, ignoreCase = true) }
+            ?: WithdrawPaymentMethod("paypal", "PayPal", R.drawable.ic_paypal_w, R.drawable.ic_paypal_b)
     }
 
     private val defLow = WithdrawTier(brl = 240, usd = 48, idr = 720_000)
@@ -92,6 +109,7 @@ object WithdrawAmountHelper {
         }
     }
 
+    //格式化金钱数据
     fun formatMoney(value: Double): String {
         val locale = LauageTools.getAppLocale()
         val formatter = java.text.NumberFormat.getNumberInstance(locale).apply {
@@ -102,10 +120,10 @@ object WithdrawAmountHelper {
     }
 
     private fun resolveMoneyUnit(): String {
-//        val locale = LauageTools.getAppLocale()
-//        runCatching {
-//            java.util.Currency.getInstance(locale).getSymbol(locale)
-//        }.getOrElse {
+        //        val locale = LauageTools.getAppLocale()
+        //        runCatching {
+        //            java.util.Currency.getInstance(locale).getSymbol(locale)
+        //        }.getOrElse {
         return when {
             LauageTools.isIndonesia() -> IDR_UNIT
             LauageTools.isBrazil() -> BRL_UNIT

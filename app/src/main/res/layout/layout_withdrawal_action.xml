@@ -83,6 +83,7 @@
             android:fontFamily="@font/noto_sans_semibold"
             android:text="@string/for_security_the_min_with"
             android:textColor="#685D78"
+            android:textSize="11sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/et_money"
             app:layout_constraintTop_toBottomOf="@id/et_money" />

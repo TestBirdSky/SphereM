@@ -12,6 +12,7 @@ import com.sphere.shortvideos.adapter.WithdrawMethodAdapter
 import com.sphere.shortvideos.baseui.GenericFragment
 import com.sphere.shortvideos.databinding.FragmentWallteBinding
 import com.sphere.shortvideos.databinding.LayoutWithdrawalActionBinding
+import com.sphere.shortvideos.dialogs.withdraw.FlipCardDialogFragment
 import com.sphere.shortvideos.dialogs.withdraw.WithdrawApplyTransitionDialogFragment
 import com.sphere.shortvideos.helper.DialogFragmentDisplayHelper
 import com.sphere.shortvideos.helper.MoneyCacheHelper
@@ -47,6 +48,7 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
                 runCatching {
                     c.handleMainWithdrawClick(parentFragmentManager)
 //                    DialogFragmentDisplayHelper.show(parentFragmentManager, WithdrawApplyTransitionDialogFragment())
+//                    DialogFragmentDisplayHelper.show(parentFragmentManager, FlipCardDialogFragment())
                 }
                 return@setOnClickListener
             }
