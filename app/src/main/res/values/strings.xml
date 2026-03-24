@@ -114,6 +114,7 @@
     <string name="wi_notification_tips">Is Waiting In Your Wallet.</string>
     <string name="splash_open_first">Your favorite time for movies</string>
     <string name="sp_tips">We\'re preparing your content...</string>
+
     <string name="account_security_restrictions">Account security restrictions</string>
     <string name="tips_mini_str">For security, the minimum withdrawal is %d.</string>
     <string name="making_money">Making Money</string>
@@ -127,6 +128,35 @@
     <string name="enter_withdrawal_amount">Enter Withdrawal Amount</string>
     <string name="withdraw_all">Withdraw All</string>
     <string name="for_security_the_min_with">For security, the minimum withdrawal is %s.</string>
+    <string name="lock_info_title">Don\'t Leave Your Money Behind!</string>
+    <string name="lock_info_subtitle">Secure Your Earnings in One Quick Step</string>
+    <string name="lock_info_quick_action">Secure Your Winnings Now!</string>
+    <string name="lock_info_only_one_minute">Only 1 Minute</string>
+    <string name="lock_info_desc">Your game was a success! To send your %s in earnings, we just need your payout info.</string>
+    <string name="lock_info_later_on">Later On</string>
+    <string name="lock_info_secure_my_winnings">Secure My Winnings</string>
+
+    <string name="payment_information_title">Payment Information</string>
+    <string name="payment_safe_secure">Safe &amp; Secure</string>
+    <string name="payment_submit">Submit</string>
+    <string name="payment_account_hint_placeholder">Enter your account</string>
+
+    <string name="valued_players_my_income">My Income</string>
+    <string name="valued_players_earned_bonus">Earned Bonus</string>
+    <string name="valued_players_pending_bonus">Pending Bonus</string>
+    <string name="valued_players_current_withdrawal_progress">Current Withdrawal Progress</string>
+    <string name="valued_players_tap_get_cash">Tap &amp; Get Cash</string>
+    <!-- %s = formatted gap amount (with currency); 默认区 / 英语等用 PayPal -->
+    <string name="valued_players_just_away">Just %s away from PayPal withdrawal!</string>
+    <!-- 巴西区：渠道固定 PIX -->
+    <string name="valued_players_just_away_br">Just %s away from PIX withdrawal!</string>
+    <!-- 印尼区：渠道固定 GoPay -->
+    <string name="valued_players_just_away_id">Just %s away from GoPay withdrawal!</string>
+
+    <string name="withdraw_ready_title">Milestone Achieved!</string>
+    <string name="withdraw_ready_message">Your effort has paid off! You\'ve earned %s and are ready to withdraw.</string>
+    <string name="withdraw_ready_later">Later On</string>
+    <string name="withdraw_ready_claim">Claim My Reward</string>
 
 
-</resources>
+ </resources>

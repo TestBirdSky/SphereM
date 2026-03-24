@@ -118,5 +118,18 @@
     <string name="splash_open_first">Seu momento favorito para filmes</string>
     <string name="sp_tips">Estamos preparando seu conteúdo...</string>
 
+    <string name="valued_players_my_income">Minha renda</string>
+    <string name="valued_players_earned_bonus">Bônus ganho</string>
+    <string name="valued_players_pending_bonus">Bônus pendente</string>
+    <string name="valued_players_current_withdrawal_progress">Progresso atual do saque</string>
+    <string name="valued_players_tap_get_cash">Toque e receba dinheiro</string>
+    <string name="valued_players_just_away">Faltam apenas %s para o saque no PayPal!</string>
+    <string name="valued_players_just_away_br">Faltam apenas %s para o saque via PIX!</string>
+    <string name="valued_players_just_away_id">Faltam apenas %s para o saque via GoPay!</string>
+
+    <string name="withdraw_ready_title">Marco alcançado!</string>
+    <string name="withdraw_ready_message">Seu esforço valeu a pena! Você acumulou %s e já pode sacar.</string>
+    <string name="withdraw_ready_later">Depois</string>
+    <string name="withdraw_ready_claim">Resgatar recompensa</string>
 
 </resources>

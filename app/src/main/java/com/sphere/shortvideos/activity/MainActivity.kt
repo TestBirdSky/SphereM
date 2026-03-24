@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.sphere.shortvideos.GlobalConstants
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.baseui.GenericBindActivity
 import com.sphere.shortvideos.databinding.ActivityMainBinding
@@ -57,6 +58,7 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
     override fun initUI() {
         setupBottomNav()
         selectForYouIfFromNotification(intent)
+        consumeOpenWalletIntent(intent)
         viewModel.collectHistoryRoom()
         lifecycleScope.launch {
             delay(1000)
@@ -188,10 +190,17 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         binding.bottomNav.selectedItemId = R.id.tab_wallet
     }
 
+    /** 切换到短视频 Tab（内嵌 [PangleVideoContainerFragment] 列表） */
+    fun jumpToVideoTab() {
+        binding.bottomNav.selectedItemId = R.id.tab_video
+    }
+
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        setIntent(intent)
         selectForYouIfFromNotification(intent)
+        consumeOpenWalletIntent(intent)
     }
 
 
@@ -204,6 +213,13 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
                 R.id.tab_video
             }
         }
+    }
+
+    /** 从播放页等通过 Intent 唤起并打开提现 Tab */
+    private fun consumeOpenWalletIntent(intent: Intent?) {
+        if (intent?.getBooleanExtra(GlobalConstants.EXTRA_KEY_OPEN_WALLET, false) != true) return
+        intent.removeExtra(GlobalConstants.EXTRA_KEY_OPEN_WALLET)
+        binding.root.post { jumpWallet() }
     }
 
     override fun onResume() {

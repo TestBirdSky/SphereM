@@ -11,6 +11,9 @@ object GlobalConstants {
     const val EXTRA_KEY_COMMON_INT = "EXTRA_KEY_COMMON_INT"
     const val EXTRA_KEY_COMMON_LONG = "EXTRA_KEY_COMMON_LONG"
 
+    /** 打开 MainActivity 后切换到提现 Tab（Wallet / [WithdrawFragment]） */
+    const val EXTRA_KEY_OPEN_WALLET = "EXTRA_KEY_OPEN_WALLET"
+
     const val PRIVACY_POLICY = "https://www.google.com" // todo
 
     const val RISK_URL = "https://ip-prod.dramasphere.net/api/cbird"

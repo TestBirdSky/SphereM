@@ -1,6 +1,7 @@
 package com.sphere.shortvideos.activity
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -481,6 +482,20 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
         if (getActivityState() && dialogNum <= 0) {
             detailFragment?.startPlay()
         }
+    }
+
+    /** 停止播放与收益计时，打开主界面提现 Tab 并关闭当前播放页 */
+    fun stopPlaybackAndOpenWallet() {
+        MoneyCacheHelper.stopWatchVideo()
+        HelperRewardShow.pauseMoneyProgress()
+        detailFragment?.pausePlay()
+        startActivity(
+            Intent(this, MainActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                putExtra(GlobalConstants.EXTRA_KEY_OPEN_WALLET, true)
+            }
+        )
+        finish()
     }
 
     override fun onDestroy() {

@@ -46,6 +46,7 @@ abstract class BaseController(val position: AdPosition, val adBean: AdItemBean) 
         activity.lifecycleScope.launch(Dispatchers.Main) {
             while (!activity.getActivityState()) delay(200)
             dismissed()
+            WithdrawalActionHelper.checkIsAllowInDismissAd(activity)
         }
     }
 

@@ -115,4 +115,18 @@
     <string name="wi_notification_tips">Te está esperando en tu billetera.</string>
     <string name="splash_open_first">Tu momento favorito para ver películas</string>
     <string name="sp_tips">Estamos preparando tu contenido...</string>
+
+    <string name="valued_players_my_income">Mis ingresos</string>
+    <string name="valued_players_earned_bonus">Bono ganado</string>
+    <string name="valued_players_pending_bonus">Bono pendiente</string>
+    <string name="valued_players_current_withdrawal_progress">Progreso actual de retiro</string>
+    <string name="valued_players_tap_get_cash">Toca y recibe dinero</string>
+    <string name="valued_players_just_away">¡Solo %s para retirar con PayPal!</string>
+    <string name="valued_players_just_away_br">¡Solo %s para retirar con PIX!</string>
+    <string name="valued_players_just_away_id">¡Solo %s para retirar con GoPay!</string>
+
+    <string name="withdraw_ready_title">¡Hito alcanzado!</string>
+    <string name="withdraw_ready_message">¡Tu esfuerzo valió la pena! Has acumulado %s y ya puedes retirar.</string>
+    <string name="withdraw_ready_later">Más tarde</string>
+    <string name="withdraw_ready_claim">Reclamar recompensa</string>
 </resources>

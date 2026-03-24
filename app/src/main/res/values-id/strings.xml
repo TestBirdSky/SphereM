@@ -118,4 +118,18 @@
     <string name="wi_notification_tips">Menunggu di Dompet Anda.</string>
     <string name="splash_open_first">Waktu favorit Anda untuk menonton film</string>
     <string name="sp_tips">Kami sedang menyiapkan konten Anda...</string>
+
+    <string name="valued_players_my_income">Pendapatan saya</string>
+    <string name="valued_players_earned_bonus">Bonus terkumpul</string>
+    <string name="valued_players_pending_bonus">Bonus tertunda</string>
+    <string name="valued_players_current_withdrawal_progress">Progres penarikan saat ini</string>
+    <string name="valued_players_tap_get_cash">Ketuk &amp; dapatkan uang</string>
+    <string name="valued_players_just_away">Hanya %s lagi untuk penarikan PayPal!</string>
+    <string name="valued_players_just_away_br">Hanya %s lagi untuk penarikan PIX!</string>
+    <string name="valued_players_just_away_id">Hanya %s lagi untuk penarikan GoPay!</string>
+
+    <string name="withdraw_ready_title">Pencapaian baru!</string>
+    <string name="withdraw_ready_message">Usaha Anda membuahkan hasil! Anda telah mengumpulkan %s dan siap menarik.</string>
+    <string name="withdraw_ready_later">Nanti saja</string>
+    <string name="withdraw_ready_claim">Klaim hadiah</string>
 </resources>

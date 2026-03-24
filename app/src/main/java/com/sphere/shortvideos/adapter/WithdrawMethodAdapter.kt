@@ -30,6 +30,9 @@ class WithdrawMethodAdapter(
         if (index in methods.indices) notifyItemChanged(index)
     }
 
+    /** 当前选中的提现方式（与钱包页横向列表一致） */
+    fun getSelectedMethod(): WithdrawAmountHelper.WithdrawPaymentMethod? = methods.getOrNull(selectedIndex)
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MethodViewHolder {
         val binding = ItemWithdrawalBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MethodViewHolder(binding)

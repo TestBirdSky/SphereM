@@ -23,6 +23,9 @@ object MMKVRepository {
     var isNewUser by MMKVData(true)
     var isShowBackTips by MMKVData(true)
 
+    /** [WithdrawReadyDialogFragment] 是否已展示过（全生命周期只弹一次） */
+    var hasShownWithdrawReadyDialogEver by MMKVData(false)
+
     // 用户类型：true 为黑名单用户（Organic），false 为买量用户
     var isBlacklistUser by MMKVData(false)
 
@@ -39,6 +42,7 @@ object MMKVRepository {
             showOpenNotifDialogFlag = 30
             AdUtils.allAdShowNum = 0
             WithdrawalActionHelper.showLock2NumCurDay = 0
+            WithdrawalActionHelper.curDayAdNum = 0
             return false
         }
         return true
