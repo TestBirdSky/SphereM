@@ -5,9 +5,9 @@ import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.activity.PangleDramaPlayActivity
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.bean.WithdrawalActionConfig
-import com.sphere.shortvideos.dialogs.LockInfoDialogFragment
-import com.sphere.shortvideos.dialogs.PaymentInformationDialogFragment
-import com.sphere.shortvideos.dialogs.ValuedPlayersDialogFragment
+import com.sphere.shortvideos.dialogs.withdraw.LockInfoDialogFragment
+import com.sphere.shortvideos.dialogs.withdraw.PaymentInformationDialogFragment
+import com.sphere.shortvideos.dialogs.withdraw.ValuedPlayersDialogFragment
 import com.sphere.shortvideos.helper.DialogFragmentDisplayHelper
 import com.sphere.shortvideos.helper.RemoteConfHelper
 import com.sphere.shortvideos.helper.mmkv.MMKVData
@@ -95,5 +95,8 @@ object WithdrawalActionHelper {
         if (curDayAdNum < getConfig().userMaintenance.premiumUser) return false
         return true
     }
+
+    // 提现账号相关缓存
+
 }
 

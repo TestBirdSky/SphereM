@@ -16,6 +16,7 @@ import com.sphere.shortvideos.helper.mmkv.MMKVData
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.helper.permission.PostPermission
 import com.sphere.shortvideos.helper.session
+import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.nextView
 import com.sphere.shortvideos.notification.NotificationHelper
@@ -70,6 +71,9 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
         }
         session()
         MMKVRepository.checkCueDay()
+        if (isDebugMode) { // todo del
+            openMain()
+        }
     }
 
     private fun openMain() {

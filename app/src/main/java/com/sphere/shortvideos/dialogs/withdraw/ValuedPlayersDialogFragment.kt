@@ -1,4 +1,4 @@
-package com.sphere.shortvideos.dialogs
+package com.sphere.shortvideos.dialogs.withdraw
 
 import android.graphics.Color
 import android.os.Bundle

@@ -1,4 +1,4 @@
-package com.sphere.shortvideos.dialogs
+package com.sphere.shortvideos.dialogs.withdraw
 
 import android.os.Bundle
 import android.text.Editable
@@ -16,7 +16,7 @@ import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.withdraw.WithdrawPaymentAccountHints
 
 /**
- * 收款信息弹窗：横向提现方式与钱包页 [fragment_wallte] 同源（[WithdrawAmountHelper.fetchWithdrawPaymentMethods]）。
+ * 收款信息弹窗：横向提现方式与钱包页 [fragment_wallte] 同源（[com.sphere.shortvideos.helper.WithdrawAmountHelper.fetchWithdrawPaymentMethods]）。
  * 根据所选渠道切换「账户类型」标题与输入 Hint；输入为空时提交按钮不可点。
  * 提交后的持久化请在类内 [binding.btnSubmit] 点击处自行实现。
  */

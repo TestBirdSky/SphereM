@@ -145,8 +145,7 @@
                 android:paddingHorizontal="9dp"
                 android:visibility="visible"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/rv_withdraw"
-                tools:visibility="invisible">
+                app:layout_constraintTop_toBottomOf="@id/rv_withdraw">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_withdraw_money"

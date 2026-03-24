@@ -1,7 +1,6 @@
-package com.sphere.shortvideos.dialogs
+package com.sphere.shortvideos.dialogs.withdraw
 
 import android.os.Bundle
-import androidx.core.text.HtmlCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

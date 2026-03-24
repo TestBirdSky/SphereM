@@ -140,6 +140,11 @@
     <string name="payment_safe_secure">Safe &amp; Secure</string>
     <string name="payment_submit">Submit</string>
     <string name="payment_account_hint_placeholder">Enter your account</string>
+    <string name="withdraw_apply_processing">Due To A High Number Of Requests,\nProcessing May Take A Bit Longer.</string>
+    <string name="withdraw_apply_skip_now">Skip Now</string>
+    <string name="withdraw_apply_success_title">Application Successful</string>
+    <string name="withdraw_apply_success_desc">· 7-14 Working Days After Application.\n· A 1% Fee Applies Per Withdrawal.\n· Keep Growing Your Wealth While You Wait.</string>
+    <string name="withdraw_apply_watch_more">Watch More</string>
 
     <string name="valued_players_my_income">My Income</string>
     <string name="valued_players_earned_bonus">Earned Bonus</string>

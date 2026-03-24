@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#CC000000"
+    android:clickable="true"
+    android:focusable="true">
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_stage1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="layout_dots,tv_processing_desc,tv_skip_now,tv_skip_ad_tag" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/layout_dots"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/progress_apply"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed">
+
+        <View
+            android:id="@+id/view_dot1"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginHorizontal="8dp"
+            android:background="@drawable/shape_circle"
+            android:backgroundTint="#F3DD00" />
+
+        <View
+            android:id="@+id/view_dot2"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginHorizontal="8dp"
+            android:background="@drawable/shape_circle"
+            android:backgroundTint="#00C9FF" />
+
+        <View
+            android:id="@+id/view_dot3"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginHorizontal="8dp"
+            android:background="@drawable/shape_circle"
+            android:backgroundTint="#FF2D2D" />
+
+        <View
+            android:id="@+id/view_dot4"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginHorizontal="8dp"
+            android:background="@drawable/shape_circle"
+            android:backgroundTint="#A957FF" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <ProgressBar
+        android:id="@+id/progress_apply"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="6dp"
+        android:layout_marginStart="34dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="34dp"
+        android:layout_marginBottom="150dp"
+        android:max="100"
+        android:progress="0"
+        android:progressDrawable="@drawable/layer_withdraw_apply_progress"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_dots" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_processing_desc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="@string/withdraw_apply_processing"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/progress_apply"
+        app:layout_constraintStart_toStartOf="@id/progress_apply"
+        app:layout_constraintTop_toBottomOf="@id/progress_apply" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_skip_now"
+        android:layout_width="240dp"
+        android:layout_height="47dp"
+        android:layout_marginTop="77dp"
+        android:background="@drawable/shape_withdraw_skip_btn"
+        android:gravity="center"
+        android:text="@string/withdraw_apply_skip_now"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_processing_desc"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/tv_skip_ad_tag"
+        android:layout_width="36dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="10dp"
+        android:rotation="20"
+        android:src="@drawable/ic_ad_tag"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/tv_skip_now"
+        app:layout_constraintEnd_toEndOf="@id/tv_skip_now"
+        app:layout_constraintTop_toTopOf="@id/tv_skip_now"
+        app:layout_constraintVertical_bias="0.2" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_stage2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="iv_stage2,tv_stage2_desc" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_stage2"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_finish_req"
+        app:layout_constraintBottom_toTopOf="@id/progress_apply"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_stage2_desc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="@string/withdraw_apply_processing"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/progress_apply"
+        app:layout_constraintStart_toStartOf="@id/progress_apply"
+        app:layout_constraintTop_toBottomOf="@id/progress_apply"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_stage3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:constraint_referenced_ids="layout_stage3_card"
+        tools:visibility="visible" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_stage3_card"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="28dp"
+        android:background="@drawable/shape_withdraw_stage3_bg"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="22dp"
+        android:paddingBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_stage3_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/withdraw_apply_success_title"
+            android:textColor="#F5C91A"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_stage3_icon"
+            android:layout_width="94dp"
+            android:layout_height="90dp"
+            android:layout_marginTop="18dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_req_mo_success"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_stage3_title" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_stage3_desc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:lineSpacingExtra="3dp"
+            android:text="@string/withdraw_apply_success_desc"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_stage3_icon" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/btn_watch_more"
+            android:layout_width="0dp"
+            android:layout_height="47dp"
+            android:layout_marginTop="23dp"
+            android:background="@drawable/shape_withdraw_watch_more_btn"
+            android:gravity="center"
+            android:text="@string/withdraw_apply_watch_more"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_stage3_desc" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_close"
+        android:layout_width="37dp"
+        android:layout_height="37dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="170dp"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_dialog_close"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_stage3_card" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,4 @@
-package com.sphere.shortvideos.dialogs
+package com.sphere.shortvideos.dialogs.withdraw
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,7 +13,7 @@ import com.sphere.shortvideos.databinding.DialogMakingMoneyingBinding
  * Date：2026/3/23
  * Describe: Account security restriction dialog
  */
-class MakingMoneyingDialogFragment : DialogFragment() {
+class MakingMoneyDialogFragment : DialogFragment() {
     var onClose: (() -> Unit)? = null
     var onClaim: (() -> Unit)? = null
 

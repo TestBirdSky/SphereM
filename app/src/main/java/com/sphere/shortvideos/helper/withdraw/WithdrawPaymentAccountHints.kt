@@ -47,10 +47,9 @@ object WithdrawPaymentAccountHints {
      */
     private fun indonesiaCopy(methodName: String): FieldCopy = when (methodName) {
         "DANA", "OVO", "GoPay" -> {
-            // TODO(印尼): 按产品表格补充各渠道的账户类型标题与 Hint（当前为占位）
             FieldCopy(
                 label = "Mobile Number",
-                hint = "E.g. 08xxxxxxxxxx"
+                hint = "E.g. 081234567890"
             )
         }
 
