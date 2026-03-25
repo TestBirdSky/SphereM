@@ -1,6 +1,8 @@
 package com.sphere.shortvideos.helper.withdraw
 
+import com.sphere.shortvideos.R
 import com.sphere.shortvideos.helper.LauageTools
+import com.sphere.shortvideos.mApp
 
 /**
  * 提现「收款账户」输入：标题（账户类型说明）与 Hint，随地区 + 所选渠道变化。
@@ -24,31 +26,27 @@ object WithdrawPaymentAccountHints {
 
     private fun brazilCopy(methodName: String): FieldCopy = when (methodName) {
         "PIX" -> FieldCopy(
-            label = "CPF / Email / Mobile Number / Random Key",
+            label = mApp.getString(R.string.withdraw_account_label_cpf_email_mobile_random),
             hint = "E.g. 12345678901"
         )
 
         "PagBank" -> FieldCopy(
-            label = "Email / CPF",
+            label = mApp.getString(R.string.withdraw_account_label_email_or_cpf),
             hint = "E.g. user@email.com"
         )
 
         "PayPal" -> FieldCopy(
-            label = "Email / Mobile Number",
+            label = mApp.getString(R.string.withdraw_account_label_email_or_mobile),
             hint = "E.g. user@email.com"
         )
 
         else -> defaultCopy()
     }
 
-    /**
-     * TODO(产品/你方补充)：印尼 DANA / OVO / GoPay 的「账户类型」标题与 Hint 以正式表格为准；
-     * 当前为占位文案，后续请在此方法内替换。
-     */
     private fun indonesiaCopy(methodName: String): FieldCopy = when (methodName) {
         "DANA", "OVO", "GoPay" -> {
             FieldCopy(
-                label = "Mobile Number",
+                label = mApp.getString(R.string.withdraw_account_label_mobile_number),
                 hint = "E.g. 081234567890"
             )
         }
@@ -58,17 +56,17 @@ object WithdrawPaymentAccountHints {
 
     private fun englishDefaultCopy(methodName: String): FieldCopy = when (methodName) {
         "PayPal" -> FieldCopy(
-            label = "Email / Mobile Number",
+            label = mApp.getString(R.string.withdraw_account_label_email_or_mobile),
             hint = "E.g. user@gmail.com"
         )
 
         "Cash App" -> FieldCopy(
-            label = "\$Cashtag / Email / Mobile Number",
+            label = mApp.getString(R.string.withdraw_account_label_cashtag_email_or_mobile),
             hint = "E.g. 1234567890"
         )
 
         "Google Pay" -> FieldCopy(
-            label = "Gmail / Mobile Number",
+            label = mApp.getString(R.string.withdraw_account_label_gmail_or_mobile),
             hint = "E.g. example@gmail.com"
         )
 
@@ -76,7 +74,7 @@ object WithdrawPaymentAccountHints {
     }
 
     private fun defaultCopy() = FieldCopy(
-        label = "Email / Mobile Number",
-        hint = "Enter your account"
+        label = mApp.getString(R.string.withdraw_account_label_email_or_mobile),
+        hint = ""
     )
 }

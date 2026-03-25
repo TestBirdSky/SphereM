@@ -57,12 +57,26 @@ class FbAndAdjustHelper {
             val network = attribution.network ?: ""
             val isBlacklist = network.contains("Organic", ignoreCase = false)
             MMKVRepository.isBlacklistUser = isBlacklist
-            MMKVRepository.myAdjustNetWorkInfo = network
+            MMKVRepository.adjustPaidChannel = parsePaidChannelByAdjustNetwork(network)
             logError(": network=$network, isBlacklistUser=$isBlacklist")
             localEvent("adjust_suc", hashMapOf("adjust_user" to if (isBlacklist) 0 else 1, "net_info" to network))
         }
 
         localEvent("adjust_req")
         Adjust.initSdk(config)
+    }
+
+    private fun parsePaidChannelByAdjustNetwork(network: String): String {
+        val n = network.trim()
+        if (n.isEmpty()) return "unknown"
+        val lower = n.lowercase()
+        return when {
+            lower.contains("mintegral") || lower.contains("mtg") -> "mtg"
+            // Facebook / Meta
+            lower.contains("facebook") || lower.contains("meta") -> "fb"
+            // TikTok / ByteDance 常见写法
+            lower.contains("tiktok") || lower.contains("bytedance") || lower.contains("pangle") -> "tt"
+            else -> "unknown"
+        }
     }
 }

@@ -54,6 +54,15 @@
             android:focusable="true"
             android:padding="6dp">
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_selected_1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_selected_bg"
+                android:visibility="gone" />
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_card_1"
                 android:layout_width="match_parent"
@@ -75,6 +84,15 @@
             android:clickable="true"
             android:focusable="true"
             android:padding="6dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_selected_2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_selected_bg"
+                android:visibility="gone" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_card_2"
@@ -98,6 +116,15 @@
             android:focusable="true"
             android:padding="4dp">
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_selected_3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@null"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_selected_bg"
+                android:visibility="gone" />
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_card_3"
                 android:layout_width="match_parent"
@@ -118,6 +145,7 @@
         android:background="@drawable/shape_dark_r20"
         android:backgroundTint="#F5CF1A"
         android:gravity="center"
+        android:text="@string/flip_card_next"
         android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold"

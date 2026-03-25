@@ -28,7 +28,14 @@ object MMKVRepository {
 
     // 用户类型：true 为黑名单用户（Organic），false 为买量用户
     var isBlacklistUser by MMKVData(false)
-    var myAdjustNetWorkInfo by MMKVData("")
+    /**
+     * Adjust attribution.network 解析得到的买量渠道：
+     * - mtg: Mintegral
+     * - fb: Facebook Ads / Meta
+     * - tt: TikTok Ads / ByteDance
+     * - unknown: 无法判断或未获取
+     */
+    var adjustPaidChannel by MMKVData("")
 
     private var isCurDayStr by MMKVData("") // 当天
 

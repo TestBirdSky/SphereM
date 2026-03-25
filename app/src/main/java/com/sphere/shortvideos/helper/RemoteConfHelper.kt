@@ -9,6 +9,7 @@ import com.sphere.shortvideos.helper.ad.DramaIntAdHelper
 import com.sphere.shortvideos.helper.reward.RewardHelper
 import com.sphere.shortvideos.helper.risk.RiskHelper
 import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
+import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.mFbAndAdjustHelper
 import com.sphere.shortvideos.unlockIndex
@@ -43,7 +44,24 @@ class RemoteConfHelper {
     }
 
     private fun fetchAdRemote() {
-        AdUtils.initData(remoteConfig["dlmsf_ad_config"].asString())
+        val defaultKey = AD_CONFIG_DEFAULT_KEY
+        val key = resolveAdConfigKeyByChannel(MMKVRepository.adjustPaidChannel)
+        val channelConfig = runCatching { remoteConfig[key].asString() }.getOrNull().orEmpty()
+        if (channelConfig.isNotBlank()) {
+            AdUtils.initData(channelConfig)
+            return
+        }
+        // 回退默认配置
+        AdUtils.initData(runCatching { remoteConfig[defaultKey].asString() }.getOrNull().orEmpty())
+    }
+
+    private fun resolveAdConfigKeyByChannel(channel: String): String {
+        return when (channel.lowercase()) {
+            "mtg" -> AD_CONFIG_MTG_KEY
+            "fb" -> AD_CONFIG_FB_KEY
+            "tt" -> AD_CONFIG_TT_KEY
+            else -> AD_CONFIG_DEFAULT_KEY
+        }
     }
 
     private fun fetchUnlockIndex() {
@@ -68,5 +86,11 @@ class RemoteConfHelper {
         remoteConfig.getString(key)
     }.getOrNull() ?: ""
 
+    companion object {
+        private const val AD_CONFIG_DEFAULT_KEY = "dlmsf_ad_config"
+        private const val AD_CONFIG_MTG_KEY = "dlmsf_ad_config_mtg"
+        private const val AD_CONFIG_FB_KEY = "dlmsf_ad_config_fb"
+        private const val AD_CONFIG_TT_KEY = "dlmsf_ad_config_tt"
+    }
 
 }

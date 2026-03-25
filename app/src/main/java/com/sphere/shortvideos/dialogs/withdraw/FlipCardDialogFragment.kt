@@ -3,6 +3,9 @@ package com.sphere.shortvideos.dialogs.withdraw
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
+import android.graphics.Color
+import android.graphics.LinearGradient
+import android.graphics.Shader
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -11,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.databinding.DialogFlipCardBinding
@@ -20,7 +24,7 @@ import com.sphere.shortvideos.helper.localEvent
  * 翻卡弹窗：
  * 1) 先执行 3 秒高亮筛选动画（用户可提前点击任一卡结束）
  * 2) 触发翻牌动画，且命中结果固定为 "Withdrawal Instantly"
- * 3) 展示黄色 Next 按钮并倒计时 5 秒，超时自动关闭
+ * 3) 展示黄色 Next 按钮（无倒计时）
  */
 class FlipCardDialogFragment : DialogFragment() {
 
@@ -30,14 +34,13 @@ class FlipCardDialogFragment : DialogFragment() {
     private val handler = Handler(Looper.getMainLooper())
     private val cards by lazy { listOf(binding.card1, binding.card2, binding.card3) }
     private val cardTexts by lazy { listOf(binding.tvCard1, binding.tvCard2, binding.tvCard3) }
+    private val selectedBorders by lazy { listOf(binding.ivSelected1, binding.ivSelected2, binding.ivSelected3) }
 
     private var selectedIndex = 0
     private var cycleRunnable: Runnable? = null
     private var cycleTick = 0
     private var locked = false
     private var closed = false
-    private var countdownRunnable: Runnable? = null
-    private var countdownSec = 5
 
     var dismissEvent: () -> Unit = {}
 
@@ -110,7 +113,7 @@ class FlipCardDialogFragment : DialogFragment() {
                 flipCard(cards[idx], cardTexts[idx], values[idx]) {
                     restFinished++
                     if (restFinished == restIndexes.size) {
-                        showNextWithCountdown()
+                        showNext()
                     }
                 }
             }
@@ -129,7 +132,10 @@ class FlipCardDialogFragment : DialogFragment() {
         half.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 card.setBackgroundResource(R.drawable.ic_open_card_bg)
-                (text as? android.widget.TextView)?.text = targetText
+                (text as? TextView)?.let { tv ->
+                    tv.text = targetText
+                    applyResultTextStyle(tv, targetText)
+                }
                 half2.start()
             }
         })
@@ -147,43 +153,55 @@ class FlipCardDialogFragment : DialogFragment() {
             card.animate().scaleX(toScale).scaleY(toScale).setDuration(90L).start()
             card.alpha = if (i == index) 1f else 0.85f
         }
+        selectedBorders.forEachIndexed { i, v ->
+            v.visibility = if (i == index) View.VISIBLE else View.GONE
+        }
     }
 
-    private fun showNextWithCountdown() {
+    private fun showNext() {
         binding.btnNext.visibility = View.VISIBLE
         binding.ivClose.visibility = View.VISIBLE
-        countdownSec = 5
-        updateNextText()
         binding.btnNext.setOnClickListener { closeDialog() }
-        startCountdown()
     }
 
-    private fun startCountdown() {
-        countdownRunnable = object : Runnable {
-            override fun run() {
-                if (closed || _binding == null) return
-                countdownSec--
-                if (countdownSec <= 0) {
-                    closeDialog()
-                    return
+    private fun applyResultTextStyle(tv: TextView, targetText: String) {
+        val instantly = getString(R.string.flip_card_result_instantly)
+        val invite = getString(R.string.flip_card_result_invite)
+        val failed = getString(R.string.flip_card_result_failed)
+
+        tv.paint.shader = null
+        when (targetText) {
+            instantly -> {
+                tv.post {
+                    if (_binding == null) return@post
+                    val w = tv.width.toFloat().coerceAtLeast(1f)
+                    tv.paint.shader = LinearGradient(
+                        0f,
+                        0f,
+                        w,
+                        0f,
+                        Color.parseColor("#9411EC"),
+                        Color.parseColor("#EA00FF"),
+                        Shader.TileMode.CLAMP,
+                    )
+                    tv.invalidate()
                 }
-                updateNextText()
-                handler.postDelayed(this, 1000L)
+            }
+
+            invite -> {
+                tv.setTextColor(Color.parseColor("#975606"))
+            }
+
+            failed -> {
+                tv.setTextColor(Color.parseColor("#7C7C7C"))
             }
         }
-        handler.postDelayed(countdownRunnable!!, 1000L)
-    }
-
-    private fun updateNextText() {
-        binding.btnNext.text = getString(R.string.flip_card_next_countdown, countdownSec)
     }
 
     private fun closeDialog() {
         if (closed) return
         closed = true
         stopCycle()
-        countdownRunnable?.let { handler.removeCallbacks(it) }
-        countdownRunnable = null
         dismissEvent()
         dismissAllowingStateLoss()
     }
@@ -191,9 +209,10 @@ class FlipCardDialogFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.window?.let { window ->
-            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
-            window.setBackgroundDrawableResource(android.R.color.transparent)
+            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
+            window.setBackgroundDrawableResource(R.color.color_dialog)
         }
+        dialog?.setCanceledOnTouchOutside(false)
     }
 
     override fun onDestroyView() {

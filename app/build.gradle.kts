@@ -185,7 +185,7 @@ dependencies {
 
     // topon聚合 6.5.71
     //TU (Necessary)
-    api("com.thinkup.sdk:core-tpn:6.5.71")
+    api("com.thinkup.sdk:core-tpn:6.5.52")
     //Androidx (Necessary)
     api("androidx.appcompat:appcompat:1.6.1")
     api("androidx.browser:browser:1.4.0")
@@ -262,9 +262,10 @@ dependencies {
     api("com.moloco.sdk:moloco-sdk:4.3.1")
 
     //UnityAds
-    api("com.thinkup.sdk:adapter-tpn-unityads:4.16.6.1.0")
-    api("com.unity3d.ads:unity-ads:4.16.6")
+    api("com.thinkup.sdk:adapter-tpn-unityads:4.16.1.1.0")
+    api("com.unity3d.ads:unity-ads:4.16.1")
+
     //Tramini
-    api("com.thinkup.sdk:tramini-plugin-tpn:6.5.71")
+    api("com.thinkup.sdk:tramini-plugin-tpn:6.5.52")
 
 }

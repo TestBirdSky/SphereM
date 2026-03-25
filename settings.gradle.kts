@@ -58,9 +58,9 @@ dependencyResolutionManagement {
         // MAX
 
         // topon
-        flatDir {
-            dirs("libs")
-        }
+//        flatDir {
+//            dirs("libs")
+//        }
         //TU(Core)
         maven {
             url = uri("https://jfrog.anythinktech.com/artifactory/overseas_sdk")
@@ -93,9 +93,9 @@ dependencyResolutionManagement {
         }
 
         // debug
-        maven {
-            url = uri("https://jfrog.anythinktech.com/artifactory/debugger")
-        }
+//        maven {
+//            url = uri("https://jfrog.anythinktech.com/artifactory/debugger")
+//        }
     }
 }
 
