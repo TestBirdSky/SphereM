@@ -87,19 +87,23 @@ class WithdrawViewModel : ViewModel() {
     private fun refreshTask(block: (Int) -> Unit) {
         logError("refreshTask-->$curTaskProgressStatus")
         if ((curTaskStep.value ?: 0) < 100) {
-            val info = fetchInfoByStep()
+            var info = fetchInfoByStep()
             val isCompleted = info?.third?.all { it.isCompleted } ?: false
             if (isCompleted && curTaskProgressStatus < 100) {
                 curTaskProgressStatus += 30
+                info = fetchInfoByStep()
             }
             curStatus.value = WithdrawalStatus.WithdrawalTask
-            if (curTaskProgressStatus != curTaskStep.value) {
-                block(curTaskProgressStatus)
-            } else if (curTaskProgressStatus == 100 && isShowWithApplyDialog.not()) {
-                block(curTaskProgressStatus)
-            }
-            curTaskStep.value = curTaskProgressStatus
+
+            val oldStep = curTaskStep.value ?: 0
+            val newStep = curTaskProgressStatus
+            curTaskStep.value = newStep
             curInfo.value = info
+            if (newStep != oldStep) {
+                block(newStep)
+            } else if (newStep == 100 && isShowWithApplyDialog.not()) {
+                block(newStep)
+            }
         }
     }
 

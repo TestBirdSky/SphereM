@@ -104,8 +104,11 @@
         app:layout_constraintTop_toBottomOf="@id/tv_money" />
 
     <ScrollView
+        android:id="@+id/scroll_withdraw"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:fillViewport="true"
         app:layout_constraintBottom_toTopOf="@+id/tv_user_title"
         app:layout_constraintTop_toBottomOf="@id/iv_bg_top">
 

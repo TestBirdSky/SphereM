@@ -106,16 +106,17 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
         hasMovedToStage2 = false
         isRvRequesting = false
         progressApply.max = 100
-        progressApply.progress = 0 // 前两个进度段仅展示全屏黑底（#000000，透明度 80%），不展示其他控件。
-        // 由于根布局已经有黑底背景，这里只需要隐藏前景控件即可。
+        progressApply.progress = 0
+        // 前两个进度段：展示黑底 + dots（避免纯黑空白），其余控件隐藏。
         progressApply.isVisible = false
-        groupStage1.isVisible = false
+        tvProcessingDesc.isVisible = false
+        groupStage1.isVisible = true
         groupStage2.isVisible = false
         groupStage3.isVisible = false
         tvSkipNow.isVisible = false
         tvSkipAdTag.isVisible = false
         ivClose.isVisible = false
-        stopDotsPulseAnim()
+        startDotsPulseAnim()
         isStage1ForegroundVisible = false
 
         revealControlsJob?.cancel()
@@ -175,9 +176,11 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
 
     private fun setStage1BackgroundOnlyUi() = with(binding) {
         if (isStage1ForegroundVisible.not()) return@with
-        groupStage1.isVisible = false
+        // 黑底 + dots，隐藏进度条/文案
+        groupStage1.isVisible = true
         progressApply.isVisible = false
-        stopDotsPulseAnim()
+        tvProcessingDesc.isVisible = false
+        if (dotsAnimatorSet == null) startDotsPulseAnim()
         isStage1ForegroundVisible = false
     }
 
@@ -185,6 +188,7 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
         if (isStage1ForegroundVisible) return@with
         groupStage1.isVisible = true
         progressApply.isVisible = true
+        tvProcessingDesc.isVisible = true
         startDotsPulseAnim()
         isStage1ForegroundVisible = true
     }

@@ -8,6 +8,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.adapter.WithdrawAmountAdapter
 import com.sphere.shortvideos.adapter.WithdrawMethodAdapter
@@ -85,7 +87,25 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
         }
         userInfoMarqueeController.setup(binding.layoutWithUserInfo)
         AnimViewHelper.applyPressBounceEffect(binding.tvWithdraw)
+        setupImeInsetForScroll()
         registerViewModel()
+    }
+
+    private fun setupImeInsetForScroll() {
+        val scrollView = binding.scrollWithdraw
+
+        // 记录滚动容器的基础 bottom padding，避免重复叠加。
+        val baseBottomPadding = scrollView.paddingBottom
+
+        ViewCompat.setOnApplyWindowInsetsListener(scrollView) { v, insets ->
+            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val bottom = maxOf(baseBottomPadding, imeInsets.bottom)
+            v.setPadding(v.paddingLeft, v.paddingTop, v.paddingRight, bottom)
+            insets
+        }
+
+        // 触发一次初始化，确保首次进入页面就能正确设置 padding。
+        ViewCompat.requestApplyInsets(scrollView)
     }
 
     private fun setupWithdrawMethods() {
@@ -216,13 +236,13 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
         viewModel.refresh({ progress ->
             activity?.let {
                 if (it.isFinishing || isAdded.not()) return@refresh
-                val taskInfo = viewModel.curInfo.value ?: return@refresh
+                val taskInfo = viewModel.curInfo.value
                 when (progress) {
                     TASK3_STEP -> {
                         DialogFragmentDisplayHelper.show(it.supportFragmentManager, FlipCardDialogFragment().apply {
                             dismissEvent = {
                                 if (it.isFinishing.not() && isAdded && isResume) {
-                                    taskInfo.let { info ->
+                                    taskInfo?.let { info ->
                                         DialogFragmentDisplayHelper.show(
                                             it.supportFragmentManager,
                                             WithdrawalTaskFragment.newInstance(
@@ -249,7 +269,7 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
                     }
 
                     else -> {
-                        taskInfo.let { info ->
+                        taskInfo?.let { info ->
                             DialogFragmentDisplayHelper.show(
                                 it.supportFragmentManager,
                                 WithdrawalTaskFragment.newInstance(
