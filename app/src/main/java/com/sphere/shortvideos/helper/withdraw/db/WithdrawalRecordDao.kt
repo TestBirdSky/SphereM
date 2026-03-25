@@ -11,4 +11,10 @@ interface WithdrawalRecordDao {
 
     @Query("UPDATE withdrawal_record_table SET progress = :progress WHERE id = :id")
     suspend fun updateProgressById(id: Long, progress: Double): Int
+
+    @Query("SELECT * FROM withdrawal_record_table ORDER BY createdAt DESC")
+    suspend fun queryAllOrderedByCreatedDesc(): List<WithdrawalRecordEntity>
+
+    @Query("SELECT * FROM withdrawal_record_table WHERE id = :id LIMIT 1")
+    suspend fun getById(id: Long): WithdrawalRecordEntity?
 }

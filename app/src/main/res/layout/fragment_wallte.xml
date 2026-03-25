@@ -113,6 +113,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/group_normal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                app:constraint_referenced_ids="tv_wm,rv_withdraw,layout_wa" />
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/group_withdrawal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:constraint_referenced_ids="tv_wm,rv_withdraw" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/cut_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_wm"
                 android:layout_width="wrap_content"
@@ -123,7 +145,7 @@
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/cut_rv" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_withdraw"
@@ -168,9 +190,9 @@
 
             <FrameLayout
                 android:id="@+id/view_parent"
-                app:layout_constraintTop_toBottomOf="@id/rv_withdraw"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/rv_withdraw" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

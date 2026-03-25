@@ -20,6 +20,7 @@ import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.databinding.DialogWithdrawApplyTransitionBinding
 import com.sphere.shortvideos.helper.ad.AdUtils
+import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -38,6 +39,9 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
 
     private var hasMovedToStage2 = false
     private var isRvRequesting = false
+    private var isStage1ForegroundVisible = false
+
+    var dismissEvent: () -> Unit = {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,12 +75,16 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
 
     private fun setupStaticUi() = with(binding) {
         tvSkipNow.setOnClickListener {
+            WithdrawalActionHelper.taskFinish()
             showRewardVideoAndFastForward()
         }
         ivClose.setOnClickListener {
+            WithdrawalActionHelper.taskFinish()
+            dismissEvent()
             dismissAllowingStateLoss()
         }
         btnWatchMore.setOnClickListener {
+            WithdrawalActionHelper.taskFinish()
             jumpToForYou()
         }
     }
@@ -88,11 +96,9 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
             dismissAllowingStateLoss()
             return
         }
-        act?.startActivity(
-            Intent(act, MainActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            }
-        )
+        act?.startActivity(Intent(act, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        })
         dismissAllowingStateLoss()
     }
 
@@ -100,20 +106,30 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
         hasMovedToStage2 = false
         isRvRequesting = false
         progressApply.max = 100
-        progressApply.progress = 0
-        progressApply.isVisible = true
-        groupStage1.isVisible = true
+        progressApply.progress = 0 // 前两个进度段仅展示全屏黑底（#000000，透明度 80%），不展示其他控件。
+        // 由于根布局已经有黑底背景，这里只需要隐藏前景控件即可。
+        progressApply.isVisible = false
+        groupStage1.isVisible = false
         groupStage2.isVisible = false
         groupStage3.isVisible = false
         tvSkipNow.isVisible = false
         tvSkipAdTag.isVisible = false
         ivClose.isVisible = false
-        startDotsPulseAnim()
+        stopDotsPulseAnim()
+        isStage1ForegroundVisible = false
 
         revealControlsJob?.cancel()
         revealControlsJob = viewLifecycleOwner.lifecycleScope.launch {
             delay(CONTROLS_REVEAL_DELAY_MS)
             if (_binding == null || hasMovedToStage2) return@launch
+
+            // 直到进入第 3 段（progress >= 45）才允许显示跳过/关闭控件，避免前两段 UI 不符合“只有黑底”要求。
+            // 注意：progress=45 可能发生在第 2 段结束后的 pause 空档，此时还没进入第 3 段前景 UI，因此这里等待 isStage1ForegroundVisible。
+            while (_binding != null && !hasMovedToStage2 && !isStage1ForegroundVisible) {
+                delay(80L)
+            }
+            if (_binding == null || hasMovedToStage2) return@launch
+
             tvSkipNow.isVisible = true
             tvSkipAdTag.isVisible = true
             ivClose.isVisible = true
@@ -133,16 +149,44 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
     }
 
     private suspend fun runStage1ProgressRhythmFrom(fromProgress: Int) {
-        var current = fromProgress.coerceIn(0, 100)
+        var current = fromProgress.coerceIn(0, 100) // 根据当前进度决定是否立即切换到“前景 UI”（点位/进度条）。
+        if (current >= STAGE1_FOREGROUND_START_PROGRESS) {
+            ensureStage1ForegroundVisible()
+        } else {
+            setStage1BackgroundOnlyUi()
+        }
         for (step in STAGE1_STEPS) {
             if (current >= step.end) continue
-            val remainRatio = ((step.end - current).toFloat() / (step.end - step.start).toFloat())
-                .coerceIn(0f, 1f)
+
+            // 前两个进度段 end<=45：仅展示黑底；从第三段开始展示点位动画/进度条。
+            if (step.end > STAGE1_FOREGROUND_START_PROGRESS) {
+                ensureStage1ForegroundVisible()
+            } else {
+                setStage1BackgroundOnlyUi()
+            }
+
+            val remainRatio = ((step.end - current).toFloat() / (step.end - step.start).toFloat()).coerceIn(0f, 1f)
             val remainDuration = (step.duration * remainRatio).toLong().coerceAtLeast(1L)
             animateProgressTo(step.end, remainDuration)
             current = step.end
             if (step.pauseAfter > 0) delay(step.pauseAfter)
         }
+    }
+
+    private fun setStage1BackgroundOnlyUi() = with(binding) {
+        if (isStage1ForegroundVisible.not()) return@with
+        groupStage1.isVisible = false
+        progressApply.isVisible = false
+        stopDotsPulseAnim()
+        isStage1ForegroundVisible = false
+    }
+
+    private fun ensureStage1ForegroundVisible() = with(binding) {
+        if (isStage1ForegroundVisible) return@with
+        groupStage1.isVisible = true
+        progressApply.isVisible = true
+        startDotsPulseAnim()
+        isStage1ForegroundVisible = true
     }
 
     private suspend fun animateProgressTo(target: Int, duration: Long) {
@@ -172,8 +216,7 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
     private fun showRewardVideoAndFastForward() {
         if (isRvRequesting) return
         val activity = activity as? GenericActivity ?: return
-        isRvRequesting = true
-        // Skip 触发后先暂停自动进度，避免广告期间自行跳到后续状态。
+        isRvRequesting = true // Skip 触发后先暂停自动进度，避免广告期间自行跳到后续状态。
         flowJob?.cancel()
         progressAnimator?.cancel()
         AdUtils.showRvAd(
@@ -314,5 +357,6 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
         private const val STAGE2_ENTER_ANIM_MS = 320L
         private const val STAGE2_REMAIN_MS_AFTER_ENTER = 680L
         private const val RV_AD_POSITION_NAME = "dlmsf_withdraw_skip_rv"
+        private const val STAGE1_FOREGROUND_START_PROGRESS = 45
     }
 }

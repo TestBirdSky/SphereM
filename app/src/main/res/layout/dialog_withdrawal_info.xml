@@ -203,7 +203,7 @@
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_method_value"
                 android:layout_width="wrap_content"
-                android:layout_height="14dp"
+                android:layout_height="20dp"
                 android:adjustViewBounds="true"
                 app:layout_constraintBottom_toBottomOf="@id/tv_method_label"
                 app:layout_constraintEnd_toEndOf="parent"

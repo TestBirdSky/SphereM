@@ -39,10 +39,11 @@ class WithdrawalTaskFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         val currentBinding = binding ?: return
 
-        currentBinding.tvTitle.text = requireArguments().getString(ARG_TITLE).orEmpty()
-        currentBinding.tvDesc.text = requireArguments().getString(ARG_DESC).orEmpty()
+        val args = arguments
+        currentBinding.tvTitle.text = args?.getString(ARG_TITLE).orEmpty()
+        currentBinding.tvDesc.text = args?.getString(ARG_DESC).orEmpty()
 
-        val taskList = requireArguments().readTaskItems()
+        val taskList = args?.readTaskItems().orEmpty()
         bindTaskItem(currentBinding.taskItem1, taskList.getOrNull(0))
         bindTaskItem(currentBinding.taskItem2, taskList.getOrNull(1))
 

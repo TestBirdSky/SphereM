@@ -55,8 +55,9 @@ object WithdrawAmountHelper {
 
     /** 按 id 查找当前地区可用的提现方式（id 不区分大小写） */
     fun findWithdrawPaymentMethodById(id: String): WithdrawPaymentMethod {
+        val list = fetchWithdrawPaymentMethods()
         return fetchWithdrawPaymentMethods().firstOrNull { it.id.equals(id, ignoreCase = true) }
-            ?: WithdrawPaymentMethod("paypal", "PayPal", R.drawable.ic_paypal_w, R.drawable.ic_paypal_b)
+            ?: list.first()
     }
 
     private val defLow = WithdrawTier(brl = 240, usd = 48, idr = 720_000)

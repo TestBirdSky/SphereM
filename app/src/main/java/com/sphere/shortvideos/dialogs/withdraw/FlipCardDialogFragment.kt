@@ -38,6 +38,8 @@ class FlipCardDialogFragment : DialogFragment() {
     private var countdownRunnable: Runnable? = null
     private var countdownSec = 5
 
+    var dismissEvent: () -> Unit = {}
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NO_TITLE, R.style.TransparentMaterialDialog)
@@ -179,6 +181,7 @@ class FlipCardDialogFragment : DialogFragment() {
         stopCycle()
         countdownRunnable?.let { handler.removeCallbacks(it) }
         countdownRunnable = null
+        dismissEvent()
         dismissAllowingStateLoss()
     }
 

@@ -9,8 +9,10 @@ import android.view.View
 import androidx.core.graphics.toColorInt
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import com.mbridge.msdk.foundation.fragment.BaseFragment
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.activity.MainActivity
+import com.sphere.shortvideos.baseui.GenericFragment
 import com.sphere.shortvideos.databinding.LayoutWithdrawalActionBinding
 import com.sphere.shortvideos.dialogs.withdraw.InsufficientRevDialogFragment
 import com.sphere.shortvideos.dialogs.withdraw.MakingMoneyDialogFragment
@@ -25,7 +27,7 @@ import com.sphere.shortvideos.view.setColorText
  * [R.layout.layout_withdrawal_action] 专用：金额输入、一键填满余额、最低提现提示，并驱动外层提现按钮可用状态与提交校验。
  */
 class LayoutWithdrawalActionController(
-    private val fragment: Fragment,
+    private val fragment: GenericFragment<*>,
     private val binding: LayoutWithdrawalActionBinding,
 ) {
     private val textWatcher = object : TextWatcher {
@@ -39,6 +41,8 @@ class LayoutWithdrawalActionController(
     private var onInputChanged: (() -> Unit)? = null
 
     private val host get() = fragment.requireContext()
+
+    var taskEvent: () -> Unit = {}
 
     /**
      * @param mainWithdrawButton 外层 [fragment_wallte] 的提现按钮（无有效输入时应不可点）
@@ -137,7 +141,9 @@ class LayoutWithdrawalActionController(
 
     private fun showInfoDialog(fragmentManager: FragmentManager) {
         WithdrawalInfoDialogFragment().apply {
-            onAction = {}
+            onAction = {
+                taskEvent()
+            }
         }.show(fragmentManager, "info_show")
     }
 

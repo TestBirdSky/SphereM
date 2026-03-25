@@ -55,6 +55,8 @@ object WithdrawalActionHelper {
     var curDayAdNum by MMKVData(0)
     fun addShowAdNum() {
         if (getConfig().isOpenWithdraw().not()) return
+        addTask3WatchAdNum()
+        if (curTaskProgressStatus > 0) return
         adNum++
         curDayAdNum++
     }
@@ -100,10 +102,85 @@ object WithdrawalActionHelper {
     // 提现账号相关缓存
     var accountWithdrawal by MMKVData("")
     var withdrawalMethodId by MMKVData("")
-    var withdrawalValue by MMKVData(0.0)
+    var withdrawalValue by MMKVData(0.0) //提的金钱
+
+    // 当前任务状态：TASK1_STEP/TASK2_STEP/TASK3_STEP，0/100 代表结束态
+    var curTaskProgressStatus by MMKVData(0)
+    var isShowWithApplyDialog by MMKVData(false)
+
+    // ===== 提现任务进度持久化（你后续可在别处写入） =====
+    /** task1: Watch xx min drama（存秒，展示时转分钟） */
+    private var task1DramaSecond by MMKVData(0)
+
+    /** task2: Claim xx bubbles */
+    private var task2BubbleCount by MMKVData(0)
+
+    /** task3: Watch xx ads */
+    private var task3AdCount by MMKVData(0)
+
+    fun clearWithdrawalInfoAndAddTask() {
+        accountWithdrawal = ""
+        curTaskProgressStatus = TASK1_STEP
+        isShowWithApplyDialog = false
+        resetAllTaskProgress()
+    }
+
+    fun taskFinish() {
+        isShowWithApplyDialog = true
+        curTaskProgressStatus = 0
+        withdrawalMethodId = ""
+        withdrawalValue = 0.0
+    }
 
     fun havaBaseInfo(): Boolean {
         return accountWithdrawal.isNotBlank() && withdrawalMethodId.isNotBlank()
+    }
+
+    /**
+     * @param step 任务步骤：`TASK1_STEP`/`TASK2_STEP`/`TASK3_STEP`
+     * @return 当前步骤的“主进度”（task1：分钟；task2：泡泡数；task3：广告次数）
+     */
+    fun getPrimaryProgressByStep(step: Int): Int {
+        return when (step) {
+            TASK1_STEP -> task1DramaSecond / 60 // 秒 -> 分钟
+            TASK2_STEP -> task2BubbleCount
+            TASK3_STEP -> task3AdCount
+            else -> 0
+        }
+    }
+
+    /** 基于当前 [curTaskProgressStatus] 获取主进度 */
+    fun getPrimaryProgressByCurStep(): Int = getPrimaryProgressByStep(curTaskProgressStatus)
+
+    /** 仅在任务 1 阶段累加看短剧时长（秒） */
+    fun addTask1WatchTime(second: Int) {
+        if (curTaskProgressStatus == TASK1_STEP) {
+            task1DramaSecond += second.coerceAtLeast(0)
+        }
+    }
+
+    /** 仅在任务 3 阶段累加看广告次数 */
+    fun addTask3WatchAdNum() {
+        if (curTaskProgressStatus == TASK3_STEP) {
+            task3AdCount++
+        }
+    }
+
+    /** 仅在任务 2 阶段累加泡泡领取次数 */
+    fun addTask2BubbleNum() {
+        if (curTaskProgressStatus == TASK2_STEP) {
+            task2BubbleCount++
+        }
+    }
+
+    fun resetAllTaskProgress() {
+        task1DramaSecond = 0
+        task2BubbleCount = 0
+        task3AdCount = 0
+    }
+
+    fun getCutInProgress(): Int {
+        return getConfig().cutIn.random()
     }
 }
 

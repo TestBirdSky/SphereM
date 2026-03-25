@@ -4,63 +4,88 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.adapter.WithdrawAmountAdapter
 import com.sphere.shortvideos.adapter.WithdrawMethodAdapter
+import com.sphere.shortvideos.adapter.WithdrawalCutInAdapter
+import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.baseui.GenericFragment
 import com.sphere.shortvideos.databinding.FragmentWallteBinding
+import com.sphere.shortvideos.databinding.ItemWithdrawalTaskBinding
 import com.sphere.shortvideos.databinding.LayoutWithdrawalActionBinding
+import com.sphere.shortvideos.databinding.WithdrawalLayoutTaskBinding
 import com.sphere.shortvideos.dialogs.withdraw.FlipCardDialogFragment
+import com.sphere.shortvideos.dialogs.withdraw.MyAccountDialogFragment
 import com.sphere.shortvideos.dialogs.withdraw.WithdrawApplyTransitionDialogFragment
+import com.sphere.shortvideos.dialogs.withdraw.WithdrawalTaskItem
+import com.sphere.shortvideos.dialogs.withdraw.WithdrawalTaskFragment
 import com.sphere.shortvideos.helper.DialogFragmentDisplayHelper
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
+import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.withdraw.LayoutWithdrawalActionController
 import com.sphere.shortvideos.helper.withdraw.WithdrawUserInfoMarqueeController
+import com.sphere.shortvideos.helper.withdraw.TASK3_STEP
 import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
+import com.sphere.shortvideos.helper.withdraw.WithdrawalStatus
 import com.sphere.shortvideos.view.AnimViewHelper
+import com.sphere.shortvideos.vm.WithdrawViewModel
+import kotlinx.coroutines.launch
 
 /**
  * Date：2026/1/21
  * Describe:
  */
 class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
+    private val viewModel by viewModels<WithdrawViewModel>()
     private val methodAdapter = WithdrawMethodAdapter()
     private val amountAdapter = WithdrawAmountAdapter()
+    private val cutInAdapter = WithdrawalCutInAdapter()
     private val userInfoMarqueeController = WithdrawUserInfoMarqueeController(this)
     private var withdrawalActionController: LayoutWithdrawalActionController? = null
+    private val mWithdrawalLayoutTaskBinding: WithdrawalLayoutTaskBinding by lazy {
+        WithdrawalLayoutTaskBinding.inflate(layoutInflater, binding.viewParent, false)
+    }
 
     override fun bindView(inflater: LayoutInflater, container: ViewGroup?): FragmentWallteBinding {
         return FragmentWallteBinding.inflate(inflater, container, false)
     }
 
     override fun initUI() {
+        viewModel.init()
         setupWithdrawMethods()
-        setupWithdrawalAmountSection()
-        userInfoMarqueeController.setup(binding.layoutWithUserInfo)
-        AnimViewHelper.applyPressBounceEffect(binding.tvWithdraw)
-        binding.tvWithdraw.setOnClickListener {
-            withdrawalActionController?.let { c ->
-                if (!binding.tvWithdraw.isEnabled) return@setOnClickListener
-                runCatching {
-                    c.handleMainWithdrawClick(parentFragmentManager)
-//                    DialogFragmentDisplayHelper.show(parentFragmentManager, WithdrawApplyTransitionDialogFragment())
-//                    DialogFragmentDisplayHelper.show(parentFragmentManager, FlipCardDialogFragment())
+        binding.cutRv.adapter = cutInAdapter
+        cutInAdapter.onCutClick = { item, holder ->
+            (activity as? GenericActivity)?.let { act ->
+                AdUtils.showRvAd(act, adPositionName = WithdrawalCutInAdapter.CUT_IN_RV_AD_POSITION) { success ->
+                    if (!success || !isAdded) return@showRvAd
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        val result = viewModel.applyCutInBoost(item.recordId)
+                        if (result == null) {
+                            Toast.makeText(context, getString(R.string.cut_in_boost_failed), Toast.LENGTH_SHORT).show()
+                            return@launch
+                        }
+                        val oldP = (result.oldProgress * 100.0).toInt().coerceIn(10, 100)
+                        val newP = (result.newProgress * 100.0).toInt().coerceIn(10, 100)
+                        val plus = "+${result.displayedDeltaPercent}%"
+                        holder.playBoostSequence(oldP, newP, plus) {
+                            viewModel.refresh()
+                        }
+                    }
                 }
-                return@setOnClickListener
-            }
-            val cur3 = MoneyCacheHelper.fetchCurMoney()
-            val m = amountAdapter.fetchWithdrawMoney()
-            localEvent("withdraw_withdraw")
-            if (cur3 < m) {
-                Toast.makeText(context, getString(R.string.cant_with_tips), Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(context, getString(R.string.withdraw_wait_tips), Toast.LENGTH_SHORT).show()
             }
         }
+        binding.tvAccount.setOnClickListener {
+            DialogFragmentDisplayHelper.show(parentFragmentManager, MyAccountDialogFragment())
+        }
+        userInfoMarqueeController.setup(binding.layoutWithUserInfo)
+        AnimViewHelper.applyPressBounceEffect(binding.tvWithdraw)
+        registerViewModel()
     }
 
     private fun setupWithdrawMethods() {
@@ -75,27 +100,6 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
         amountAdapter.submitList(WithdrawAmountHelper.fetchWithdrawAmounts())
     }
 
-    private fun setupWithdrawalAmountSection() {
-        withdrawalActionController?.detach()
-        withdrawalActionController = null
-        val openWithdrawAction = WithdrawalActionHelper.getConfig().isOpenWithdraw()
-        if (openWithdrawAction) {
-            binding.layoutWa.visibility = View.GONE
-            binding.viewParent.removeAllViews()
-            val actionBinding = LayoutWithdrawalActionBinding.inflate(layoutInflater, binding.viewParent, false)
-            binding.viewParent.addView(actionBinding.root)
-            withdrawalActionController = LayoutWithdrawalActionController(this, actionBinding).also {
-                it.attach(binding.tvWithdraw)
-            }
-            return
-        }
-        binding.layoutWa.visibility = View.VISIBLE
-        binding.tvWithdraw.isEnabled = true
-        binding.tvWithdraw.alpha = 1f
-        binding.viewParent.removeAllViews()
-        setupWithdrawAmounts()
-    }
-
     override fun onDestroyView() {
         withdrawalActionController?.detach()
         withdrawalActionController = null
@@ -106,10 +110,176 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
     override fun onResume() {
         super.onResume()
         localEvent("withdraw_page")
+        refreshAndShowTaskDialog()
         binding.tvMoney.text = WithdrawAmountHelper.moneyFormatAddUnit(MoneyCacheHelper.fetchCurMoney())
         withdrawalActionController?.run {
             refreshMinTips()
             refreshMainWithdrawButton(binding.tvWithdraw)
         }
+    }
+
+    private fun registerViewModel() {
+        viewModel.isShowMyAccount.observe(this) { it ->
+            if (it) {
+                binding.tvAccount.visibility = View.VISIBLE
+            } else {
+                binding.tvAccount.visibility = View.GONE
+            }
+        }
+        viewModel.cutInItems.observe(this) { list ->
+            cutInAdapter.submitList(list)
+        }
+        viewModel.curInfo.observe(this) { t ->
+            mWithdrawalLayoutTaskBinding.apply {
+                t?.let {
+                    ivType.setImageResource(WithdrawAmountHelper.findWithdrawPaymentMethodById(WithdrawalActionHelper.withdrawalMethodId).iconSelected)
+                    tvMoney.text = WithdrawAmountHelper.moneyFormatAddUnit(WithdrawalActionHelper.withdrawalValue)
+                    tvTaskTitle.setText(t.first)
+                    tvDes.setText(t.second)
+                    bindTaskItem(taskItem1, t.third.getOrNull(0))
+                    bindTaskItem(taskItem2, t.third.getOrNull(1))
+                }
+            }
+        }
+        viewModel.curStatus.observe(this) {
+            when (it) {
+                WithdrawalStatus.NORMAL -> {
+                    binding.cutRv.visibility = View.GONE
+                    binding.groupNormal.visibility = View.VISIBLE
+                    binding.groupWithdrawal.visibility = View.GONE
+                    binding.tvWithdraw.isEnabled = true
+                    binding.tvWithdraw.alpha = 1f
+                    binding.viewParent.removeAllViews()
+                    setupWithdrawAmounts()
+                    binding.tvWithdraw.setOnClickListener {
+                        val cur3 = MoneyCacheHelper.fetchCurMoney()
+                        val m = amountAdapter.fetchWithdrawMoney()
+                        localEvent("withdraw_withdraw")
+                        if (cur3 < m) {
+                            Toast.makeText(context, getString(R.string.cant_with_tips), Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, getString(R.string.withdraw_wait_tips), Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+
+                WithdrawalStatus.WithdrawalCut -> {
+                    showWithdrawalActionFlow(showCutList = true)
+                }
+
+                WithdrawalStatus.Withdrawal1 -> {
+                    showWithdrawalActionFlow(showCutList = false)
+                }
+
+                WithdrawalStatus.WithdrawalTask -> {
+                    binding.cutRv.visibility = View.GONE
+                    binding.apply {
+                        binding.groupNormal.visibility = View.GONE
+                        binding.groupWithdrawal.visibility = View.GONE
+                        tvWithdraw.visibility = View.GONE
+                        binding.viewParent.removeAllViews()
+                    }
+                    binding.viewParent.addView(mWithdrawalLayoutTaskBinding.root)
+                }
+            }
+        }
+    }
+
+    private fun showWithdrawalActionFlow(showCutList: Boolean) {
+        binding.cutRv.visibility = if (showCutList) View.VISIBLE else View.GONE
+        binding.groupNormal.visibility = View.GONE
+        binding.groupWithdrawal.visibility = View.VISIBLE
+        binding.tvWithdraw.visibility = View.VISIBLE
+        withdrawalActionController?.detach()
+        withdrawalActionController = null
+        binding.viewParent.removeAllViews()
+        val actionBinding = LayoutWithdrawalActionBinding.inflate(layoutInflater, binding.viewParent, false)
+        binding.viewParent.addView(actionBinding.root)
+        withdrawalActionController = LayoutWithdrawalActionController(this, actionBinding).also {
+            it.attach(binding.tvWithdraw)
+            it.taskEvent = {
+                refreshAndShowTaskDialog()
+            }
+        }
+        binding.tvWithdraw.setOnClickListener {
+            withdrawalActionController?.let { c ->
+                if (!binding.tvWithdraw.isEnabled) return@setOnClickListener
+                runCatching {
+                    WithdrawalActionHelper.withdrawalMethodId = methodAdapter.getSelectedMethod()?.id ?: ""
+                    c.handleMainWithdrawClick(parentFragmentManager)
+                }
+            }
+        }
+    }
+
+    private fun refreshAndShowTaskDialog() {
+        viewModel.refresh({ progress ->
+            activity?.let {
+                if (it.isFinishing || isAdded.not()) return@refresh
+                val taskInfo = viewModel.curInfo.value ?: return@refresh
+                when (progress) {
+                    TASK3_STEP -> {
+                        DialogFragmentDisplayHelper.show(it.supportFragmentManager, FlipCardDialogFragment().apply {
+                            dismissEvent = {
+                                if (it.isFinishing.not() && isAdded && isResume) {
+                                    taskInfo.let { info ->
+                                        DialogFragmentDisplayHelper.show(
+                                            it.supportFragmentManager,
+                                            WithdrawalTaskFragment.newInstance(
+                                                title = getString(info.first),
+                                                desc = getString(info.second),
+                                                tasks = info.third,
+                                            ),
+                                        )
+                                    }
+                                }
+                            }
+                        })
+                    }
+
+                    100 -> {
+                        DialogFragmentDisplayHelper.show(it.supportFragmentManager,
+                            WithdrawApplyTransitionDialogFragment().apply {
+                                dismissEvent = {
+                                    if (it.isFinishing.not() && isAdded && isResume) {
+                                        viewModel.refresh()
+                                    }
+                                }
+                            })
+                    }
+
+                    else -> {
+                        taskInfo.let { info ->
+                            DialogFragmentDisplayHelper.show(
+                                it.supportFragmentManager,
+                                WithdrawalTaskFragment.newInstance(
+                                    title = getString(info.first),
+                                    desc = getString(info.second),
+                                    tasks = info.third,
+                                ),
+                            )
+                        }
+                    }
+                }
+
+            }
+        })
+    }
+
+    private fun bindTaskItem(binding: ItemWithdrawalTaskBinding, item: WithdrawalTaskItem?) {
+        if (item == null) {
+            binding.root.visibility = View.GONE
+            return
+        }
+        binding.root.visibility = View.VISIBLE
+        binding.tvTask.text = item.text
+        binding.tvProgress.text = item.progressText
+        binding.tvProgress.visibility = if (item.isCompleted) View.GONE else View.VISIBLE
+        binding.ivDone.visibility = if (item.isCompleted) View.VISIBLE else View.GONE
+        binding.tvTask.setTextColor(
+            requireContext().getColor(
+                if (item.isCompleted) R.color.color_46d else android.R.color.white,
+            ),
+        )
     }
 }

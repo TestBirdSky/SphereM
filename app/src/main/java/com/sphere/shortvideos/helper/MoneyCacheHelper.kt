@@ -2,6 +2,7 @@ package com.sphere.shortvideos.helper
 
 import com.sphere.shortvideos.helper.mmkv.MMKVData
 import com.sphere.shortvideos.helper.reward.RewardHelper
+import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.mApp
 import com.sphere.shortvideos.notification.NotificationHelper
@@ -72,7 +73,9 @@ object MoneyCacheHelper {
         if (time <= 0L) return
         val now = System.currentTimeMillis()
         if (now > time) {
-            watchVideoTime += (now - time)
+            val time = (now - time)
+            WithdrawalActionHelper.addTask1WatchTime((time / 1000).toInt())
+            watchVideoTime += time
         }
         logError("stopWatchVideo-->$watchVideoTime")
         time = 0L

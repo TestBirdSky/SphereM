@@ -3,47 +3,55 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
+    android:layout_height="36dp"
     android:paddingHorizontal="14dp">
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_task"
+        android:id="@+id/tv_date"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:fontFamily="@font/noto_sans"
+        android:gravity="center"
         android:maxLines="1"
+        android:text="2025.9.14"
         android:textColor="@android:color/white"
         android:textSize="12sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/tv_progress"
+        app:layout_constraintEnd_toStartOf="@id/tv_amount"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5"
-        tools:text="scratch 0/20 card" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_progress"
-        android:layout_width="wrap_content"
+        android:id="@+id/tv_amount"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/noto_sans"
-        android:textColor="#B182F5"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:text="$1000"
+        android:textColor="#FFD000"
         android:textSize="12sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="0/2" />
+        app:layout_constraintEnd_toStartOf="@id/tv_status"
+        app:layout_constraintStart_toEndOf="@id/tv_date"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/iv_done"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/ic_finish_task"
-        android:visibility="gone"
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_status"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:text="$1000"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/tv_amount"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:textColor="#37C049" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

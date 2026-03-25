@@ -167,7 +167,7 @@
     <string name="withdraw_info_platform">Payout Platform</string>
     <string name="withdraw_info_instruction">Payout Instructions</string>
     <string name="withdraw_info_creation_time">Creation Time</string>
-    <string name="withdraw_info_estimated_time">Estimated Payment Time</string>
+    <string name="withdraw_info_estimated_time">Pay Account</string>
     <string name="withdraw_info_payment_method">Payment Method</string>
     <string name="withdraw_info_confirm">Confirm</string>
     <string name="withdraw_info_default_platform">App Name</string>
@@ -180,9 +180,23 @@
     <string name="flip_card_result_invite">Invite 20 New Users To Withdraw</string>
     <string name="flip_card_result_failed">Withdrawl Failed</string>
     <string name="flip_card_next_countdown">Next (%ds)</string>
-    <string name="security_verification">Security Verification</string>
-    <string name="task1_des">Your withdrawal is under security verification. Please complete the required task to confirm account authenticity.</string>
     <string name="withdrawal_application_in_progress">Withdrawal application in progress</string>
+    <string name="security_verification">Security Verification</string>
+    <string name="task_des1">Your withdrawal is under security verification. Please complete the required task to confirm account authenticity.</string>
+    <string name="identity_confirmation">Identity Confirmation</string>
+    <string name="task_des2">Suspicious activity detected. Please complete verification tasks to confirm your identity and proceed with withdrawal.</string>
+    <string name="compliance_check">Compliance Check</string>
+    <string name="task_des3">Your withdrawal is pending compliance review. Complete the required steps to validate your account and release funds.</string>
+    <string name="cut_in">Cut In</string>
+    <string name="cut_in_boost_failed">Cut In Failed!</string>
+    <string name="task_info_get_money">Payment within 7-14 business days</string>
+    <string name="watch_min_drama">Watch %1$d min drama</string>
+    <string name="claim_bubbles">Claim %1$d bubbles</string>
+    <string name="watch_ads">Watch %1$d ads</string>
+    <string name="daily_check_in">Daily check-in</string>
+    <string name="date">Date</string>
+    <string name="amount">Amount</string>
+    <string name="status">Status</string>
 
 
 </resources>

@@ -39,7 +39,7 @@
             android:layout_marginTop="18dp"
             android:gravity="center"
             android:lineSpacingExtra="2dp"
-            android:text="@string/task1_des"
+            android:text="@string/task_des1"
             android:textColor="@android:color/white"
             android:textSize="12sp"
             android:textStyle="bold"

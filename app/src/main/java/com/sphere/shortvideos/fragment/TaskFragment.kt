@@ -12,9 +12,12 @@ import com.sphere.shortvideos.baseui.GenericFragment
 import com.sphere.shortvideos.view.setTaskInfo
 import com.sphere.shortvideos.databinding.FragmentTaskBinding
 import com.sphere.shortvideos.helper.HelperRewardShow
+import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.task.TaskHelper
+import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
+import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.view.AnimViewHelper
 import com.sphere.shortvideos.vm.MainViewModel
 import kotlinx.coroutines.delay
@@ -55,6 +58,9 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
         localEvent("billetera_bubble")
         localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_task_int"))
         if (curPopMoney > 0) {
+            if (isDebugMode) { // todo remove
+                curPopMoney = 48.0
+            }
             viewModel.addMoneyNotExChange(curPopMoney)
             AnimViewHelper.flyToTarget(view, binding.iv1, end = {
                 lifecycleScope.launch {
@@ -65,6 +71,7 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
             (activity as? MainActivity)?.let {
                 AdUtils.showRateAd(it, adPositionName = "dlmsf_task_int")
             }
+            WithdrawalActionHelper.addTask2BubbleNum()
         }
     }
 
