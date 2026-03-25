@@ -62,6 +62,7 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
     private var detailFragment: ShortPlayFragment? = null
     private var onProgressChanged: (progress: Int, max: Int) -> Unit = { _, _ -> }
 
+
     companion object {
         fun newInstance(shortPlay: ShortPlay): PangleVideoContainerFragment {
             val args = Bundle().apply {

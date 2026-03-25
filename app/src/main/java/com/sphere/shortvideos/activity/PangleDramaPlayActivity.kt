@@ -76,6 +76,8 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
     private var isForceShowAd: Boolean = false
     private var lastIsEven: Boolean = false
     private var dialogNum = 0
+    private var pageResumeAtMs: Long = 0L
+    private val completedEpisodes70 = mutableSetOf<Int>()
 
     private val dialogLifecycleCallbacks = object : FragmentManager.FragmentLifecycleCallbacks() {
         override fun onFragmentCreated(fm: FragmentManager, f: Fragment, savedInstanceState: Bundle?) {
@@ -100,6 +102,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
 
     @SuppressLint("SetTextI18n")
     override fun initUI() {
+        pageResumeAtMs = System.currentTimeMillis()
         initSeekbarAnim()
         bindClick()
         supportFragmentManager.registerFragmentLifecycleCallbacks(dialogLifecycleCallbacks, true)
@@ -275,6 +278,16 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                             currentProgress = currentPlayTime
                             maxProgress = duration
                             lastWatchTime = System.currentTimeMillis()
+                        }
+                    }
+                    if (duration > 0 && currentPlayTime >= (duration * 0.7f)) {
+                        if (completedEpisodes70.add(index)) {
+                            localEvent("drame_num", hashMapOf(
+                                "num" to completedEpisodes70.size,
+                                "index" to index,
+                                "drama_id" to (shortPlay?.id ?: ""),
+                                "name" to (shortPlay?.title ?: ""),
+                            ))
                         }
                     }
                 }
@@ -501,6 +514,10 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
     override fun onDestroy() {
         supportFragmentManager.unregisterFragmentLifecycleCallbacks(dialogLifecycleCallbacks)
         super.onDestroy()
+        val staySec = ((System.currentTimeMillis() - pageResumeAtMs) / 1000L).toInt().coerceAtLeast(0)
+        if (staySec > 0) {
+            localEvent("drame_page_stay", hashMapOf("stay_times" to staySec))
+        }
     }
 
     override fun onStop() {

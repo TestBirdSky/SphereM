@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.databinding.DialogWithdrawalInfoBinding
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
+import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 import com.sphere.shortvideos.helper.withdraw.db.WithdrawalRecordStore
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +18,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.random.Random
 
 /**
  * 提现信息确认弹窗（Confirm 与关闭按钮共用同一个回调）。
@@ -40,9 +42,11 @@ class WithdrawalInfoDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        localEvent("withdrawal_confirmation")
         fillDefaultInfo()
         persistWithdrawalRecord()
         binding.btnConfirm.setOnClickListener {
+            localEvent("withdrawal_Initiate")
             onAction?.invoke()
             dismissAllowingStateLoss()
         }
@@ -70,7 +74,7 @@ class WithdrawalInfoDialogFragment : DialogFragment() {
 
     private fun persistWithdrawalRecord() {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-            WithdrawalRecordStore.createRecordFromCache(initialProgress = 0.1)
+            WithdrawalRecordStore.createRecordFromCache(initialProgress = Random.nextDouble(0.12,0.20))
         }
     }
 

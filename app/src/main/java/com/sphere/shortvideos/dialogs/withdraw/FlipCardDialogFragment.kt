@@ -14,6 +14,7 @@ import android.view.animation.DecelerateInterpolator
 import androidx.fragment.app.DialogFragment
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.databinding.DialogFlipCardBinding
+import com.sphere.shortvideos.helper.localEvent
 
 /**
  * 翻卡弹窗：
@@ -53,10 +54,12 @@ class FlipCardDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        localEvent("withdrawal_card")
         cards.forEachIndexed { index, card ->
             card.setOnClickListener {
                 if (locked) return@setOnClickListener
                 locked = true
+                localEvent("withdrawal_ins", hashMapOf("index" to index))
                 selectedIndex = index
                 stopCycle()
                 highlightSelected(selectedIndex)

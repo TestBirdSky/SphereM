@@ -51,12 +51,14 @@ class ValuedPlayersDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         localEvent("valued_players_pop")
+        localEvent("premium_user")
         refreshAll()
         HelperRewardShow.curGetMoneyAnimLiveData.observe(viewLifecycleOwner) {
             refreshAll()
         }
         AnimViewHelper.applyPressBounceEffect(binding.btnTapGetCash)
         binding.btnTapGetCash.setOnClickListener {
+            localEvent("premium_user_c")
             (activity as? MainActivity)?.jumpToVideoTab()
             dismissAllowingStateLoss()
         }

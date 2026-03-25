@@ -21,6 +21,7 @@ object AppLifecycleManager : Application.ActivityLifecycleCallbacks {
     private var restart = false
     private var backgroundJob: Job? = null
     private var foregroundCounts = 0
+    private var foregroundStartMs: Long = 0L
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         synchronized(activityList) { activityList.add(activity) }
@@ -30,6 +31,9 @@ object AppLifecycleManager : Application.ActivityLifecycleCallbacks {
     override fun onActivityStarted(activity: Activity) {
         logError("onActivityStarted-->$activity")
         foregroundCounts++
+        if (foregroundCounts == 1) {
+            foregroundStartMs = System.currentTimeMillis()
+        }
         NotificationHelper.isInApp = true
         backgroundJob?.cancel()
         if (!restart) return
@@ -51,6 +55,11 @@ object AppLifecycleManager : Application.ActivityLifecycleCallbacks {
         runCatching {
             backgroundJob?.cancel()
             if (--foregroundCounts <= 0) {
+                foregroundCounts = 0
+                val staySec = ((System.currentTimeMillis() - foregroundStartMs) / 1000L).toInt().coerceAtLeast(0)
+                if (staySec > 0) {
+                    localEvent("app_stay", hashMapOf("stay_times" to staySec))
+                }
                 NotificationHelper.isInApp = false
                 backgroundJob = CoroutineScope(Dispatchers.IO).launch {
                     delay(3000L)

@@ -21,6 +21,7 @@ import com.sphere.shortvideos.dialogs.withdraw.WithdrawalInfoDialogFragment
 import com.sphere.shortvideos.helper.LauageTools
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
+import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.view.setColorText
 
 /**
@@ -58,6 +59,7 @@ class LayoutWithdrawalActionController(
         binding.etMoney.addTextChangedListener(textWatcher)
 
         binding.btnWithAll.setOnClickListener {
+            localEvent("withdrawal_all")
             val cur = MoneyCacheHelper.fetchCurMoney()
             binding.etMoney.setText(WithdrawAmountHelper.formatMoney(cur))
             binding.etMoney.setSelection(binding.etMoney.text?.length ?: 0)

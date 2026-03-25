@@ -32,6 +32,8 @@ import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.withdraw.LayoutWithdrawalActionController
 import com.sphere.shortvideos.helper.withdraw.WithdrawUserInfoMarqueeController
+import com.sphere.shortvideos.helper.withdraw.TASK1_STEP
+import com.sphere.shortvideos.helper.withdraw.TASK2_STEP
 import com.sphere.shortvideos.helper.withdraw.TASK3_STEP
 import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 import com.sphere.shortvideos.helper.withdraw.WithdrawalStatus
@@ -67,6 +69,7 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
                 AdUtils.showRvAd(act, adPositionName = WithdrawalCutInAdapter.CUT_IN_RV_AD_POSITION) { success ->
                     if (!success || !isAdded) return@showRvAd
                     viewLifecycleOwner.lifecycleScope.launch {
+                        localEvent("cut_in")
                         val result = viewModel.applyCutInBoost(item.recordId)
                         if (result == null) {
                             Toast.makeText(context, getString(R.string.cut_in_boost_failed), Toast.LENGTH_SHORT).show()
@@ -225,10 +228,20 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
             withdrawalActionController?.let { c ->
                 if (!binding.tvWithdraw.isEnabled) return@setOnClickListener
                 runCatching {
+                    localEvent("withdrawal_c")
                     WithdrawalActionHelper.withdrawalMethodId = methodAdapter.getSelectedMethod()?.id ?: ""
                     c.handleMainWithdrawClick(parentFragmentManager)
                 }
             }
+        }
+    }
+
+    private fun mapTaskType(progress: Int): String {
+        return when (progress) {
+            TASK1_STEP -> "task1"
+            TASK2_STEP -> "task2"
+            TASK3_STEP -> "task3"
+            else -> "task1"
         }
     }
 
@@ -249,6 +262,7 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
                                                 title = getString(info.first),
                                                 desc = getString(info.second),
                                                 tasks = info.third,
+                                                type = mapTaskType(progress),
                                             ),
                                         )
                                     }
@@ -276,6 +290,7 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
                                     title = getString(info.first),
                                     desc = getString(info.second),
                                     tasks = info.third,
+                                    type = mapTaskType(progress),
                                 ),
                             )
                         }

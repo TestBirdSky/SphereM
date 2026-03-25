@@ -12,6 +12,7 @@ import androidx.fragment.app.DialogFragment
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.databinding.DialogWithdrawalTaskBinding
 import com.sphere.shortvideos.databinding.ItemWithdrawalTaskBinding
+import com.sphere.shortvideos.helper.localEvent
 
 /**
  * 提现任务弹窗。
@@ -40,6 +41,10 @@ class WithdrawalTaskFragment : DialogFragment() {
         val currentBinding = binding ?: return
 
         val args = arguments
+        val type = args?.getString(ARG_TYPE).orEmpty()
+        if (type.isNotBlank()) {
+            localEvent("withdrawal_task_s", hashMapOf("type" to type))
+        }
         currentBinding.tvTitle.text = args?.getString(ARG_TITLE).orEmpty()
         currentBinding.tvDesc.text = args?.getString(ARG_DESC).orEmpty()
 
@@ -92,13 +97,15 @@ class WithdrawalTaskFragment : DialogFragment() {
         private const val ARG_TITLE = "arg_title"
         private const val ARG_DESC = "arg_desc"
         private const val ARG_TASK_LIST = "arg_task_list"
+        private const val ARG_TYPE = "arg_type"
 
-        fun newInstance(title: String, desc: String, tasks: List<WithdrawalTaskItem>): WithdrawalTaskFragment {
+        fun newInstance(title: String, desc: String, tasks: List<WithdrawalTaskItem>, type: String): WithdrawalTaskFragment {
             return WithdrawalTaskFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_TITLE, title)
                     putString(ARG_DESC, desc)
                     putParcelableArrayList(ARG_TASK_LIST, ArrayList(tasks.take(2)))
+                    putString(ARG_TYPE, type)
                 }
             }
         }

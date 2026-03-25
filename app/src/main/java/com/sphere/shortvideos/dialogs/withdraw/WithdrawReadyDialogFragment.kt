@@ -56,6 +56,7 @@ class WithdrawReadyDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        localEvent("meet_withdraw")
         bindMessage()
         startIllustrationBgAnim()
         AnimViewHelper.applyPressBounceEffect(binding.btnClaim)
@@ -63,6 +64,7 @@ class WithdrawReadyDialogFragment : DialogFragment() {
             dismissAllowingStateLoss()
         }
         binding.btnClaim.setOnClickListener {
+            localEvent("meet_withdraw_c")
             val act = activity ?: return@setOnClickListener
             WithdrawNavigator.navigateToWithdrawTab(act)
             if (act is MainActivity) {

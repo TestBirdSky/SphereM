@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.databinding.DialogMyAccountBinding
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
+import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.withdraw.db.WithdrawalRecordEntity
 import com.sphere.shortvideos.helper.withdraw.db.WithdrawalRecordStore
 import kotlinx.coroutines.Dispatchers
@@ -39,6 +40,7 @@ class MyAccountDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        localEvent("withdrawal_information")
         val b = binding ?: return
         b.ivClose.setOnClickListener { dismissAllowingStateLoss() }
         b.rv.layoutManager = LinearLayoutManager(requireContext())

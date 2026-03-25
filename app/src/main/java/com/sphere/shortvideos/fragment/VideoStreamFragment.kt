@@ -14,6 +14,8 @@ import com.sphere.shortvideos.baseui.GenericFragment
 import com.sphere.shortvideos.databinding.FragmentVideoStreamBinding
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.vm.StreamViewModel
+import kotlin.div
+import kotlin.text.toInt
 
 class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
 
@@ -71,10 +73,20 @@ class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
         }
     }
 
+    private var pageResumeAtMs: Long = 0L
     override fun onResume() {
         super.onResume()
         autoRefresh()
+        pageResumeAtMs = System.currentTimeMillis()
         localEvent("foru_page")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        val staySec = ((System.currentTimeMillis() - pageResumeAtMs) / 1000L).toInt().coerceAtLeast(0)
+        if (staySec > 0) {
+            localEvent("foru_page_stay", hashMapOf("stay_times" to staySec))
+        }
     }
 
     fun pauseCurrentVideo() {

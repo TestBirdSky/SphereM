@@ -100,7 +100,7 @@ class HomeDramaListFragment : GenericFragment<FragmentHomeDramaListBinding>() {
             }
         })
         mAdapter = DramaInfoListAdapter(requireContext()) {
-            localEvent("list_drama_c", hashMapOf("name" to it.title))
+            localEvent("list_drama_c", hashMapOf("name" to it.title, "id" to it.id, ))
             requireContext().nextView<PangleDramaPlayActivity> {
                 putExtra(GlobalConstants.EXTRA_KEY_SHORT_PLAY, it)
             }

@@ -44,7 +44,8 @@ class FbAndAdjustHelper {
     }
 
     fun initAdjust(context: Context) {
-        val environment = AdjustConfig.ENVIRONMENT_SANDBOX //        if (BuildConfig.DEBUG) AdjustConfig.ENVIRONMENT_SANDBOX else AdjustConfig.ENVIRONMENT_PRODUCTION
+        val environment =
+            AdjustConfig.ENVIRONMENT_SANDBOX //        if (BuildConfig.DEBUG) AdjustConfig.ENVIRONMENT_SANDBOX else AdjustConfig.ENVIRONMENT_PRODUCTION
         // todo modify adjust key
         val config = AdjustConfig(context, adjustKey, environment)
 
@@ -56,8 +57,9 @@ class FbAndAdjustHelper {
             val network = attribution.network ?: ""
             val isBlacklist = network.contains("Organic", ignoreCase = false)
             MMKVRepository.isBlacklistUser = isBlacklist
+            MMKVRepository.myAdjustNetWorkInfo = network
             logError(": network=$network, isBlacklistUser=$isBlacklist")
-            localEvent("adjust_suc", hashMapOf("adjust_user" to if (isBlacklist) 0 else 1))
+            localEvent("adjust_suc", hashMapOf("adjust_user" to if (isBlacklist) 0 else 1, "net_info" to network))
         }
 
         localEvent("adjust_req")

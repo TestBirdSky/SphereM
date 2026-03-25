@@ -13,6 +13,7 @@ import com.sphere.shortvideos.R
 import com.sphere.shortvideos.adapter.WithdrawMethodAdapter
 import com.sphere.shortvideos.databinding.DialogPaymentInformationBinding
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
+import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.withdraw.WithdrawPaymentAccountHints
 import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 
@@ -47,6 +48,7 @@ class PaymentInformationDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        localEvent("withdrawal_popfill")
         binding.rvWithdraw.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.rvWithdraw.adapter = methodAdapter

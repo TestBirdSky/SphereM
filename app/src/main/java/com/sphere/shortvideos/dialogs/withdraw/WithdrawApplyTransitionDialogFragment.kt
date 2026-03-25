@@ -19,6 +19,7 @@ import com.sphere.shortvideos.R
 import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.databinding.DialogWithdrawApplyTransitionBinding
+import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 import kotlinx.coroutines.Job
@@ -59,6 +60,7 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        localEvent("withdrawal_progress")
         setupStaticUi()
         enterStage1AndStartFlow()
     }
@@ -74,6 +76,7 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
 
     private fun setupStaticUi() = with(binding) {
         tvSkipNow.setOnClickListener {
+            localEvent("withdrawal_progress_c")
             WithdrawalActionHelper.taskFinish()
             showRewardVideoAndFastForward()
         }
@@ -226,6 +229,7 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
 
         playStage2EnterAnim()
         delay(STAGE2_REMAIN_MS_AFTER_ENTER)
+        localEvent("queue_c")
         if (_binding == null) return
 
         groupStage1.isVisible = false
