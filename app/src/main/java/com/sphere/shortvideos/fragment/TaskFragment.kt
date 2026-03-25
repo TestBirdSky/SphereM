@@ -56,7 +56,6 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
 
     private fun showPopAd(view: View) {
         localEvent("billetera_bubble")
-        localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_task_int"))
         if (curPopMoney > 0) {
             if (isDebugMode) { // todo remove
                 curPopMoney = 48.0
@@ -69,7 +68,9 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
                 }
             })
             (activity as? MainActivity)?.let {
-                AdUtils.showRateAd(it, adPositionName = "dlmsf_task_int")
+                AdUtils.showRateAd(it, adPositionName = "dlmsf_task_int", isRate = {
+                    localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_task_int"))
+                })
             }
             WithdrawalActionHelper.addTask2BubbleNum()
         }

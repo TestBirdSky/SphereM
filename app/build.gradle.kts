@@ -259,4 +259,8 @@ dependencies {
     //Tramini
     api("com.thinkup.sdk:tramini-plugin-tpn:6.5.52")
 
+    //Moloco
+    api("com.thinkup.sdk:adapter-tpn-moloco:4.3.1.1.0")
+    api("com.moloco.sdk:moloco-sdk:4.3.1")
+
 }

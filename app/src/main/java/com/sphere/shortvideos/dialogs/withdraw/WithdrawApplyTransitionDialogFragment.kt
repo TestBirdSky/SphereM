@@ -39,7 +39,6 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
 
     private var hasMovedToStage2 = false
     private var isRvRequesting = false
-    private var isStage1ForegroundVisible = false
 
     var dismissEvent: () -> Unit = {}
 
@@ -68,7 +67,7 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
         super.onStart()
         dialog?.window?.let { window ->
             window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
-            window.setBackgroundDrawableResource(android.R.color.transparent)
+            window.setBackgroundDrawableResource(R.color.color_dialog)
         }
         dialog?.setCanceledOnTouchOutside(false)
     }
@@ -107,9 +106,8 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
         isRvRequesting = false
         progressApply.max = 100
         progressApply.progress = 0
-        // 前两个进度段：展示黑底 + dots（避免纯黑空白），其余控件隐藏。
-        progressApply.isVisible = false
-        tvProcessingDesc.isVisible = false
+        progressApply.isVisible = true
+        tvProcessingDesc.isVisible = true
         groupStage1.isVisible = true
         groupStage2.isVisible = false
         groupStage3.isVisible = false
@@ -117,20 +115,11 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
         tvSkipAdTag.isVisible = false
         ivClose.isVisible = false
         startDotsPulseAnim()
-        isStage1ForegroundVisible = false
 
         revealControlsJob?.cancel()
         revealControlsJob = viewLifecycleOwner.lifecycleScope.launch {
             delay(CONTROLS_REVEAL_DELAY_MS)
             if (_binding == null || hasMovedToStage2) return@launch
-
-            // 直到进入第 3 段（progress >= 45）才允许显示跳过/关闭控件，避免前两段 UI 不符合“只有黑底”要求。
-            // 注意：progress=45 可能发生在第 2 段结束后的 pause 空档，此时还没进入第 3 段前景 UI，因此这里等待 isStage1ForegroundVisible。
-            while (_binding != null && !hasMovedToStage2 && !isStage1ForegroundVisible) {
-                delay(80L)
-            }
-            if (_binding == null || hasMovedToStage2) return@launch
-
             tvSkipNow.isVisible = true
             tvSkipAdTag.isVisible = true
             ivClose.isVisible = true
@@ -151,20 +140,8 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
 
     private suspend fun runStage1ProgressRhythmFrom(fromProgress: Int) {
         var current = fromProgress.coerceIn(0, 100) // 根据当前进度决定是否立即切换到“前景 UI”（点位/进度条）。
-        if (current >= STAGE1_FOREGROUND_START_PROGRESS) {
-            ensureStage1ForegroundVisible()
-        } else {
-            setStage1BackgroundOnlyUi()
-        }
         for (step in STAGE1_STEPS) {
             if (current >= step.end) continue
-
-            // 前两个进度段 end<=45：仅展示黑底；从第三段开始展示点位动画/进度条。
-            if (step.end > STAGE1_FOREGROUND_START_PROGRESS) {
-                ensureStage1ForegroundVisible()
-            } else {
-                setStage1BackgroundOnlyUi()
-            }
 
             val remainRatio = ((step.end - current).toFloat() / (step.end - step.start).toFloat()).coerceIn(0f, 1f)
             val remainDuration = (step.duration * remainRatio).toLong().coerceAtLeast(1L)
@@ -172,25 +149,6 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
             current = step.end
             if (step.pauseAfter > 0) delay(step.pauseAfter)
         }
-    }
-
-    private fun setStage1BackgroundOnlyUi() = with(binding) {
-        if (isStage1ForegroundVisible.not()) return@with
-        // 黑底 + dots，隐藏进度条/文案
-        groupStage1.isVisible = true
-        progressApply.isVisible = false
-        tvProcessingDesc.isVisible = false
-        if (dotsAnimatorSet == null) startDotsPulseAnim()
-        isStage1ForegroundVisible = false
-    }
-
-    private fun ensureStage1ForegroundVisible() = with(binding) {
-        if (isStage1ForegroundVisible) return@with
-        groupStage1.isVisible = true
-        progressApply.isVisible = true
-        tvProcessingDesc.isVisible = true
-        startDotsPulseAnim()
-        isStage1ForegroundVisible = true
     }
 
     private suspend fun animateProgressTo(target: Int, duration: Long) {
@@ -349,18 +307,17 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
             val pauseAfter: Long,
         )
 
+        // 规则：前 13 秒进度最多到 40%，之后再走到 100%
         private val STAGE1_STEPS = listOf(
-            StageStep(start = 0, end = 20, duration = 2000L, pauseAfter = 600L),
-            StageStep(start = 20, end = 45, duration = 2200L, pauseAfter = 700L),
-            StageStep(start = 45, end = 72, duration = 2600L, pauseAfter = 700L),
+            StageStep(start = 0, end = 40, duration = 13_000L, pauseAfter = 0L),
+            StageStep(start = 40, end = 72, duration = 2600L, pauseAfter = 700L),
             StageStep(start = 72, end = 92, duration = 2000L, pauseAfter = 600L),
             StageStep(start = 92, end = 100, duration = 1600L, pauseAfter = 0L),
         )
 
         private const val CONTROLS_REVEAL_DELAY_MS = 3000L
         private const val STAGE2_ENTER_ANIM_MS = 320L
-        private const val STAGE2_REMAIN_MS_AFTER_ENTER = 680L
+        private const val STAGE2_REMAIN_MS_AFTER_ENTER = 1500L
         private const val RV_AD_POSITION_NAME = "dlmsf_withdraw_skip_rv"
-        private const val STAGE1_FOREGROUND_START_PROGRESS = 45
     }
 }

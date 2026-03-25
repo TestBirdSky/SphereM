@@ -14,4 +14,5 @@
     <color name="color_ca">#CAC1E3</color>
     <color name="color_129">#129E24</color>
     <color name="color_46d">#46DA58</color>
+    <color name="color_dialog">#CC000000</color>
 </resources>

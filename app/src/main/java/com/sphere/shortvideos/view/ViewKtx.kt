@@ -72,8 +72,12 @@ fun LayoutMoneyTopViewBinding.initView(activity: MainActivity, tag: String, wall
 }
 
 fun LayoutMoneyTopViewBinding.refreshViewTagMoney(tagMoney: String) {
-    val fullText = root.context.getString(R.string.withdraw_tips, tagMoney)
-    tvTips.setColorText(fullText, tagMoney, "#49F32B".toColorInt())
+    if (tagMoney == "0") {
+        tvTips.setText(R.string.add_money_info_tips3)
+    } else {
+        val fullText = root.context.getString(R.string.withdraw_tips, tagMoney)
+        tvTips.setColorText(fullText, tagMoney, "#49F32B".toColorInt())
+    }
 }
 
 fun LayoutTaskChildBinding.setTaskInfo(

@@ -125,8 +125,8 @@ class WithdrawReadyDialogFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.window?.let { window ->
-            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
-            window.setBackgroundDrawableResource(android.R.color.transparent)
+            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
+            window.setBackgroundDrawableResource(R.color.color_dialog)
         }
         dialog?.setCanceledOnTouchOutside(false)
     }

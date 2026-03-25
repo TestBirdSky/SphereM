@@ -41,10 +41,10 @@ class LockInfoDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val money=WithdrawAmountHelper.moneyFormatAddUnit(MoneyCacheHelper.fetchCurMoney())
+        val money = WithdrawAmountHelper.moneyFormatAddUnit(MoneyCacheHelper.fetchCurMoney())
         val fullText = getString(R.string.lock_info_desc,
             money)
-        binding.tvDesc.setColorText(fullText,money,"#FFDD00".toColorInt())
+        binding.tvDesc.setColorText(fullText, money, "#FFDD00".toColorInt())
         binding.btnLater.setOnClickListener {
             onLater?.invoke()
             dismissAllowingStateLoss()
@@ -58,9 +58,10 @@ class LockInfoDialogFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.window?.let { window ->
-            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
-            window.setBackgroundDrawableResource(android.R.color.transparent)
+            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
+            window.setBackgroundDrawableResource(R.color.color_dialog)
         }
+        dialog?.setCanceledOnTouchOutside(false)
     }
 
     override fun onDestroyView() {

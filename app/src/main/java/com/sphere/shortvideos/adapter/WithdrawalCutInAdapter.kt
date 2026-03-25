@@ -71,9 +71,10 @@ class WithdrawalCutInAdapter : RecyclerView.Adapter<WithdrawalCutInAdapter.CutIn
             val percent = item.progressPercent.coerceIn(0, 100)
             binding.progressView.progress = percent
             binding.tvCurProgress.text = "${percent}%"
-            val add = item.addPercentDisplay
-            binding.tvAddProgress.isVisible = !add.isNullOrEmpty()
-            binding.tvAddProgress.text = add.orEmpty()
+            // `tvAddProgress` 仅用于“看广告后短暂展示 +X%”的动效，避免被列表复用导致常驻显示。
+            binding.tvAddProgress.animate().cancel()
+            binding.tvAddProgress.isVisible = false
+            binding.tvAddProgress.text = ""
             binding.tvAddProgress.alpha = 1f
             binding.tvAddProgress.scaleX = 1f
             binding.tvAddProgress.scaleY = 1f
@@ -107,6 +108,12 @@ class WithdrawalCutInAdapter : RecyclerView.Adapter<WithdrawalCutInAdapter.CutIn
             pendingEndRunnable = null
 
             binding.tvCut.isEnabled = false
+            binding.tvAddProgress.animate().cancel()
+            binding.tvAddProgress.isVisible = false
+            binding.tvAddProgress.text = ""
+            binding.tvAddProgress.alpha = 1f
+            binding.tvAddProgress.scaleX = 1f
+            binding.tvAddProgress.scaleY = 1f
 
             // 第一段：1s「增加」动效（进度数字与条暂不跳）
             val intro = ObjectAnimator.ofPropertyValuesHolder(
@@ -168,6 +175,7 @@ class WithdrawalCutInAdapter : RecyclerView.Adapter<WithdrawalCutInAdapter.CutIn
                         .withEndAction {
                             binding.tvAddProgress.isVisible = false
                             binding.tvAddProgress.alpha = 1f
+                            binding.tvAddProgress.text = ""
                             onSequenceEnded()
                         }
                         .start()

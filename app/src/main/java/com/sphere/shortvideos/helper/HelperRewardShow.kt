@@ -239,13 +239,15 @@ object HelperRewardShow {
                             showRvAd(activity, reward, adPositionName = "dlmsf_video_rv")
                         }
                         onClose = { reward ->
-                            localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_video_close_int"))
-                            AdUtils.showRateAd(activity, isRate = {}, adPositionName = "dlmsf_video_close_int")
+                            AdUtils.showRateAd(activity, isRate = {
+                                localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_video_close_int"))
+                            }, adPositionName = "dlmsf_video_close_int")
                         }
                         onNormalClick = { reward ->
-                            localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_video_int"))
                             AdUtils.showRateAd(activity, adPositionName = "dlmsf_video_int", dismiss = {
                                 addMoneyNotExChangeFlyAnim(reward)
+                            }, isRate = {
+                                localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_video_int"))
                             })
                         }
                     }.show(activity.supportFragmentManager, "congratulation")

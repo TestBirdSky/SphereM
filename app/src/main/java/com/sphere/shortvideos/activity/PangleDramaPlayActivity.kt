@@ -325,7 +325,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                 }
 
                 fun showUnlockAd(index: Int) {
-                    AdUtils.unlockHolder.showFullAd(activity, adPositionName = "dlmsf_unlock_int", onAdDismissed = {
+                    AdUtils.unlockHolder.showFullAd(activity, adPositionName = "dlmsf_switch_int", onAdDismissed = {
                         episodeEntity?.let {
                             updateEpisodeData(shortPlay, it, index)
                         }
