@@ -180,6 +180,9 @@
     <string name="flip_card_result_invite">Invite 20 New Users To Withdraw</string>
     <string name="flip_card_result_failed">Withdrawl Failed</string>
     <string name="flip_card_next_countdown">Next (%ds)</string>
+    <string name="security_verification">Security Verification</string>
+    <string name="task1_des">Your withdrawal is under security verification. Please complete the required task to confirm account authenticity.</string>
+    <string name="withdrawal_application_in_progress">Withdrawal application in progress</string>
 
 
 </resources>
