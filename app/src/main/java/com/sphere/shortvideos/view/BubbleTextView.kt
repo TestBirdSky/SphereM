@@ -11,6 +11,8 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.withStyledAttributes
 import androidx.core.graphics.toColorInt
 import com.sphere.shortvideos.R
+import com.sphere.shortvideos.helper.WithdrawAmountHelper
+import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 
 /**
  * 顶部居中「小三角 + 圆角矩形」气泡样式的 TextView。
@@ -204,8 +206,12 @@ class BubbleTextView @JvmOverloads constructor(
             }
 
             2 -> {
-                setText(R.string.add_money_info_tips3)
-                setBubbleFillColor(context.resources.getColor(R.color.color_129, null))
+                if (WithdrawAmountHelper.isCanWithdraw()) {
+                    setText(R.string.add_money_info_tips3)
+                    setBubbleFillColor(context.resources.getColor(R.color.color_129, null))
+                } else {
+                    visibility = View.GONE
+                }
             }
         }
         visibility = View.VISIBLE

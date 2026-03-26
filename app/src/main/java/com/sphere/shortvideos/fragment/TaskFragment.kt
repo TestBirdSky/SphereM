@@ -9,10 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.baseui.GenericFragment
-import com.sphere.shortvideos.view.setTaskInfo
 import com.sphere.shortvideos.databinding.FragmentTaskBinding
-import com.sphere.shortvideos.dialogs.withdraw.WithdrawApplyTransitionDialogFragment
-import com.sphere.shortvideos.dialogs.withdraw.WithdrawReadyDialogFragment
 import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.ad.AdUtils
@@ -21,6 +18,7 @@ import com.sphere.shortvideos.helper.task.TaskHelper
 import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.view.AnimViewHelper
+import com.sphere.shortvideos.view.setTaskInfo
 import com.sphere.shortvideos.vm.MainViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

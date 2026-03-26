@@ -27,7 +27,6 @@ import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.mApp
-import com.sphere.shortvideos.view.BubbleTextView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -233,7 +232,7 @@ object HelperRewardShow {
 
     fun registerGetMoney(activity: GenericActivity) {
         showDialogFetchMoney.observe(activity) {
-            if (DialogFragmentDisplayHelper.isShowing().not()) {
+            if (DialogFragmentDisplayHelper.hasDialogFragmentShowing(activity).not()) {
                 WithdrawReadyDialogFragment.showIfEligible(activity.supportFragmentManager)
             }
         }

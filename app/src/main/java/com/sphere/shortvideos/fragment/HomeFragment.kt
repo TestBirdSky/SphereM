@@ -83,7 +83,7 @@ class HomeFragment : GenericFragment<FragmentHomeBinding>() {
     }
 
     private suspend fun requestCategoryList(): List<ShortPlayCategory>? = suspendCancellableCoroutine { continuation ->
-        PSSDK.requestCategoryList(PSSDK.getContentLanguages()?.getOrNull(0) ?: "",
+        PSSDK.requestCategoryList(PSSDK.getContentLanguages()?.getOrNull(0) ?: "en",
             object : PSSDK.CategoryListResultListener {
                 override fun onFail(e: PSSDK.ErrorInfo?) = continuation.resume(null)
                 override fun onSuccess(result: PSSDK.FeedListLoadResult<ShortPlayCategory>?) {

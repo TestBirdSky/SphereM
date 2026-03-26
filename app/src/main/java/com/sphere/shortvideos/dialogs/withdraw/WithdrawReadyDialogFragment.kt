@@ -43,14 +43,10 @@ class WithdrawReadyDialogFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NO_TITLE, R.style.TransparentMaterialDialog)
-        isCancelable = true
+        isCancelable = false
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = DialogWithdrawReadyBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -113,12 +109,10 @@ class WithdrawReadyDialogFragment : DialogFragment() {
         val ss = SpannableStringBuilder(template)
         val start = template.indexOf(amountStr)
         if (start >= 0) {
-            ss.setSpan(
-                ForegroundColorSpan(Color.parseColor("#F5B71A")),
+            ss.setSpan(ForegroundColorSpan(Color.parseColor("#F5B71A")),
                 start,
                 start + amountStr.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
         binding.tvMessage.text = ss
     }
@@ -147,6 +141,7 @@ class WithdrawReadyDialogFragment : DialogFragment() {
          */
         @JvmStatic
         fun showIfEligible(fragmentManager: FragmentManager) {
+            if (MMKVRepository.hasShownWithdrawReadyDialogEver) return
             if (WithdrawalActionHelper.getConfig().isOpenWithdraw().not()) return
             if (WithdrawAmountHelper.isCanWithdraw().not()) return
             if (fragmentManager.findFragmentByTag(TAG_FM) != null) return

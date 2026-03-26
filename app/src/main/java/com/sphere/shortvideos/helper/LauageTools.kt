@@ -31,9 +31,6 @@ object LauageTools {
 
     private val SUPPORTED_LANGUAGE_CODES = setOf(
         LanguageCode.ENGLISH,
-        LanguageCode.PORTUGUESE,
-        LanguageCode.INDONESIAN,
-        "in", // 兼容历史印尼语代码
         "ar",
         "th",
         "es",
@@ -79,10 +76,10 @@ object LauageTools {
         val country = locale.country.uppercase()
         val languageTag = locale.toLanguageTag().lowercase()
 
+        // 巴西/印尼优先直返，不参与英语兜底
         when (language) {
-            LanguageCode.PORTUGUESE -> CountryCode.BRAZIL
-            LanguageCode.INDONESIAN, "in" -> CountryCode.INDONESIA  // 兼容非标准的 in 语言代码
-            LanguageCode.ENGLISH -> CountryCode.US
+            LanguageCode.PORTUGUESE -> return CountryCode.BRAZIL
+            LanguageCode.INDONESIAN, "in" -> return CountryCode.INDONESIA
         }
 
         if (isSupportedLanguage(language, languageTag)) {

@@ -14,6 +14,8 @@ import com.sphere.shortvideos.notification.NotificationHelper
 object MoneyCacheHelper {
     /** 当前余额，沿用原 key，存的是美元(USD) */
     private var userFetchMoneyUSD by MMKVData(0.0)
+    private var historyMoneyUSD by MMKVData(0.0)
+
 
     fun fetchPushReward(): Pair<Double, String> {
         return RewardHelper.getConfigByLanguage().getNotificationRewardMoney(fetchCurMoney())
@@ -40,11 +42,13 @@ object MoneyCacheHelper {
     @Synchronized
     fun addNotExchangeMoney(value: Double) {
         logError("000>addNotExchangeMoney$value")
-        userFetchMoneyUSD += when {
+        val v = when {
             LauageTools.isIndonesia() -> value / WithdrawAmountHelper.IDR_PER_USD
             LauageTools.isBrazil() -> value / WithdrawAmountHelper.BRL_PER_USD
             else -> value
         }
+        userFetchMoneyUSD += v
+        historyMoneyUSD += v
         NotificationHelper.showOrUpdateNotificationService(mApp)
     }
 
