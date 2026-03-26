@@ -3,6 +3,8 @@ package com.sphere.shortvideos.dialogs.withdraw
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
+import android.animation.ValueAnimator
 import android.graphics.Color
 import android.graphics.LinearGradient
 import android.graphics.Shader
@@ -43,7 +45,9 @@ class FlipCardDialogFragment : DialogFragment() {
     private var selectedIndex = 0
     private var cycleRunnable: Runnable? = null
     private var cycleTick = 0
+    private var fingerAnimator: ObjectAnimator? = null
     private var locked = false
+    private var revealed = false
     private var closed = false
 
     var dismissEvent: () -> Unit = {}
@@ -66,6 +70,9 @@ class FlipCardDialogFragment : DialogFragment() {
             card.setOnClickListener {
                 if (locked) return@setOnClickListener
                 locked = true
+                revealed = true
+                stopFingerAnim()
+                binding.ivFingerAnim.visibility = View.GONE
                 localEvent("withdrawal_ins", hashMapOf("index" to index))
                 selectedIndex = index
                 stopCycle()
@@ -75,23 +82,19 @@ class FlipCardDialogFragment : DialogFragment() {
         }
         binding.ivClose.setOnClickListener { closeDialog() }
         startCycle()
+        startFingerAnim()
     }
 
     private fun startCycle() {
         cycleTick = 0
-        val totalTicks = 3000 / 120
         cycleRunnable = object : Runnable {
             override fun run() {
                 if (closed || locked || _binding == null) return
                 selectedIndex = cycleTick % 3
                 highlightSelected(selectedIndex)
                 cycleTick++
-                if (cycleTick >= totalTicks) {
-                    locked = true
-                    revealResult()
-                } else {
-                    handler.postDelayed(this, 120L)
-                }
+                // 仅做引导高亮，不自动翻牌；必须用户点击才翻开。
+                handler.postDelayed(this, CARD_CYCLE_INTERVAL_MS)
             }
         }
         handler.post(cycleRunnable!!)
@@ -110,13 +113,14 @@ class FlipCardDialogFragment : DialogFragment() {
         values[(selectedIndex + 2) % 3] = getString(R.string.flip_card_result_failed)
         highlightSelected(selectedIndex)
         // 先翻选中的卡，翻完后再翻其余两张
-        flipCard(cards[selectedIndex], cardInners[selectedIndex], cardTexts[selectedIndex], values[selectedIndex]) {
+        flipCard(cards[selectedIndex], cardInners[selectedIndex], cardTexts[selectedIndex], values[selectedIndex], true) {
             val restIndexes = (0..2).filter { it != selectedIndex }
             var restFinished = 0
             restIndexes.forEach { idx ->
-                flipCard(cards[idx], cardInners[idx], cardTexts[idx], values[idx]) {
+                flipCard(cards[idx], cardInners[idx], cardTexts[idx], values[idx], false) {
                     restFinished++
                     if (restFinished == restIndexes.size) {
+                        applyRevealedCardScale(selectedIndex)
                         showNext()
                     }
                 }
@@ -124,7 +128,14 @@ class FlipCardDialogFragment : DialogFragment() {
         }
     }
 
-    private fun flipCard(outer: View, inner: View, text: View, targetText: String, end: () -> Unit) {
+    private fun flipCard(
+        outer: View,
+        inner: View,
+        text: View,
+        targetText: String,
+        isSelectedCard: Boolean,
+        end: () -> Unit,
+    ) {
         val half = ObjectAnimator.ofFloat(outer, View.ROTATION_Y, 0f, 90f).apply {
             duration = 130L
             interpolator = DecelerateInterpolator()
@@ -138,7 +149,8 @@ class FlipCardDialogFragment : DialogFragment() {
                 inner.setBackgroundResource(R.drawable.ic_open_card_bg)
                 (text as? TextView)?.let { tv ->
                     tv.text = targetText
-                    tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, FLIP_CARD_TEXT_SIZE_REVEALED_SP)
+                    val size = if (isSelectedCard) FLIP_CARD_TEXT_SIZE_REVEALED_SP else FLIP_CARD_TEXT_SIZE_UNSELECTED_REVEALED_SP
+                    tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, size)
                     applyResultTextStyle(tv, targetText)
                 }
                 half2.start()
@@ -154,12 +166,23 @@ class FlipCardDialogFragment : DialogFragment() {
 
     private fun highlightSelected(index: Int) {
         cards.forEachIndexed { i, card ->
-            val toScale = if (i == index) 1.12f else 1f
-            card.animate().scaleX(toScale).scaleY(toScale).setDuration(90L).start()
+            val toScale = if (revealed) {
+                if (i == index) REVEALED_SELECTED_SCALE else REVEALED_UNSELECTED_SCALE
+            } else {
+                if (i == index) PRE_REVEAL_SELECTED_SCALE else PRE_REVEAL_UNSELECTED_SCALE
+            }
+            card.animate().scaleX(toScale).scaleY(toScale).setDuration(CARD_SCALE_ANIM_MS).start()
             card.alpha = if (i == index) 1f else 0.85f
         }
         selectedBorders.forEachIndexed { i, v ->
             v.visibility = if (i == index) View.VISIBLE else View.GONE
+        }
+    }
+
+    private fun applyRevealedCardScale(selected: Int) {
+        cards.forEachIndexed { i, card ->
+            val toScale = if (i == selected) REVEALED_SELECTED_SCALE else REVEALED_UNSELECTED_SCALE
+            card.animate().scaleX(toScale).scaleY(toScale).setDuration(CARD_SCALE_ANIM_MS).start()
         }
     }
 
@@ -207,14 +230,35 @@ class FlipCardDialogFragment : DialogFragment() {
         if (closed) return
         closed = true
         stopCycle()
+        stopFingerAnim()
         dismissEvent()
         dismissAllowingStateLoss()
+    }
+
+    private fun startFingerAnim() {
+        if (_binding == null || fingerAnimator != null) return
+        binding.ivFingerAnim.visibility = View.VISIBLE
+        binding.ivFingerAnim.scaleX = 0.8f
+        binding.ivFingerAnim.scaleY = 0.8f
+        val scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 0.8f, 1.3f)
+        val scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.8f, 1.3f)
+        fingerAnimator = ObjectAnimator.ofPropertyValuesHolder(binding.ivFingerAnim, scaleX, scaleY).apply {
+            duration = 1000L
+            repeatCount = ValueAnimator.INFINITE
+            repeatMode = ValueAnimator.REVERSE
+            start()
+        }
+    }
+
+    private fun stopFingerAnim() {
+        fingerAnimator?.cancel()
+        fingerAnimator = null
     }
 
     override fun onStart() {
         super.onStart()
         dialog?.window?.let { window ->
-            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
+            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
             window.setBackgroundDrawableResource(R.color.color_dialog)
         }
         dialog?.setCanceledOnTouchOutside(false)
@@ -229,5 +273,13 @@ class FlipCardDialogFragment : DialogFragment() {
     companion object {
         /** 翻牌后（正面结果文案）字号；背面在布局中为 14sp */
         private const val FLIP_CARD_TEXT_SIZE_REVEALED_SP = 13f
+        /** 翻牌后未选中两张卡的字号 */
+        private const val FLIP_CARD_TEXT_SIZE_UNSELECTED_REVEALED_SP = 10f
+        private const val CARD_CYCLE_INTERVAL_MS = 220L
+        private const val CARD_SCALE_ANIM_MS = 180L
+        private const val PRE_REVEAL_SELECTED_SCALE = 1.10f
+        private const val PRE_REVEAL_UNSELECTED_SCALE = 1f
+        private const val REVEALED_SELECTED_SCALE = 1.10f
+        private const val REVEALED_UNSELECTED_SCALE = 0.94f
     }
 }

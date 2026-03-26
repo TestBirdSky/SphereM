@@ -162,9 +162,18 @@
         android:id="@+id/group_stage3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:constraint_referenced_ids="layout_stage3_card"
         tools:visibility="gone" />
+
+    <!-- Skip 与成功卡二选一展示时，取二者较低的 bottom，关闭键始终在「当前主内容」下方 -->
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_close_anchor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierAllowsGoneWidgets="false"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="tv_skip_now,layout_stage3_card" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_stage3_card"
@@ -240,12 +249,11 @@
         android:layout_width="37dp"
         android:layout_height="37dp"
         android:layout_marginTop="24dp"
-        android:layout_marginBottom="170dp"
         android:contentDescription="@null"
         android:src="@drawable/ic_dialog_close"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_stage3_card" />
+        app:layout_constraintTop_toBottomOf="@id/barrier_close_anchor" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

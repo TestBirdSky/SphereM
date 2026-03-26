@@ -37,6 +37,7 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
     private var revealControlsJob: Job? = null
     private var dotsAnimatorSet: AnimatorSet? = null
     private var progressAnimator: ValueAnimator? = null
+    private var stage2PulseAnimator: ObjectAnimator? = null
 
     private var hasMovedToStage2 = false
     private var isRvRequesting = false
@@ -68,8 +69,8 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.window?.let { window ->
-            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
-            window.setBackgroundDrawableResource(R.color.color_dialog)
+            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
+            window.setBackgroundDrawableResource(R.color.color_dialog_2)
         }
         dialog?.setCanceledOnTouchOutside(false)
     }
@@ -125,8 +126,7 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
             if (_binding == null || hasMovedToStage2) return@launch
             tvSkipNow.isVisible = true
             tvSkipAdTag.isVisible = true
-            // 第一步、第二步（进度未到第三段）不显示关闭按钮，仅第三段及之后显示
-            syncStage1CloseVisibility()
+            ivClose.isVisible = true
         }
 
         flowJob?.cancel()
@@ -144,7 +144,7 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
 
     private suspend fun runStage1ProgressRhythmFrom(fromProgress: Int) {
         var current = fromProgress.coerceIn(0, 100)
-        syncStage1CloseVisibility()
+        if (binding.tvSkipNow.isVisible) binding.ivClose.isVisible = true
         for (step in STAGE1_STEPS) {
             if (current >= step.end) continue
 
@@ -166,7 +166,6 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
                 addUpdateListener {
                     val p = it.animatedValue as Int
                     pb.progress = p
-                    syncStage1CloseVisibility()
                 }
                 addListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
@@ -182,13 +181,6 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
             cont.invokeOnCancellation { animator.cancel() }
             animator.start()
         }
-    }
-
-    /** Stage1：前两段进度不显示关闭；从第三段起点（与 [STAGE1_STEPS] 第 3 步 start 一致）起显示。 */
-    private fun syncStage1CloseVisibility() {
-        if (_binding == null || hasMovedToStage2) return
-        val p = binding.progressApply.progress
-        binding.ivClose.isVisible = p >= STAGE1_STEP3_START_PROGRESS
     }
 
     private fun showRewardVideoAndFastForward() {
@@ -219,6 +211,7 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
         val current = binding.progressApply.progress.coerceIn(0, 100)
         flowJob?.cancel()
         flowJob = viewLifecycleOwner.lifecycleScope.launch {
+            if (binding.tvSkipNow.isVisible) binding.ivClose.isVisible = true
             runStage1ProgressRhythmFrom(current)
             if (_binding == null || hasMovedToStage2) return@launch
             moveToStage2ThenStage3()
@@ -239,13 +232,15 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
         progressApply.isVisible = true
         tvSkipNow.isVisible = false
         tvSkipAdTag.isVisible = false
-        ivClose.isVisible = false
+        // 第二阶段也显示关闭按钮
+        ivClose.isVisible = true
 
         playStage2EnterAnim()
         delay(STAGE2_REMAIN_MS_AFTER_ENTER)
         localEvent("queue_c")
         if (_binding == null) return
 
+        stopStage2PulseAnim()
         groupStage1.isVisible = false
         groupStage2.isVisible = false
         groupStage3.isVisible = true
@@ -275,9 +270,11 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
     }
 
     private fun playStage2EnterAnim() = with(binding) {
+        stopStage2PulseAnim()
         ivStage2.alpha = 0f
         ivStage2.scaleX = 0.78f
         ivStage2.scaleY = 0.78f
+        ivStage2.translationY = 0f
         tvStage2Desc.alpha = 0f
 
         val iconAlpha = ObjectAnimator.ofFloat(ivStage2, View.ALPHA, 0f, 1f).apply {
@@ -296,8 +293,29 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
         }
         AnimatorSet().apply {
             playTogether(iconAlpha, iconScaleX, iconScaleY, textAlpha)
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    startStage2PulseAnim()
+                }
+            })
             start()
         }
+    }
+
+    private fun startStage2PulseAnim() = with(binding) {
+        stopStage2PulseAnim()
+        // 第二阶段图标：入场后持续轻微跳动
+        stage2PulseAnimator = ObjectAnimator.ofFloat(ivStage2, View.TRANSLATION_Y, 0f, -6f, 0f).apply {
+            duration = 1150L
+            repeatCount = ValueAnimator.INFINITE
+            interpolator = AccelerateDecelerateInterpolator()
+            start()
+        }
+    }
+
+    private fun stopStage2PulseAnim() {
+        stage2PulseAnimator?.cancel()
+        stage2PulseAnimator = null
     }
 
     private fun stopDotsPulseAnim() {
@@ -308,6 +326,7 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
     override fun onDestroyView() {
         progressAnimator?.cancel()
         progressAnimator = null
+        stopStage2PulseAnim()
         stopDotsPulseAnim()
         flowJob?.cancel()
         flowJob = null
@@ -333,12 +352,9 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
             StageStep(start = 92, end = 100, duration = 1600L, pauseAfter = 0L),
         )
 
-        /** 第三段进度起始 = 第一步+第二步结束后；此前不展示关闭按钮 */
-        private const val STAGE1_STEP3_START_PROGRESS = 72
-
         private const val CONTROLS_REVEAL_DELAY_MS = 3000L
         private const val STAGE2_ENTER_ANIM_MS = 320L
-        private const val STAGE2_REMAIN_MS_AFTER_ENTER = 1500L
+        private const val STAGE2_REMAIN_MS_AFTER_ENTER = 5000L
         private const val RV_AD_POSITION_NAME = "dlmsf_withdraw_skip_rv"
     }
 }

@@ -140,19 +140,20 @@
 
     <com.sphere.shortvideos.view.BubbleTextView
         android:id="@+id/tv_tis"
-        android:layout_width="200dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="9dp"
         android:gravity="center"
         android:paddingHorizontal="12dp"
         android:paddingVertical="10dp"
+        android:maxWidth="300dp"
         android:textColor="@color/white"
         android:textSize="12sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/layout_money"
-        tools:text="you can cash out now!"
+        tools:text="you can cash out now!ssssssssssssssssssssssssss"
         tools:visibility="visible" />
 
     <androidx.appcompat.widget.AppCompatImageView

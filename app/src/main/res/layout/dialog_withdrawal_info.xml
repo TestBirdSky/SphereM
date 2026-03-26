@@ -9,7 +9,7 @@
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/layout_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal"
@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:text="@string/withdraw_info_title_prefix"
             android:textColor="@color/white"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -33,7 +33,7 @@
             android:layout_marginHorizontal="6dp"
             android:text="@string/withdraw_info_title_highlight"
             android:textColor="#F5C91A"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 

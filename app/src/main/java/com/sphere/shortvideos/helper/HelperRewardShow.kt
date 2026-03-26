@@ -47,7 +47,7 @@ object HelperRewardShow {
 
     private var lastShowTipsMoneyTime = System.currentTimeMillis()
     private var showTipsPeriod = if (isDebugMode) 60000 else 60000 * 3
-    private val showTime get() = Random.nextLong(2000, 3100)
+    private val showTime get() = Random.nextLong(4500, 5000)
 
     val showBubbleTips = MutableLiveData<Triple<Int, Long, String>>() // 显示的词条 显示时间
     private val showDialogFetchMoney = MutableLiveData<Long>() // 显示的词条 显示时间

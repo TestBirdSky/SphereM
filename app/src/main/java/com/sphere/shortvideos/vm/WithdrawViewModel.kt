@@ -192,7 +192,7 @@ class WithdrawViewModel : ViewModel() {
         return WithdrawalTaskItem(
             text = mApp.getString(R.string.daily_check_in),
             isCompleted = isDone,
-            progressText = if (isDone) "" else "0/2",
+            progressText = if (isDone) "" else "0/1",
         )
     }
 
