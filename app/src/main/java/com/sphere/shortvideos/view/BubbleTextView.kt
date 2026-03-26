@@ -10,6 +10,7 @@ import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.withStyledAttributes
 import androidx.core.graphics.toColorInt
+import androidx.core.view.ViewCompat
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
@@ -143,6 +144,12 @@ class BubbleTextView @JvmOverloads constructor(
         pathDirty = true
     }
 
+    override fun onRtlPropertiesChanged(layoutDirection: Int) {
+        super.onRtlPropertiesChanged(layoutDirection)
+        pathDirty = true
+        invalidate()
+    }
+
     override fun draw(canvas: Canvas) {
         if (width > 0 && height > 0) {
             if (pathDirty) {
@@ -167,9 +174,12 @@ class BubbleTextView @JvmOverloads constructor(
         val aw = minOf(arrowWidthPx, w * 0.45f)
         val minCx = r + aw / 2f
         val maxCx = w - r - aw / 2f
-        val startCx = r + aw / 2f + 12f * density
+        val startPadding = 12f * density
+        val startCxLtr = r + aw / 2f + startPadding
+        val startCxRtl = w - (r + aw / 2f + startPadding)
+        val isRtl = ViewCompat.getLayoutDirection(this) == ViewCompat.LAYOUT_DIRECTION_RTL
         val cxRaw = when (bubbleArrowGravity) {
-            ARROW_GRAVITY_START -> startCx
+            ARROW_GRAVITY_START -> if (isRtl) startCxRtl else startCxLtr
             else -> w / 2f
         }
         val cx = cxRaw.coerceIn(minCx, maxCx)
