@@ -4,25 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clickable="true"
     android:clipChildren="false"
     android:clipToPadding="false"
-    android:clickable="true"
     android:focusable="true">
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/group_stage1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:visibility="gone"
-        app:constraint_referenced_ids="layout_dots,tv_processing_desc,tv_skip_now,tv_skip_ad_tag" />
+        app:constraint_referenced_ids="layout_dots,tv_processing_desc,tv_skip_now,tv_skip_ad_tag"
+        tools:visibility="gone" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/layout_dots"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
-        android:orientation="horizontal"
         android:clipChildren="false"
         android:clipToPadding="false"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@id/progress_apply"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -128,8 +128,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        tools:visibility="visible"
-        app:constraint_referenced_ids="iv_stage2,tv_stage2_desc" />
+        app:constraint_referenced_ids="iv_stage2,tv_stage2_desc"
+        tools:visibility="visible" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_stage2"
@@ -163,8 +163,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="invisible"
-        tools:visibility="gone"
-        app:constraint_referenced_ids="layout_stage3_card" />
+        app:constraint_referenced_ids="layout_stage3_card"
+        tools:visibility="gone" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_stage3_card"
@@ -224,7 +224,7 @@
             android:layout_width="0dp"
             android:layout_height="47dp"
             android:layout_marginTop="23dp"
-            android:background="@drawable/shape_withdraw_watch_more_btn"
+            android:background="@drawable/shape_primary_r20"
             android:gravity="center"
             android:text="@string/withdraw_apply_watch_more"
             android:textColor="@color/white"

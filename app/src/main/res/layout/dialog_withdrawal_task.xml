@@ -78,7 +78,7 @@
             android:layout_width="0dp"
             android:layout_height="56dp"
             android:layout_marginTop="24dp"
-            android:background="@drawable/shape_withdrawal_task_confirm_bg"
+            android:background="@drawable/shape_primary_r20"
             android:gravity="center"
             android:text="@string/withdraw_info_confirm"
             android:textColor="@android:color/white"

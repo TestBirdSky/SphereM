@@ -1,6 +1,7 @@
 package com.sphere.shortvideos.helper
 
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -24,6 +25,32 @@ object DialogFragmentDisplayHelper {
         val d = currentDialog ?: return false
         if (!d.isAdded) return false
         return runCatching { d.dialog?.isShowing == true }.getOrDefault(false)
+    }
+
+    /**
+     * 指定 [FragmentActivity] 下（含嵌套子 [Fragment]）是否有任一 [DialogFragment] 正在展示。
+     * 与是否通过本类 [show] 登记无关，凡挂在该 Activity [FragmentManager] 树上的弹窗均会检测到。
+     */
+    @JvmStatic
+    fun hasDialogFragmentShowing(activity: FragmentActivity): Boolean {
+        return hasDialogFragmentShowing(activity.supportFragmentManager)
+    }
+
+    /**
+     * 指定 [FragmentManager] 为根的子树中是否有 [DialogFragment] 正在展示（含子 Fragment 的 childFragmentManager）。
+     */
+    @JvmStatic
+    fun hasDialogFragmentShowing(fragmentManager: FragmentManager): Boolean {
+        for (fragment in fragmentManager.fragments) {
+            if (fragment is DialogFragment && fragment.isAdded) {
+                val showing = runCatching { fragment.dialog?.isShowing == true }.getOrDefault(false)
+                if (showing) return true
+            }
+            if (hasDialogFragmentShowing(fragment.childFragmentManager)) {
+                return true
+            }
+        }
+        return false
     }
 
     /** 当前登记的 [DialogFragment]；若未通过本类 [show] 展示则可能为 null */

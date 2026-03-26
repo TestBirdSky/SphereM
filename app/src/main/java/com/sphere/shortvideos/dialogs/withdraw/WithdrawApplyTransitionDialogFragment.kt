@@ -125,7 +125,8 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
             if (_binding == null || hasMovedToStage2) return@launch
             tvSkipNow.isVisible = true
             tvSkipAdTag.isVisible = true
-            ivClose.isVisible = true
+            // 第一步、第二步（进度未到第三段）不显示关闭按钮，仅第三段及之后显示
+            syncStage1CloseVisibility()
         }
 
         flowJob?.cancel()
@@ -142,7 +143,8 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
     }
 
     private suspend fun runStage1ProgressRhythmFrom(fromProgress: Int) {
-        var current = fromProgress.coerceIn(0, 100) // 根据当前进度决定是否立即切换到“前景 UI”（点位/进度条）。
+        var current = fromProgress.coerceIn(0, 100)
+        syncStage1CloseVisibility()
         for (step in STAGE1_STEPS) {
             if (current >= step.end) continue
 
@@ -161,7 +163,11 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
             val animator = ValueAnimator.ofInt(pb.progress, target).apply {
                 this.duration = duration
                 interpolator = AccelerateDecelerateInterpolator()
-                addUpdateListener { pb.progress = it.animatedValue as Int }
+                addUpdateListener {
+                    val p = it.animatedValue as Int
+                    pb.progress = p
+                    syncStage1CloseVisibility()
+                }
                 addListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
                         if (cont.isActive) cont.resume(Unit)
@@ -176,6 +182,13 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
             cont.invokeOnCancellation { animator.cancel() }
             animator.start()
         }
+    }
+
+    /** Stage1：前两段进度不显示关闭；从第三段起点（与 [STAGE1_STEPS] 第 3 步 start 一致）起显示。 */
+    private fun syncStage1CloseVisibility() {
+        if (_binding == null || hasMovedToStage2) return
+        val p = binding.progressApply.progress
+        binding.ivClose.isVisible = p >= STAGE1_STEP3_START_PROGRESS
     }
 
     private fun showRewardVideoAndFastForward() {
@@ -319,6 +332,9 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
             StageStep(start = 72, end = 92, duration = 2000L, pauseAfter = 600L),
             StageStep(start = 92, end = 100, duration = 1600L, pauseAfter = 0L),
         )
+
+        /** 第三段进度起始 = 第一步+第二步结束后；此前不展示关闭按钮 */
+        private const val STAGE1_STEP3_START_PROGRESS = 72
 
         private const val CONTROLS_REVEAL_DELAY_MS = 3000L
         private const val STAGE2_ENTER_ANIM_MS = 320L

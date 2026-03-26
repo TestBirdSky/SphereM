@@ -59,7 +59,6 @@ class WithdrawReadyDialogFragment : DialogFragment() {
         localEvent("meet_withdraw")
         bindMessage()
         startIllustrationBgAnim()
-        AnimViewHelper.applyPressBounceEffect(binding.btnClaim)
         binding.btnLater.setOnClickListener {
             dismissAllowingStateLoss()
         }
@@ -126,7 +125,7 @@ class WithdrawReadyDialogFragment : DialogFragment() {
         super.onStart()
         dialog?.window?.let { window ->
             window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
-            window.setBackgroundDrawableResource(R.color.color_dialog)
+            window.setBackgroundDrawableResource(R.color.color_dialog_2)
         }
         dialog?.setCanceledOnTouchOutside(false)
     }

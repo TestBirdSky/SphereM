@@ -25,6 +25,7 @@ import com.sphere.shortvideos.fragment.TaskFragment
 import com.sphere.shortvideos.fragment.VideoStreamFragment
 import com.sphere.shortvideos.fragment.WithdrawFragment
 import com.sphere.shortvideos.helper.AppHelper
+import com.sphere.shortvideos.helper.DialogFragmentDisplayHelper
 import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
@@ -160,6 +161,7 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         lifecycleScope.launch {
             delay(Random.nextLong(2500, delTime))
             if (isFinishing || isDestroyed) return@launch
+            if (DialogFragmentDisplayHelper.hasDialogFragmentShowing(this@MainActivity)) return@launch
             val isShow = if (isHome) PermissionHelper.isShowNotificationDialogHome(this@MainActivity)
             else PermissionHelper.isShowNotificationDialogAfterRv(this@MainActivity)
             if (isShow) {

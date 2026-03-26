@@ -36,6 +36,7 @@
             android:background="@drawable/shape_h5"
             android:backgroundTint="#332548"
             android:gravity="center|start"
+            tools:text="11111"
             android:hint="@string/enter_withdrawal_amount"
             android:inputType="numberDecimal"
             android:paddingHorizontal="28dp"
@@ -51,7 +52,7 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_unit"
             android:layout_width="25dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:gravity="center|end"
             android:textColor="#FFD000"
             android:textSize="16sp"

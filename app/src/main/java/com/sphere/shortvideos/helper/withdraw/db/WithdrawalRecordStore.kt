@@ -2,7 +2,12 @@ package com.sphere.shortvideos.helper.withdraw.db
 
 import com.sphere.shortvideos.mApp
 import com.sphere.shortvideos.helper.HelperRewardShow
+import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import kotlin.math.roundToInt
 
 data class CutInBoostResult(
@@ -57,6 +62,37 @@ object WithdrawalRecordStore {
     /** 用于「插队提现」等列表：最新记录在前 */
     suspend fun getAllRecordsOrdered(): List<WithdrawalRecordEntity> {
         return dao.queryAllOrderedByCreatedDesc().filter { it.progress < 1 }
+    }
+
+    /**
+     * 读取插队列表前调用：每个自然日至多执行一次。
+     * - 未完成记录若 **不是今天创建** 的，按与 Cut In 广告相同规则 [WithdrawalActionHelper.getCutInProgress] 加一次随机进度；
+     * - **当天新入库** 的记录不参与（避免与创建时初始进度叠加）。
+     */
+    suspend fun applyDailyPassiveBoostIfNeeded() {
+        val day = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        if (MMKVRepository.lastCutInDailyAutoBoostDay == day) return
+
+        val cal = Calendar.getInstance()
+        cal.set(Calendar.HOUR_OF_DAY, 0)
+        cal.set(Calendar.MINUTE, 0)
+        cal.set(Calendar.SECOND, 0)
+        cal.set(Calendar.MILLISECOND, 0)
+        val startOfToday = cal.timeInMillis
+        cal.add(Calendar.DAY_OF_MONTH, 1)
+        val startOfTomorrow = cal.timeInMillis
+
+        val candidates = dao.queryAllOrderedByCreatedDesc().filter { it.progress < 1.0 - 1e-9 }
+        for (entity in candidates) {
+            if (entity.createdAt in startOfToday until startOfTomorrow) continue
+            val deltaPercent = WithdrawalActionHelper.getCutInProgress()
+            val old = entity.progress
+            val newProgress = (old + deltaPercent / 100.0).coerceAtMost(1.0)
+            if (newProgress > old) {
+                updateProgress(entity.id, newProgress)
+            }
+        }
+        MMKVRepository.lastCutInDailyAutoBoostDay = day
     }
 
     /** 历史记录：包含已完成，最新在前 */

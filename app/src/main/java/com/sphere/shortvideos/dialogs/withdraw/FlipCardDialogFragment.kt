@@ -9,6 +9,7 @@ import android.graphics.Shader
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -137,6 +138,7 @@ class FlipCardDialogFragment : DialogFragment() {
                 inner.setBackgroundResource(R.drawable.ic_open_card_bg)
                 (text as? TextView)?.let { tv ->
                     tv.text = targetText
+                    tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, FLIP_CARD_TEXT_SIZE_REVEALED_SP)
                     applyResultTextStyle(tv, targetText)
                 }
                 half2.start()
@@ -222,5 +224,10 @@ class FlipCardDialogFragment : DialogFragment() {
         closeDialog()
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        /** 翻牌后（正面结果文案）字号；背面在布局中为 14sp */
+        private const val FLIP_CARD_TEXT_SIZE_REVEALED_SP = 13f
     }
 }

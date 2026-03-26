@@ -228,7 +228,7 @@ dependencies {
     api("com.thinkup.sdk:adapter-tpn-inmobi:11.1.1.1.0")
     api("com.inmobi.monetization:inmobi-ads-kotlin:11.1.0")
     //TU Adx SDK(Necessary)
-//    api("com.thinkup.sdk:adapter-tpn-sdm:6.5.56.1.1")
+    api("com.thinkup.sdk:adapter-tpn-sdm:6.5.56.1.1")
     api("com.smartdigimkttech.sdk:smartdigimkttech-sdk:6.5.56")
     //AppLovin
     api("com.thinkup.sdk:adapter-tpn-applovin:13.5.0.1.0")

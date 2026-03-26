@@ -39,6 +39,9 @@ object MMKVRepository {
 
     private var isCurDayStr by MMKVData("") // 当天
 
+    /** 已执行「插队每日被动随机加进度」的日历日 yyyy-MM-dd，同一天只加一次 */
+    var lastCutInDailyAutoBoostDay by MMKVData("")
+
     fun checkCueDay(): Boolean {
         //        if (isDebugMode) { //
         //            isCurDayStr = ""

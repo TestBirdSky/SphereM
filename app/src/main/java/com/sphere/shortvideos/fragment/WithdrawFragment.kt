@@ -26,6 +26,7 @@ import com.sphere.shortvideos.dialogs.withdraw.WithdrawApplyTransitionDialogFrag
 import com.sphere.shortvideos.dialogs.withdraw.WithdrawalTaskItem
 import com.sphere.shortvideos.dialogs.withdraw.WithdrawalTaskFragment
 import com.sphere.shortvideos.helper.DialogFragmentDisplayHelper
+import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.ad.AdUtils
@@ -93,6 +94,9 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
         AnimViewHelper.applyPressBounceEffect(binding.tvWithdraw)
         setupImeInsetForScroll()
         registerViewModel()
+        HelperRewardShow.curGetMoneyStr.observe(this) {
+            binding.tvMoney.text = it.first
+        }
     }
 
     private fun setupImeInsetForScroll() {
@@ -135,7 +139,6 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
         super.onResume()
         localEvent("withdraw_page")
         refreshAndShowTaskDialog()
-        binding.tvMoney.text = WithdrawAmountHelper.moneyFormatAddUnit(MoneyCacheHelper.fetchCurMoney())
         withdrawalActionController?.run {
             refreshMinTips()
             refreshMainWithdrawButton(binding.tvWithdraw)
@@ -172,7 +175,6 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
                     binding.groupNormal.visibility = View.VISIBLE
                     binding.groupWithdrawal.visibility = View.GONE
                     binding.tvWithdraw.isEnabled = true
-                    binding.tvWithdraw.alpha = 1f
                     binding.tvWithdraw.setBackgroundResource(R.drawable.shape_bg_ye)
                     binding.viewParent.removeAllViews()
                     setupWithdrawAmounts()

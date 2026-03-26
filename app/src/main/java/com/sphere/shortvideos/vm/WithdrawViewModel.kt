@@ -41,6 +41,7 @@ class WithdrawViewModel : ViewModel() {
 
     fun init() {
         viewModelScope.launch(Dispatchers.IO) {
+            WithdrawalRecordStore.applyDailyPassiveBoostIfNeeded()
             val records = WithdrawalRecordStore.getAllRecordsOrdered()
             if (records.isNotEmpty()) {
                 isShowMyAccount.postValue(true)
@@ -70,6 +71,7 @@ class WithdrawViewModel : ViewModel() {
                 return@launch
             }
             withContext(Dispatchers.IO) {
+                WithdrawalRecordStore.applyDailyPassiveBoostIfNeeded()
                 val records = WithdrawalRecordStore.getAllRecordsOrdered()
                 val uiItems = records.map { it.toCutInItem() }
                 val status = if (records.isNotEmpty()) {

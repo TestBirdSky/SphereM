@@ -82,8 +82,9 @@ object WithdrawalActionHelper {
         if (activity is PangleDramaPlayActivity) return
         if (isShowInfoLock2()) {
             if (activity is MainActivity) {
-                DialogFragmentDisplayHelper.show(activity.supportFragmentManager, ValuedPlayersDialogFragment())
-                showLock2NumCurDay++
+                if (DialogFragmentDisplayHelper.show(activity.supportFragmentManager, ValuedPlayersDialogFragment())) {
+                    showLock2NumCurDay++
+                }
             }
         }
     }

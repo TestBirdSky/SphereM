@@ -150,9 +150,8 @@ object NotificationHelper {
         val importance =
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.VANILLA_ICE_CREAM && isGoogleDevice()) NotificationManagerCompat.IMPORTANCE_MIN else NotificationManagerCompat.IMPORTANCE_DEFAULT
         NotificationManagerCompat.from(context)
-            .createNotificationChannel(NotificationChannelCompat.Builder(CHANNEL_ID, importance)
-                .setSound(null, null).setLightsEnabled(false)
-            .setVibrationEnabled(false).setShowBadge(false).setName(CHANNEL_NAME).build())
+            .createNotificationChannel(NotificationChannelCompat.Builder(CHANNEL_ID, importance).setSound(null, null)
+                .setLightsEnabled(false).setVibrationEnabled(false).setShowBadge(false).setName(CHANNEL_NAME).build())
     }
 
     fun initNotificationChannel(context: Context, isShowN: Boolean = true): String {
@@ -232,10 +231,10 @@ object NotificationHelper {
         launcherScope(if (isDebugMode) 3 else 79, {
             showLocalNotification(context, LOCAL_TYPE_79)
         })
-        launcherScope(if (isDebugMode) 2 else 23, {
+        launcherScope(23, {
             showLocalNotification(context, LOCAL_TYPE_23)
         })
-        enqueueLocalWorker(context, WORK_NAME_59, LOCAL_TYPE_59, if (isDebugMode) 4 else 59)
+        enqueueLocalWorker(context, WORK_NAME_59, LOCAL_TYPE_59, 59)
     }
 
     private val workScope = CoroutineScope(Dispatchers.Main + SupervisorJob())

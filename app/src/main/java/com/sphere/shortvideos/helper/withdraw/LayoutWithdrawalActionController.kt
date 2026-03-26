@@ -18,6 +18,7 @@ import com.sphere.shortvideos.dialogs.withdraw.InsufficientRevDialogFragment
 import com.sphere.shortvideos.dialogs.withdraw.MakingMoneyDialogFragment
 import com.sphere.shortvideos.dialogs.withdraw.PaymentInformationDialogFragment
 import com.sphere.shortvideos.dialogs.withdraw.WithdrawalInfoDialogFragment
+import com.sphere.shortvideos.helper.DialogFragmentDisplayHelper
 import com.sphere.shortvideos.helper.LauageTools
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
@@ -95,7 +96,7 @@ class LayoutWithdrawalActionController(
         if (input.isEmpty()) return false
 
         val amount = parseAmountNumber(input) ?: return false
-        val pair=WithdrawAmountHelper.fetchCurMoneyAndGetMoneyMinValue()
+        val pair = WithdrawAmountHelper.fetchCurMoneyAndGetMoneyMinValue()
         val balance = pair.first
         val minWithdraw = pair.second
         val jumpForyou = {
@@ -104,28 +105,26 @@ class LayoutWithdrawalActionController(
                 if (act is MainActivity) {
                     act.jumpToVideoTab()
                 } else {
-                    act.startActivity(
-                        Intent(act, MainActivity::class.java).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                        }
-                    )
+                    act.startActivity(Intent(act, MainActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    })
                 }
             }
         }
         if (amount + EPSILON < minWithdraw) {
-            MakingMoneyDialogFragment().apply {
+            DialogFragmentDisplayHelper.show(fragmentManager, MakingMoneyDialogFragment().apply {
                 onClaim = {
                     jumpForyou()
                 }
-            }.show(fragmentManager, "making_moneying")
+            }, "making_moneying")
             return true
         }
         if (amount - EPSILON > balance) {
-            InsufficientRevDialogFragment().apply {
+            DialogFragmentDisplayHelper.show(fragmentManager, InsufficientRevDialogFragment().apply {
                 onClaim = {
                     jumpForyou()
                 }
-            }.show(fragmentManager, "insufficient_rev")
+            })
             return true
         }
 
@@ -143,17 +142,16 @@ class LayoutWithdrawalActionController(
     }
 
     private fun showInfoDialog(fragmentManager: FragmentManager) {
-        WithdrawalInfoDialogFragment().apply {
+        DialogFragmentDisplayHelper.show(fragmentManager, WithdrawalInfoDialogFragment().apply {
             onAction = {
                 taskEvent()
             }
-        }.show(fragmentManager, "info_show")
+        }, "info_show")
     }
 
     private fun updateMainWithdrawButton(mainWithdrawButton: View) {
         val hasInput = binding.etMoney.text?.toString()?.trim().orEmpty().isNotEmpty()
         mainWithdrawButton.isEnabled = hasInput
-        mainWithdrawButton.alpha = 1f
         mainWithdrawButton.setBackgroundResource(
             if (hasInput) R.drawable.shape_bg_ye else R.drawable.shape_bg_withdraw_disabled,
         )

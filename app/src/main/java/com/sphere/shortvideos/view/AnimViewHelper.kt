@@ -59,7 +59,7 @@ object AnimViewHelper {
     fun applyPressBounceEffect(
         view: View,
         pressAlpha: Float = 0.85f,
-        pressScale: Float = 0.96f,
+        pressScale: Float = 0.98f,
         pressDurationMs: Long = 80L,
         releaseDurationMs: Long = 120L
     ) {
