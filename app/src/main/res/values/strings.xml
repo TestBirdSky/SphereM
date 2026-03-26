@@ -168,6 +168,7 @@
     <string name="withdraw_ready_message">Your effort has paid off! You\'ve earned %s and are ready to withdraw.</string>
     <string name="withdraw_ready_later">Later On</string>
     <string name="withdraw_ready_claim">Claim My Reward</string>
+
     <string name="withdraw_info_title_prefix">Please Verify Your </string>
     <string name="withdraw_info_title_highlight">Payout Account!</string>
     <string name="withdraw_info_platform">Payout Platform</string>
@@ -196,7 +197,7 @@
     <string name="task_des3">Your withdrawal is pending compliance review. Complete the required steps to validate your account and release funds.</string>
     <string name="cut_in">Cut In</string>
     <string name="cut_in_boost_failed">Cut In Failed!</string>
-    <string name="task_info_get_money">Payment within 7-14 business days</string>
+    <string name="task_info_get_money">Payment within 7–14 business days</string>
     <string name="watch_min_drama">Watch %1$d min drama</string>
     <string name="claim_bubbles">Claim %1$d bubbles</string>
     <string name="watch_ads">Watch %1$d ads</string>

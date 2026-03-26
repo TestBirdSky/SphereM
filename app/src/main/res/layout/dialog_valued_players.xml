@@ -22,8 +22,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_income"
             android:layout_width="0dp"
-            android:layout_marginTop="86dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="86dp"
             android:background="@drawable/shape_valued_income_inner"
             android:paddingVertical="14dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -86,13 +86,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="6dp"
                 android:layout_weight="1"
-                android:background="@drawable/shape_g1a0_12"
+                android:background="@drawable/shape_gr_9"
                 android:orientation="vertical">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#3D2F5C"
+                    android:background="@drawable/shape_top_12r"
+                    android:backgroundTint="#5E1397"
                     android:fontFamily="@font/noto_sans_semibold"
                     android:gravity="center"
                     android:paddingVertical="8dp"
@@ -117,13 +118,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
                 android:layout_weight="1"
-                android:background="@drawable/shape_g1a0_12"
+                android:background="@drawable/shape_gr_9"
                 android:orientation="vertical">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#3D2F5C"
+                    android:backgroundTint="#5E1397"
+                    android:background="@drawable/shape_top_12r"
                     android:fontFamily="@font/noto_sans_semibold"
                     android:gravity="center"
                     android:paddingVertical="8dp"

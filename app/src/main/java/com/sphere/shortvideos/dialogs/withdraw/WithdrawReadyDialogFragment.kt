@@ -65,11 +65,9 @@ class WithdrawReadyDialogFragment : DialogFragment() {
         }
         binding.btnClaim.setOnClickListener {
             localEvent("meet_withdraw_c")
+            dismissAllowingStateLoss()
             val act = activity ?: return@setOnClickListener
             WithdrawNavigator.navigateToWithdrawTab(act)
-            if (act is MainActivity) {
-                dismissAllowingStateLoss()
-            }
         }
     }
 
@@ -109,7 +107,7 @@ class WithdrawReadyDialogFragment : DialogFragment() {
     }
 
     private fun bindMessage() {
-        val amountStr = WithdrawAmountHelper.moneyFormatAddUnit(MoneyCacheHelper.fetchCurMoney()).replace("\t", " ")
+        val amountStr = WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(MoneyCacheHelper.fetchCurMoney())
         val template = getString(R.string.withdraw_ready_message, amountStr)
         val ss = SpannableStringBuilder(template)
         val start = template.indexOf(amountStr)
@@ -127,7 +125,7 @@ class WithdrawReadyDialogFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.window?.let { window ->
-            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
+            window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
             window.setBackgroundDrawableResource(R.color.color_dialog)
         }
         dialog?.setCanceledOnTouchOutside(false)
@@ -151,7 +149,6 @@ class WithdrawReadyDialogFragment : DialogFragment() {
             if (WithdrawalActionHelper.getConfig().isOpenWithdraw().not()) return
             if (WithdrawAmountHelper.isCanWithdraw().not()) return
             if (fragmentManager.findFragmentByTag(TAG_FM) != null) return
-            if (MMKVRepository.hasShownWithdrawReadyDialogEver) return
             WithdrawReadyDialogFragment().show(fragmentManager, TAG_FM)
             MMKVRepository.hasShownWithdrawReadyDialogEver = true
         }

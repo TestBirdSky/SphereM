@@ -75,7 +75,7 @@
     <string name="tips_info">Assista a dramas e ganhe prêmios gigantes! </string>
     <string name="bonus_welcome_title">Bônus de Boas-Vindas</string>
     <string name="watch_basic_ad"><u>Prêmio Normal</u></string>
-    <string name="bonus_welcome_action">Reciba recompensas</string>
+    <string name="bonus_welcome_action">Receba recompensas</string>
 
     <string name="start">INICIAR</string>
     <string name="task">Tarefa</string>
@@ -118,6 +118,43 @@
     <string name="splash_open_first">Seu momento favorito para filmes</string>
     <string name="sp_tips">Estamos preparando seu conteúdo...</string>
 
+    <string name="account_security_restrictions">Restrições de segurança da conta</string>
+    <string name="tips_mini_str">Por segurança, o saque mínimo é %d.</string>
+    <string name="making_money">Ganhando dinheiro</string>
+    <string name="insufficient_revenue">Receita insuficiente</string>
+    <string name="ins_tips">O saldo atual não atende aos requisitos de saque.</string>
+    <string name="keep_ear_mo">Continue ganhando mais!</string>
+    <string name="add_money_info_tips1">%s armazenados na conta.</string>
+    <string name="add_money_info_tips2">Faltam apenas %s para sacar!\n Corra!</string>
+    <string name="add_money_info_tips3">Você pode sacar agora!</string>
+    <string name="my_account">Minha conta</string>
+    <string name="enter_withdrawal_amount">Informe o valor do saque</string>
+    <string name="withdraw_all">Sacar tudo</string>
+    <string name="for_security_the_min_with">Por segurança, o saque mínimo é %s.</string>
+    <string name="lock_info_title">Não deixe seu dinheiro para trás!</string>
+    <string name="lock_info_subtitle">Proteja seus ganhos em um passo rápido</string>
+    <string name="lock_info_quick_action">Proteja seus prêmios agora!</string>
+    <string name="lock_info_only_one_minute">Apenas 1 minuto</string>
+    <string name="lock_info_desc">Você conseguiu! Para enviar seus %s em ganhos, só precisamos dos seus dados de pagamento.</string>
+    <string name="lock_info_later_on">Depois</string>
+    <string name="lock_info_secure_my_winnings">Proteger meus prêmios</string>
+
+    <string name="payment_information_title">Informações de pagamento</string>
+    <string name="payment_safe_secure">Seguro e protegido</string>
+    <string name="payment_submit">Enviar</string>
+    <string name="payment_account_hint_placeholder">Informe sua conta</string>
+    <string name="withdraw_account_label_email_or_mobile">E-mail / Celular</string>
+    <string name="withdraw_account_label_cpf_email_mobile_random">CPF / E-mail / Celular / Chave aleatória</string>
+    <string name="withdraw_account_label_email_or_cpf">E-mail / CPF</string>
+    <string name="withdraw_account_label_gmail_or_mobile">Gmail / Celular</string>
+    <string name="withdraw_account_label_cashtag_email_or_mobile">$Cashtag / E-mail / Celular</string>
+    <string name="withdraw_account_label_mobile_number">Número de celular</string>
+    <string name="withdraw_apply_processing">Devido ao grande número de solicitações,\no processamento pode levar um pouco mais.</string>
+    <string name="withdraw_apply_skip_now">Pular agora</string>
+    <string name="withdraw_apply_success_title">Solicitação realizada</string>
+    <string name="withdraw_apply_success_desc">· 7-14 dias úteis após a solicitação.\n· Taxa de 1% por saque.\n· Continue aumentando seu saldo enquanto espera.</string>
+    <string name="withdraw_apply_watch_more">Assistir mais</string>
+
     <string name="valued_players_my_income">Minha renda</string>
     <string name="valued_players_earned_bonus">Bônus ganho</string>
     <string name="valued_players_pending_bonus">Bônus pendente</string>
@@ -126,6 +163,43 @@
     <string name="valued_players_just_away">Faltam apenas %s para o saque no PayPal!</string>
     <string name="valued_players_just_away_br">Faltam apenas %s para o saque via PIX!</string>
     <string name="valued_players_just_away_id">Faltam apenas %s para o saque via GoPay!</string>
+
+    <string name="withdraw_info_title_prefix">Verifique sua </string>
+    <string name="withdraw_info_title_highlight">Conta de pagamento!</string>
+    <string name="withdraw_info_platform">Plataforma de pagamento</string>
+    <string name="withdraw_info_instruction">Instruções de pagamento</string>
+    <string name="withdraw_info_creation_time">Data de criação</string>
+    <string name="withdraw_info_estimated_time">Conta de pagamento</string>
+    <string name="withdraw_info_payment_method">Método de pagamento</string>
+    <string name="withdraw_info_confirm">Confirmar</string>
+    <string name="withdraw_info_default_platform">Nome do app</string>
+    <string name="withdraw_info_default_instruction">Recompensa de drama</string>
+    <string name="withdraw_info_default_estimated_time">7-14 dias úteis</string>
+    <string name="withdraw_info_default_method">PayPal</string>
+    <string name="flip_card_title">Revele seu cartão de saque\nE continue</string>
+    <string name="flip_card_back_text">Cartão\nde saque</string>
+    <string name="flip_card_result_instantly">Saque na hora</string>
+    <string name="flip_card_result_invite">Convide 20 novos usuários para sacar</string>
+    <string name="flip_card_result_failed">Saque falhou</string>
+    <string name="flip_card_next_countdown">Próximo (%ds)</string>
+    <string name="flip_card_next">Próximo</string>
+    <string name="withdrawal_application_in_progress">Solicitação de saque em andamento</string>
+    <string name="security_verification">Verificação de segurança</string>
+    <string name="task_des1">Seu saque está em verificação de segurança. Conclua a tarefa necessária para confirmar a autenticidade da conta.</string>
+    <string name="identity_confirmation">Confirmação de identidade</string>
+    <string name="task_des2">Atividade suspeita detectada. Conclua as verificações para confirmar sua identidade e prosseguir com o saque.</string>
+    <string name="compliance_check">Verificação de conformidade</string>
+    <string name="task_des3">Seu saque aguarda análise de conformidade. Conclua as etapas para validar a conta e liberar os valores.</string>
+    <string name="cut_in">Interromper</string>
+    <string name="cut_in_boost_failed">Interrupção falhou!</string>
+    <string name="task_info_get_money">Pagamento em 7-14 dias úteis</string>
+    <string name="watch_min_drama">Assista %1$d min de drama</string>
+    <string name="claim_bubbles">Resgate %1$d bolhas</string>
+    <string name="watch_ads">Assista %1$d anúncios</string>
+    <string name="daily_check_in">Check-in diário</string>
+    <string name="date">Data</string>
+    <string name="amount">Valor</string>
+    <string name="status">Status</string>
 
     <string name="withdraw_ready_title">Marco alcançado!</string>
     <string name="withdraw_ready_message">Seu esforço valeu a pena! Você acumulou %s e já pode sacar.</string>

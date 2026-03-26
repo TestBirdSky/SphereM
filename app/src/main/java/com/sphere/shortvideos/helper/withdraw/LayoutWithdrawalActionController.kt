@@ -95,8 +95,9 @@ class LayoutWithdrawalActionController(
         if (input.isEmpty()) return false
 
         val amount = parseAmountNumber(input) ?: return false
-        val minWithdraw = WithdrawAmountHelper.fetchCurMoneyAndGetMoneyMinValue().second
-        val balance = MoneyCacheHelper.fetchCurMoney()
+        val pair=WithdrawAmountHelper.fetchCurMoneyAndGetMoneyMinValue()
+        val balance = pair.first
+        val minWithdraw = pair.second
         val jumpForyou = {
             val act = fragment.activity
             if (act != null) {

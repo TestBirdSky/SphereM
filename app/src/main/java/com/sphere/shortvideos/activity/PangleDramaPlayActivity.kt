@@ -443,7 +443,8 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
 
     private fun registerLV() {
         showBubbleTips.observe(this, { pair ->
-            if (System.currentTimeMillis() - pair.second < 2000) return@observe
+            // pair.second 是“预计消失时间”(未来时间戳)，剩余时间太短就不展示
+            if (pair.second - System.currentTimeMillis() < 2000) return@observe
             binding.tipsBubble.setTextAndDismiss(pair)
         })
         HelperRewardShow.numProgress.observe(this, {
@@ -467,6 +468,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
             binding.tvCurMoney.text = it
         })
         HelperRewardShow.registerConDialog(activity)
+        HelperRewardShow.registerGetMoney(activity)
         HelperRewardShow.animAddMoneyDurationInMill.observe(this, {
             logError("animAddMoney -->$it --$this")
             if (it > 0) {

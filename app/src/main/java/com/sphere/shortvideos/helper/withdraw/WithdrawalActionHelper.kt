@@ -1,5 +1,6 @@
 package com.sphere.shortvideos.helper.withdraw
 
+import com.chartboost.sdk.impl.fa
 import com.google.gson.Gson
 import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.activity.PangleDramaPlayActivity
@@ -9,7 +10,9 @@ import com.sphere.shortvideos.dialogs.withdraw.LockInfoDialogFragment
 import com.sphere.shortvideos.dialogs.withdraw.PaymentInformationDialogFragment
 import com.sphere.shortvideos.dialogs.withdraw.ValuedPlayersDialogFragment
 import com.sphere.shortvideos.helper.DialogFragmentDisplayHelper
+import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.RemoteConfHelper
+import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.mmkv.MMKVData
 import com.sphere.shortvideos.isDebugMode
 
@@ -95,6 +98,7 @@ object WithdrawalActionHelper {
 
     fun isShowInfoLock2(): Boolean {
         if (getConfig().isOpenWithdraw().not()) return false
+        if (WithdrawAmountHelper.isCanWithdraw()) return false
         if (showLock2NumCurDay >= 1) return false
         if (curDayAdNum < getConfig().userMaintenance.premiumUser) return false
         return true

@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
+import com.chartboost.sdk.impl.ac
 import com.chartboost.sdk.impl.fa
 import com.chartboost.sdk.impl.pa
 import com.sphere.shortvideos.R
@@ -18,7 +19,9 @@ import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.dialogs.LuckChallengeDialogFragment
 import com.sphere.shortvideos.dialogs.NormalCongratulateDialogFragment
+import com.sphere.shortvideos.dialogs.withdraw.WithdrawReadyDialogFragment
 import com.sphere.shortvideos.helper.ad.AdUtils
+import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.helper.reward.RewardHelper
 import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 import com.sphere.shortvideos.isDebugMode
@@ -47,6 +50,7 @@ object HelperRewardShow {
     private val showTime get() = Random.nextLong(2000, 3100)
 
     val showBubbleTips = MutableLiveData<Triple<Int, Long, String>>() // 显示的词条 显示时间
+    private val showDialogFetchMoney = MutableLiveData<Long>() // 显示的词条 显示时间
 
     var isShowCanCash = false
 
@@ -227,6 +231,15 @@ object HelperRewardShow {
         showDialogType.postValue(int)
     }
 
+    fun registerGetMoney(activity: GenericActivity) {
+        if (MMKVRepository.hasShownWithdrawReadyDialogEver) return
+        HelperRewardShow.showDialogFetchMoney.observe(activity) {
+            if (DialogFragmentDisplayHelper.isShowing().not()) {
+                WithdrawReadyDialogFragment.showIfEligible(activity.supportFragmentManager)
+            }
+        }
+    }
+
     fun registerConDialog(activity: GenericActivity) {
         showDialogType.observe(activity) {
             logError("registerConDialog-->$it")
@@ -292,9 +305,17 @@ object HelperRewardShow {
 
     fun isArriveMinMoney() {
         if (WithdrawalActionHelper.getConfig().isOpenWithdraw().not()) return
+        showArriveMoney()
         if (isShowCanCash) return
         if (WithdrawAmountHelper.isCanWithdraw()) {
             showBubbleTips.postValue(Triple(2, System.currentTimeMillis() + showTime, ""))
+            isShowCanCash = true
+        }
+    }
+
+    fun showArriveMoney() {
+        if (WithdrawAmountHelper.isCanWithdraw()) {
+            showDialogFetchMoney.postValue(System.currentTimeMillis())
         }
     }
 

@@ -228,7 +228,7 @@ dependencies {
     api("com.thinkup.sdk:adapter-tpn-inmobi:11.1.1.1.0")
     api("com.inmobi.monetization:inmobi-ads-kotlin:11.1.0")
     //TU Adx SDK(Necessary)
-    api("com.thinkup.sdk:adapter-tpn-sdm:6.5.56.1.1")
+//    api("com.thinkup.sdk:adapter-tpn-sdm:6.5.56.1.1")
     api("com.smartdigimkttech.sdk:smartdigimkttech-sdk:6.5.56")
     //AppLovin
     api("com.thinkup.sdk:adapter-tpn-applovin:13.5.0.1.0")
@@ -257,13 +257,14 @@ dependencies {
     api("com.fyber:marketplace-sdk:8.3.7")
     api("com.google.android.gms:play-services-ads-identifier:18.0.1")
 
+    // todo modify
     //Moloco
-    api("com.thinkup.sdk:adapter-tpn-moloco:4.3.1.1.0")
-    api("com.moloco.sdk:moloco-sdk:4.3.1")
-
-    //UnityAds
-    api("com.thinkup.sdk:adapter-tpn-unityads:4.16.1.1.0")
-    api("com.unity3d.ads:unity-ads:4.16.1")
+//    api("com.thinkup.sdk:adapter-tpn-moloco:4.3.1.1.0")
+//    api("com.moloco.sdk:moloco-sdk:4.3.1")
+//
+//    //UnityAds
+//    api("com.thinkup.sdk:adapter-tpn-unityads:4.16.1.1.0")
+//    api("com.unity3d.ads:unity-ads:4.16.1")
 
     //Tramini
     api("com.thinkup.sdk:tramini-plugin-tpn:6.5.52")

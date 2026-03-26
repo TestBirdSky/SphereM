@@ -33,7 +33,6 @@ import com.sphere.shortvideos.database.DramaCollectEntity
 import com.sphere.shortvideos.databinding.FragmentPangleVideoContainerBinding
 import com.sphere.shortvideos.dialogs.WelcomeBonusDialogFragment
 import com.sphere.shortvideos.helper.HelperRewardShow
-import com.sphere.shortvideos.helper.HelperRewardShow.isShowCanCash
 import com.sphere.shortvideos.helper.HelperRewardShow.showBubbleTips
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.localEvent
@@ -352,7 +351,8 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
 
         showBubbleTips.observe(this, { pair ->
             logError("showBubbleTips-->$pair")
-            if (System.currentTimeMillis() - pair.second < 2000) return@observe
+            // pair.second 是“预计消失时间”(未来时间戳)，剩余时间太短就不展示
+            if (pair.second - System.currentTimeMillis() < 2000) return@observe
             binding.tvTis.setTextAndDismiss(pair)
         })
     }

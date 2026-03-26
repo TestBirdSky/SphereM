@@ -88,7 +88,7 @@ object WithdrawAmountHelper {
     fun fetchCurMoneyAndWithdrawNeedMoney(): Pair<String, String> {
         val curMoney = fetchCurMoney()
         val curMoneyStr = moneyFormatAddUnit(curMoney)
-        val needTagMoney = moneyFormatAddUnitWithNoSpace((defLow.fetWithdraw() - curMoney).coerceAtLeast(0)) // 剩余体现的金额
+        val needTagMoney = moneyFormatAddUnitWithNoSpace((defLow.fetWithdraw() - curMoney).coerceAtLeast(0.0)) // 剩余体现的金额
         return Pair(curMoneyStr, needTagMoney)
     }
 

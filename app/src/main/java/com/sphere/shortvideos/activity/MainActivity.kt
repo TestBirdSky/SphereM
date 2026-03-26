@@ -184,6 +184,7 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
 
     private fun registerViewModel() {
         HelperRewardShow.registerConDialog(this)
+        HelperRewardShow.registerGetMoney(this)
     }
 
     fun jumpWallet() {
