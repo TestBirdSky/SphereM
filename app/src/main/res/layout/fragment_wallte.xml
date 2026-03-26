@@ -59,7 +59,7 @@
                 android:text="@string/my_balance"
                 android:textColor="#F8F8F8"
                 android:textSize="12sp"
-                app:layout_constraintLeft_toLeftOf="@id/iv_bg_top"
+                app:layout_constraintStart_toStartOf="@id/iv_bg_top"
                 app:layout_constraintTop_toTopOf="@id/iv_bg_top" />
 
             <androidx.appcompat.widget.AppCompatImageView

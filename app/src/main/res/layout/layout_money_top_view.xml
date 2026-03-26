@@ -35,7 +35,7 @@
             android:textColor="#F3CD0C"
             android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@id/tv_tips"
-            app:layout_constraintLeft_toRightOf="@id/iv_p_tag"
+            app:layout_constraintStart_toEndOf="@id/iv_p_tag"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.5"
             app:layout_constraintVertical_chainStyle="packed"
@@ -49,7 +49,7 @@
             android:scaleType="fitXY"
             android:src="@drawable/ic_wall_task_top"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
