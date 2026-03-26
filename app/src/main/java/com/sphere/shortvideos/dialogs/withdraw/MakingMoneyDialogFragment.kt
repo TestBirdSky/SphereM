@@ -5,9 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.core.graphics.toColorInt
 import androidx.fragment.app.DialogFragment
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.databinding.DialogMakingMoneyingBinding
+import com.sphere.shortvideos.helper.WithdrawAmountHelper
+import com.sphere.shortvideos.view.setColorText
 
 /**
  * Date：2026/3/23
@@ -45,6 +48,9 @@ class MakingMoneyDialogFragment : DialogFragment() {
             onClaim?.invoke()
             dismissAllowingStateLoss()
         }
+        val tag = WithdrawAmountHelper.fetchWithdrawMinMoney()
+        val text = getString(R.string.tips_mini_str, tag)
+        binding.tvDes.setColorText(text, tag, "#32C752".toColorInt())
     }
 
     override fun onStart() {

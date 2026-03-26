@@ -32,7 +32,10 @@ class FlipCardDialogFragment : DialogFragment() {
     private val binding get() = _binding!!
 
     private val handler = Handler(Looper.getMainLooper())
+    /** 外层槽位：承载选中框 + 缩放/3D 翻转 */
     private val cards by lazy { listOf(binding.card1, binding.card2, binding.card3) }
+    /** 内层卡面：ic_card_bg / ic_open_card_bg 只切换这一层 */
+    private val cardInners by lazy { listOf(binding.cardInner1, binding.cardInner2, binding.cardInner3) }
     private val cardTexts by lazy { listOf(binding.tvCard1, binding.tvCard2, binding.tvCard3) }
     private val selectedBorders by lazy { listOf(binding.ivSelected1, binding.ivSelected2, binding.ivSelected3) }
 
@@ -106,11 +109,11 @@ class FlipCardDialogFragment : DialogFragment() {
         values[(selectedIndex + 2) % 3] = getString(R.string.flip_card_result_failed)
         highlightSelected(selectedIndex)
         // 先翻选中的卡，翻完后再翻其余两张
-        flipCard(cards[selectedIndex], cardTexts[selectedIndex], values[selectedIndex]) {
+        flipCard(cards[selectedIndex], cardInners[selectedIndex], cardTexts[selectedIndex], values[selectedIndex]) {
             val restIndexes = (0..2).filter { it != selectedIndex }
             var restFinished = 0
             restIndexes.forEach { idx ->
-                flipCard(cards[idx], cardTexts[idx], values[idx]) {
+                flipCard(cards[idx], cardInners[idx], cardTexts[idx], values[idx]) {
                     restFinished++
                     if (restFinished == restIndexes.size) {
                         showNext()
@@ -120,18 +123,18 @@ class FlipCardDialogFragment : DialogFragment() {
         }
     }
 
-    private fun flipCard(card: View, text: View, targetText: String, end: () -> Unit) {
-        val half = ObjectAnimator.ofFloat(card, View.ROTATION_Y, 0f, 90f).apply {
+    private fun flipCard(outer: View, inner: View, text: View, targetText: String, end: () -> Unit) {
+        val half = ObjectAnimator.ofFloat(outer, View.ROTATION_Y, 0f, 90f).apply {
             duration = 130L
             interpolator = DecelerateInterpolator()
         }
-        val half2 = ObjectAnimator.ofFloat(card, View.ROTATION_Y, -90f, 0f).apply {
+        val half2 = ObjectAnimator.ofFloat(outer, View.ROTATION_Y, -90f, 0f).apply {
             duration = 130L
             interpolator = DecelerateInterpolator()
         }
         half.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
-                card.setBackgroundResource(R.drawable.ic_open_card_bg)
+                inner.setBackgroundResource(R.drawable.ic_open_card_bg)
                 (text as? TextView)?.let { tv ->
                     tv.text = targetText
                     applyResultTextStyle(tv, targetText)

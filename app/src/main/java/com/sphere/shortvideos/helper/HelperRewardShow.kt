@@ -46,7 +46,7 @@ object HelperRewardShow {
     val showDialogType = MutableLiveData<Int>() //0 普通奖励看插屏 1 倍率玩法看激励广告
 
     private var lastShowTipsMoneyTime = System.currentTimeMillis()
-    private var showTipsPeriod = if (isDebugMode) 60000 else 60000 * 5
+    private var showTipsPeriod = if (isDebugMode) 60000 else 60000 * 3
     private val showTime get() = Random.nextLong(2000, 3100)
 
     val showBubbleTips = MutableLiveData<Triple<Int, Long, String>>() // 显示的词条 显示时间
@@ -308,12 +308,14 @@ object HelperRewardShow {
         showArriveMoney()
         if (isShowCanCash) return
         if (WithdrawAmountHelper.isCanWithdraw()) {
+            lastShowTipsMoneyTime = System.currentTimeMillis()
             showBubbleTips.postValue(Triple(2, System.currentTimeMillis() + showTime, ""))
             isShowCanCash = true
         }
     }
 
     fun showArriveMoney() {
+        if (MMKVRepository.hasShownWithdrawReadyDialogEver)return
         if (WithdrawAmountHelper.isCanWithdraw()) {
             showDialogFetchMoney.postValue(System.currentTimeMillis())
         }

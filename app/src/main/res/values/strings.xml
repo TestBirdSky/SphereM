@@ -116,7 +116,7 @@
     <string name="sp_tips">We\'re preparing your content...</string>
 
     <string name="account_security_restrictions">Account security restrictions</string>
-    <string name="tips_mini_str">For security, the minimum withdrawal is %d.</string>
+    <string name="tips_mini_str">For security, the minimum withdrawal is %s.</string>
     <string name="making_money">Making Money</string>
     <string name="insufficient_revenue">Insufficient Revenue</string>
     <string name="ins_tips">The current account balance does not meet your withdrawal requirements.</string>

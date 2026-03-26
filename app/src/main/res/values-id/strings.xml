@@ -120,7 +120,7 @@
     <string name="sp_tips">Kami sedang menyiapkan konten Anda...</string>
 
     <string name="account_security_restrictions">Pembatasan keamanan akun</string>
-    <string name="tips_mini_str">Untuk keamanan, penarikan minimum adalah %d.</string>
+    <string name="tips_mini_str">Untuk keamanan, penarikan minimum adalah %s.</string>
     <string name="making_money">Menghasilkan uang</string>
     <string name="insufficient_revenue">Pendapatan tidak mencukupi</string>
     <string name="ins_tips">Saldo akun saat ini tidak memenuhi syarat penarikan Anda.</string>

@@ -117,7 +117,7 @@
     <string name="sp_tips">Estamos preparando tu contenido...</string>
 
     <string name="account_security_restrictions">Restricciones de seguridad de la cuenta</string>
-    <string name="tips_mini_str">Por seguridad, el retiro mínimo es %d.</string>
+    <string name="tips_mini_str">Por seguridad, el retiro mínimo es %s.</string>
     <string name="making_money">Ganando dinero</string>
     <string name="insufficient_revenue">Ingresos insuficientes</string>
     <string name="ins_tips">El saldo actual no cumple con los requisitos de retiro.</string>

@@ -1,11 +1,6 @@
 package com.sphere.shortvideos.adapter
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.ObjectAnimator
-import android.animation.PropertyValuesHolder
 import android.animation.ValueAnimator
-import android.view.View
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -59,10 +54,13 @@ class WithdrawalCutInAdapter : RecyclerView.Adapter<WithdrawalCutInAdapter.CutIn
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private var bindGeneration = 0L
+        private var pendingStartProgressRunnable: Runnable? = null
         private var pendingEndRunnable: Runnable? = null
 
         fun bind(item: WithdrawalCutInItem) {
             bindGeneration++
+            pendingStartProgressRunnable?.let { binding.root.removeCallbacks(it) }
+            pendingStartProgressRunnable = null
             pendingEndRunnable?.let { binding.root.removeCallbacks(it) }
             pendingEndRunnable = null
 
@@ -89,10 +87,8 @@ class WithdrawalCutInAdapter : RecyclerView.Adapter<WithdrawalCutInAdapter.CutIn
         }
 
         /**
-         * T0：调用此方法（广告已发奖且服务端/本地进度已落库）。
-         * T0～T0+1s：金额区域缩放脉冲（进度条不动）。
-         * T0+1s：进度条动画涨至 [newPercent]，并展示 [plusText]。
-         * T0+3s：隐藏 「+」 文案（与涨进度同时开始再过 2s）。
+         * 看广告发奖后：先播放 [plusText] 入场动效；**1 秒后**再播放进度条涨至 [newPercent]；
+         * 进度开始后再过约 2s 隐藏「+」并回调。
          */
         fun playBoostSequence(
             oldPercent: Int,
@@ -104,6 +100,8 @@ class WithdrawalCutInAdapter : RecyclerView.Adapter<WithdrawalCutInAdapter.CutIn
 
             fun isStale(): Boolean = gen != bindGeneration
 
+            pendingStartProgressRunnable?.let { binding.root.removeCallbacks(it) }
+            pendingStartProgressRunnable = null
             pendingEndRunnable?.let { binding.root.removeCallbacks(it) }
             pendingEndRunnable = null
 
@@ -115,79 +113,69 @@ class WithdrawalCutInAdapter : RecyclerView.Adapter<WithdrawalCutInAdapter.CutIn
             binding.tvAddProgress.scaleX = 1f
             binding.tvAddProgress.scaleY = 1f
 
-            // 第一段：1s「增加」动效（进度数字与条暂不跳）
-            val intro = ObjectAnimator.ofPropertyValuesHolder(
-                binding.tvMoney,
-                PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 1.18f, 1f),
-                PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 1.18f, 1f),
-            ).apply {
-                duration = 1000L
-                interpolator = AccelerateDecelerateInterpolator()
+            if (isStale()) {
+                onSequenceEnded()
+                return
             }
-            intro.addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    binding.tvMoney.scaleX = 1f
-                    binding.tvMoney.scaleY = 1f
-                }
-            })
-            intro.start()
 
-            binding.root.postDelayed({
+            binding.tvAddProgress.text = plusText
+            binding.tvAddProgress.isVisible = true
+            binding.tvAddProgress.alpha = 0f
+            binding.tvAddProgress.scaleX = 0.6f
+            binding.tvAddProgress.scaleY = 0.6f
+            binding.tvAddProgress.animate()
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(280L)
+                .setInterpolator(AccelerateDecelerateInterpolator())
+                .start()
+
+            val clampedOld = oldPercent.coerceIn(0, 100)
+            val clampedNew = newPercent.coerceIn(0, 100)
+            val progressAnim = ValueAnimator.ofInt(clampedOld, clampedNew).apply {
+                duration = 850L
+                interpolator = AccelerateDecelerateInterpolator()
+                addUpdateListener { va ->
+                    val v = va.animatedValue as Int
+                    binding.progressView.progress = v
+                    binding.tvCurProgress.text = "$v%"
+                }
+            }
+
+            val hideRunnable = Runnable {
                 if (isStale()) {
                     onSequenceEnded()
-                    return@postDelayed
+                    return@Runnable
                 }
-
-                binding.tvAddProgress.text = plusText
-                binding.tvAddProgress.isVisible = true
-                binding.tvAddProgress.alpha = 0f
-                binding.tvAddProgress.scaleX = 0.6f
-                binding.tvAddProgress.scaleY = 0.6f
                 binding.tvAddProgress.animate()
-                    .alpha(1f)
-                    .scaleX(1f)
-                    .scaleY(1f)
-                    .setDuration(280L)
-                    .setInterpolator(AccelerateDecelerateInterpolator())
-                    .start()
-
-                val clampedOld = oldPercent.coerceIn(0, 100)
-                val clampedNew = newPercent.coerceIn(0, 100)
-                val progressAnim = ValueAnimator.ofInt(clampedOld, clampedNew).apply {
-                    duration = 850L
-                    interpolator = AccelerateDecelerateInterpolator()
-                    addUpdateListener { va ->
-                        val v = va.animatedValue as Int
-                        binding.progressView.progress = v
-                        binding.tvCurProgress.text = "$v%"
+                    .alpha(0f)
+                    .setDuration(220L)
+                    .withEndAction {
+                        binding.tvAddProgress.isVisible = false
+                        binding.tvAddProgress.alpha = 1f
+                        binding.tvAddProgress.text = ""
+                        onSequenceEnded()
                     }
+                    .start()
+            }
+
+            val startProgressRunnable = Runnable {
+                if (isStale()) {
+                    onSequenceEnded()
+                    return@Runnable
                 }
                 progressAnim.start()
-
-                val hideRunnable = Runnable {
-                    if (isStale()) {
-                        onSequenceEnded()
-                        return@Runnable
-                    }
-                    binding.tvAddProgress.animate()
-                        .alpha(0f)
-                        .setDuration(220L)
-                        .withEndAction {
-                            binding.tvAddProgress.isVisible = false
-                            binding.tvAddProgress.alpha = 1f
-                            binding.tvAddProgress.text = ""
-                            onSequenceEnded()
-                        }
-                        .start()
-                }
                 pendingEndRunnable = hideRunnable
                 binding.root.postDelayed(hideRunnable, 2000L)
-            }, 1000L)
+            }
+            pendingStartProgressRunnable = startProgressRunnable
+            binding.root.postDelayed(startProgressRunnable, 1000L)
         }
     }
 
     companion object {
         /** 与提现流程激励位一致，需与广告配置中的 position 名称对齐 */
-        const val CUT_IN_RV_AD_POSITION = "dlmsf_withdraw_skip_rv"
+        const val CUT_IN_RV_AD_POSITION = "dlmsf_withdraw_cut_in_rv"
     }
 }

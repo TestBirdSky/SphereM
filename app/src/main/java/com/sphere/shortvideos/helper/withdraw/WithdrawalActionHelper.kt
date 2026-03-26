@@ -11,10 +11,13 @@ import com.sphere.shortvideos.dialogs.withdraw.PaymentInformationDialogFragment
 import com.sphere.shortvideos.dialogs.withdraw.ValuedPlayersDialogFragment
 import com.sphere.shortvideos.helper.DialogFragmentDisplayHelper
 import com.sphere.shortvideos.helper.MoneyCacheHelper
+import com.sphere.shortvideos.helper.MoneyCacheHelper.watchVideoTime
 import com.sphere.shortvideos.helper.RemoteConfHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.mmkv.MMKVData
+import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.isDebugMode
+import com.sphere.shortvideos.logError
 
 /**
  * 提现动作配置读取（Remote Config key: Withdrawal_action）
@@ -126,9 +129,6 @@ object WithdrawalActionHelper {
     fun clearWithdrawalInfoAndAddTask() {
         accountWithdrawal = ""
         curTaskProgressStatus = TASK1_STEP
-        if (isDebugMode) {
-            curTaskProgressStatus = TASK2_STEP
-        }
         isShowWithApplyDialog = false
         resetAllTaskProgress()
     }
@@ -138,6 +138,7 @@ object WithdrawalActionHelper {
         curTaskProgressStatus = 0
         withdrawalMethodId = ""
         withdrawalValue = 0.0
+        MMKVRepository.hasShownWithdrawReadyDialogEver = false
     }
 
     fun havaBaseInfo(): Boolean {
@@ -163,10 +164,8 @@ object WithdrawalActionHelper {
     /** 仅在任务 1 阶段累加看短剧时长（秒） */
     fun addTask1WatchTime(second: Int) {
         if (curTaskProgressStatus == TASK1_STEP) {
+            logError("addTask1WatchTime-->$second --$task1DramaSecond")
             task1DramaSecond += second.coerceAtLeast(0)
-            if (isDebugMode) {
-                task1DramaSecond += second * 60
-            }
         }
     }
 
@@ -174,9 +173,6 @@ object WithdrawalActionHelper {
     fun addTask3WatchAdNum() {
         if (curTaskProgressStatus == TASK3_STEP) {
             task3AdCount++
-            if (isDebugMode) { //todo del
-                task3AdCount += 5
-            }
         }
     }
 
@@ -184,9 +180,6 @@ object WithdrawalActionHelper {
     fun addTask2BubbleNum() {
         if (curTaskProgressStatus == TASK2_STEP) {
             task2BubbleCount++
-            if (isDebugMode) { //todo del
-                task2BubbleCount += 5
-            }
         }
     }
 

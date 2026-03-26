@@ -71,9 +71,6 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
         }
         session()
         MMKVRepository.checkCueDay()
-        if (isDebugMode) { // todo del
-            openMain()
-        }
     }
 
     private fun openMain() {

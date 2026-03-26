@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipChildren="false"
@@ -31,7 +32,7 @@
         android:id="@+id/layout_cards"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="48dp"
         android:clipChildren="false"
         android:clipToPadding="false"
         android:gravity="center"
@@ -43,16 +44,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.42">
 
+        <!-- 外层：选中框包在内层 ic_card_bg 外缘；缩放/翻转作用在外层，内层内缩露出边框 -->
         <FrameLayout
             android:id="@+id/card_1"
             android:layout_width="0dp"
             android:layout_height="150dp"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:background="@drawable/ic_card_bg"
             android:clickable="true"
-            android:focusable="true"
-            android:padding="6dp">
+            android:clipChildren="false"
+            android:focusable="true">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_selected_1"
@@ -61,17 +62,28 @@
                 android:contentDescription="@null"
                 android:scaleType="fitXY"
                 android:src="@drawable/ic_selected_bg"
+                tools:visibility="visible"
                 android:visibility="gone" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_card_1"
+            <FrameLayout
+                android:id="@+id/card_inner_1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="@string/flip_card_back_text"
-                android:textColor="#A45714"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:layout_gravity="center"
+                android:layout_margin="6dp"
+                android:background="@drawable/ic_card_bg"
+                android:padding="6dp">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_card_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/flip_card_back_text"
+                    android:textColor="#A45714"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </FrameLayout>
         </FrameLayout>
 
         <FrameLayout
@@ -80,10 +92,9 @@
             android:layout_height="150dp"
             android:layout_marginHorizontal="8dp"
             android:layout_weight="1"
-            android:background="@drawable/ic_card_bg"
             android:clickable="true"
-            android:focusable="true"
-            android:padding="6dp">
+            android:clipChildren="false"
+            android:focusable="true">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_selected_2"
@@ -94,15 +105,25 @@
                 android:src="@drawable/ic_selected_bg"
                 android:visibility="gone" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_card_2"
+            <FrameLayout
+                android:id="@+id/card_inner_2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="@string/flip_card_back_text"
-                android:textColor="#A45714"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:layout_gravity="center"
+                android:layout_margin="6dp"
+                android:background="@drawable/ic_card_bg"
+                android:padding="6dp">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_card_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/flip_card_back_text"
+                    android:textColor="#A45714"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </FrameLayout>
         </FrameLayout>
 
         <FrameLayout
@@ -111,10 +132,9 @@
             android:layout_height="150dp"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:background="@drawable/ic_card_bg"
             android:clickable="true"
-            android:focusable="true"
-            android:padding="4dp">
+            android:clipChildren="false"
+            android:focusable="true">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_selected_3"
@@ -123,17 +143,28 @@
                 android:contentDescription="@null"
                 android:scaleType="fitXY"
                 android:src="@drawable/ic_selected_bg"
-                android:visibility="gone" />
+                android:visibility="gone"
+                tools:visibility="visible" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_card_3"
+            <FrameLayout
+                android:id="@+id/card_inner_3"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="@string/flip_card_back_text"
-                android:textColor="#A45714"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:layout_gravity="center"
+                android:layout_margin="6dp"
+                android:background="@drawable/ic_card_bg"
+                android:padding="6dp">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_card_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/flip_card_back_text"
+                    android:textColor="#A45714"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </FrameLayout>
         </FrameLayout>
     </androidx.appcompat.widget.LinearLayoutCompat>
 

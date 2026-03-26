@@ -30,6 +30,7 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="6dp"
             android:text="@string/withdraw_info_title_highlight"
             android:textColor="#F5C91A"
             android:textSize="20sp"

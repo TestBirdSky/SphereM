@@ -46,6 +46,9 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
             binding.tvMoney.text = moneyText
         }
         binding.layoutPop1.setOnClickListener {
+            if (isDebugMode) { // todo remove
+                curPopMoney = 23.9
+            }
             showPopAd(binding.layoutPop1)
         }
 
@@ -57,9 +60,6 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
     private fun showPopAd(view: View) {
         localEvent("billetera_bubble")
         if (curPopMoney > 0) {
-            if (isDebugMode) { // todo remove
-                curPopMoney = 48.0
-            }
             viewModel.addMoneyNotExChange(curPopMoney)
             AnimViewHelper.flyToTarget(view, binding.iv1, end = {
                 lifecycleScope.launch {

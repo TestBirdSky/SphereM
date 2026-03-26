@@ -66,6 +66,7 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
         binding.cutRv.adapter = cutInAdapter
         cutInAdapter.onCutClick = { item, holder ->
             (activity as? GenericActivity)?.let { act ->
+                localEvent("ad_chance", params = hashMapOf("ad_pos_id" to WithdrawalCutInAdapter.CUT_IN_RV_AD_POSITION))
                 AdUtils.showRvAd(act, adPositionName = WithdrawalCutInAdapter.CUT_IN_RV_AD_POSITION) { success ->
                     if (!success || !isAdded) return@showRvAd
                     viewLifecycleOwner.lifecycleScope.launch {
@@ -172,6 +173,7 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
                     binding.groupWithdrawal.visibility = View.GONE
                     binding.tvWithdraw.isEnabled = true
                     binding.tvWithdraw.alpha = 1f
+                    binding.tvWithdraw.setBackgroundResource(R.drawable.shape_bg_ye)
                     binding.viewParent.removeAllViews()
                     setupWithdrawAmounts()
                     binding.tvWithdraw.setOnClickListener {

@@ -184,6 +184,7 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
         isRvRequesting = true // Skip 触发后先暂停自动进度，避免广告期间自行跳到后续状态。
         flowJob?.cancel()
         progressAnimator?.cancel()
+        localEvent("ad_chance", params = hashMapOf("ad_pos_id" to RV_AD_POSITION_NAME))
         AdUtils.showRvAd(
             activity = activity,
             adPositionName = RV_AD_POSITION_NAME,

@@ -153,7 +153,10 @@ class LayoutWithdrawalActionController(
     private fun updateMainWithdrawButton(mainWithdrawButton: View) {
         val hasInput = binding.etMoney.text?.toString()?.trim().orEmpty().isNotEmpty()
         mainWithdrawButton.isEnabled = hasInput
-        mainWithdrawButton.alpha = if (hasInput) 1f else 0.45f
+        mainWithdrawButton.alpha = 1f
+        mainWithdrawButton.setBackgroundResource(
+            if (hasInput) R.drawable.shape_bg_ye else R.drawable.shape_bg_withdraw_disabled,
+        )
     }
 
     private fun resolveUnitSymbol(): String = when {
