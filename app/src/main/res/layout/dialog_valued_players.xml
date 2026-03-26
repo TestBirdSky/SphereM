@@ -124,8 +124,8 @@
                 <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="#5E1397"
                     android:background="@drawable/shape_top_12r"
+                    android:backgroundTint="#5E1397"
                     android:fontFamily="@font/noto_sans_semibold"
                     android:gravity="center"
                     android:paddingVertical="8dp"

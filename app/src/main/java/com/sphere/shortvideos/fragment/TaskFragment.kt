@@ -47,7 +47,7 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
         }
         binding.layoutPop1.setOnClickListener {
             if (isDebugMode) { // todo remove
-                curPopMoney = 23.9
+                curPopMoney = WithdrawAmountHelper.fetchWithdrawMinMoneyDouble() / 2
             }
             showPopAd(binding.layoutPop1)
         }
@@ -60,16 +60,17 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
     private fun showPopAd(view: View) {
         localEvent("billetera_bubble")
         if (curPopMoney > 0) {
-            viewModel.addMoneyNotExChange(curPopMoney)
-            AnimViewHelper.flyToTarget(view, binding.iv1, end = {
-                lifecycleScope.launch {
-                    delay(Random.nextLong(6000, 16000))
-                    AnimViewHelper.playShowScaleAlphaAnim(view)
-                }
-            })
             (activity as? MainActivity)?.let {
                 AdUtils.showRateAd(it, adPositionName = "dlmsf_task_int", isRate = {
                     localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_task_int"))
+                }, dismiss = {
+                    AnimViewHelper.flyToTarget(view, binding.iv1, end = {
+                        lifecycleScope.launch {
+                            delay(Random.nextLong(6000, 16000))
+                            AnimViewHelper.playShowScaleAlphaAnim(view)
+                        }
+                    })
+                    viewModel.addMoneyNotExChange(curPopMoney)
                 })
             }
             WithdrawalActionHelper.addTask2BubbleNum()

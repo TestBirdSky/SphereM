@@ -41,6 +41,7 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
 
     private var hasMovedToStage2 = false
     private var isRvRequesting = false
+    private var stage1StartAtMs = 0L
 
     var dismissEvent: () -> Unit = {}
 
@@ -108,6 +109,7 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
     private fun enterStage1AndStartFlow() = with(binding) {
         hasMovedToStage2 = false
         isRvRequesting = false
+        stage1StartAtMs = System.currentTimeMillis()
         progressApply.max = 100
         progressApply.progress = 0
         progressApply.isVisible = true
@@ -115,18 +117,14 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
         groupStage1.isVisible = true
         groupStage2.isVisible = false
         groupStage3.isVisible = false
-        tvSkipNow.isVisible = false
-        tvSkipAdTag.isVisible = false
-        ivClose.isVisible = false
+        setStage1ControlsVisible(false)
         startDotsPulseAnim()
 
         revealControlsJob?.cancel()
         revealControlsJob = viewLifecycleOwner.lifecycleScope.launch {
             delay(CONTROLS_REVEAL_DELAY_MS)
             if (_binding == null || hasMovedToStage2) return@launch
-            tvSkipNow.isVisible = true
-            tvSkipAdTag.isVisible = true
-            ivClose.isVisible = true
+            setStage1ControlsVisible(true)
         }
 
         flowJob?.cancel()
@@ -135,6 +133,28 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
             if (_binding == null || hasMovedToStage2) return@launch
             moveToStage2ThenStage3()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // 避免视图状态恢复导致“Skip 立即可见”：回到前台时按计时门限再次校正。
+        if (_binding == null || hasMovedToStage2) return
+        val elapsed = System.currentTimeMillis() - stage1StartAtMs
+        if (elapsed < CONTROLS_REVEAL_DELAY_MS) {
+            setStage1ControlsVisible(false)
+            revealControlsJob?.cancel()
+            revealControlsJob = viewLifecycleOwner.lifecycleScope.launch {
+                delay(CONTROLS_REVEAL_DELAY_MS - elapsed)
+                if (_binding == null || hasMovedToStage2) return@launch
+                setStage1ControlsVisible(true)
+            }
+        }
+    }
+
+    private fun setStage1ControlsVisible(visible: Boolean) {
+        binding.tvSkipNow.isVisible = visible
+        binding.tvSkipAdTag.isVisible = visible
+        binding.ivClose.isVisible = visible
     }
 
     private suspend fun runStage1ProgressRhythm() {

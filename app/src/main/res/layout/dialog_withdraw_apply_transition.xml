@@ -173,7 +173,7 @@
         android:layout_height="wrap_content"
         app:barrierAllowsGoneWidgets="false"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="tv_skip_now,layout_stage3_card" />
+        app:constraint_referenced_ids="tv_skip_now,layout_stage3_card,tv_stage2_desc" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_stage3_card"

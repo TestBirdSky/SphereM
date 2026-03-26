@@ -18,7 +18,7 @@
             android:layout_height="311dp"
             android:src="@drawable/ic_dialog_congratulate" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.sphere.shortvideos.view.AutoShrinkSingleLineTextView
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -82,9 +82,11 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/iv_dialog_bg" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.sphere.shortvideos.view.AutoShrinkSingleLineTextView
             android:id="@+id/tv_reward_value"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:paddingHorizontal="16dp"
             android:layout_height="48dp"
             android:fontFamily="@font/noto_sans_bold"
             android:textColor="#F5B71A"

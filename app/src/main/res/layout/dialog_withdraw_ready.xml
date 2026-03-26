@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.sphere.shortvideos.view.AutoShrinkSingleLineTextView
             android:id="@+id/tv_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -110,7 +110,7 @@
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.sphere.shortvideos.view.AutoShrinkSingleLineTextView
                 android:id="@+id/btn_claim"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -120,7 +120,7 @@
                 android:gravity="center"
                 android:text="@string/withdraw_ready_claim"
                 android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.constraintlayout.widget.ConstraintLayout>

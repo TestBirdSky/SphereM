@@ -18,14 +18,14 @@
             android:src="@drawable/ic_dialog_congratulate"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.sphere.shortvideos.view.AutoShrinkSingleLineTextView
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/noto_sans"
             android:text="@string/fortune_challenge"
             android:textColor="#F5C91A"
-            android:textSize="21sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -83,11 +83,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/iv_dialog_bg" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.sphere.shortvideos.view.AutoShrinkSingleLineTextView
             android:id="@+id/tv_reward_value"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
             android:fontFamily="@font/noto_sans_bold"
+            android:gravity="center"
+            android:paddingHorizontal="16dp"
             android:textColor="#F5B71A"
             android:textSize="32sp"
             app:layout_constraintEnd_toEndOf="parent"

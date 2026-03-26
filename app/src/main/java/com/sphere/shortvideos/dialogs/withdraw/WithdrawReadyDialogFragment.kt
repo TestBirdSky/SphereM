@@ -19,6 +19,7 @@ import com.sphere.shortvideos.R
 import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.databinding.DialogWithdrawReadyBinding
 import com.sphere.shortvideos.helper.MoneyCacheHelper
+import com.sphere.shortvideos.helper.SoundHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.WithdrawNavigator
 import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
@@ -56,6 +57,7 @@ class WithdrawReadyDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        SoundHelper.playWithdrawalMoney(requireContext())
         localEvent("meet_withdraw")
         bindMessage()
         startIllustrationBgAnim()

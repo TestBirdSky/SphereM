@@ -18,7 +18,7 @@
             android:src="@drawable/ic_dialog_congratulate"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.sphere.shortvideos.view.AutoShrinkSingleLineTextView
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

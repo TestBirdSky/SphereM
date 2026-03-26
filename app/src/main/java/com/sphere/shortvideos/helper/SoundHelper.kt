@@ -14,6 +14,8 @@ object SoundHelper {
     private var soundIdCoinShrink: Int = 0
     private var soundIdDialogAppear: Int = 0
     private var soundIdDoubleRoll: Int = 0
+    private var soundIdWithdrawalMoney: Int = 0
+    private var soundIdWaringTips: Int = 0
 
     /**
      * 建议在 Application.onCreate 中调用，预加载音效
@@ -32,6 +34,8 @@ object SoundHelper {
         soundIdCoinShrink = pool.load(context, R.raw.get_money, 1)
         soundIdDialogAppear = pool.load(context, R.raw.show_dialog, 1)
         soundIdDoubleRoll = pool.load(context, R.raw.whell, 1)
+        soundIdWithdrawalMoney = pool.load(context, R.raw.withdrawal_money, 1)
+        soundIdWaringTips = pool.load(context, R.raw.waring_tips, 1)
     }
 
     private fun ensureInit(context: Context) {
@@ -54,5 +58,17 @@ object SoundHelper {
     fun playDoubleRoll(context: Context) {
         ensureInit(context)
         soundPool?.play(soundIdDoubleRoll, 1f, 1f, 0, 0, 1f)
+    }
+
+    /** 提现相关弹窗出现时播放 */
+    fun playWithdrawalMoney(context: Context) {
+        ensureInit(context)
+        soundPool?.play(soundIdWithdrawalMoney, 1f, 1f, 0, 0, 1f)
+    }
+
+    /** 风险/提示类弹窗出现时播放 */
+    fun playWaringTips(context: Context) {
+        ensureInit(context)
+        soundPool?.play(soundIdWaringTips, 1f, 1f, 0, 0, 1f)
     }
 }

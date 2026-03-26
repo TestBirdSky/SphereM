@@ -232,8 +232,7 @@ object HelperRewardShow {
     }
 
     fun registerGetMoney(activity: GenericActivity) {
-        if (MMKVRepository.hasShownWithdrawReadyDialogEver) return
-        HelperRewardShow.showDialogFetchMoney.observe(activity) {
+        showDialogFetchMoney.observe(activity) {
             if (DialogFragmentDisplayHelper.isShowing().not()) {
                 WithdrawReadyDialogFragment.showIfEligible(activity.supportFragmentManager)
             }
@@ -300,7 +299,7 @@ object HelperRewardShow {
         lastShowTipsMoneyTime = System.currentTimeMillis()
         showBubbleTips.postValue(Triple(0,
             System.currentTimeMillis() + showTime,
-            mApp.getString(R.string.add_money_info_tips1, WithdrawAmountHelper.moneyFormatAddUnit(dub))))
+            mApp.getString(R.string.add_money_info_tips1, WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(dub))))
     }
 
     fun isArriveMinMoney() {
@@ -315,7 +314,7 @@ object HelperRewardShow {
     }
 
     fun showArriveMoney() {
-        if (MMKVRepository.hasShownWithdrawReadyDialogEver)return
+        if (MMKVRepository.hasShownWithdrawReadyDialogEver) return
         if (WithdrawAmountHelper.isCanWithdraw()) {
             showDialogFetchMoney.postValue(System.currentTimeMillis())
         }

@@ -8,6 +8,7 @@ import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.databinding.DialogShowAdLimitBinding
+import com.sphere.shortvideos.helper.SoundHelper
 
 /**
  * Date：2026/1/29
@@ -36,6 +37,7 @@ class ShowAdLimitDialogFragment(val dismiss:()-> Unit) : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        SoundHelper.playWaringTips(requireContext())
         binding.ivClose.setOnClickListener {
             dismiss.invoke()
             dismissAllowingStateLoss()

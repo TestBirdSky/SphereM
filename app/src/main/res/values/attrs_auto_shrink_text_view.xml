@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AutoShrinkSingleLineTextView">
+        <!-- 自动缩放时允许的最小字号 -->
+        <attr name="autoShrinkMinTextSize" format="dimension" />
+    </declare-styleable>
+</resources>

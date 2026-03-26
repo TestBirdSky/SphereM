@@ -170,10 +170,12 @@
         android:layout_height="51dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="42dp"
+        android:rotation="180"
+        android:rotationX="180"
         android:src="@drawable/ic_first_guide_finger"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/layout_cards"
+        app:layout_constraintBottom_toBottomOf="@id/layout_cards"
         tools:visibility="visible" />
 
     <androidx.appcompat.widget.AppCompatTextView

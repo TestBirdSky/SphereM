@@ -9,6 +9,7 @@ import androidx.core.graphics.toColorInt
 import androidx.fragment.app.DialogFragment
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.databinding.DialogMakingMoneyingBinding
+import com.sphere.shortvideos.helper.SoundHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.view.setColorText
 
@@ -40,6 +41,7 @@ class MakingMoneyDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        SoundHelper.playWaringTips(requireContext())
         binding.ivClose.setOnClickListener {
             onClose?.invoke()
             dismissAllowingStateLoss()

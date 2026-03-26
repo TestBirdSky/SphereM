@@ -108,6 +108,13 @@ class BubbleTextView @JvmOverloads constructor(
         invalidate()
     }
 
+    /**
+     * 兼容外部调用 setBackgroundColor：统一转为气泡填充色，保证尖角仍然可见。
+     */
+    override fun setBackgroundColor(color: Int) {
+        setBubbleFillColor(color)
+    }
+
     fun setBubbleStrokeColor(color: Int) {
         bubbleStrokeColor = color
         strokePaint.color = color
@@ -198,7 +205,7 @@ class BubbleTextView @JvmOverloads constructor(
 
             2 -> {
                 setText(R.string.add_money_info_tips3)
-                setBackgroundColor(context.resources.getColor(R.color.color_129, null))
+                setBubbleFillColor(context.resources.getColor(R.color.color_129, null))
             }
         }
         visibility = View.VISIBLE

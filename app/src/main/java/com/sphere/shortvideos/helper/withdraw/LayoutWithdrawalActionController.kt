@@ -24,6 +24,9 @@ import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.view.setColorText
+import java.text.DecimalFormatSymbols
+import java.text.NumberFormat
+import java.math.RoundingMode
 
 /**
  * [R.layout.layout_withdrawal_action] 专用：金额输入、一键填满余额、最低提现提示，并驱动外层提现按钮可用状态与提交校验。
@@ -62,7 +65,7 @@ class LayoutWithdrawalActionController(
         binding.btnWithAll.setOnClickListener {
             localEvent("withdrawal_all")
             val cur = MoneyCacheHelper.fetchCurMoney()
-            binding.etMoney.setText(WithdrawAmountHelper.formatMoney(cur))
+            binding.etMoney.setText(formatInputAmountNoRoundUp(cur))
             binding.etMoney.setSelection(binding.etMoney.text?.length ?: 0)
         }
 
@@ -157,11 +160,7 @@ class LayoutWithdrawalActionController(
         )
     }
 
-    private fun resolveUnitSymbol(): String = when {
-        LauageTools.isIndonesia() -> WithdrawAmountHelper.IDR_UNIT
-        LauageTools.isBrazil() -> WithdrawAmountHelper.BRL_UNIT
-        else -> WithdrawAmountHelper.DEFAULT_UNIT
-    }
+    private fun resolveUnitSymbol(): String = WithdrawAmountHelper.resolveMoneyUnit()
 
     /** EditText 输入 16sp（XML），hint 单独 11sp */
     private fun applyHintTextSize() {
@@ -172,17 +171,53 @@ class LayoutWithdrawalActionController(
         binding.etMoney.hint = span
     }
 
+    /**
+     * “全部提现”输入框展示值：按本地化格式，但不进位，避免显示值大于真实余额。
+     */
+    private fun formatInputAmountNoRoundUp(value: Double): String {
+        val formatter = NumberFormat.getNumberInstance(LauageTools.getAppLocale()).apply {
+            maximumFractionDigits = 2
+            minimumFractionDigits = 0
+            roundingMode = RoundingMode.DOWN
+        }
+        return formatter.format(value)
+    }
+
     companion object {
         private const val EPSILON = 1e-6
 
         /** 仅解析用户输入的数值（不含货币符号） */
         fun parseAmountNumber(raw: String): Double? {
-            val s = raw.trim().replace(",", ".").filter { it.isDigit() || it == '.' }
-            if (s.isEmpty()) return null
-            val normalized = if (s.count { it == '.' } > 1) {
-                val first = s.indexOf('.')
-                s.substring(0, first + 1) + s.substring(first + 1).replace(".", "")
-            } else s
+            val locale = LauageTools.getAppLocale()
+            val symbols = DecimalFormatSymbols.getInstance(locale)
+            val localeDecimal = symbols.decimalSeparator
+            val localeGrouping = symbols.groupingSeparator
+
+            // 去掉货币符号与空白，仅保留数字和常见分隔符
+            val compact = raw.trim().replace(Regex("[\\s\\u00A0]"), "")
+                .filter { it.isDigit() || it == ',' || it == '.' || it == '-' || it == localeDecimal || it == localeGrouping }
+            if (compact.isEmpty()) return null
+
+            val commaIndex = compact.lastIndexOf(',')
+            val dotIndex = compact.lastIndexOf('.')
+            val decimalChar = when {
+                commaIndex >= 0 && dotIndex >= 0 -> if (commaIndex > dotIndex) ',' else '.'
+                commaIndex >= 0 -> if (localeDecimal == ',') ',' else null
+                dotIndex >= 0 -> if (localeDecimal == '.') '.' else null
+                else -> null
+            }
+
+            val normalized = buildString(compact.length) {
+                compact.forEachIndexed { index, ch ->
+                    when {
+                        ch.isDigit() || (index == 0 && ch == '-') -> append(ch)
+                        decimalChar != null && ch == decimalChar -> append('.')
+                        else -> { // 分组符号等直接忽略
+                        }
+                    }
+                }
+            }
+            if (normalized.isEmpty() || normalized == "-" || normalized == ".") return null
             return normalized.toDoubleOrNull()
         }
     }

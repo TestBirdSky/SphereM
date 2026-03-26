@@ -88,7 +88,8 @@ object WithdrawAmountHelper {
     fun fetchCurMoneyAndWithdrawNeedMoney(): Pair<String, String> {
         val curMoney = fetchCurMoney()
         val curMoneyStr = moneyFormatAddUnit(curMoney)
-        val needTagMoney = moneyFormatAddUnitWithNoSpace((defLow.fetWithdraw() - curMoney).coerceAtLeast(0.0)) // 剩余体现的金额
+        val needTagMoney =
+            moneyFormatAddUnitWithNoSpace((defLow.fetWithdraw() - curMoney).coerceAtLeast(0.0)) // 剩余体现的金额
         return Pair(curMoneyStr, needTagMoney)
     }
 
@@ -120,11 +121,7 @@ object WithdrawAmountHelper {
         return formatter.format(value)
     }
 
-    private fun resolveMoneyUnit(): String {
-        //        val locale = LauageTools.getAppLocale()
-        //        runCatching {
-        //            java.util.Currency.getInstance(locale).getSymbol(locale)
-        //        }.getOrElse {
+    fun resolveMoneyUnit(): String {
         return when {
             LauageTools.isIndonesia() -> IDR_UNIT
             LauageTools.isBrazil() -> BRL_UNIT
@@ -146,6 +143,10 @@ object WithdrawAmountHelper {
     fun fetchWithdrawMinMoney(): String {
         val total = defLow.fetWithdraw()
         return moneyFormatAddUnitWithNoSpace(total)
+    }
+
+    fun fetchWithdrawMinMoneyDouble(): Double {
+        return defLow.fetWithdraw()
     }
 
     fun isCanWithdraw(): Boolean {

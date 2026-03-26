@@ -24,16 +24,16 @@
             android:layout_height="wrap_content"
             android:text="@string/withdraw_info_title_prefix"
             android:textColor="@color/white"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <com.sphere.shortvideos.view.AutoShrinkSingleLineTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="6dp"
             android:text="@string/withdraw_info_title_highlight"
             android:textColor="#F5C91A"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
