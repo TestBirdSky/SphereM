@@ -105,8 +105,8 @@
         android:layout_height="48dp"
         android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toTopOf="@id/layout_options"
-        app:layout_constraintLeft_toLeftOf="@id/layout_options"
-        app:layout_constraintRight_toRightOf="@id/layout_options">
+        app:layout_constraintStart_toStartOf="@id/layout_options"
+        app:layout_constraintEnd_toEndOf="@id/layout_options">
 
         <FrameLayout
             android:id="@+id/layout_anim"

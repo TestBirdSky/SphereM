@@ -29,6 +29,16 @@ object LauageTools {
         const val INDONESIAN = "id"
     }
 
+    private val SUPPORTED_LANGUAGE_CODES = setOf(
+        LanguageCode.ENGLISH,
+        LanguageCode.PORTUGUESE,
+        LanguageCode.INDONESIAN,
+        "in", // 兼容历史印尼语代码
+        "ar",
+        "th",
+        "es",
+    )
+
     /**
      * 获取当前设备语言
      */
@@ -59,41 +69,37 @@ object LauageTools {
 
     /**
      * 获取当前设备对应的国家代码
-     * 优先根据语言判断，语言确定了就返回对应国家
-     * 如果语言不匹配，再根据国家代码判断
+     * 若系统语言在支持列表内：按语言路由（pt->BR, id/in->ID, 其余支持语言->US）
+     * 若系统语言不在支持列表：按国家码兜底
      * @return 国家代码（BR/ID/US），默认返回 US
      */
     fun getCurrentCountry(): String {
         val locale = getDeviceLanguage(mApp)
         val language = locale.language.lowercase()
-        val country = locale.country
+        val country = locale.country.uppercase()
         val languageTag = locale.toLanguageTag().lowercase()
-        
-        // 优先语言判断：语言确定了国家就确定了
-        val countryByLanguage = when (language) {
+
+        when (language) {
             LanguageCode.PORTUGUESE -> CountryCode.BRAZIL
             LanguageCode.INDONESIAN, "in" -> CountryCode.INDONESIA  // 兼容非标准的 in 语言代码
             LanguageCode.ENGLISH -> CountryCode.US
-            else -> null
         }
-        
-        // 如果通过语言确定了国家，直接返回
-        if (countryByLanguage != null) {
-            return countryByLanguage
+
+        if (isSupportedLanguage(language, languageTag)) {
+            return CountryCode.US
         }
-        
-        // 兼容语言标签格式（如 in-ID, id-ID）
-        when {
-            languageTag.startsWith("in-") || languageTag.startsWith("id-") -> return CountryCode.INDONESIA
-            languageTag.startsWith("pt-") -> return CountryCode.BRAZIL
-        }
-        
-        // 语言都没有匹配，再根据国家代码判断
+
+        // 不在支持语言列表时，仍按国家码兜底
         return when (country) {
             CountryCode.BRAZIL -> CountryCode.BRAZIL
             CountryCode.INDONESIA -> CountryCode.INDONESIA
-            else -> CountryCode.US  // 默认返回美国
+            else -> CountryCode.US
         }
+    }
+
+    private fun isSupportedLanguage(language: String, languageTag: String): Boolean {
+        if (SUPPORTED_LANGUAGE_CODES.contains(language)) return true
+        return SUPPORTED_LANGUAGE_CODES.any { code -> languageTag.startsWith("$code-") }
     }
 
     /**

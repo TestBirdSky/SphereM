@@ -12,18 +12,6 @@
         android:background="@drawable/ic_task_top_bg"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/tv_title"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="18dp"
-        android:gravity="center"
-        android:text="@string/withdraw"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <ScrollView
         android:id="@+id/scroll_withdraw"
         android:layout_width="match_parent"
@@ -31,11 +19,23 @@
         android:clipToPadding="false"
         android:fillViewport="true"
         app:layout_constraintBottom_toTopOf="@+id/tv_user_title"
-        app:layout_constraintTop_toBottomOf="@id/tv_title">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="18dp"
+                android:gravity="center"
+                android:text="@string/withdraw"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_bg_top"
@@ -45,9 +45,9 @@
                 android:layout_marginTop="20dp"
                 android:adjustViewBounds="true"
                 android:src="@drawable/ic_withdraw_top_bg"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_name"

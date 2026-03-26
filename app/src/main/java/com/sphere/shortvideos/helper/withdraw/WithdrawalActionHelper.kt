@@ -69,6 +69,7 @@ object WithdrawalActionHelper {
     }
 
     fun checkIsAllowInDismissAd(activity: GenericActivity) {
+        if (DialogFragmentDisplayHelper.hasDialogFragmentShowing(activity)) return
         if (isShowInfoLock()) {
             isShowLock1 =
                 DialogFragmentDisplayHelper.show(activity.supportFragmentManager, LockInfoDialogFragment().apply {

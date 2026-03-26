@@ -47,8 +47,8 @@
             android:src="@drawable/ic_check"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/iv_day"
-            app:layout_constraintLeft_toLeftOf="@id/iv_day"
-            app:layout_constraintRight_toRightOf="@id/iv_day"
+            app:layout_constraintStart_toStartOf="@id/iv_day"
+            app:layout_constraintEnd_toEndOf="@id/iv_day"
             app:layout_constraintTop_toTopOf="@id/iv_day"
             tools:visibility="visible" />
 

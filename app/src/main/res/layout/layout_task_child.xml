@@ -51,7 +51,7 @@
         android:src="@drawable/ic_money"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@id/iv_watch_ad"
-        app:layout_constraintRight_toRightOf="@id/iv_watch_ad"
+        app:layout_constraintEnd_toEndOf="@id/iv_watch_ad"
         app:layout_constraintTop_toTopOf="@id/iv_watch_ad" />
 
     <ImageView
@@ -60,7 +60,7 @@
         android:layout_height="17dp"
         android:layout_margin="8dp"
         android:src="@drawable/ic_ad_tag"
-        app:layout_constraintLeft_toLeftOf="@id/iv_watch_ad"
+        app:layout_constraintStart_toStartOf="@id/iv_watch_ad"
         app:layout_constraintTop_toTopOf="@id/iv_watch_ad" />
 
     <TextView
@@ -126,8 +126,8 @@
         android:textSize="10sp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/iv_h51"
-        app:layout_constraintLeft_toRightOf="@id/iv_h51"
-        app:layout_constraintRight_toRightOf="@id/bg_h5"
+        app:layout_constraintStart_toEndOf="@id/iv_h51"
+        app:layout_constraintEnd_toEndOf="@id/bg_h5"
         app:layout_constraintTop_toTopOf="@id/iv_h51" />
 
     <ImageView
@@ -150,7 +150,7 @@
         android:textColor="@color/white"
         android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="@id/iv_bg_watch"
+        app:layout_constraintStart_toStartOf="@id/iv_bg_watch"
         app:layout_constraintTop_toTopOf="@id/iv_bg_watch" />
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
@@ -163,8 +163,8 @@
         app:indicatorColor="#FFE600"
         app:indicatorTrackGapSize="0dp"
         app:layout_constraintBottom_toBottomOf="@id/iv_bg_watch"
-        app:layout_constraintLeft_toLeftOf="@id/iv_bg_watch"
-        app:layout_constraintRight_toRightOf="@id/iv_bg_watch"
+        app:layout_constraintStart_toStartOf="@id/iv_bg_watch"
+        app:layout_constraintEnd_toEndOf="@id/iv_bg_watch"
         app:trackColor="#858585"
         app:trackCornerRadius="6dp"
         app:trackThickness="6dp"
@@ -425,7 +425,7 @@
         android:textColor="@color/white"
         android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="@id/iv_bg_bottom"
+        app:layout_constraintStart_toStartOf="@id/iv_bg_bottom"
         app:layout_constraintTop_toTopOf="@id/iv_bg_bottom" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -434,8 +434,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:paddingHorizontal="10dp"
-        app:layout_constraintLeft_toLeftOf="@id/iv_bg_bottom"
-        app:layout_constraintRight_toRightOf="@id/iv_bg_bottom"
+        app:layout_constraintStart_toStartOf="@id/iv_bg_bottom"
+        app:layout_constraintEnd_toEndOf="@id/iv_bg_bottom"
         app:layout_constraintTop_toBottomOf="@id/tv7_day" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

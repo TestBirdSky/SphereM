@@ -13,7 +13,7 @@
         android:id="@+id/group_stage1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="layout_dots,tv_processing_desc,tv_skip_now,tv_skip_ad_tag"
+        app:constraint_referenced_ids="layout_dots,tv_processing_desc"
         tools:visibility="gone" />
 
     <androidx.appcompat.widget.LinearLayoutCompat

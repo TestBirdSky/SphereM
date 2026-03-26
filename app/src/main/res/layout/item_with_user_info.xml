@@ -27,8 +27,8 @@
         android:textColor="#7BC52E"
         android:textSize="8sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="@id/iv_money"
-        app:layout_constraintRight_toRightOf="@id/iv_money"
+        app:layout_constraintStart_toStartOf="@id/iv_money"
+        app:layout_constraintEnd_toEndOf="@id/iv_money"
         app:layout_constraintTop_toBottomOf="@id/iv_money" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -55,7 +55,7 @@
         android:textColor="#B4A6BE"
         android:textSize="8sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="@id/tv_user_name"
+        app:layout_constraintStart_toStartOf="@id/tv_user_name"
         app:layout_constraintTop_toBottomOf="@id/tv_user_name"
         tools:text="arrived via [Paypal]" />
 

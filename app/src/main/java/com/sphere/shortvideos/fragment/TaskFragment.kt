@@ -11,6 +11,8 @@ import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.baseui.GenericFragment
 import com.sphere.shortvideos.view.setTaskInfo
 import com.sphere.shortvideos.databinding.FragmentTaskBinding
+import com.sphere.shortvideos.dialogs.withdraw.WithdrawApplyTransitionDialogFragment
+import com.sphere.shortvideos.dialogs.withdraw.WithdrawReadyDialogFragment
 import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.ad.AdUtils
@@ -46,6 +48,10 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
             binding.tvMoney.text = moneyText
         }
         binding.layoutPop1.setOnClickListener {
+//            (activity as? MainActivity)?.let {
+//                WithdrawApplyTransitionDialogFragment().show(it.supportFragmentManager, "")
+//            }
+//            return@setOnClickListener
             if (isDebugMode) { // todo remove
                 curPopMoney = WithdrawAmountHelper.fetchWithdrawMinMoneyDouble() / 2
             }

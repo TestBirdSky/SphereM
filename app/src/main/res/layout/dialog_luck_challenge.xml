@@ -150,8 +150,8 @@
             android:layout_marginTop="23dp"
             android:src="@drawable/ic_selected_icon"
             android:visibility="gone"
-            app:layout_constraintLeft_toLeftOf="@id/iv_anim_parent"
-            app:layout_constraintRight_toRightOf="@id/iv_anim_parent"
+            app:layout_constraintStart_toStartOf="@id/iv_anim_parent"
+            app:layout_constraintEnd_toEndOf="@id/iv_anim_parent"
             app:layout_constraintTop_toTopOf="@id/iv_anim_parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
