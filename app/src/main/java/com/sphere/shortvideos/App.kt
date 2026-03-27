@@ -8,6 +8,7 @@ import com.sphere.shortvideos.helper.AppHelper
 import com.sphere.shortvideos.helper.SoundHelper
 import com.sphere.shortvideos.helper.risk.HelperRiskNetCheck
 import com.sphere.shortvideos.helper.InstallReferrerManager
+import com.sphere.shortvideos.helper.LauageTools
 import com.sphere.shortvideos.helper.RemoteConfHelper
 import com.sphere.shortvideos.helper.ad.AdSdkHelper
 import com.sphere.shortvideos.helper.ad.AdUtils
@@ -71,6 +72,10 @@ class App : Application() {
             logError("onInitFinished() called with: success = [$success], errorInfo = [$errorInfo]")
         }
         PSSDK.setEligibleAudience(true)
+        if (LauageTools.isArabic()) {
+            val l = listOf("en", "id", "in", "pt", "th", "es")
+            PSSDK.setContentLanguages(l)
+        }
     }
 
     override fun onTerminate() {

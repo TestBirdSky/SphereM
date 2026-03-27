@@ -139,6 +139,7 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
         super.onResume()
         localEvent("withdraw_page")
         refreshAndShowTaskDialog()
+        methodAdapter.updateSelected()
         withdrawalActionController?.run {
             refreshMinTips()
             refreshMainWithdrawButton(binding.tvWithdraw)

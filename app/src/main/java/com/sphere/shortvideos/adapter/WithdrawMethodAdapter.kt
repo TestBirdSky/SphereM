@@ -13,7 +13,7 @@ import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 class WithdrawMethodAdapter(
     private var methods: List<WithdrawAmountHelper.WithdrawPaymentMethod> = emptyList()
 ) : RecyclerView.Adapter<WithdrawMethodAdapter.MethodViewHolder>() {
-
+    private var lastSelectedId = ""
     private var selectedIndex = 0
     var onItemClick: ((index: Int) -> Unit)? = null
 
@@ -23,6 +23,7 @@ class WithdrawMethodAdapter(
         if (WithdrawalActionHelper.withdrawalMethodId.isNotEmpty()) {
             list.forEachIndexed { index, method ->
                 if (WithdrawalActionHelper.withdrawalMethodId == method.id) {
+                    lastSelectedId = method.id
                     selectedIndex = index
                     return
                 }
@@ -31,10 +32,24 @@ class WithdrawMethodAdapter(
         notifyDataSetChanged()
     }
 
-    fun setSelected(index: Int) {
+    fun updateSelected() {
+        if (WithdrawalActionHelper.withdrawalMethodId.isNotEmpty() && lastSelectedId != WithdrawalActionHelper.withdrawalMethodId) {
+            methods.forEachIndexed { index, method ->
+                if (WithdrawalActionHelper.withdrawalMethodId == method.id) {
+                    lastSelectedId = method.id
+                    selectedIndex = index
+                    notifyDataSetChanged()
+                    return
+                }
+            }
+        }
+    }
+
+    fun setSelected(index: Int, method: WithdrawAmountHelper.WithdrawPaymentMethod) {
         if (index == selectedIndex) return
         val old = selectedIndex
         selectedIndex = index
+        lastSelectedId = method.id
         if (old in methods.indices) notifyItemChanged(old)
         if (index in methods.indices) notifyItemChanged(index)
     }
@@ -62,7 +77,7 @@ class WithdrawMethodAdapter(
             binding.root.setOnClickListener {
                 val pos = bindingAdapterPosition
                 if (pos == RecyclerView.NO_POSITION) return@setOnClickListener
-                setSelected(pos)
+                setSelected(pos, method)
                 onItemClick?.invoke(pos)
             }
         }

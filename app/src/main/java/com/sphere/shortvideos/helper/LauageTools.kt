@@ -27,6 +27,7 @@ object LauageTools {
         const val ENGLISH = "en"
         const val PORTUGUESE = "pt"
         const val INDONESIAN = "id"
+        const val ARABIC = "ar"
     }
 
     private val SUPPORTED_LANGUAGE_CODES = setOf(
@@ -139,6 +140,22 @@ object LauageTools {
     fun isIndonesianUser(context: Context): Boolean {
         val languageCode = getDeviceLanguageCode(context).lowercase()
         return languageCode == LanguageCode.INDONESIAN || languageCode == "in"
+    }
+
+    /**
+     * 判断是否为阿拉伯语用户
+     * @return true 是阿拉伯语用户，false 不是
+     */
+    fun isArabicUser(context: Context): Boolean {
+        return getDeviceLanguageCode(context).lowercase() == LanguageCode.ARABIC
+    }
+
+    /**
+     * 判断当前设备是否为阿拉伯语
+     * @return true 是阿拉伯语，false 不是
+     */
+    fun isArabic(): Boolean {
+        return isArabicUser(mApp)
     }
 
 
