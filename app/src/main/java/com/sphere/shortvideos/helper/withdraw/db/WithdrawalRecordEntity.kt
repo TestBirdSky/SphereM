@@ -11,5 +11,6 @@ data class WithdrawalRecordEntity(
     val withdrawalMethodId: String,
     /** 进度区间：[0.1, 1.0] */
     val progress: Double = 0.1,
+    /** 提现金额，美元(USD)，与 [MoneyCacheHelper] 一致；展示时用 [MoneyCacheHelper.usdToShowMoneyD] */
     val withdrawalAmount: Double,
 )

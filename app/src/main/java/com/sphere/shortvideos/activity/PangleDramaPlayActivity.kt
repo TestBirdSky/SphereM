@@ -444,7 +444,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
     private fun registerLV() {
         showBubbleTips.observe(this, { pair ->
             // pair.second 是“预计消失时间”(未来时间戳)，剩余时间太短就不展示
-            if (pair.second - System.currentTimeMillis() < 2000) return@observe
+            if (System.currentTimeMillis() - pair.second > 1500) return@observe
             binding.tipsBubble.setTextAndDismiss(pair)
         })
         HelperRewardShow.numProgress.observe(this, {

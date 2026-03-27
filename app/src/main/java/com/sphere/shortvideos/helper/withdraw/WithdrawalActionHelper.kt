@@ -10,6 +10,7 @@ import com.sphere.shortvideos.dialogs.withdraw.LockInfoDialogFragment
 import com.sphere.shortvideos.dialogs.withdraw.PaymentInformationDialogFragment
 import com.sphere.shortvideos.dialogs.withdraw.ValuedPlayersDialogFragment
 import com.sphere.shortvideos.helper.DialogFragmentDisplayHelper
+import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.MoneyCacheHelper.watchVideoTime
 import com.sphere.shortvideos.helper.RemoteConfHelper
@@ -140,6 +141,7 @@ object WithdrawalActionHelper {
         curTaskProgressStatus = 0
         withdrawalMethodId = ""
         withdrawalValue = 0.0
+        HelperRewardShow.isShowCanCash = true
         MMKVRepository.hasShownWithdrawReadyDialogEver = false
     }
 

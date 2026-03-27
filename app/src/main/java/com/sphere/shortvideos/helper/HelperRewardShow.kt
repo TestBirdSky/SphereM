@@ -46,12 +46,11 @@ object HelperRewardShow {
 
     private var lastShowTipsMoneyTime = System.currentTimeMillis()
     private var showTipsPeriod = if (isDebugMode) 60000 else 60000 * 3
-    private val showTime get() = Random.nextLong(4500, 5000)
 
     val showBubbleTips = MutableLiveData<Triple<Int, Long, String>>() // 显示的词条 显示时间
     private val showDialogFetchMoney = MutableLiveData<Long>() // 显示的词条 显示时间
 
-    var isShowCanCash = false
+    var isShowCanCash = true
 
     private var maxReachedCount = 0
     private var progressJob: Job? = null
@@ -297,18 +296,17 @@ object HelperRewardShow {
         if (WithdrawalActionHelper.getConfig().isOpenWithdraw().not()) return
         lastShowTipsMoneyTime = System.currentTimeMillis()
         showBubbleTips.postValue(Triple(0,
-            System.currentTimeMillis() + showTime,
+            System.currentTimeMillis(),
             mApp.getString(R.string.add_money_info_tips1, WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(dub))))
     }
 
     fun isArriveMinMoney() {
         if (WithdrawalActionHelper.getConfig().isOpenWithdraw().not()) return
         showArriveMoney()
-        if (isShowCanCash) return
+        if (isShowCanCash.not()) return
         if (WithdrawAmountHelper.isCanWithdraw()) {
             lastShowTipsMoneyTime = System.currentTimeMillis()
-            showBubbleTips.postValue(Triple(2, System.currentTimeMillis() + showTime, ""))
-            isShowCanCash = true
+            showBubbleTips.postValue(Triple(2, System.currentTimeMillis(), ""))
         }
     }
 
@@ -325,9 +323,7 @@ object HelperRewardShow {
         if (WithdrawAmountHelper.isCanWithdraw()) return
         if (System.currentTimeMillis() - lastShowTipsMoneyTime > showTipsPeriod) {
             lastShowTipsMoneyTime = System.currentTimeMillis()
-            showBubbleTips.postValue(Triple(1,
-                System.currentTimeMillis() + showTime,
-                curMoneyNeedAnimLiveData.value ?: ""))
+            showBubbleTips.postValue(Triple(1, System.currentTimeMillis(), curMoneyNeedAnimLiveData.value ?: ""))
         }
     }
 }

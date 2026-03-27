@@ -77,6 +77,7 @@ object AdUtils {
         if (unlockHolder.isAdHaveCache()) {
             unlockHolder.showFullAd(activity, onAdDismissed = dismiss, adPositionName = adPositionName)
         } else {
+            dismiss.invoke()
             unlockHolder.preloadIfCan()
         }
     }

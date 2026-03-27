@@ -3,11 +3,12 @@ package com.sphere.shortvideos.vm
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.chartboost.sdk.impl.fa
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.adapter.WithdrawalCutInItem
 import com.sphere.shortvideos.dialogs.withdraw.WithdrawalTaskItem
+import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
+import com.sphere.shortvideos.helper.mmkv.MMKVData
 import com.sphere.shortvideos.helper.task.TaskHelper
 import com.sphere.shortvideos.helper.withdraw.TASK1_STEP
 import com.sphere.shortvideos.helper.withdraw.TASK2_STEP
@@ -34,7 +35,7 @@ class WithdrawViewModel : ViewModel() {
 
     var isShowMyAccount = MutableLiveData<Boolean>(false)
 
-    var curTaskStep = MutableLiveData(curTaskProgressStatus)
+    var curTaskShowStepCache by MMKVData(0)
     var curInfo = MutableLiveData<Triple<Int, Int, List<WithdrawalTaskItem>>?>()
     val cutInItems = MutableLiveData<List<WithdrawalCutInItem>>(emptyList())
 
@@ -88,7 +89,7 @@ class WithdrawViewModel : ViewModel() {
 
     private fun refreshTask(block: (Int) -> Unit) {
         logError("refreshTask-->$curTaskProgressStatus")
-        if ((curTaskStep.value ?: 0) < 100) {
+        if (curTaskShowStepCache < 100) {
             var info = fetchInfoByStep()
             val isCompleted = info?.third?.all { it.isCompleted } ?: false
             if (isCompleted && curTaskProgressStatus < 100) {
@@ -96,10 +97,8 @@ class WithdrawViewModel : ViewModel() {
                 info = fetchInfoByStep()
             }
             curStatus.value = WithdrawalStatus.WithdrawalTask
-
-            val oldStep = curTaskStep.value ?: 0
+            val oldStep = curTaskShowStepCache
             val newStep = curTaskProgressStatus
-            curTaskStep.value = newStep
             curInfo.value = info
             if (newStep != oldStep) {
                 block(newStep)
@@ -117,7 +116,9 @@ class WithdrawViewModel : ViewModel() {
 
     private fun WithdrawalRecordEntity.toCutInItem(): WithdrawalCutInItem {
         val method = WithdrawAmountHelper.findWithdrawPaymentMethodById(withdrawalMethodId)
-        val amountText = WithdrawAmountHelper.moneyFormatAddUnit(withdrawalAmount)
+        val amountText = WithdrawAmountHelper.moneyFormatAddUnit(
+            MoneyCacheHelper.usdToShowMoneyD(withdrawalAmount),
+        )
         val percent = (progress * 100.0).toInt().coerceIn(10, 100)
         val baseline = 0.1
         val delta = ((progress - baseline) * 100.0).toInt()

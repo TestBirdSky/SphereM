@@ -2,6 +2,7 @@ package com.sphere.shortvideos.helper.withdraw.db
 
 import com.sphere.shortvideos.mApp
 import com.sphere.shortvideos.helper.HelperRewardShow
+import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 import java.text.SimpleDateFormat
@@ -29,7 +30,8 @@ object WithdrawalRecordStore {
     suspend fun createRecordFromCache(initialProgress: Double = 0.1): Long? {
         val account = WithdrawalActionHelper.accountWithdrawal.trim()
         val methodId = WithdrawalActionHelper.withdrawalMethodId.trim()
-        val amount = WithdrawalActionHelper.withdrawalValue
+        val showAmount = WithdrawalActionHelper.withdrawalValue
+        val amountUsd = MoneyCacheHelper.showMoneyToUsdMoney(showAmount)
         if (account.isBlank() || methodId.isBlank()) return null
 
         val recordId = dao.insert(
@@ -37,12 +39,12 @@ object WithdrawalRecordStore {
                 account = account,
                 withdrawalMethodId = methodId,
                 progress = normalizeProgress(initialProgress),
-                withdrawalAmount = amount,
+                withdrawalAmount = amountUsd,
             )
         )
 
         if (recordId > 0) {
-            HelperRewardShow.reduceMoney(amount)
+            HelperRewardShow.reduceMoney(showAmount)
             WithdrawalActionHelper.clearWithdrawalInfoAndAddTask()
             return recordId
         }

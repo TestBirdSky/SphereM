@@ -255,16 +255,12 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
         if (detailFragment == null) {
             requireContext().showToast(R.string.play_failed_please_try_again)
             return
-        }
-        // 这里有可能在 onSaveInstanceState 之后被调用，直接 commit() 会抛 IllegalStateException
+        } // 这里有可能在 onSaveInstanceState 之后被调用，直接 commit() 会抛 IllegalStateException
         // 使用 commitAllowingStateLoss 防止因状态已保存导致的崩溃
-        if (!isAdded || isDetached || view == null) {
-            // 宿主 Fragment 已不再处于有效状态，直接放弃添加子 Fragment，避免状态丢失相关异常
+        if (!isAdded || isDetached || view == null) { // 宿主 Fragment 已不再处于有效状态，直接放弃添加子 Fragment，避免状态丢失相关异常
             return
         }
-        childFragmentManager.beginTransaction()
-            .add(R.id.fragment_container, detailFragment!!)
-            .show(detailFragment!!)
+        childFragmentManager.beginTransaction().add(R.id.fragment_container, detailFragment!!).show(detailFragment!!)
             .commitAllowingStateLoss()
     }
 
@@ -352,7 +348,7 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
         showBubbleTips.observe(this, { pair ->
             logError("showBubbleTips-->$pair")
             // pair.second 是“预计消失时间”(未来时间戳)，剩余时间太短就不展示
-            if (pair.second - System.currentTimeMillis() < 2000) return@observe
+            if (System.currentTimeMillis() - pair.second > 1500) return@observe
             binding.tvTis.setTextAndDismiss(pair)
         })
     }

@@ -24,10 +24,12 @@
 
         <com.sphere.shortvideos.view.AutoShrinkSingleLineTextView
             android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
             android:fontFamily="@font/noto_sans"
+            android:gravity="center"
+            android:paddingHorizontal="16dp"
             android:text="@string/insufficient_revenue"
             android:textColor="#F5C91A"
             android:textSize="24sp"
@@ -74,7 +76,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_anim" />
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/btn_claim"
             android:layout_width="match_parent"
             android:layout_height="47dp"
@@ -86,23 +88,32 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_des">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.sphere.shortvideos.view.AutoShrinkSingleLineTextView
                 android:id="@+id/tv_money"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:paddingHorizontal="16dp"
                 android:text="@string/keep_ear_mo"
                 android:textColor="@color/white"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/iv11"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="AAA11111111sss" />
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv11"
                 android:layout_width="33dp"
                 android:layout_height="28dp"
-                android:layout_marginHorizontal="8dp"
-                android:src="@drawable/ic_coin_low" />
+                android:src="@drawable/ic_coin_low"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tv_money"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

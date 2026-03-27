@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import com.chartboost.sdk.impl.fa
 import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.baseui.GenericFragment
 import com.sphere.shortvideos.databinding.FragmentTaskBinding
@@ -29,6 +30,7 @@ import kotlin.random.Random
  * Describe:
  */
 class TaskFragment : GenericFragment<FragmentTaskBinding>() {
+    private var isProgressing = false
     private var curPopMoney = 0.0
     private val viewModel by activityViewModels<MainViewModel>()
     private var popAnimator1: ObjectAnimator? = null
@@ -46,10 +48,10 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
             binding.tvMoney.text = moneyText
         }
         binding.layoutPop1.setOnClickListener {
-//            (activity as? MainActivity)?.let {
-//                WithdrawApplyTransitionDialogFragment().show(it.supportFragmentManager, "")
-//            }
-//            return@setOnClickListener
+            //            (activity as? MainActivity)?.let {
+            //                WithdrawApplyTransitionDialogFragment().show(it.supportFragmentManager, "")
+            //            }
+            //            return@setOnClickListener
             if (isDebugMode) { // todo remove
                 curPopMoney = WithdrawAmountHelper.fetchWithdrawMinMoneyDouble() / 2
             }
@@ -62,12 +64,14 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
     }
 
     private fun showPopAd(view: View) {
+        if (isProgressing) return
         localEvent("billetera_bubble")
         if (curPopMoney > 0) {
             (activity as? MainActivity)?.let {
                 AdUtils.showRateAd(it, adPositionName = "dlmsf_task_int", isRate = {
                     localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_task_int"))
                 }, dismiss = {
+                    isProgressing = false
                     AnimViewHelper.flyToTarget(view, binding.iv1, end = {
                         lifecycleScope.launch {
                             delay(Random.nextLong(6000, 16000))
@@ -76,6 +80,7 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
                     })
                     viewModel.addMoneyNotExChange(curPopMoney)
                 })
+                isProgressing = true
             }
             WithdrawalActionHelper.addTask2BubbleNum()
         }

@@ -32,11 +32,7 @@ object MoneyCacheHelper {
     /** 当前余额（展示用）：英语=USD，巴西=BRL，印尼=IDR */
     fun fetchCurMoney(): Double {
         val usd = userFetchMoneyUSD
-        return when {
-            LauageTools.isIndonesia() -> usd * WithdrawAmountHelper.IDR_PER_USD
-            LauageTools.isBrazil() -> usd * WithdrawAmountHelper.BRL_PER_USD
-            else -> usd
-        }
+        return usdToShowMoneyD(usd)
     }
 
     @Synchronized
@@ -55,19 +51,32 @@ object MoneyCacheHelper {
     @Synchronized
     fun reduceNotExchangeMoney(value: Double) {
         if (value <= 0) return
-        val reduceUsd = when {
+        val reduceUsd = showMoneyToUsdMoney(value)
+        userFetchMoneyUSD = (userFetchMoneyUSD - reduceUsd).coerceAtLeast(0.0)
+        NotificationHelper.showOrUpdateNotificationService(mApp)
+    }
+
+    fun showMoneyToUsdMoney(value: Double): Double {
+        return when {
             LauageTools.isIndonesia() -> value / WithdrawAmountHelper.IDR_PER_USD
             LauageTools.isBrazil() -> value / WithdrawAmountHelper.BRL_PER_USD
             else -> value
         }
-        userFetchMoneyUSD = (userFetchMoneyUSD - reduceUsd).coerceAtLeast(0.0)
-        NotificationHelper.showOrUpdateNotificationService(mApp)
+    }
+
+    fun usdToShowMoneyD(usd: Double): Double {
+        return when {
+            LauageTools.isIndonesia() -> usd * WithdrawAmountHelper.IDR_PER_USD
+            LauageTools.isBrazil() -> usd * WithdrawAmountHelper.BRL_PER_USD
+            else -> usd
+        }
     }
 
     var watchVideoTime by MMKVData(0L) // 观看时长
         private set
 
-    private var time = 0L
+    private
+    var time = 0L
     fun startWatchVideo() {
         logError("startWatchVideo-->$watchVideoTime")
         time = System.currentTimeMillis()

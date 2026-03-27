@@ -38,6 +38,7 @@ import com.sphere.shortvideos.helper.withdraw.TASK2_STEP
 import com.sphere.shortvideos.helper.withdraw.TASK3_STEP
 import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 import com.sphere.shortvideos.helper.withdraw.WithdrawalStatus
+import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.view.AnimViewHelper
 import com.sphere.shortvideos.vm.WithdrawViewModel
 import kotlinx.coroutines.launch
@@ -251,11 +252,14 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
     }
 
     private fun refreshAndShowTaskDialog() {
-        viewModel.refresh({ progress ->
+        logError("refreshAndShowTaskDialog=-->")
+        viewModel.refresh({ step ->
+            logError("refreshAndShowTaskDialog=-->$step")
             activity?.let {
                 if (it.isFinishing || isAdded.not()) return@refresh
                 val taskInfo = viewModel.curInfo.value
-                when (progress) {
+                viewModel.curTaskShowStepCache = step
+                when (step) {
                     TASK3_STEP -> {
                         DialogFragmentDisplayHelper.show(it.supportFragmentManager, FlipCardDialogFragment().apply {
                             dismissEvent = {
@@ -267,7 +271,7 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
                                                 title = getString(info.first),
                                                 desc = getString(info.second),
                                                 tasks = info.third,
-                                                type = mapTaskType(progress),
+                                                type = mapTaskType(step),
                                             ),
                                         )
                                     }
@@ -295,7 +299,7 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
                                     title = getString(info.first),
                                     desc = getString(info.second),
                                     tasks = info.third,
-                                    type = mapTaskType(progress),
+                                    type = mapTaskType(step),
                                 ),
                             )
                         }

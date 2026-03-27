@@ -145,6 +145,7 @@ class LayoutWithdrawalActionController(
     }
 
     private fun showInfoDialog(fragmentManager: FragmentManager) {
+        localEvent("withdrawal_Initiate")
         DialogFragmentDisplayHelper.show(fragmentManager, WithdrawalInfoDialogFragment().apply {
             onAction = {
                 taskEvent()

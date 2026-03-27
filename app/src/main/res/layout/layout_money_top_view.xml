@@ -63,7 +63,7 @@
             app:layout_constraintEnd_toStartOf="@id/iv_pack"
             app:layout_constraintStart_toStartOf="@id/tv_cur_money"
             app:layout_constraintTop_toBottomOf="@id/tv_cur_money"
-            tools:text="Only R$ 0.5 more to withdraw! Act fast!" />
+            tools:text="Only R$ 0.5 more9999999999999999999 to withdraw! Act fast!" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

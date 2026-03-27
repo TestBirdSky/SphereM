@@ -43,19 +43,20 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.sphere.shortvideos.view.AutoShrinkSingleLineTextView
                 android:id="@+id/tv_money"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_marginHorizontal="9dp"
-                android:gravity="center"
+                android:gravity="center|start"
                 android:textColor="@color/white"
                 android:textSize="26sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/iv1"
                 app:layout_constraintStart_toEndOf="@id/iv1"
+                app:layout_constraintEnd_toStartOf="@id/layout_pop2"
                 app:layout_constraintTop_toTopOf="@id/iv1"
-                tools:text="26sp" />
+                tools:text="Rp 3999999999999" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_withdraw"

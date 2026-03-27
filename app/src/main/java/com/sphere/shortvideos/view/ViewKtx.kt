@@ -73,8 +73,10 @@ fun LayoutMoneyTopViewBinding.initView(activity: MainActivity, tag: String, wall
 
 fun LayoutMoneyTopViewBinding.refreshViewTagMoney(tagMoney: String) {
     if (WithdrawAmountHelper.isCanWithdraw()) {
+        tvTips.setTextColor("#49F32B".toColorInt())
         tvTips.setText(R.string.add_money_info_tips3)
     } else {
+        tvTips.setTextColor(root.context.getColor(R.color.white))
         val fullText = root.context.getString(R.string.withdraw_tips, tagMoney)
         tvTips.setColorText(fullText, tagMoney, "#49F32B".toColorInt())
     }

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.lifecycleScope
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.databinding.DialogBackTipsBinding
 import com.sphere.shortvideos.helper.HelperRewardShow
@@ -14,6 +15,7 @@ import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.RemoteConfHelper
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.reward.RewardHelper
+import kotlinx.coroutines.launch
 
 /**
  * Date：2026/1/23

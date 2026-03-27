@@ -1,17 +1,18 @@
 package com.sphere.shortvideos.dialogs.withdraw
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.core.graphics.toColorInt
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.databinding.DialogMyAccountBinding
+import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.withdraw.db.WithdrawalRecordEntity
@@ -57,13 +58,15 @@ class MyAccountDialogFragment : DialogFragment() {
     private fun WithdrawalRecordEntity.toRow(): MyAccountRecordRow {
         val fmt = SimpleDateFormat("yyyy.M.d", Locale.getDefault())
         val dateText = fmt.format(Date(createdAt))
-        val amountText = WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(withdrawalAmount)
+        val amountText = WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(
+            MoneyCacheHelper.usdToShowMoneyD(withdrawalAmount),
+        )
         val done = progress >= 1.0 - 1e-9
         return MyAccountRecordRow(
             dateText = dateText,
             amountText = amountText,
             statusText = if (done) "Done" else "Processing",
-            statusColor = Color.parseColor(if (done) "#37C049" else "#20B1F5"),
+            statusColor = if (done) "#37C049".toColorInt() else "#20B1F5".toColorInt(),
         )
     }
 

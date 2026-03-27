@@ -7,14 +7,18 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
+import com.chartboost.sdk.impl.fa
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.databinding.DialogWithdrawalInfoBinding
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 import com.sphere.shortvideos.helper.withdraw.db.WithdrawalRecordStore
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -25,7 +29,6 @@ import kotlin.random.Random
  */
 class WithdrawalInfoDialogFragment : DialogFragment() {
     var onAction: (() -> Unit)? = null
-
     private var _binding: DialogWithdrawalInfoBinding? = null
     private val binding get() = _binding!!
 
@@ -44,9 +47,23 @@ class WithdrawalInfoDialogFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         localEvent("withdrawal_confirmation")
         fillDefaultInfo()
-        persistWithdrawalRecord()
+        binding.btnConfirm.visibility = View.GONE
+        binding.ivClose.visibility = View.GONE
+        var isAdd = false
+        CoroutineScope(Dispatchers.Main).launch {
+            withContext(Dispatchers.IO) {
+                WithdrawalRecordStore.createRecordFromCache(initialProgress = Random.nextDouble(0.08, 0.18))
+            }
+            isAdd = true
+        }
+        lifecycleScope.launch {
+            while (isAdd.not()) {
+                delay(500)
+            }
+            binding.btnConfirm.visibility = View.VISIBLE
+            binding.ivClose.visibility = View.VISIBLE
+        }
         binding.btnConfirm.setOnClickListener {
-            localEvent("withdrawal_Initiate")
             onAction?.invoke()
             dismissAllowingStateLoss()
         }
@@ -73,9 +90,7 @@ class WithdrawalInfoDialogFragment : DialogFragment() {
     }
 
     private fun persistWithdrawalRecord() {
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-            WithdrawalRecordStore.createRecordFromCache(initialProgress = Random.nextDouble(0.12,0.20))
-        }
+
     }
 
     override fun onStart() {
@@ -84,6 +99,7 @@ class WithdrawalInfoDialogFragment : DialogFragment() {
             window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
             window.setBackgroundDrawableResource(android.R.color.transparent)
         }
+        dialog?.setCancelable(false)
         dialog?.setCanceledOnTouchOutside(false)
     }
 

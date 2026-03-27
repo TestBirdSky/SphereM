@@ -12,6 +12,7 @@ import androidx.core.content.withStyledAttributes
 import androidx.core.graphics.toColorInt
 import androidx.core.view.ViewCompat
 import com.sphere.shortvideos.R
+import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 
@@ -202,7 +203,7 @@ class BubbleTextView @JvmOverloads constructor(
     fun setTextAndDismiss(triple: Triple<Int, Long, String>) {
         postDelayed({
             visibility = View.GONE
-        }, triple.second - System.currentTimeMillis())
+        }, 5000)
         val tips = triple.third
         when (triple.first) {
             0 -> {

@@ -37,6 +37,19 @@ object LauageTools {
         "es",
     )
 
+    private val LANGUAGE_WHITELIST = setOf(
+        "zh_hans",
+        "zh_hant",
+        "en",
+        "vi",
+        "in",
+        "th",
+        "ja",
+        "ko",
+        "pt",
+        "es",
+    )
+
     /**
      * 获取当前设备语言
      */
@@ -156,6 +169,46 @@ object LauageTools {
      */
     fun isArabic(): Boolean {
         return isArabicUser(mApp)
+    }
+
+    /**
+     * 判断当前设备语言是否在白名单中
+     * 白名单：zh_hans, zh_hant, en, vi, in(id兼容), th, ja, ko, pt, es
+     */
+    fun isCurrentLanguageInWhitelist(): Boolean {
+        return isLanguageInWhitelist(mApp)
+    }
+
+    /**
+     * 判断指定 context 的设备语言是否在白名单中
+     * 白名单：zh_hans, zh_hant, en, vi, in(id兼容), th, ja, ko, pt, es
+     */
+    fun isLanguageInWhitelist(context: Context): Boolean {
+        val normalizedLanguage = normalizeLanguageKey(getDeviceLanguage(context))
+        return LANGUAGE_WHITELIST.contains(normalizedLanguage)
+    }
+
+    private fun normalizeLanguageKey(locale: Locale): String {
+        val language = locale.language.lowercase()
+        val country = locale.country.uppercase()
+        val languageTag = locale.toLanguageTag().lowercase()
+//
+//        if (language == "zh") {
+//            // 简繁体优先使用 script 判断；无 script 时按地区兜底
+//            return when {
+//                languageTag.contains("-hant") -> "zh_hant"
+//                languageTag.contains("-hans") -> "zh_hans"
+//                country in setOf("TW", "HK", "MO") -> "zh_hant"
+//                else -> "zh_hans"
+//            }
+//        }
+
+        // 印尼语统一返回 in（兼容 Android 里可能出现的 id）
+        if (language == "id" || language == "in") {
+            return "in"
+        }
+
+        return language
     }
 
 

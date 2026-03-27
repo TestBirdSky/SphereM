@@ -96,7 +96,7 @@
                 android:gravity="center"
                 android:text="@string/making_money"
                 android:textColor="@color/white"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <androidx.appcompat.widget.AppCompatImageView

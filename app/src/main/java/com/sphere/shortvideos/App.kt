@@ -72,7 +72,7 @@ class App : Application() {
             logError("onInitFinished() called with: success = [$success], errorInfo = [$errorInfo]")
         }
         PSSDK.setEligibleAudience(true)
-        if (LauageTools.isArabic()) {
+        if (LauageTools.isCurrentLanguageInWhitelist().not()) {
             val l = listOf("en", "id", "in", "pt", "th", "es")
             PSSDK.setContentLanguages(l)
         }
