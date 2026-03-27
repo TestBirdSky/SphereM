@@ -170,6 +170,9 @@ object WithdrawalActionHelper {
         if (curTaskProgressStatus == TASK1_STEP) {
             logError("addTask1WatchTime-->$second --$task1DramaSecond")
             task1DramaSecond += second.coerceAtLeast(0)
+            if (isDebugMode) {
+                task1DramaSecond += 55
+            }
         }
     }
 

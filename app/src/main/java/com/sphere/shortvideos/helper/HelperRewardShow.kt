@@ -55,7 +55,7 @@ object HelperRewardShow {
     private var maxReachedCount = 0
     private var progressJob: Job? = null
     private val progressMax = 100
-    private val roundDurationMs = /*if (isDebugMode) 5000L else */ 15000L //15_000L //
+    private val roundDurationMs = if (isDebugMode) 10000L else 15000L //15_000L //
 
     private var numIntervalIndex = 0 // 目标
     private var tagGam = -1
@@ -241,6 +241,7 @@ object HelperRewardShow {
         showDialogType.observe(activity) {
             logError("registerConDialog-->$it")
             if (it == -1) return@observe
+            DialogFragmentDisplayHelper.hideCurShowFragment(activity)
             when (it) {
                 0 -> {
                     NormalCongratulateDialogFragment().apply {

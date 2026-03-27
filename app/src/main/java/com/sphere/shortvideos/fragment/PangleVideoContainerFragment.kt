@@ -269,10 +269,8 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
     }
 
     fun resumePlay() {
-        (activity as? MainActivity)?.let {
-            if (it.dialogFragmentNum > 0) {
-                return
-            }
+        if ((viewModel.fragmentNum.value ?: 0) > 0) {
+            return
         }
         if (isResume) {
             detailFragment?.startPlay()
@@ -329,6 +327,13 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
         viewModel.numProgress.observe(viewLifecycleOwner, numProgressObserver)
         viewModel.numTime.observe(viewLifecycleOwner, numTimeObserver)
         viewModel.nextRewordType.observe(viewLifecycleOwner, nextRewardObserver)
+        viewModel.shouldPauseVideoByDialog.observe(viewLifecycleOwner) { shouldPause ->
+            if (shouldPause) {
+                pausePlay()
+            } else {
+                resumePlay()
+            }
+        }
         HelperRewardShow.curGetMoneyAnimLiveData.observe(this, {
             binding.layoutMoney.tvCurMoney.text = it
         })
@@ -348,7 +353,7 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
         showBubbleTips.observe(this, { pair ->
             logError("showBubbleTips-->$pair")
             // pair.second 是“预计消失时间”(未来时间戳)，剩余时间太短就不展示
-            if (System.currentTimeMillis() - pair.second > 1500) return@observe
+            if (System.currentTimeMillis() - pair.second > 1000) return@observe
             binding.tvTis.setTextAndDismiss(pair)
         })
     }

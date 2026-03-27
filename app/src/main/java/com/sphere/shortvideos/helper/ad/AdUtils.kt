@@ -66,6 +66,7 @@ object AdUtils {
 
     fun showRateAd(activity: GenericActivity,
                    dismiss: () -> Unit = {},
+                   noAd: () -> Unit = {},
                    adPositionName: String,
                    isRate: () -> Unit = {}) {
         if (DramaIntAdHelper.fetchIsShowRateAd().not()) {
@@ -77,7 +78,7 @@ object AdUtils {
         if (unlockHolder.isAdHaveCache()) {
             unlockHolder.showFullAd(activity, onAdDismissed = dismiss, adPositionName = adPositionName)
         } else {
-            dismiss.invoke()
+            noAd.invoke()
             unlockHolder.preloadIfCan()
         }
     }

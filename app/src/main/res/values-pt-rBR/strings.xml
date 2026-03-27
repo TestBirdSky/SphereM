@@ -125,7 +125,7 @@
     <string name="ins_tips">O saldo atual não atende aos requisitos de saque.</string>
     <string name="keep_ear_mo">Continue ganhando mais!</string>
     <string name="add_money_info_tips1">%s armazenados na conta.</string>
-    <string name="add_money_info_tips2">Faltam apenas %s para sacar!\n Corra!</string>
+    <string name="add_money_info_tips2">Faltam apenas %s para sacar! Corra!</string>
     <string name="add_money_info_tips3">Você pode sacar agora!</string>
     <string name="my_account">Minha conta</string>
     <string name="enter_withdrawal_amount">Informe o valor do saque</string>

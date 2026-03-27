@@ -124,7 +124,7 @@
     <string name="ins_tips">ยอดในบัญชีปัจจุบันไม่ถึงเงื่อนไขการถอน</string>
     <string name="keep_ear_mo">สร้างรายได้ต่อไป!</string>
     <string name="add_money_info_tips1">%s เก็บไว้ในบัญชีแล้ว</string>
-    <string name="add_money_info_tips2">อีกแค่ %s ก็ถอนได้!\n รีบเลย!</string>
+    <string name="add_money_info_tips2">อีกแค่ %s ก็ถอนได้! รีบเลย!</string>
     <string name="add_money_info_tips3">คุณถอนเงินได้แล้วตอนนี้!</string>
     <string name="my_account">บัญชีของฉัน</string>
     <string name="enter_withdrawal_amount">ใส่จำนวนเงินที่ต้องการถอน</string>

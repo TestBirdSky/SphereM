@@ -234,35 +234,19 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         }
     }
 
-    var dialogFragmentNum = 0
-
-    fun pauseCurrentVideo() {
-        val videoStreamFragment =
-            supportFragmentManager.fragments.find { it is VideoStreamFragment } as? VideoStreamFragment
-        videoStreamFragment?.pauseCurrentVideo()
-    }
-
-    fun resumeCurrentVideo() {
-        val videoStreamFragment =
-            supportFragmentManager.fragments.find { it is VideoStreamFragment } as? VideoStreamFragment
-        videoStreamFragment?.resumeCurrentVideo()
-    }
-
     private val dialogLifecycleCallbacks = object : FragmentManager.FragmentLifecycleCallbacks() {
         override fun onFragmentCreated(fm: FragmentManager, f: Fragment, savedInstanceState: Bundle?) {
             super.onFragmentCreated(fm, f, savedInstanceState)
             if (HelperRewardShow.isPauseFragment(f)) {
-                dialogFragmentNum++
-                logError("onFragmentCreated-->$dialogFragmentNum --$f")
-                pauseCurrentVideo()
+                viewModel.onPauseDialogShown()
+                logError("onFragmentCreated-->${viewModel.fragmentNum.value} --$f")
             }
         }
 
         override fun onFragmentViewDestroyed(fm: FragmentManager, f: Fragment) {
             if (HelperRewardShow.isPauseFragment(f)) {
-                dialogFragmentNum--
-                logError("onFragmentViewDestroyed-->$dialogFragmentNum --$f")
-                resumeCurrentVideo()
+                viewModel.onPauseDialogDismissed()
+                logError("onFragmentViewDestroyed-->${viewModel.fragmentNum.value} --$f")
             }
         }
     }

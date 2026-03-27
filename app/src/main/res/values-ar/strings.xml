@@ -124,7 +124,7 @@
     <string name="ins_tips">رصيد الحساب الحالي لا يستوفي شروط السحب.</string>
     <string name="keep_ear_mo">واصل كسب المزيد!</string>
     <string name="add_money_info_tips1">تم تخزين ‏%s في الحساب.</string>
-    <string name="add_money_info_tips2">متبقٍ فقط ‏%s للسحب!\n أسرع!</string>
+    <string name="add_money_info_tips2">متبقٍ فقط ‏%s للسحب! أسرع!</string>
     <string name="add_money_info_tips3">يمكنك صرف الأموال الآن!</string>
     <string name="my_account">حسابي</string>
     <string name="enter_withdrawal_amount">أدخل مبلغ السحب</string>

@@ -3,6 +3,7 @@ package com.sphere.shortvideos.helper
 import com.sphere.shortvideos.helper.mmkv.MMKVData
 import com.sphere.shortvideos.helper.reward.RewardHelper
 import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
+import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.mApp
 import com.sphere.shortvideos.notification.NotificationHelper
@@ -26,6 +27,9 @@ object MoneyCacheHelper {
     }
 
     fun fetchWatchVideoReward(): Double {
+        if (isDebugMode) { // todo remove
+            return WithdrawAmountHelper.fetchWithdrawMinMoneyDouble() / 5
+        }
         return RewardHelper.getConfigByLanguage().getMoneyVideoIconReward(fetchCurMoney())
     }
 
@@ -75,8 +79,7 @@ object MoneyCacheHelper {
     var watchVideoTime by MMKVData(0L) // 观看时长
         private set
 
-    private
-    var time = 0L
+    private var time = 0L
     fun startWatchVideo() {
         logError("startWatchVideo-->$watchVideoTime")
         time = System.currentTimeMillis()

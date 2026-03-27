@@ -47,7 +47,7 @@ class BubbleTextView @JvmOverloads constructor(
 
     private var bubbleFillColor = Color.parseColor("#653AA2")
     private var bubbleStrokeColor = Color.WHITE
-    private var bubbleStrokeWidthPx = 1f * density
+    private var bubbleStrokeWidthPx = 1.5f * density
     private var bubbleArrowGravity = ARROW_GRAVITY_CENTER
 
     private val bubblePath = Path()
@@ -217,6 +217,7 @@ class BubbleTextView @JvmOverloads constructor(
             }
 
             2 -> {
+                HelperRewardShow.isShowCanCash = false
                 if (WithdrawAmountHelper.isCanWithdraw()) {
                     setText(R.string.add_money_info_tips3)
                     setBubbleFillColor(context.resources.getColor(R.color.color_129, null))

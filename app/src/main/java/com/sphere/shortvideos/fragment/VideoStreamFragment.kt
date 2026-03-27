@@ -89,21 +89,21 @@ class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
         }
     }
 
-    fun pauseCurrentVideo() {
-        // Fragment 可能已经从 Activity 分离，这时不能再通过 childFragmentManager 查找子 Fragment
-        if (!isAdded || isDetached || view == null) return
-        val currentIndex = binding.viewPager.currentItem
-        val current = childFragmentManager.findFragmentByTag("f$currentIndex")
-        (current as? PangleVideoContainerFragment)?.pausePlay()
-    }
-
-    fun resumeCurrentVideo() {
-        // 防御性判断：只有在 Fragment 已经 attach 且 View 存在时，才访问 childFragmentManager
-        if (!isAdded || isDetached || view == null) return
-        val currentIndex = binding.viewPager.currentItem
-        val current = childFragmentManager.findFragmentByTag("f$currentIndex")
-        (current as? PangleVideoContainerFragment)?.resumePlay()
-    }
+//    fun pauseCurrentVideo() {
+//        // Fragment 可能已经从 Activity 分离，这时不能再通过 childFragmentManager 查找子 Fragment
+//        if (!isAdded || isDetached || view == null) return
+//        val currentIndex = binding.viewPager.currentItem
+//        val current = childFragmentManager.findFragmentByTag("f$currentIndex")
+//        (current as? PangleVideoContainerFragment)?.pausePlay()
+//    }
+//
+//    fun resumeCurrentVideo() {
+//        // 防御性判断：只有在 Fragment 已经 attach 且 View 存在时，才访问 childFragmentManager
+//        if (!isAdded || isDetached || view == null) return
+//        val currentIndex = binding.viewPager.currentItem
+//        val current = childFragmentManager.findFragmentByTag("f$currentIndex")
+//        (current as? PangleVideoContainerFragment)?.resumePlay()
+//    }
 
     inner class FeedListAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
         FragmentStateAdapter(fragmentManager, lifecycle) {

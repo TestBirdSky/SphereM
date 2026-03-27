@@ -88,8 +88,8 @@ class WithdrawViewModel : ViewModel() {
     }
 
     private fun refreshTask(block: (Int) -> Unit) {
-        logError("refreshTask-->$curTaskProgressStatus")
-        if (curTaskShowStepCache < 100) {
+        logError("refreshTask-->$curTaskProgressStatus --$curTaskShowStepCache")
+        if (curTaskProgressStatus <= 100) {
             var info = fetchInfoByStep()
             val isCompleted = info?.third?.all { it.isCompleted } ?: false
             if (isCompleted && curTaskProgressStatus < 100) {

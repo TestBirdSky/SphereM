@@ -36,6 +36,24 @@ object DialogFragmentDisplayHelper {
         return hasDialogFragmentShowing(activity.supportFragmentManager)
     }
 
+    @JvmStatic
+    fun hideCurShowFragment(activity: FragmentActivity) {
+        val fm = activity.supportFragmentManager
+        if (fm.isStateSaved) {
+            fm.fragments.toList().forEach { fragment ->
+                if (fragment is DialogFragment && fragment.isAdded) {
+                    fragment.dismissAllowingStateLoss()
+                }
+            }
+            return
+        }
+        fm.fragments.toList().forEach { fragment ->
+            if (fragment is DialogFragment && fragment.isAdded) {
+                fragment.dismiss()
+            }
+        }
+    }
+
     /**
      * 指定 [FragmentManager] 为根的子树中是否有 [DialogFragment] 正在展示（含子 Fragment 的 childFragmentManager）。
      */

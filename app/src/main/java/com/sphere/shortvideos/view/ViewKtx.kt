@@ -6,21 +6,20 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.GridLayoutManager
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.activity.MainActivity
-import com.sphere.shortvideos.databinding.LayoutMoneyTopViewBinding
-import com.sphere.shortvideos.databinding.LayoutTaskChildBinding
 import com.sphere.shortvideos.adapter.SevenDayRewardAdapter
 import com.sphere.shortvideos.baseui.GenericActivity
-import com.sphere.shortvideos.helper.HelperRewardShow
+import com.sphere.shortvideos.databinding.LayoutMoneyTopViewBinding
+import com.sphere.shortvideos.databinding.LayoutTaskChildBinding
+import com.sphere.shortvideos.dialogs.TaskInfoDialogFragment
 import com.sphere.shortvideos.helper.MoneyCacheHelper
-import com.sphere.shortvideos.helper.task.TaskHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.localEvent
-import androidx.core.graphics.toColorInt
-import com.sphere.shortvideos.dialogs.TaskInfoDialogFragment
+import com.sphere.shortvideos.helper.task.TaskHelper
 
 /**
  * Date：2026/1/21

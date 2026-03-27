@@ -71,6 +71,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clipChildren="false"
         app:layout_constraintTop_toBottomOf="@id/layout_top">
 
         <com.sphere.shortvideos.view.BubbleTextView

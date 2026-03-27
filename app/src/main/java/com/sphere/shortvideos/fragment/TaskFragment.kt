@@ -12,6 +12,7 @@ import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.baseui.GenericFragment
 import com.sphere.shortvideos.databinding.FragmentTaskBinding
 import com.sphere.shortvideos.helper.HelperRewardShow
+import com.sphere.shortvideos.helper.HelperRewardShow.addMoneyNotExChangeFlyAnim
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.localEvent
@@ -23,6 +24,7 @@ import com.sphere.shortvideos.view.setTaskInfo
 import com.sphere.shortvideos.vm.MainViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.io.path.Path
 import kotlin.random.Random
 
 /**
@@ -30,7 +32,6 @@ import kotlin.random.Random
  * Describe:
  */
 class TaskFragment : GenericFragment<FragmentTaskBinding>() {
-    private var isProgressing = false
     private var curPopMoney = 0.0
     private val viewModel by activityViewModels<MainViewModel>()
     private var popAnimator1: ObjectAnimator? = null
@@ -47,14 +48,10 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
         HelperRewardShow.curGetMoneyAnimLiveData.observe(viewLifecycleOwner) { moneyText ->
             binding.tvMoney.text = moneyText
         }
-        binding.layoutPop1.setOnClickListener {
-            //            (activity as? MainActivity)?.let {
+        binding.layoutPop1.setOnClickListener { //            (activity as? MainActivity)?.let {
             //                WithdrawApplyTransitionDialogFragment().show(it.supportFragmentManager, "")
             //            }
             //            return@setOnClickListener
-            if (isDebugMode) { // todo remove
-                curPopMoney = WithdrawAmountHelper.fetchWithdrawMinMoneyDouble() / 2
-            }
             showPopAd(binding.layoutPop1)
         }
 
@@ -64,23 +61,28 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
     }
 
     private fun showPopAd(view: View) {
-        if (isProgressing) return
         localEvent("billetera_bubble")
         if (curPopMoney > 0) {
             (activity as? MainActivity)?.let {
-                AdUtils.showRateAd(it, adPositionName = "dlmsf_task_int", isRate = {
-                    localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_task_int"))
-                }, dismiss = {
-                    isProgressing = false
+                val actionAfter = {
                     AnimViewHelper.flyToTarget(view, binding.iv1, end = {
                         lifecycleScope.launch {
                             delay(Random.nextLong(6000, 16000))
                             AnimViewHelper.playShowScaleAlphaAnim(view)
                         }
                     })
+                    if (isDebugMode) { // todo remove
+                        curPopMoney = WithdrawAmountHelper.fetchWithdrawMinMoneyDouble() / 2
+                    }
                     viewModel.addMoneyNotExChange(curPopMoney)
+                }
+                AdUtils.showRateAd(it, adPositionName = "dlmsf_task_int", isRate = {
+                    localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_task_int"))
+                }, dismiss = {
+                    actionAfter()
+                }, noAd = {
+                    actionAfter()
                 })
-                isProgressing = true
             }
             WithdrawalActionHelper.addTask2BubbleNum()
         }

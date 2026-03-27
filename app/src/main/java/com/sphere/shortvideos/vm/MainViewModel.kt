@@ -17,7 +17,8 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
-
+    var fragmentNum = MutableLiveData(0)
+    val shouldPauseVideoByDialog = MutableLiveData(false)
     val historyLiveData = MutableLiveData<List<DramaHistoryEntity>>()
     val collectionLiveData = MutableLiveData<List<DramaCollectEntity>>()
 
@@ -61,6 +62,18 @@ class MainViewModel : ViewModel() {
 
     fun addMoneyNotExChange(d: Double) {
         HelperRewardShow.addMoneyNotExChange(d)
+    }
+
+    fun onPauseDialogShown() {
+        val next = (fragmentNum.value ?: 0) + 1
+        fragmentNum.value = next
+        shouldPauseVideoByDialog.value = true
+    }
+
+    fun onPauseDialogDismissed() {
+        val next = ((fragmentNum.value ?: 0) - 1).coerceAtLeast(0)
+        fragmentNum.value = next
+        shouldPauseVideoByDialog.value = next > 0
     }
 
 }

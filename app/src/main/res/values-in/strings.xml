@@ -126,7 +126,7 @@
     <string name="ins_tips">Saldo akun saat ini tidak memenuhi syarat penarikan Anda.</string>
     <string name="keep_ear_mo">Terus hasilkan lebih banyak!</string>
     <string name="add_money_info_tips1">%s tersimpan di akun.</string>
-    <string name="add_money_info_tips2">Hanya %s lagi untuk menarik!\n Cepat!</string>
+    <string name="add_money_info_tips2">Hanya %s lagi untuk menarik! Cepat!</string>
     <string name="add_money_info_tips3">Anda bisa mencairkan sekarang!</string>
     <string name="my_account">Akun saya</string>
     <string name="enter_withdrawal_amount">Masukkan jumlah penarikan</string>

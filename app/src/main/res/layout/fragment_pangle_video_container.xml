@@ -141,6 +141,8 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:paddingBottom="6dp"
         app:layout_constraintTop_toBottomOf="@id/layout_money">
 
         <com.sphere.shortvideos.view.BubbleTextView
@@ -149,7 +151,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginHorizontal="12dp"
-            android:layout_marginTop="2dp"
             android:gravity="center"
             android:paddingHorizontal="12dp"
             android:paddingVertical="8dp"

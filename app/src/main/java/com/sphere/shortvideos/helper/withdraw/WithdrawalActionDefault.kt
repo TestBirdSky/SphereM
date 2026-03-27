@@ -13,7 +13,7 @@ const val DEFAULT_WITHDRAWAL_ACTION_JSON = """
       "drama": 1
     },
     "task2": {
-      "bubble": 1
+      "bubble": 2
     },
     "task3": {
       "ad": 1

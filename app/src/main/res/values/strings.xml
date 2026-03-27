@@ -122,7 +122,7 @@
     <string name="ins_tips">The current account balance does not meet your withdrawal requirements.</string>
     <string name="keep_ear_mo">Keep Earning More!</string>
     <string name="add_money_info_tips1">%s Stored In Account.</string>
-    <string name="add_money_info_tips2">Only %s More To Withdraw! \n Act Fast!</string>
+    <string name="add_money_info_tips2">Only %s More To Withdraw! Act Fast!</string>
     <string name="add_money_info_tips3">You Can Cash Out Now!</string>
     <string name="my_account">My Account</string>
     <string name="enter_withdrawal_amount">Enter Withdrawal Amount</string>
