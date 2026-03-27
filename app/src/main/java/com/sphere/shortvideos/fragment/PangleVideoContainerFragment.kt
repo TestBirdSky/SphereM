@@ -85,6 +85,7 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
 
     @SuppressLint("SetTextI18n")
     override fun initUI() {
+        registerMainViewModel()
         initSeekbarAnim()
         spineHelper.addViewMoney1(binding.layoutAnim, requireContext())
         lifecycleScope.launch(Dispatchers.Main) {
@@ -297,12 +298,12 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
 
     override fun onResume() {
         super.onResume()
-        registerMainViewModel()
         resumePlay()
     }
 
     override fun onDestroyView() {
         stopFingerAnim()
+        isObserversRegistered = false
         super.onDestroyView()
     }
 
@@ -352,7 +353,6 @@ class PangleVideoContainerFragment : GenericFragment<FragmentPangleVideoContaine
 
         showBubbleTips.observe(this, { pair ->
             logError("showBubbleTips-->$pair")
-            // pair.second 是“预计消失时间”(未来时间戳)，剩余时间太短就不展示
             if (System.currentTimeMillis() - pair.second > 1000) return@observe
             binding.tvTis.setTextAndDismiss(pair)
         })

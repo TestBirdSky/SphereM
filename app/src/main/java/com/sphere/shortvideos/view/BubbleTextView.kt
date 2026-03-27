@@ -207,11 +207,13 @@ class BubbleTextView @JvmOverloads constructor(
         val tips = triple.third
         when (triple.first) {
             0 -> {
+                setBubbleFillColor(bubbleFillColor)
                 val fullText = context.getString(R.string.add_money_info_tips1, tips)
                 setColorText(fullText, tips, "#FFDD00".toColorInt())
             }
 
             1 -> {
+                setBubbleFillColor(bubbleFillColor)
                 val fullText = context.getString(R.string.add_money_info_tips2, tips)
                 setColorText(fullText, tips, "#FFDD00".toColorInt())
             }

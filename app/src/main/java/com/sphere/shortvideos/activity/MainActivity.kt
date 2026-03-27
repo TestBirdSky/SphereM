@@ -238,16 +238,23 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         override fun onFragmentCreated(fm: FragmentManager, f: Fragment, savedInstanceState: Bundle?) {
             super.onFragmentCreated(fm, f, savedInstanceState)
             if (HelperRewardShow.isPauseFragment(f)) {
-                viewModel.onPauseDialogShown()
+                refreshPauseDialogState()
                 logError("onFragmentCreated-->${viewModel.fragmentNum.value} --$f")
             }
         }
 
         override fun onFragmentViewDestroyed(fm: FragmentManager, f: Fragment) {
             if (HelperRewardShow.isPauseFragment(f)) {
-                viewModel.onPauseDialogDismissed()
+                refreshPauseDialogState()
                 logError("onFragmentViewDestroyed-->${viewModel.fragmentNum.value} --$f")
             }
+        }
+    }
+
+    private fun refreshPauseDialogState() {
+        binding.root.post {
+            val count = DialogFragmentDisplayHelper.countShowingPauseDialogFragments(supportFragmentManager)
+            viewModel.syncPauseDialogState(count)
         }
     }
 

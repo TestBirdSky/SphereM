@@ -1,17 +1,12 @@
 package com.sphere.shortvideos.vm
 
-import android.animation.ValueAnimator
-import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sphere.shortvideos.database
 import com.sphere.shortvideos.database.DramaCollectEntity
 import com.sphere.shortvideos.database.DramaHistoryEntity
-import com.sphere.shortvideos.helper.AddMoneyListener
 import com.sphere.shortvideos.helper.HelperRewardShow
-import com.sphere.shortvideos.helper.MoneyCacheHelper
-import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -74,6 +69,12 @@ class MainViewModel : ViewModel() {
         val next = ((fragmentNum.value ?: 0) - 1).coerceAtLeast(0)
         fragmentNum.value = next
         shouldPauseVideoByDialog.value = next > 0
+    }
+
+    fun syncPauseDialogState(showingCount: Int) {
+        val safeCount = showingCount.coerceAtLeast(0)
+        fragmentNum.value = safeCount
+        shouldPauseVideoByDialog.value = safeCount > 0
     }
 
 }

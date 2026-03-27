@@ -71,6 +71,20 @@ object DialogFragmentDisplayHelper {
         return false
     }
 
+    /** 统计指定 [FragmentManager] 树中当前正在显示的 [DialogFragment] 数量（含子树）。 */
+    @JvmStatic
+    fun countShowingDialogFragments(fragmentManager: FragmentManager): Int {
+        return countShowingDialogsInternal(fragmentManager) { true }
+    }
+
+    /** 统计指定 [FragmentManager] 树中当前正在显示且会触发视频暂停的 Dialog 数量（含子树）。 */
+    @JvmStatic
+    fun countShowingPauseDialogFragments(fragmentManager: FragmentManager): Int {
+        return countShowingDialogsInternal(fragmentManager) { dialog ->
+            HelperRewardShow.isPauseFragment(dialog)
+        }
+    }
+
     /** 当前登记的 [DialogFragment]；若未通过本类 [show] 展示则可能为 null */
     fun getCurrentDialog(): DialogFragment? = currentDialog
 
@@ -150,5 +164,20 @@ object DialogFragmentDisplayHelper {
             runCatching { d.lifecycle.removeObserver(obs) }
         }
         destroyObserver = null
+    }
+
+    private fun countShowingDialogsInternal(
+        fragmentManager: FragmentManager,
+        matcher: (DialogFragment) -> Boolean,
+    ): Int {
+        var count = 0
+        for (fragment in fragmentManager.fragments) {
+            if (fragment is DialogFragment && fragment.isAdded && matcher(fragment)) {
+                val showing = runCatching { fragment.dialog?.isShowing == true }.getOrDefault(false)
+                if (showing) count++
+            }
+            count += countShowingDialogsInternal(fragment.childFragmentManager, matcher)
+        }
+        return count
     }
 }

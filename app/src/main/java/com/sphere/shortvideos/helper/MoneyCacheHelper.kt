@@ -27,9 +27,9 @@ object MoneyCacheHelper {
     }
 
     fun fetchWatchVideoReward(): Double {
-        if (isDebugMode) { // todo remove
-            return WithdrawAmountHelper.fetchWithdrawMinMoneyDouble() / 5
-        }
+//        if (isDebugMode) { //
+//            return WithdrawAmountHelper.fetchWithdrawMinMoneyDouble() / 5
+//        }
         return RewardHelper.getConfigByLanguage().getMoneyVideoIconReward(fetchCurMoney())
     }
 

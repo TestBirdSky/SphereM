@@ -30,6 +30,7 @@ import com.sphere.shortvideos.database.DramaHistoryEntity
 import com.sphere.shortvideos.databinding.ActivityDramaPlayPangleBinding
 import com.sphere.shortvideos.dialogs.TaskInfoDialogFragment
 import com.sphere.shortvideos.dialogs.showIndexSelectorDialog
+import com.sphere.shortvideos.helper.DialogFragmentDisplayHelper
 import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.HelperRewardShow.showBubbleTips
 import com.sphere.shortvideos.helper.MoneyCacheHelper
@@ -83,16 +84,25 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
         override fun onFragmentCreated(fm: FragmentManager, f: Fragment, savedInstanceState: Bundle?) {
             super.onFragmentCreated(fm, f, savedInstanceState)
             if (HelperRewardShow.isPauseFragment(f)) {
-                logError("onFragmentResumed-->$f")
-                dialogNum++
-                detailFragment?.pausePlay()
+                refreshPauseDialogState()
+                logError("onFragmentCreated-->$dialogNum --$f")
             }
         }
 
         override fun onFragmentViewDestroyed(fm: FragmentManager, f: Fragment) {
             if (HelperRewardShow.isPauseFragment(f)) {
-                logError("onFragmentViewDestroyed-->$f")
-                dialogNum--
+                refreshPauseDialogState()
+                logError("onFragmentViewDestroyed-->$dialogNum --$f")
+            }
+        }
+    }
+
+    private fun refreshPauseDialogState() {
+        binding.root.post {
+            dialogNum = DialogFragmentDisplayHelper.countShowingPauseDialogFragments(supportFragmentManager)
+            if (dialogNum > 0) {
+                detailFragment?.pausePlay()
+            } else {
                 reStartPlay()
             }
         }
