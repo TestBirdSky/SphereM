@@ -298,7 +298,7 @@ object HelperRewardShow {
         lastShowTipsMoneyTime = System.currentTimeMillis()
         showBubbleTips.postValue(Triple(0,
             System.currentTimeMillis(),
-            mApp.getString(R.string.add_money_info_tips1, WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(dub))))
+            WithdrawAmountHelper.moneyFormatAddUnitWithNoSpace(dub)))
     }
 
     fun isArriveMinMoney() {
