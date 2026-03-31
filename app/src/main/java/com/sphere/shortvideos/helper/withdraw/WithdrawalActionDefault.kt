@@ -3,7 +3,7 @@ package com.sphere.shortvideos.helper.withdraw
 // todo check
 const val DEFAULT_WITHDRAWAL_ACTION_JSON = """
 {
-  "Withdrawal_process": 1,
+  "Withdrawal_process": 0,
   "user_maintenance": {
     "withdrawal_form": 2,
     "premium_user": 2

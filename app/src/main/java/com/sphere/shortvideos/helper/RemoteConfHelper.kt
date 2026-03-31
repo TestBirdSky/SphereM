@@ -1,6 +1,9 @@
 package com.sphere.shortvideos.helper
 
 import com.google.firebase.Firebase
+import com.google.firebase.remoteconfig.ConfigUpdate
+import com.google.firebase.remoteconfig.ConfigUpdateListener
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigException
 import com.google.firebase.remoteconfig.get
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
@@ -11,6 +14,7 @@ import com.sphere.shortvideos.helper.risk.RiskHelper
 import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.isDebugMode
+import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.mFbAndAdjustHelper
 import com.sphere.shortvideos.unlockIndex
 
@@ -27,6 +31,16 @@ class RemoteConfHelper {
     fun fetch() {
         if (isDebugMode) {
             AdUtils.initData()
+            fetchAll()
+            remoteConfig.fetchAndActivate().addOnSuccessListener { fetchAll() }
+            remoteConfig.addOnConfigUpdateListener(object : ConfigUpdateListener{
+                override fun onUpdate(configUpdate: ConfigUpdate) {
+                    logError("onUpdate--->$configUpdate")
+                }
+
+                override fun onError(error: FirebaseRemoteConfigException) {
+                }
+            })
         } else {
             fetchAll()
             remoteConfig.fetchAndActivate().addOnSuccessListener { fetchAll() }

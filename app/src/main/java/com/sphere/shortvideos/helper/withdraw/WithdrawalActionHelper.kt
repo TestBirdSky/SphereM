@@ -44,6 +44,7 @@ object WithdrawalActionHelper {
 
     fun updateConfigure() {
         val remoteJson = RemoteConfHelper().getString(REMOTE_KEY)
+        logError("updateConfigure--->$remoteJson")
         if (remoteJson.isNotBlank() && remoteJson != lastRemoteJson) {
             lastRemoteJson = remoteJson
             parseConfig(remoteJson)?.let {
