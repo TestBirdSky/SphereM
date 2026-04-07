@@ -34,6 +34,9 @@ object AppLifecycleManager : Application.ActivityLifecycleCallbacks {
         if (foregroundCounts == 1) {
             foregroundStartMs = System.currentTimeMillis()
         }
+        if (NotificationHelper.isInApp.not()) {
+            session()
+        }
         NotificationHelper.isInApp = true
         backgroundJob?.cancel()
         if (!restart) return

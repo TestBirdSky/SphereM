@@ -69,7 +69,7 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
                 CustomTabsIntent.Builder().build().launchUrl(this, GlobalConstants.PRIVACY_POLICY.toUri())
             }
         }
-        session()
+        localEvent("launch_page")
         MMKVRepository.checkCueDay()
     }
 
@@ -99,7 +99,6 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
                 }
             }
         }
-        localEvent("launch_page")
     }
 
     private fun checkNotification() {
