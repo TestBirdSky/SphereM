@@ -30,21 +30,31 @@ class RemoteConfHelper {
 
     fun fetch() {
         if (isDebugMode) {
-            AdUtils.initData()
             fetchAll()
-            remoteConfig.fetchAndActivate().addOnSuccessListener { fetchAll() }
-            remoteConfig.addOnConfigUpdateListener(object : ConfigUpdateListener{
-                override fun onUpdate(configUpdate: ConfigUpdate) {
-                    logError("onUpdate--->$configUpdate")
-                }
-
-                override fun onError(error: FirebaseRemoteConfigException) {
-                }
-            })
+            fetchRemote()
         } else {
             fetchAll()
-            remoteConfig.fetchAndActivate().addOnSuccessListener { fetchAll() }
+            fetchRemote()
         }
+    }
+
+    private fun fetchRemote() {
+        remoteConfig.fetchAndActivate().addOnSuccessListener {
+            if (it) {
+                fetchAll()
+            }
+        }
+        remoteConfig.addOnConfigUpdateListener(object : ConfigUpdateListener {
+            override fun onUpdate(configUpdate: ConfigUpdate) {
+                remoteConfig.activate().addOnSuccessListener {
+                    if (it) {
+                        fetchAll()
+                    }
+                }
+            }
+
+            override fun onError(error: FirebaseRemoteConfigException) = Unit
+        })
     }
 
     private fun fetchAll() {
@@ -57,7 +67,7 @@ class RemoteConfHelper {
         fetchFbCon()
     }
 
-    private fun fetchAdRemote() {
+    fun fetchAdRemote() {
         val defaultKey = AD_CONFIG_DEFAULT_KEY
         val key = resolveAdConfigKeyByChannel(MMKVRepository.adjustPaidChannel)
         val channelConfig = runCatching { remoteConfig[key].asString() }.getOrNull().orEmpty()

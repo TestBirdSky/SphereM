@@ -83,7 +83,7 @@ class NotificationImpl(val notificationId: Int = 1000,
                     .setMediaSession(mMediaSession.sessionToken)
                 val builder =
                     NotificationCompat.Builder(context, channelIdStr).setSmallIcon(R.drawable.ic_notification_app)
-                        .setStyle(style).setContentIntent(getPendingI(context))
+                        .setStyle(style).setContentIntent(getPendingI(context, NOTI_ID_MEDIA))
                         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                         .setPriority(NotificationCompat.PRIORITY_MAX)
                         .setLargeIcon(Icon.createWithResource(mApp, R.drawable.ic_notification_small_app_icon))
@@ -141,10 +141,10 @@ class NotificationImpl(val notificationId: Int = 1000,
         }
     }
 
-    private fun getPendingI(context: Context): PendingIntent {
+    private fun getPendingI(context: Context, id: Int = notificationId): PendingIntent {
         val pendingIntent =
             PendingIntent.getActivity(context, Random.nextInt(), Intent(context, LoadingActivity::class.java).apply {
-                putExtra(NOTIFICATION_ID_KEY, notificationId)
+                putExtra(NOTIFICATION_ID_KEY, id)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             }, PendingIntent.FLAG_IMMUTABLE)
         return pendingIntent

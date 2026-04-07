@@ -14,18 +14,30 @@ import kotlinx.coroutines.SupervisorJob
 import org.json.JSONObject
 
 object AdUtils {
-
+    private var historyAdNum by MMKVData(0)
+    private var adPostPvTagNum by MMKVData(5)
     var allAdShowNum by MMKVData(0)
+
+    fun adShow() {
+        allAdShowNum++
+        historyAdNum++
+        if (historyAdNum >= adPostPvTagNum) {
+            localEvent("pv_dall", hashMapOf("ad" to adPostPvTagNum))
+            adPostPvTagNum += 5
+        }
+    }
+
     val adScope by lazy { CoroutineScope(Dispatchers.Main + SupervisorJob() + CoroutineExceptionHandler { _, _ -> }) }
     val launchHolder = AdHolder(LaunchPosition)
     val unlockHolder = AdHolder(UnlockPosition)
     val rewardHolder = AdHolder(RewardPosition)
 
     private var isSwitchIntAd = false //显示激励广告没有的情况下使用unlockHolder广告位逻辑
-
+    private var lastAdJson = ""
 
     fun initData(json: String = GlobalConstants.NEW_DEFAULT_AD_LOCAL_JSON) {
         val adJson = json.ifBlank { GlobalConstants.NEW_DEFAULT_AD_LOCAL_JSON }
+        if (lastAdJson == adJson) return
         runCatching {
             JSONObject(adJson).apply {
                 isSwitchIntAd = optBoolean("dlmsf_switch")
@@ -33,6 +45,7 @@ object AdUtils {
                 unlockHolder.initHolder(UnlockPosition.aliasName.formatBean(this))
                 rewardHolder.initHolder(RewardPosition.aliasName.formatBean(this))
             }
+            lastAdJson = adJson
         }
     }
 
@@ -67,7 +80,7 @@ object AdUtils {
     fun showRateAd(activity: GenericActivity,
                    dismiss: () -> Unit = {},
                    noAd: () -> Unit = {},
-                   adPositionName: String,
+                   adPosId: String,
                    isRate: () -> Unit = {}) {
         if (DramaIntAdHelper.fetchIsShowRateAd().not()) {
             logError("fetchIsShowRateAd failed-->")
@@ -76,15 +89,22 @@ object AdUtils {
         }
         isRate.invoke()
         if (unlockHolder.isAdHaveCache()) {
-            unlockHolder.showFullAd(activity, onAdDismissed = dismiss, adPositionName = adPositionName)
+            unlockHolder.showFullAd(activity, onAdDismissed = dismiss, adPosId = adPosId)
         } else {
             noAd.invoke()
             unlockHolder.preloadIfCan()
         }
     }
 
+    fun perLoadRvAd() {
+        rewardHolder.preloadIfCan()
+        if (isSwitchIntAd) {
+            unlockHolder.preloadIfCan()
+        }
+    }
+
     fun showRvAd(activity: GenericActivity,
-                 adPositionName: String, dismiss: (isRewardSuccess: Boolean) -> Unit = {}) {
+                 adPosId: String, dismiss: (isRewardSuccess: Boolean) -> Unit = {}) {
         if (RiskHelper.isAdLimit()) {
             ShowAdLimitDialogFragment({
                 localEvent("see_you_tommorow")
@@ -100,17 +120,21 @@ object AdUtils {
         }
         if (rewardHolder.isAdHaveCache()) {
             var showRVAdTime = 0L
-            rewardHolder.showFullAd(activity, adPositionName = adPositionName, rewardCall = { isRewardCall = true }, onAdDismissed = {
-                RiskHelper.closeRvEvent(System.currentTimeMillis() - showRVAdTime)
-                dis.invoke()
-            }, onAdShowed = {
-                showRVAdTime = System.currentTimeMillis()
-            })
+            rewardHolder.showFullAd(activity,
+                adPosId = adPosId,
+                rewardCall = { isRewardCall = true },
+                onAdDismissed = {
+                    RiskHelper.closeRvEvent(System.currentTimeMillis() - showRVAdTime)
+                    dis.invoke()
+                },
+                onAdShowed = {
+                    showRVAdTime = System.currentTimeMillis()
+                })
             return
         } else if (isSwitchIntAd) {
             if (unlockHolder.isAdHaveCache()) {
                 val time = System.currentTimeMillis()
-                unlockHolder.showFullAd(activity, adPositionName = adPositionName, onAdDismissed = {
+                unlockHolder.showFullAd(activity, adPosId = adPosId, onAdDismissed = {
                     if (System.currentTimeMillis() - time > 5000) {
                         isRewardCall = true
                     }

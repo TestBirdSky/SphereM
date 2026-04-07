@@ -16,6 +16,7 @@ object MoneyCacheHelper {
     /** 当前余额，沿用原 key，存的是美元(USD) */
     private var userFetchMoneyUSD by MMKVData(0.0)
     private var historyMoneyUSD by MMKVData(0.0)
+    private var lastPostEvent by MMKVData(20)
 
 
     fun fetchPushReward(): Pair<Double, String> {
@@ -27,9 +28,9 @@ object MoneyCacheHelper {
     }
 
     fun fetchWatchVideoReward(): Double {
-//        if (isDebugMode) { //
-//            return WithdrawAmountHelper.fetchWithdrawMinMoneyDouble() / 5
-//        }
+        //        if (isDebugMode) { //
+        //            return WithdrawAmountHelper.fetchWithdrawMinMoneyDouble() / 5
+        //        }
         return RewardHelper.getConfigByLanguage().getMoneyVideoIconReward(fetchCurMoney())
     }
 
@@ -49,6 +50,10 @@ object MoneyCacheHelper {
         }
         userFetchMoneyUSD += v
         historyMoneyUSD += v
+        if (historyMoneyUSD >= lastPostEvent) {
+            localEvent("cash_dall", hashMapOf("money" to lastPostEvent))
+            lastPostEvent += 5
+        }
         NotificationHelper.showOrUpdateNotificationService(mApp)
     }
 

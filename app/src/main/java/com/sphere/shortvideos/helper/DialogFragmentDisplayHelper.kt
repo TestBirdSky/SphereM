@@ -1,6 +1,7 @@
 package com.sphere.shortvideos.helper
 
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -59,12 +60,12 @@ object DialogFragmentDisplayHelper {
      */
     @JvmStatic
     fun hasDialogFragmentShowing(fragmentManager: FragmentManager): Boolean {
-        for (fragment in fragmentManager.fragments) {
+        for (fragment in fragmentManager.fragments.toList()) {
             if (fragment is DialogFragment && fragment.isAdded) {
                 val showing = runCatching { fragment.dialog?.isShowing == true }.getOrDefault(false)
                 if (showing) return true
             }
-            if (hasDialogFragmentShowing(fragment.childFragmentManager)) {
+            if (hasDialogFragmentShowingInChildSafe(fragment)) {
                 return true
             }
         }
@@ -171,13 +172,30 @@ object DialogFragmentDisplayHelper {
         matcher: (DialogFragment) -> Boolean,
     ): Int {
         var count = 0
-        for (fragment in fragmentManager.fragments) {
+        // snapshots：避免遍历期间 Fragment 事务修改 mAdded 引发 ConcurrentModificationException
+        for (fragment in fragmentManager.fragments.toList()) {
             if (fragment is DialogFragment && fragment.isAdded && matcher(fragment)) {
                 val showing = runCatching { fragment.dialog?.isShowing == true }.getOrDefault(false)
                 if (showing) count++
             }
-            count += countShowingDialogsInternal(fragment.childFragmentManager, matcher)
+            count += countShowingDialogsInChildSafe(fragment, matcher)
         }
         return count
     }
+
+    /**
+     * ViewPager2 / 事务中间态下可能出现 isAdded 为 true 但 getChildFragmentManager 仍抛
+     * [IllegalStateException]（has not been attached yet），此处必须兜底。
+     */
+    private fun hasDialogFragmentShowingInChildSafe(parent: Fragment): Boolean =
+        runCatching {
+            if (!parent.isAdded) return false
+            hasDialogFragmentShowing(parent.childFragmentManager)
+        }.getOrDefault(false)
+
+    private fun countShowingDialogsInChildSafe(parent: Fragment, matcher: (DialogFragment) -> Boolean): Int =
+        runCatching {
+            if (!parent.isAdded) return@runCatching 0
+            countShowingDialogsInternal(parent.childFragmentManager, matcher)
+        }.getOrDefault(0)
 }

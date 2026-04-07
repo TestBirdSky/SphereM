@@ -127,19 +127,19 @@ dependencies {
 
     // admob
 //    implementation("com.google.android.libraries.ads.mobile.sdk:ads-mobile-sdk:0.20.0-beta01")
-    implementation("com.google.android.gms:play-services-ads:24.9.0")
-    implementation("com.google.ads.mediation:applovin:13.5.0.0")
-    implementation("com.google.ads.mediation:chartboost:9.11.0.0")
-    implementation("com.google.ads.mediation:fyber:8.4.2.0")
-    implementation("com.google.ads.mediation:inmobi:11.1.0.0")
-    implementation("com.google.ads.mediation:ironsource:9.2.0.0")
-    implementation("com.google.ads.mediation:vungle:7.6.3.0")
-    implementation("com.google.ads.mediation:facebook:6.21.0.0")
-    implementation("com.google.ads.mediation:mintegral:17.0.61.0")
-    implementation("com.google.ads.mediation:moloco:4.4.0.0")
-    implementation("com.google.ads.mediation:pangle:7.8.5.2.0")
-    implementation("com.unity3d.ads:unity-ads:4.16.5")
-    implementation("com.google.ads.mediation:unity:4.16.5.0")
+    implementation("com.google.android.gms:play-services-ads:25.0.0")
+    implementation("com.google.ads.mediation:applovin:13.6.0.0")
+    implementation("com.google.ads.mediation:chartboost:9.11.1.0")
+    implementation("com.google.ads.mediation:fyber:8.4.3.0")
+    implementation("com.google.ads.mediation:inmobi:11.1.1.0")
+    implementation("com.google.ads.mediation:ironsource:9.3.0.1")
+    implementation("com.google.ads.mediation:vungle:7.7.1.0")
+    implementation("com.google.ads.mediation:facebook:6.21.0.1")
+    implementation("com.google.ads.mediation:mintegral:17.0.91.0")
+    implementation("com.google.ads.mediation:moloco:4.3.1.0")
+    implementation("com.google.ads.mediation:pangle:7.9.1.0.0")
+    implementation("com.unity3d.ads:unity-ads:4.17.0")
+    implementation("com.google.ads.mediation:unity:4.17.0.0")
     // firebase
     implementation(platform("com.google.firebase:firebase-bom:34.3.0"))
     implementation("com.google.firebase:firebase-analytics")
@@ -163,57 +163,56 @@ dependencies {
     // topon聚合Max
     api("io.github.alex-only:max_adapter_tpn:1.2.9")
 
-    // Max 聚合 13.5.0
-    implementation("com.applovin:applovin-sdk:13.5.0")
-    implementation("com.applovin.mediation:bidmachine-adapter:3.5.1.0")
-    implementation("com.applovin.mediation:bigoads-adapter:5.7.0.0")
-    implementation("com.applovin.mediation:chartboost-adapter:9.11.0.0")
+    // Max 聚合 13.6.0
+    implementation("com.applovin:applovin-sdk:13.6.0")
+    implementation("com.applovin.mediation:bidmachine-adapter:3.6.1.0")
+    implementation("com.applovin.mediation:bigoads-adapter:5.7.1.0")
+    implementation("com.applovin.mediation:chartboost-adapter:9.11.1.0")
     implementation("com.google.android.gms:play-services-base:16.1.0")
     implementation("com.applovin.mediation:fyber-adapter:8.4.2.0")
-    implementation("com.applovin.mediation:google-ad-manager-adapter:24.9.0.0")
-    implementation("com.applovin.mediation:google-adapter:24.9.0.0")
-    implementation("com.applovin.mediation:inmobi-adapter:11.1.0.0")
+    implementation("com.applovin.mediation:google-ad-manager-adapter:25.0.0.0")
+    implementation("com.applovin.mediation:google-adapter:25.0.0.0")
+    implementation("com.applovin.mediation:inmobi-adapter:11.1.1.0")
     implementation("com.squareup.picasso:picasso:2.8")
     implementation("androidx.recyclerview:recyclerview:1.1.0")
-    implementation("com.applovin.mediation:ironsource-adapter:9.2.0.0.0")
-    implementation("com.applovin.mediation:vungle-adapter:7.6.3.0")
+    implementation("com.applovin.mediation:ironsource-adapter:9.3.0.1")
+    implementation("com.applovin.mediation:vungle-adapter:7.7.1.0")
     implementation("com.applovin.mediation:facebook-adapter:6.21.0.0")
-    implementation("com.applovin.mediation:mintegral-adapter:17.0.61.0")
-    implementation("com.applovin.mediation:moloco-adapter:4.4.0.0")
-    implementation("com.applovin.mediation:bytedance-adapter:7.8.5.2.0")
-    implementation("com.applovin.mediation:unityads-adapter:4.16.5.0")
+    implementation("com.applovin.mediation:mintegral-adapter:17.0.91.0")
+    implementation("com.applovin.mediation:moloco-adapter:4.3.1.0")
+    implementation("com.applovin.mediation:bytedance-adapter:7.9.1.0.0")
+    implementation("com.applovin.mediation:unityads-adapter:4.17.0.0")
 
-    // topon聚合 6.5.71
+    // topon聚合 6.5.80
     //TU (Necessary)
-    api("com.thinkup.sdk:core-tpn:6.5.71")
+    api("com.thinkup.sdk:core-tpn:6.5.80")
     //Androidx (Necessary)
     api("androidx.appcompat:appcompat:1.6.1")
     api("androidx.browser:browser:1.4.0")
     //Moloco
-    api("com.thinkup.sdk:adapter-tpn-moloco:4.3.1.1.0")
+    api("com.thinkup.sdk:adapter-tpn-moloco:4.3.1.1.1")
     api("com.moloco.sdk:moloco-sdk:4.3.1")
     //Vungle
-    api("com.thinkup.sdk:adapter-tpn-vungle:7.6.1.1.0")
+    api("com.thinkup.sdk:adapter-tpn-vungle:7.6.1.1.1")
     api("com.vungle:vungle-ads:7.6.1")
     api("com.google.android.gms:play-services-basement:18.1.0")
     api("com.google.android.gms:play-services-ads-identifier:18.0.1")
     //UnityAds
-    api("com.thinkup.sdk:adapter-tpn-unityads:4.16.6.1.0")
-    api("com.unity3d.ads:unity-ads:4.16.6")
-
+    api("com.thinkup.sdk:adapter-tpn-unityads:4.17.0.1.1")
+    api("com.unity3d.ads:unity-ads:4.17.0")
     //Ironsource
-    api("com.thinkup.sdk:adapter-tpn-ironsource:9.2.0.1.0")
+    api("com.thinkup.sdk:adapter-tpn-ironsource:9.2.0.1.1")
     api("com.unity3d.ads-mediation:mediation-sdk:9.2.0")
     api("com.google.android.gms:play-services-appset:16.0.2")
     api("com.google.android.gms:play-services-ads-identifier:18.0.1")
     api("com.google.android.gms:play-services-basement:18.1.0")
 
     //Bigo
-    api("com.thinkup.sdk:adapter-tpn-bigo:5.7.0.1.0")
-    api("com.bigossp:bigo-ads:5.7.0")
+    api("com.thinkup.sdk:adapter-tpn-bigo:5.7.1.1.1")
+    api("com.bigossp:bigo-ads:5.7.1")
     //Pangle
-    api("com.thinkup.sdk:adapter-tpn-pangle:7.8.5.9.1.0")
-    api("com.pangle.global:pag-sdk:7.8.5.9")
+    api("com.thinkup.sdk:adapter-tpn-pangle:7.9.1.0.1.0")
+    api("com.pangle.global:pag-sdk:7.9.1.0")
     api("com.google.android.gms:play-services-ads-identifier:18.2.0")
     //Kwai
     api("com.thinkup.sdk:adapter-tpn-kwai:1.2.21.1.0")
@@ -226,27 +225,27 @@ dependencies {
     api("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.10")
     api("com.google.android.gms:play-services-ads-identifier:18.0.1")
     //Facebook
-    api("com.thinkup.sdk:adapter-tpn-facebook:6.21.0.1.0")
+    api("com.thinkup.sdk:adapter-tpn-facebook:6.21.0.1.1")
     api("com.facebook.android:audience-network-sdk:6.21.0")
     api("androidx.annotation:annotation:1.0.0")
     //Admob
-    api("com.thinkup.sdk:adapter-tpn-admob:24.9.0.1.0")
-    api("com.google.android.gms:play-services-ads:24.9.0")
+    api("com.thinkup.sdk:adapter-tpn-admob:25.0.0.1.0")
+    api("com.google.android.gms:play-services-ads:25.0.0")
     //Inmobi
     api("com.thinkup.sdk:adapter-tpn-inmobi:11.1.1.1.0")
     api("com.inmobi.monetization:inmobi-ads-kotlin:11.1.1")
     //TU Adx SDK(Necessary)
-    api("com.thinkup.sdk:adapter-tpn-sdm:6.5.56.1.1")
-    api("com.smartdigimkttech.sdk:smartdigimkttech-sdk:6.5.56")
+    api("com.thinkup.sdk:adapter-tpn-sdm:6.5.60.1.0")
+    api("com.smartdigimkttech.sdk:smartdigimkttech-sdk:6.5.60")
     //AppLovin
-    api("com.thinkup.sdk:adapter-tpn-applovin:13.5.1.1.0")
-    api("com.applovin:applovin-sdk:13.5.1")
+    api("com.thinkup.sdk:adapter-tpn-applovin:13.6.0.1.0")
+    api("com.applovin:applovin-sdk:13.6.0")
     //Mintegral
     api("com.thinkup.sdk:adapter-tpn-mintegral:17.0.91.1.0")
     api("com.mbridge.msdk.oversea:mbridge_android_sdk:17.0.91")
     api("androidx.recyclerview:recyclerview:1.1.0")
     //Chartboost
-    api("com.thinkup.sdk:adapter-tpn-chartboost:9.11.0.1.1")
+    api("com.thinkup.sdk:adapter-tpn-chartboost:9.11.0.1.2")
     api("com.chartboost:chartboost-sdk:9.11.0")
     api("com.chartboost:chartboost-mediation-sdk:5.3.0")
     api("com.chartboost:chartboost-core-sdk:1.1.0")
@@ -261,11 +260,11 @@ dependencies {
     api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
     //Fyber
-    api("com.thinkup.sdk:adapter-tpn-fyber:8.4.2.1.0")
+    api("com.thinkup.sdk:adapter-tpn-fyber:8.4.2.1.1")
     api("com.fyber:marketplace-sdk:8.4.2")
     api("com.google.android.gms:play-services-basement:18.9.0")
     api("com.google.android.gms:play-services-ads-identifier:18.0.1")
     //Tramini
-    api("com.thinkup.sdk:tramini-plugin-tpn:6.5.71")
+    api("com.thinkup.sdk:tramini-plugin-tpn:6.5.80")
 
 }

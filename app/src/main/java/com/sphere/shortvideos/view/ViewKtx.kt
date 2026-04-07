@@ -95,7 +95,8 @@ fun LayoutTaskChildBinding.setTaskInfo(
             if (isRewardSuccess) {
                 receiverMoneyEvent.invoke(MoneyCacheHelper.fetchRvAdReward().first, ivAnimMoney)
             }
-        }, adPositionName = "dlmsf_task_rv")
+            AdUtils.perLoadRvAd()
+        }, adPosId = "dlmsf_task_rv")
     }
     AnimViewHelper.playClaimablePulseAnim(tvAdGo, true, 0.95f, 1.05f) //    bgH5.setOnClickListener {
     //

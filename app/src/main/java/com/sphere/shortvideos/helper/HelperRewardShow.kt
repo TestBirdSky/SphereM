@@ -4,17 +4,10 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.os.SystemClock
-import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.lifecycleScope
-import com.chartboost.sdk.impl.ac
-import com.chartboost.sdk.impl.fa
-import com.chartboost.sdk.impl.pa
-import com.sphere.shortvideos.R
 import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.dialogs.LuckChallengeDialogFragment
@@ -23,17 +16,16 @@ import com.sphere.shortvideos.dialogs.withdraw.WithdrawReadyDialogFragment
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.helper.reward.RewardHelper
+import com.sphere.shortvideos.helper.risk.RiskHelper
 import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.logError
-import com.sphere.shortvideos.mApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 object HelperRewardShow {
     private var num = 1
@@ -101,6 +93,7 @@ object HelperRewardShow {
                     } else {
                         checkNextTips()
                     }
+                    AdUtils.perLoadRvAd()
                     numTime.postValue("$num/$maxNum")
                 }
                 numProgress.postValue(nextProgress)
@@ -252,10 +245,10 @@ object HelperRewardShow {
                         onClose = { reward ->
                             AdUtils.showRateAd(activity, isRate = {
                                 localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_video_close_int"))
-                            }, adPositionName = "dlmsf_video_close_int")
+                            }, adPosId = "dlmsf_video_close_int")
                         }
                         onNormalClick = { reward ->
-                            AdUtils.showRateAd(activity, adPositionName = "dlmsf_video_int", dismiss = {
+                            AdUtils.showRateAd(activity, adPosId = "dlmsf_video_int", dismiss = {
                                 addMoneyNotExChangeFlyAnim(reward)
                             }, isRate = {
                                 localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_video_int"))
@@ -267,7 +260,9 @@ object HelperRewardShow {
                 1 -> {
                     LuckChallengeDialogFragment().apply {
                         onResult = { reward ->
-                            localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_wheel_rv"))
+                            if (RiskHelper.isAdLimit().not()) {
+                                localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_wheel_rv"))
+                            }
                             showRvAd(activity, reward, adPositionName = "dlmsf_wheel_rv")
                         }
                     }.show(activity.supportFragmentManager, "luck")
@@ -278,7 +273,7 @@ object HelperRewardShow {
     }
 
     private fun showRvAd(activity: GenericActivity, reward: Double, adPositionName: String) {
-        AdUtils.showRvAd(activity, adPositionName = adPositionName, dismiss = { isFetchReward ->
+        AdUtils.showRvAd(activity, adPosId = adPositionName, dismiss = { isFetchReward ->
             if (isFetchReward) {
                 addMoneyNotExChangeFlyAnim(reward)
 

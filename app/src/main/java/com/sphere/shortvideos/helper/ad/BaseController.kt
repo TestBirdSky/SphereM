@@ -54,7 +54,7 @@ abstract class BaseController(val position: AdPosition, val adBean: AdItemBean) 
     }
 
     fun showAdEvent(ad: Any) {
-        AdUtils.allAdShowNum++
+        AdUtils.adShow()
         WithdrawalActionHelper.addShowAdNum()
         when (adBean.format) {
             AppOpenFormat -> {
@@ -90,6 +90,7 @@ abstract class BaseController(val position: AdPosition, val adBean: AdItemBean) 
                 "ad_platform" to adBean.source,
                 "reason" to reason,
                 "ad_sense" to position.adSense,
+                "ad_pos_id" to position.aliasName,
             ))
     }
 

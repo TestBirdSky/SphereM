@@ -7,12 +7,10 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import com.chartboost.sdk.impl.fa
 import com.sphere.shortvideos.activity.MainActivity
 import com.sphere.shortvideos.baseui.GenericFragment
 import com.sphere.shortvideos.databinding.FragmentTaskBinding
 import com.sphere.shortvideos.helper.HelperRewardShow
-import com.sphere.shortvideos.helper.HelperRewardShow.addMoneyNotExChangeFlyAnim
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.localEvent
@@ -24,7 +22,6 @@ import com.sphere.shortvideos.view.setTaskInfo
 import com.sphere.shortvideos.vm.MainViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.io.path.Path
 import kotlin.random.Random
 
 /**
@@ -32,6 +29,7 @@ import kotlin.random.Random
  * Describe:
  */
 class TaskFragment : GenericFragment<FragmentTaskBinding>() {
+    private var lastClickTime = 0L
     private var curPopMoney = 0.0
     private val viewModel by activityViewModels<MainViewModel>()
     private var popAnimator1: ObjectAnimator? = null
@@ -61,10 +59,14 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
     }
 
     private fun showPopAd(view: View) {
+        if (System.currentTimeMillis() - lastClickTime < 5000) return
+        lastClickTime = System.currentTimeMillis()
         localEvent("billetera_bubble")
         if (curPopMoney > 0) {
             (activity as? MainActivity)?.let {
                 val actionAfter = {
+                    lastClickTime = 0L
+                    AdUtils.unlockHolder.preloadIfCan()
                     AnimViewHelper.flyToTarget(view, binding.iv1, end = {
                         lifecycleScope.launch {
                             delay(Random.nextLong(6000, 16000))
@@ -76,7 +78,7 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
                     }
                     viewModel.addMoneyNotExChange(curPopMoney)
                 }
-                AdUtils.showRateAd(it, adPositionName = "dlmsf_task_int", isRate = {
+                AdUtils.showRateAd(it, adPosId = "dlmsf_task_int", isRate = {
                     localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_task_int"))
                 }, dismiss = {
                     actionAfter()
@@ -91,6 +93,7 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
     override fun onResume() {
         super.onResume()
         localEvent("billetera_page")
+        AdUtils.unlockHolder.preloadIfCan()
         setupWatchCoins()
         refreshMoney()
         startPopFloatAnim()

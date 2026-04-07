@@ -47,7 +47,7 @@ class AdHolder(private val position: AdPosition) {
         }
     }
 
-    fun showFullAd(activity: GenericActivity, adPositionName: String = "", canShowAd: () -> Boolean = {
+    fun showFullAd(activity: GenericActivity, adPosId: String = "", canShowAd: () -> Boolean = {
         RiskHelper.isAdLimit().not()
     }, onAdDismissed: () -> Unit = {}, onAdShowed: () -> Unit = {}, rewardCall: (() -> Unit)? = null) {
         AdUtils.adScope.launch {
@@ -66,9 +66,9 @@ class AdHolder(private val position: AdPosition) {
                 delay(1000L)
                 dialog?.dismiss()
                 ad.onUserEarnedReward = rewardCall
-                position.aliasName = adPositionName.ifBlank { position.aliasName }
+                position.aliasName = adPosId.ifBlank { position.aliasName }
                 ad.showFullScreenAd(activity, onAdDismissed, onAdShowed)
-                localEvent("ds_ad_impression", hashMapOf("ad_pos_id" to adPositionName))
+                localEvent("ds_ad_impression", hashMapOf("ad_pos_id" to adPosId))
                 onAdLoaded = {}
                 preloadIfCan()
             }

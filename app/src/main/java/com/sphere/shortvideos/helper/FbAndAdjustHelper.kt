@@ -57,8 +57,12 @@ class FbAndAdjustHelper {
             val network = attribution.network ?: ""
             val isBlacklist = network.contains("Organic", ignoreCase = false)
             MMKVRepository.isBlacklistUser = isBlacklist
-            MMKVRepository.adjustPaidChannel = parsePaidChannelByAdjustNetwork(network)
-            logError(": network=$network, isBlacklistUser=$isBlacklist")
+            val info = parsePaidChannelByAdjustNetwork(network)
+            if (MMKVRepository.adjustPaidChannel != info) {
+                MMKVRepository.adjustPaidChannel = info
+                RemoteConfHelper().fetchAdRemote()
+            }
+            logError(": network=$network, isBlacklistUser=$isBlacklist --${MMKVRepository.adjustPaidChannel}")
             localEvent("adjust_suc", hashMapOf("adjust_user" to if (isBlacklist) 0 else 1, "net_info" to network))
         }
 
@@ -67,15 +71,27 @@ class FbAndAdjustHelper {
     }
 
     private fun parsePaidChannelByAdjustNetwork(network: String): String {
-        val n = network.trim()
+        val n = if (isDebugMode) {
+            listOf("Facebook Int", "Instagram Installs","").random()
+        } else {
+            network.trim()
+        }
         if (n.isEmpty()) return "unknown"
+        logError("parsePaidChannelByAdjustNetwork-->$n")
         val lower = n.lowercase()
         return when {
             lower.contains("mintegral") || lower.contains("mtg") -> "mtg"
             // Facebook / Meta
-            lower.contains("facebook") || lower.contains("meta") -> "fb"
+            lower.contains("facebook", true)
+                    || lower.contains("meta")
+                    || lower.contains("instagram", true)
+                    || lower.contains("fb4a") -> "fb"
             // TikTok / ByteDance 常见写法
-            lower.contains("tiktok") || lower.contains("bytedance") || lower.contains("pangle") -> "tt"
+            lower.contains("tiktok", true)
+                    || lower.contains("bytedance", true)
+                    || lower.contains("pangle")
+                    || lower.contains("tik tok") -> "tt"
+
             else -> "unknown"
         }
     }

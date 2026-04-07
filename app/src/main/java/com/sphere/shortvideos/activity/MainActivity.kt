@@ -232,29 +232,30 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
             rewardHolder.preloadIfCan()
             launchHolder.preloadIfCan()
         }
+        runCatching {
+            viewModel.syncPauseDialogState(DialogFragmentDisplayHelper.countShowingPauseDialogFragments(
+                supportFragmentManager))
+        }
     }
 
     private val dialogLifecycleCallbacks = object : FragmentManager.FragmentLifecycleCallbacks() {
         override fun onFragmentCreated(fm: FragmentManager, f: Fragment, savedInstanceState: Bundle?) {
             super.onFragmentCreated(fm, f, savedInstanceState)
             if (HelperRewardShow.isPauseFragment(f)) {
-                refreshPauseDialogState()
-                logError("onFragmentCreated-->${viewModel.fragmentNum.value} --$f")
+                binding.root.post {
+                    viewModel.onPauseDialogShown()
+                    logError("onFragmentCreated-->${viewModel.fragmentNum.value} --$f")
+                }
             }
         }
 
         override fun onFragmentViewDestroyed(fm: FragmentManager, f: Fragment) {
             if (HelperRewardShow.isPauseFragment(f)) {
-                refreshPauseDialogState()
-                logError("onFragmentViewDestroyed-->${viewModel.fragmentNum.value} --$f")
+                binding.root.post {
+                    viewModel.onPauseDialogDismissed()
+                    logError("onFragmentViewDestroyed-->${viewModel.fragmentNum.value} --$f")
+                }
             }
-        }
-    }
-
-    private fun refreshPauseDialogState() {
-        binding.root.post {
-            val count = DialogFragmentDisplayHelper.countShowingPauseDialogFragments(supportFragmentManager)
-            viewModel.syncPauseDialogState(count)
         }
     }
 

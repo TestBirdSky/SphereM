@@ -212,7 +212,7 @@ class WithdrawApplyTransitionDialogFragment : DialogFragment() {
         localEvent("ad_chance", params = hashMapOf("ad_pos_id" to RV_AD_POSITION_NAME))
         AdUtils.showRvAd(
             activity = activity,
-            adPositionName = RV_AD_POSITION_NAME,
+            adPosId = RV_AD_POSITION_NAME,
         ) { isRewardSuccess ->
             isRvRequesting = false
             if (_binding == null || hasMovedToStage2) return@showRvAd

@@ -69,7 +69,7 @@ class WithdrawFragment : GenericFragment<FragmentWallteBinding>() {
         cutInAdapter.onCutClick = { item, holder ->
             (activity as? GenericActivity)?.let { act ->
                 localEvent("ad_chance", params = hashMapOf("ad_pos_id" to WithdrawalCutInAdapter.CUT_IN_RV_AD_POSITION))
-                AdUtils.showRvAd(act, adPositionName = WithdrawalCutInAdapter.CUT_IN_RV_AD_POSITION) { success ->
+                AdUtils.showRvAd(act, adPosId = WithdrawalCutInAdapter.CUT_IN_RV_AD_POSITION) { success ->
                     if (!success || !isAdded) return@showRvAd
                     viewLifecycleOwner.lifecycleScope.launch {
                         localEvent("cut_in")

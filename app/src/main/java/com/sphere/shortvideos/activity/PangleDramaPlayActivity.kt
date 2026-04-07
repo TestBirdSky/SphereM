@@ -35,7 +35,6 @@ import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.HelperRewardShow.showBubbleTips
 import com.sphere.shortvideos.helper.MoneyCacheHelper
 import com.sphere.shortvideos.helper.ad.AdUtils
-import com.sphere.shortvideos.helper.ad.UnlockPosition
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.showToast
@@ -99,11 +98,14 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
 
     private fun refreshPauseDialogState() {
         binding.root.post {
-            dialogNum = DialogFragmentDisplayHelper.countShowingPauseDialogFragments(supportFragmentManager)
-            if (dialogNum > 0) {
-                detailFragment?.pausePlay()
-            } else {
-                reStartPlay()
+            if (isFinishing || isDestroyed) return@post
+            runCatching {
+                dialogNum = DialogFragmentDisplayHelper.countShowingPauseDialogFragments(supportFragmentManager)
+                if (dialogNum > 0) {
+                    detailFragment?.pausePlay()
+                } else {
+                    reStartPlay()
+                }
             }
         }
     }
@@ -323,7 +325,8 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                     val lastEven = lastIsEven
                     val currentIsEven = index % 2 == 0
                     lastIsEven = currentIsEven
-                    if (index >= unlockIndex) localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_switch_int"))
+                    if (isOddGreaterThanRemote(index) || isForceShowAd)
+                        localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_switch_int"))
                     if (AdUtils.unlockHolder.isAdHaveCache()) {
                         if (isOddGreaterThanRemote(index)) {
                             showUnlockAd(index)
@@ -348,7 +351,8 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                 }
 
                 fun showUnlockAd(index: Int) {
-                    AdUtils.unlockHolder.showFullAd(activity, adPositionName = "dlmsf_switch_int", onAdDismissed = {
+                    AdUtils.unlockHolder.showFullAd(activity, adPosId = "dlmsf_switch_int", onAdDismissed = {
+                        AdUtils.unlockHolder.preloadIfCan()
                         episodeEntity?.let {
                             updateEpisodeData(shortPlay, it, index)
                         }
