@@ -32,6 +32,7 @@ class AdHolder(private val position: AdPosition) {
     fun preloadIfCan() {
         if (RiskHelper.isAdLimit()) {
             logError("ad limit-->")
+            return
         }
         AdUtils.adScope.launch {
             if (sourceList.isEmpty()) return@launch
