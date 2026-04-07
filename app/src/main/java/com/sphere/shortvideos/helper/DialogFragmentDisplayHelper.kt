@@ -39,18 +39,20 @@ object DialogFragmentDisplayHelper {
 
     @JvmStatic
     fun hideCurShowFragment(activity: FragmentActivity) {
-        val fm = activity.supportFragmentManager
-        if (fm.isStateSaved) {
+        runCatching {
+            val fm = activity.supportFragmentManager
+            if (fm.isStateSaved) {
+                fm.fragments.toList().forEach { fragment ->
+                    if (fragment is DialogFragment && fragment.isAdded) {
+                        fragment.dismissAllowingStateLoss()
+                    }
+                }
+                return
+            }
             fm.fragments.toList().forEach { fragment ->
                 if (fragment is DialogFragment && fragment.isAdded) {
-                    fragment.dismissAllowingStateLoss()
+                    fragment.dismiss()
                 }
-            }
-            return
-        }
-        fm.fragments.toList().forEach { fragment ->
-            if (fragment is DialogFragment && fragment.isAdded) {
-                fragment.dismiss()
             }
         }
     }
@@ -60,22 +62,18 @@ object DialogFragmentDisplayHelper {
      */
     @JvmStatic
     fun hasDialogFragmentShowing(fragmentManager: FragmentManager): Boolean {
-        for (fragment in fragmentManager.fragments.toList()) {
-            if (fragment is DialogFragment && fragment.isAdded) {
-                val showing = runCatching { fragment.dialog?.isShowing == true }.getOrDefault(false)
-                if (showing) return true
-            }
-            if (hasDialogFragmentShowingInChildSafe(fragment)) {
-                return true
+        runCatching {
+            for (fragment in fragmentManager.fragments.toList()) {
+                if (fragment is DialogFragment && fragment.isAdded) {
+                    val showing = runCatching { fragment.dialog?.isShowing == true }.getOrDefault(false)
+                    if (showing) return true
+                }
+                if (hasDialogFragmentShowingInChildSafe(fragment)) {
+                    return true
+                }
             }
         }
         return false
-    }
-
-    /** 统计指定 [FragmentManager] 树中当前正在显示的 [DialogFragment] 数量（含子树）。 */
-    @JvmStatic
-    fun countShowingDialogFragments(fragmentManager: FragmentManager): Int {
-        return countShowingDialogsInternal(fragmentManager) { true }
     }
 
     /** 统计指定 [FragmentManager] 树中当前正在显示且会触发视频暂停的 Dialog 数量（含子树）。 */
@@ -85,9 +83,6 @@ object DialogFragmentDisplayHelper {
             HelperRewardShow.isPauseFragment(dialog)
         }
     }
-
-    /** 当前登记的 [DialogFragment]；若未通过本类 [show] 展示则可能为 null */
-    fun getCurrentDialog(): DialogFragment? = currentDialog
 
     /**
      * 展示指定 [DialogFragment]。
