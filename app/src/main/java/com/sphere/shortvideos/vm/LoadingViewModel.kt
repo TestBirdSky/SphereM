@@ -8,6 +8,7 @@ import com.google.android.ump.ConsentInformation
 import com.google.android.ump.ConsentRequestParameters
 import com.google.android.ump.UserMessagingPlatform
 import com.sphere.shortvideos.baseui.GenericActivity
+import com.sphere.shortvideos.helper.AppHelper
 import com.sphere.shortvideos.helper.EventData
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.ad.AdUtils.rewardHolder
@@ -21,7 +22,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class LoadingViewModel : ViewModel() {
-
+    var posiIdName = if (AppHelper.isIceLuncher) "dlmsf_launch_cold" else "dlmsf_launch_hot"
     private var consentInformation: ConsentInformation? = null
     private var waitLoadingJob: Job? = null
     val umpCompletedLiveData = MutableLiveData<Boolean>()
@@ -40,7 +41,7 @@ class LoadingViewModel : ViewModel() {
                     rewardHolder.preloadIfCan()
                     AdUtils.launchHolder.showFullAd(activity, onAdDismissed = {
                         nextLiveData.postValue(true)
-                    })
+                    }, adPosId = posiIdName)
                 } else if (num % 10 == 0) {
                     preload()
                 }
@@ -67,7 +68,7 @@ class LoadingViewModel : ViewModel() {
     }
 
     private fun preload(needChance: Boolean = false) {
-        if (needChance) localEvent("ad_chance", hashMapOf("ad_pos_id" to LaunchPosition.aliasName))
+        if (needChance) localEvent("ad_chance", hashMapOf("ad_pos_id" to posiIdName))
         AdUtils.run {
             launchHolder.preloadIfCan()
         }

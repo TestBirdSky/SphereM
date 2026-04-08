@@ -3,7 +3,6 @@ package com.sphere.shortvideos.activity
 import android.view.View
 import androidx.activity.viewModels
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.sphere.shortvideos.GlobalConstants
@@ -15,8 +14,6 @@ import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.mmkv.MMKVData
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.helper.permission.PostPermission
-import com.sphere.shortvideos.helper.session
-import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.nextView
 import com.sphere.shortvideos.notification.NotificationHelper
@@ -85,7 +82,7 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
 
     override fun onDestroy() {
         super.onDestroy()
-        AppHelper.isNeedFetch = true
+        AppHelper.isIceLuncher = false
     }
 
     override fun onResume() {

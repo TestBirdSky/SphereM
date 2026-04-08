@@ -19,7 +19,7 @@ object AppHelper {
     private val topicId = arrayOf("drama_id_data_fcm", "drama_id_normal_fcm")
     private val topicEn = arrayOf("drama_en_data_fcm", "drama_en_normal_fcm")
 
-    var isNeedFetch = true
+    var isIceLuncher = true
 
     fun registerInfo(context: Context) {
         NotificationHelper.registerScreenUnlockReceiver(context)
