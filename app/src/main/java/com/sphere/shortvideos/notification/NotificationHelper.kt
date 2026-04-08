@@ -250,9 +250,9 @@ object NotificationHelper {
     fun showLocalNotification(context: Context, type: Int) {
         logError("showLocalNotification--->$type")
         val (titles, descs, index, notificationId) = when (type) {
-            LOCAL_TYPE_59 -> Quad(listLocal59Title, listLocal59Content, localIndex59, NOTI_ID_TIMER)
-            LOCAL_TYPE_79 -> Quad(listLocal79Title, listLocal79Content, localIndex79, NOTI_ID_TIMER2)
-            else -> Quad(listLocal23Title, listLocal23Content, localIndex23, NOTI_ID_TIMER3)
+            LOCAL_TYPE_59 -> Quad(listLocal59Title, listLocal59Content, localIndex59, NOTI_ID_TIMER2)
+            LOCAL_TYPE_79 -> Quad(listLocal79Title, listLocal79Content, localIndex79, NOTI_ID_TIMER3)
+            else -> Quad(listLocal23Title, listLocal23Content, localIndex23, NOTI_ID_TIMER)
         }
         if (titles.isEmpty() || descs.isEmpty()) return
         val safeIndex = index.coerceAtLeast(0) % titles.size
@@ -300,7 +300,6 @@ object NotificationHelper {
                             val notificationId: Int)
 
     fun showNotiEvent(id: Int) {
-
         localEvent("all_noti_t", hashMapOf("type" to getType(id)))
     }
 
@@ -310,7 +309,9 @@ object NotificationHelper {
 
     private fun getType(id: Int): String {
         return when (id) {
-            NOTI_ID_TIMER, NOTI_ID_TIMER2, NOTI_ID_TIMER3 -> "noti"
+            NOTI_ID_TIMER -> "noti_1"
+            NOTI_ID_TIMER2 -> "noti_2"
+            NOTI_ID_TIMER3 -> "noti_3"
             NOTI_ID_UNLOCK, NOTI_ID_UNLOCK2 -> "unlock"
             NOTI_ID_FCM_DATA -> "fcm"
             NOTI_ID_FIXED -> "fixed"
