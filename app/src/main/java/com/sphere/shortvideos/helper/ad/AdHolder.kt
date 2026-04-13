@@ -14,7 +14,7 @@ import com.sphere.shortvideos.logError
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class AdHolder(private val position: AdPosition) {
+class AdHolder(val position: AdPosition) {
 
     private val sourceList = mutableListOf<AdItemBean>()
     private val cacheList = mutableListOf<BaseController>()

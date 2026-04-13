@@ -87,6 +87,9 @@ object AppLifecycleManager : Application.ActivityLifecycleCallbacks {
     override fun onActivityDestroyed(activity: Activity) {
         logError("onActivityDestroyed-->$activity")
         synchronized(activityList) { activityList.remove(activity) }
+        if (NotificationHelper.isInApp.not() && activityList.isEmpty()) {
+            AppHelper.isIceLuncher = true
+        }
     }
 
 

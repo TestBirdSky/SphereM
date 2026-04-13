@@ -55,8 +55,7 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
             binding.progressHorizontal.visibility = View.INVISIBLE
             binding.tvDes2.visibility = View.INVISIBLE
             binding.firstLayout.visibility = View.VISIBLE
-            binding.tvPp.visibility = View.VISIBLE
-            // 启动按钮提醒：复用已有的呼吸脉冲动画
+            binding.tvPp.visibility = View.VISIBLE // 启动按钮提醒：复用已有的呼吸脉冲动画
             AnimViewHelper.playClaimablePulseAnim(binding.tvStart, true, 0.98f, 1.06f)
             binding.tvStart.setOnClickListener {
                 localEvent("launch_start")
@@ -105,7 +104,8 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
             //            runCatching {
             //                NotificationManagerCompat.from(this).cancel(notificationId)
             //            }
-            NotificationHelper.clickNotiEvent(notificationId)
+            viewModel.adContext = NotificationHelper.clickNotiEvent(notificationId)
         }
+        viewModel.refreshAdContext(viewModel.adContext)
     }
 }

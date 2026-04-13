@@ -50,6 +50,7 @@ object NotificationHelper {
     private const val NOTI_ID_TIMER = 1111
     private const val NOTI_ID_TIMER2 = 1112
     private const val NOTI_ID_TIMER3 = 1113
+    private const val NOTI_ID_BACK = 1114
     const val NOTI_ID_MEDIA = 18900
     const val NOTI_ID_FCM_DATA = 1221
     const val NOTI_ID_FIXED = 10091
@@ -247,12 +248,12 @@ object NotificationHelper {
         }
     }
 
-    fun showLocalNotification(context: Context, type: Int) {
+    fun showLocalNotification(context: Context, type: Int, notifId: Int? = null) {
         logError("showLocalNotification--->$type")
         val (titles, descs, index, notificationId) = when (type) {
-            LOCAL_TYPE_59 -> Quad(listLocal59Title, listLocal59Content, localIndex59, NOTI_ID_TIMER2)
-            LOCAL_TYPE_79 -> Quad(listLocal79Title, listLocal79Content, localIndex79, NOTI_ID_TIMER3)
-            else -> Quad(listLocal23Title, listLocal23Content, localIndex23, NOTI_ID_TIMER)
+            LOCAL_TYPE_59 -> Quad(listLocal59Title, listLocal59Content, localIndex59, notifId ?: NOTI_ID_TIMER2)
+            LOCAL_TYPE_79 -> Quad(listLocal79Title, listLocal79Content, localIndex79, notifId ?: NOTI_ID_TIMER3)
+            else -> Quad(listLocal23Title, listLocal23Content, localIndex23, notifId ?: NOTI_ID_TIMER)
         }
         if (titles.isEmpty() || descs.isEmpty()) return
         val safeIndex = index.coerceAtLeast(0) % titles.size
@@ -303,8 +304,10 @@ object NotificationHelper {
         localEvent("all_noti_t", hashMapOf("type" to getType(id)))
     }
 
-    fun clickNotiEvent(id: Int) {
-        localEvent("all_noti_c", hashMapOf("type" to getType(id)))
+    fun clickNotiEvent(id: Int): String {
+        val type = getType(id)
+        localEvent("all_noti_c", hashMapOf("type" to type))
+        return type
     }
 
     private fun getType(id: Int): String {
@@ -312,6 +315,7 @@ object NotificationHelper {
             NOTI_ID_TIMER -> "noti_1"
             NOTI_ID_TIMER2 -> "noti_2"
             NOTI_ID_TIMER3 -> "noti_3"
+            NOTI_ID_BACK -> "noti_back" // 后台
             NOTI_ID_UNLOCK, NOTI_ID_UNLOCK2 -> "unlock"
             NOTI_ID_FCM_DATA -> "fcm"
             NOTI_ID_FIXED -> "fixed"
@@ -390,6 +394,6 @@ object NotificationHelper {
         if (isInteractive().not()) return
         if (System.currentTimeMillis() - time < Random.nextLong(60000, 120000)) return
         time = System.currentTimeMillis()
-        showLocalNotification(mApp, arrayListOf(LOCAL_TYPE_23, LOCAL_TYPE_59, LOCAL_TYPE_79).random())
+        showLocalNotification(mApp, arrayListOf(LOCAL_TYPE_23, LOCAL_TYPE_59, LOCAL_TYPE_79).random(), NOTI_ID_BACK)
     }
 }

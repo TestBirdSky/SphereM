@@ -35,7 +35,7 @@ object RevenueHelper {
             put("friable", adBean.source)
             put("boniface", adBean.adId)
             put("hadamard", position.aliasName)
-            put("hexagon", position.adSense)
+            put("hexagon", position.adContext.ifEmpty { position.adSense })
             put("neva", adBean.format.aliasName)
         })
         fun postAdmobRevenueAdjust() { //v5
@@ -69,7 +69,7 @@ object RevenueHelper {
                 put("friable", adBean.source)
                 put("boniface", adBean.adId)
                 put("hadamard", position.aliasName)
-                put("hexagon", position.adSense)
+                put("hexagon", position.adContext.ifEmpty { position.adSense })
                 put("neva", adBean.format.aliasName)
             })
 
@@ -102,7 +102,7 @@ object RevenueHelper {
                 put("friable", adBean.source)
                 put("boniface", adBean.adId)
                 put("hadamard", position.aliasName)
-                put("hexagon", position.adSense)
+                put("hexagon", position.adContext.ifEmpty { position.adSense })
                 put("neva", adBean.format.aliasName)
             })
             // Adjust 上报

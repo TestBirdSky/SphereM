@@ -75,7 +75,7 @@ object HelperRewardShow {
                 var nextProgress = (numProgress.value ?: 0) + 1
                 if (nextProgress >= progressMax) {
                     nextProgress = 0
-                    if (num == 2) {
+                    if (num <= 2) {
                         addMoneyInTwoWatchVideo(this)
                     }
                     num += 1

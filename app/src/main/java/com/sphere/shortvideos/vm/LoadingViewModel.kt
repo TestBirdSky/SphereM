@@ -23,10 +23,16 @@ import kotlinx.coroutines.launch
 
 class LoadingViewModel : ViewModel() {
     var posiIdName = if (AppHelper.isIceLuncher) "dlmsf_launch_cold" else "dlmsf_launch_hot"
+    // v1.0.9 新增需求
+    var adContext = if (AppHelper.isIceLuncher) "launcher" else "hot"
     private var consentInformation: ConsentInformation? = null
     private var waitLoadingJob: Job? = null
     val umpCompletedLiveData = MutableLiveData<Boolean>()
     val nextLiveData = MutableLiveData<Boolean>()
+
+    fun refreshAdContext(string: String) {
+        AdUtils.launchHolder.position.adContext = string
+    }
 
     fun waitAdLoading(activity: GenericActivity) {
         logError("waitAdLoading--->")
@@ -68,7 +74,7 @@ class LoadingViewModel : ViewModel() {
     }
 
     private fun preload(needChance: Boolean = false) {
-        if (needChance) localEvent("ad_chance", hashMapOf("ad_pos_id" to posiIdName))
+        if (needChance) localEvent("ad_chance", hashMapOf("ad_pos_id" to posiIdName, "ad_context" to adContext))
         AdUtils.run {
             launchHolder.preloadIfCan()
         }

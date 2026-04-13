@@ -25,6 +25,8 @@ data class AdItemBean(
 sealed class AdPosition {
     abstract var aliasName: String // ad_pos_id
     abstract val adSense: String
+
+    open var adContext = "" //针对开屏广告增加的参数
 }
 
 data object LaunchPosition : AdPosition() {
@@ -32,6 +34,8 @@ data object LaunchPosition : AdPosition() {
 
     override val adSense: String
         get() = "Launch"
+
+    override var adContext = ""
 
 }
 
@@ -44,7 +48,7 @@ data object UnlockPosition : AdPosition() {
 data object RewardPosition : AdPosition() {
     override var aliasName: String = "dlmsf_rv"
     override val adSense: String
-        get() ="Reward"
+        get() = "Reward"
 }
 
 sealed class AdFormat {
