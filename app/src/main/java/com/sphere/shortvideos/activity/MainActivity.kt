@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
@@ -161,6 +162,8 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         lifecycleScope.launch {
             delay(Random.nextLong(2500, delTime))
             if (isFinishing || isDestroyed) return@launch
+            if (!lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) return@launch
+            if (supportFragmentManager.isStateSaved) return@launch
             if (DialogFragmentDisplayHelper.hasDialogFragmentShowing(this@MainActivity)) return@launch
             val isShow = if (isHome) PermissionHelper.isShowNotificationDialogHome(this@MainActivity)
             else PermissionHelper.isShowNotificationDialogAfterRv(this@MainActivity)
