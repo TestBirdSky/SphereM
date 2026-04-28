@@ -9,6 +9,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.databinding.LayoutProgressbarBinding
 import com.sphere.shortvideos.helper.localEvent
+import com.sphere.shortvideos.helper.mmkv.mmkvIns
 import com.sphere.shortvideos.helper.risk.RiskHelper
 import com.sphere.shortvideos.logError
 import kotlinx.coroutines.delay
@@ -21,12 +22,22 @@ class AdHolder(val position: AdPosition) {
     private var loading = false
     private var onAdLoaded: (Boolean) -> Unit = {}
     private var loadingTime = 0L
+    private var failTimesThreshold = 5
+    private var requestIntervalSec = 10
+
+    private val failCountKey = "ad_fail_count_${position.adSense}"
+    private val lastFailTimeKey = "ad_last_fail_ms_${position.adSense}"
 
     fun isAdHaveCache() = cacheList.isNotEmpty()
 
     fun initHolder(data: List<AdItemBean>) {
         sourceList.clear()
         sourceList.addAll(data.sortedByDescending { it.weight })
+    }
+
+    fun updateRequestRetryConfig(failTimes: Int, requestInterval: Int) {
+        failTimesThreshold = failTimes.coerceAtLeast(1)
+        requestIntervalSec = requestInterval.coerceAtLeast(1)
     }
 
     fun preloadIfCan() {
@@ -36,6 +47,17 @@ class AdHolder(val position: AdPosition) {
         }
         AdUtils.adScope.launch {
             if (sourceList.isEmpty()) return@launch
+            if (position != LaunchPosition) {
+                if (isStoppedByBackgroundFailure()) {
+                    logError("stop preload by background fail rule: ${position.aliasName}")
+                    return@launch
+                }
+                val waitTime = isCanLoadAdIfNeeded()
+                if (waitTime > 0) {
+                    logError("stop preload not in period$waitTime  ${position.aliasName}")
+                    return@launch
+                }
+            }
             removeExpiredAd()
             if (cacheList.isNotEmpty()) return@launch
             if (loading && System.currentTimeMillis() - loadingTime < 60000 * 4) {
@@ -89,10 +111,15 @@ class AdHolder(val position: AdPosition) {
         if (null == adItem) {
             loading = false
             loadingTime = 0
+            onRequestFailed()
             onAdLoaded(false) // 加载完成
             if (position != LaunchPosition && isAdHaveCache().not()) {
                 AdUtils.adScope.launch {
                     delay(3000)
+                    val waitTime = isCanLoadAdIfNeeded()
+                    if (waitTime > 0) {
+                        delay(waitTime)
+                    }
                     preloadIfCan()
                 }
             }
@@ -100,8 +127,7 @@ class AdHolder(val position: AdPosition) {
         }
 
         // 在 preload 之前判断平台是否就绪
-        if (!isPlatformReady(adItem.source)) {
-            // 平台未就绪，跳过当前广告项，继续下一个
+        if (!isPlatformReady(adItem.source)) { // 平台未就绪，跳过当前广告项，继续下一个
             loadAd(index + 1)
             return
         }
@@ -109,6 +135,7 @@ class AdHolder(val position: AdPosition) {
         val adEntity = adItem.buildController(position)
         adEntity.preload { success ->
             if (success) {
+                onRequestSuccess()
                 localEvent("ad_return",
                     hashMapOf(
                         "ad_code_id" to adEntity.adBean.adId,
@@ -138,8 +165,7 @@ class AdHolder(val position: AdPosition) {
                 }.getOrElse { false }
             }
 
-            else -> {
-                // Admob 或其他平台
+            else -> { // Admob 或其他平台
                 val status = MobileAds.getInitializationStatus()
                 status?.adapterStatusMap?.isNotEmpty() == true
             }
@@ -154,5 +180,38 @@ class AdHolder(val position: AdPosition) {
     }
 
     private val mApp = com.sphere.shortvideos.mApp
+
+    private fun onRequestSuccess() {
+        if (position == LaunchPosition) return
+        mmkvIns.encode(failCountKey, 0)
+        mmkvIns.encode(lastFailTimeKey, 0L)
+    }
+
+    private fun onRequestFailed() {
+        if (position == LaunchPosition) return
+        val currentFailCount = mmkvIns.decodeInt(failCountKey, 0) + 1
+        mmkvIns.encode(failCountKey, currentFailCount)
+        mmkvIns.encode(lastFailTimeKey, System.currentTimeMillis())
+    }
+
+    private fun isCanLoadAdIfNeeded(): Long {
+        val failCount = mmkvIns.decodeInt(failCountKey, 0)
+        val lastFailAt = mmkvIns.decodeLong(lastFailTimeKey, 0L)
+        if (lastFailAt <= 0L) return 0L
+        if (failCount <= failTimesThreshold) {
+            return 0L
+        }
+        val step = (failCount / failTimesThreshold) - 1
+        if (step < 0) return 0L
+        val intervalSec = requestIntervalSec.toLong().times(1L shl step.coerceAtMost(20))
+        val nextAt = lastFailAt + intervalSec * 1000L
+        return (nextAt - System.currentTimeMillis()).coerceAtLeast(0L)
+    }
+
+    private fun isStoppedByBackgroundFailure(): Boolean {
+        if (AdUtils.isInBack.not()) return false
+        val failCount = mmkvIns.decodeInt(failCountKey, 0)
+        return failCount >= failTimesThreshold
+    }
 
 }

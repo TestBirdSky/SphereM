@@ -31,9 +31,12 @@ object AdUtils {
     val launchHolder = AdHolder(LaunchPosition)
     val unlockHolder = AdHolder(UnlockPosition)
     val rewardHolder = AdHolder(RewardPosition)
+    var isInBack = true
 
     private var isSwitchIntAd = false //显示激励广告没有的情况下使用unlockHolder广告位逻辑
     private var lastAdJson = ""
+    private var requestFailTimes = 5
+    private var requestIntervalSec = 10
 
     fun initData(json: String = GlobalConstants.NEW_DEFAULT_AD_LOCAL_JSON) {
         val adJson = json.ifBlank { GlobalConstants.NEW_DEFAULT_AD_LOCAL_JSON }
@@ -41,9 +44,14 @@ object AdUtils {
         runCatching {
             JSONObject(adJson).apply {
                 isSwitchIntAd = optBoolean("dlmsf_switch")
+                requestFailTimes = optInt("fail_times", 5).coerceAtLeast(1)
+                requestIntervalSec = optInt("request_interval", 10).coerceAtLeast(1)
                 launchHolder.initHolder(LaunchPosition.aliasName.formatBean(this))
                 unlockHolder.initHolder(UnlockPosition.aliasName.formatBean(this))
                 rewardHolder.initHolder(RewardPosition.aliasName.formatBean(this))
+                launchHolder.updateRequestRetryConfig(requestFailTimes, requestIntervalSec)
+                unlockHolder.updateRequestRetryConfig(requestFailTimes, requestIntervalSec)
+                rewardHolder.updateRequestRetryConfig(requestFailTimes, requestIntervalSec)
             }
             lastAdJson = adJson
         }

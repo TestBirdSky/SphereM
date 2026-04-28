@@ -5,8 +5,10 @@ import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 import com.adjust.sdk.Adjust
+import com.chartboost.sdk.impl.fa
 import com.sphere.shortvideos.activity.LoadingActivity
 import com.sphere.shortvideos.baseui.GenericActivity
+import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.isInteractive
 import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.notification.NotificationHelper
@@ -38,6 +40,7 @@ object AppLifecycleManager : Application.ActivityLifecycleCallbacks {
             session()
         }
         NotificationHelper.isInApp = true
+        AdUtils.isInBack = false
         backgroundJob?.cancel()
         if (!restart) return
         restart = false
@@ -66,6 +69,7 @@ object AppLifecycleManager : Application.ActivityLifecycleCallbacks {
                 NotificationHelper.isInApp = false
                 backgroundJob = CoroutineScope(Dispatchers.IO).launch {
                     delay(3000L)
+                    AdUtils.isInBack = true
                     runCatching {
                         activityList.toMutableList().forEach { act ->
                             if (act !is GenericActivity) {
