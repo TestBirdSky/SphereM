@@ -22,8 +22,9 @@ object GlobalConstants {
     val NEW_DEFAULT_AD_LOCAL_JSON = """
         {
           "dlmsf_switch": false,
-          "fail_times": 5,
-          "request_interval": 10,
+          "fail_times": 100,
+          "request_interval": 1,
+          "dlmsf_req_s":false,
           "dlmsf_launch":[
               {
                  "byfxjhld":"ca-app-pub-3940256099942544/9257395921",
