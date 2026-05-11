@@ -4,6 +4,7 @@ import android.app.Activity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import com.chartboost.sdk.impl.fa
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.sphere.shortvideos.baseui.GenericActivity
@@ -22,8 +23,9 @@ class AdHolder(val position: AdPosition) {
     private var loading = false
     private var onAdLoaded: (Boolean) -> Unit = {}
     private var loadingTime = 0L
-    private var failTimesThreshold = 5
-    private var requestIntervalSec = 10
+    private var failTimesThreshold = Int.MAX_VALUE
+    private var requestIntervalSec = 0
+    private var isOpen = false
 
     private val failCountKey = "ad_fail_count_${position.adSense}"
     private val lastFailTimeKey = "ad_last_fail_ms_${position.adSense}"
@@ -35,9 +37,10 @@ class AdHolder(val position: AdPosition) {
         sourceList.addAll(data.sortedByDescending { it.weight })
     }
 
-    fun updateRequestRetryConfig(failTimes: Int, requestInterval: Int) {
-        failTimesThreshold = failTimes.coerceAtLeast(1)
-        requestIntervalSec = requestInterval.coerceAtLeast(1)
+    fun updateRequestRetryConfig(failTimes: Int, requestInterval: Int, isOpen: Boolean) {
+        failTimesThreshold = failTimes
+        requestIntervalSec = requestInterval
+        this.isOpen = isOpen
     }
 
     fun preloadIfCan() {
@@ -189,12 +192,14 @@ class AdHolder(val position: AdPosition) {
 
     private fun onRequestFailed() {
         if (position == LaunchPosition) return
+        if (isOpen.not()) return
         val currentFailCount = mmkvIns.decodeInt(failCountKey, 0) + 1
         mmkvIns.encode(failCountKey, currentFailCount)
         mmkvIns.encode(lastFailTimeKey, System.currentTimeMillis())
     }
 
     private fun isCanLoadAdIfNeeded(): Long {
+        if (isOpen.not()) return 0
         val failCount = mmkvIns.decodeInt(failCountKey, 0)
         val lastFailAt = mmkvIns.decodeLong(lastFailTimeKey, 0L)
         if (lastFailAt <= 0L) return 0L

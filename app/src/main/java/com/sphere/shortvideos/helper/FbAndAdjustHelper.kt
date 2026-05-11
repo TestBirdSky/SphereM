@@ -2,17 +2,10 @@ package com.sphere.shortvideos.helper
 
 import android.content.Context
 import com.adjust.sdk.Adjust
-import com.adjust.sdk.AdjustAdRevenue
 import com.adjust.sdk.AdjustConfig
-import com.facebook.FacebookSdk
-import com.facebook.appevents.AppEventsLogger
-import com.google.android.gms.ads.AdValue
-import com.sphere.shortvideos.GlobalConstants
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.logError
-import com.sphere.shortvideos.mApp
-import org.json.JSONObject
 
 /**
  * Date：2026/1/20
@@ -28,19 +21,19 @@ class FbAndAdjustHelper {
     """.trimIndent()
 
     fun initFb(str: String) {
-        val js = str.ifBlank { defC }
-        runCatching {
-            JSONObject(js).apply {
-                val fbStr = optString("app_id")
-                val token = optString("client_token")
-                if (fbStr.isBlank() || token.isBlank()) return
-                if (FacebookSdk.isInitialized()) return
-                FacebookSdk.setApplicationId(fbStr)
-                FacebookSdk.setClientToken(token)
-                FacebookSdk.sdkInitialize(mApp)
-                AppEventsLogger.activateApp(mApp)
-            }
-        }
+//        val js = str.ifBlank { defC }
+//        runCatching {
+//            JSONObject(js).apply {
+//                val fbStr = optString("app_id")
+//                val token = optString("client_token")
+//                if (fbStr.isBlank() || token.isBlank()) return
+//                if (FacebookSdk.isInitialized()) return
+//                FacebookSdk.setApplicationId(fbStr)
+//                FacebookSdk.setClientToken(token)
+//                FacebookSdk.sdkInitialize(mApp)
+//                AppEventsLogger.activateApp(mApp)
+//            }
+//        }
     }
 
     fun initAdjust(context: Context) {

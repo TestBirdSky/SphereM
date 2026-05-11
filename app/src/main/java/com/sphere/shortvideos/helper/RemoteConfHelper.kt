@@ -102,8 +102,8 @@ class RemoteConfHelper {
     }
 
     private fun fetchFbCon() {
-        val fbInfo = getString("drama_fb")
-        mFbAndAdjustHelper.initFb(fbInfo)
+//        val fbInfo = getString("drama_fb")
+//        mFbAndAdjustHelper.initFb(fbInfo)
     }
 
     fun getString(key: String): String = runCatching {

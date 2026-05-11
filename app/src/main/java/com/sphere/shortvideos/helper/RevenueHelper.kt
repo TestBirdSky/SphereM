@@ -1,20 +1,15 @@
 package com.sphere.shortvideos.helper
 
-import android.os.Bundle
 import com.adjust.sdk.Adjust
 import com.adjust.sdk.AdjustAdRevenue
-import com.facebook.appevents.AppEventsConstants
-import com.facebook.appevents.AppEventsLogger
 import com.google.android.gms.ads.AdValue
 import com.google.android.gms.ads.ResponseInfo
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.sphere.shortvideos.helper.ad.AdItemBean
 import com.sphere.shortvideos.helper.ad.AdPosition
 import com.sphere.shortvideos.logError
-import com.sphere.shortvideos.mApp
 import com.thinkup.core.api.TUAdInfo
 import org.json.JSONObject
-import java.util.Currency
 
 object RevenueHelper {
 
@@ -122,13 +117,13 @@ object RevenueHelper {
 
     /** 向 Facebook SDK 上报 AD_IMPRESSION（Meta 广告收入标准事件），与 logPurchase 并存 */
     private fun logFbAdImpression(revenue: Double, currencyCode: String) {
-        runCatching {
-            val logger = AppEventsLogger.newLogger(mApp)
-            val params = Bundle().apply {
-                putString(AppEventsConstants.EVENT_PARAM_CURRENCY, currencyCode)
-            }
-            logger.logEvent(AppEventsConstants.EVENT_NAME_AD_IMPRESSION, revenue, params)
-            logger.logPurchase((revenue).toBigDecimal(), Currency.getInstance(currencyCode))
-        }
+//        runCatching {
+//            val logger = AppEventsLogger.newLogger(mApp)
+//            val params = Bundle().apply {
+//                putString(AppEventsConstants.EVENT_PARAM_CURRENCY, currencyCode)
+//            }
+//            logger.logEvent(AppEventsConstants.EVENT_NAME_AD_IMPRESSION, revenue, params)
+//            logger.logPurchase((revenue).toBigDecimal(), Currency.getInstance(currencyCode))
+//        }
     }
 }

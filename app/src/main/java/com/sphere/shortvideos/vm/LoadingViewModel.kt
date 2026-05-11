@@ -16,6 +16,8 @@ import com.sphere.shortvideos.helper.ad.AdUtils.unlockHolder
 import com.sphere.shortvideos.helper.ad.LaunchPosition
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.logError
+import com.sphere.shortvideos.mApp
+import com.thinkup.core.api.TUSDK
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

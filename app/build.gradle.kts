@@ -120,7 +120,10 @@ dependencies {
     implementation(libs.refresh.header.material)
     implementation(libs.refresh.footer.ball) // Gson
     implementation(libs.gson)
-    implementation(libs.facebook.android.sdk)
+//    implementation(libs.facebook.android.sdk)
+
+    //
+    implementation("androidx.media:media:1.7.0")
 
     // installReferrer
     implementation(libs.installreferrer)
@@ -183,9 +186,9 @@ dependencies {
     implementation("com.applovin.mediation:bytedance-adapter:7.9.1.0.0")
     implementation("com.applovin.mediation:unityads-adapter:4.17.0.0")
 
-    // topon聚合 6.5.80
+    // topon聚合 6.5.73
     //TU (Necessary)
-    api("com.thinkup.sdk:core-tpn:6.5.80")
+    api("com.thinkup.sdk:core-tpn:6.5.73.1")
     //Androidx (Necessary)
     api("androidx.appcompat:appcompat:1.6.1")
     api("androidx.browser:browser:1.4.0")
@@ -232,11 +235,11 @@ dependencies {
     api("com.thinkup.sdk:adapter-tpn-admob:25.0.0.1.0")
     api("com.google.android.gms:play-services-ads:25.0.0")
     //Inmobi
-    api("com.thinkup.sdk:adapter-tpn-inmobi:11.1.1.1.0")
+    api("com.thinkup.sdk:adapter-tpn-inmobi:11.1.1.1.1")
     api("com.inmobi.monetization:inmobi-ads-kotlin:11.1.1")
     //TU Adx SDK(Necessary)
-    api("com.thinkup.sdk:adapter-tpn-sdm:6.5.60.1.0")
-    api("com.smartdigimkttech.sdk:smartdigimkttech-sdk:6.5.60")
+    api("com.thinkup.sdk:adapter-tpn-sdm:6.5.67.1.0")
+    api("com.smartdigimkttech.sdk:smartdigimkttech-sdk:6.5.67")
     //AppLovin
     api("com.thinkup.sdk:adapter-tpn-applovin:13.6.0.1.0")
     api("com.applovin:applovin-sdk:13.6.0")
@@ -265,6 +268,6 @@ dependencies {
     api("com.google.android.gms:play-services-basement:18.9.0")
     api("com.google.android.gms:play-services-ads-identifier:18.0.1")
     //Tramini
-    api("com.thinkup.sdk:tramini-plugin-tpn:6.5.80")
+    api("com.thinkup.sdk:tramini-plugin-tpn:6.5.73")
 
 }

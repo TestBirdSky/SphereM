@@ -44,14 +44,17 @@ object AdUtils {
         runCatching {
             JSONObject(adJson).apply {
                 isSwitchIntAd = optBoolean("dlmsf_switch")
-                requestFailTimes = optInt("fail_times", 5).coerceAtLeast(1)
-                requestIntervalSec = optInt("request_interval", 10).coerceAtLeast(1)
+                val isOpen = optBoolean("dlmsf_req_s", false)
+                requestFailTimes = optInt("fail_times", 0)
+                requestIntervalSec = optInt("request_interval", 1)
                 launchHolder.initHolder(LaunchPosition.aliasName.formatBean(this))
                 unlockHolder.initHolder(UnlockPosition.aliasName.formatBean(this))
                 rewardHolder.initHolder(RewardPosition.aliasName.formatBean(this))
-                launchHolder.updateRequestRetryConfig(requestFailTimes, requestIntervalSec)
-                unlockHolder.updateRequestRetryConfig(requestFailTimes, requestIntervalSec)
-                rewardHolder.updateRequestRetryConfig(requestFailTimes, requestIntervalSec)
+                if (isOpen) {
+                    launchHolder.updateRequestRetryConfig(requestFailTimes, requestIntervalSec, isOpen)
+                    unlockHolder.updateRequestRetryConfig(requestFailTimes, requestIntervalSec, isOpen)
+                    rewardHolder.updateRequestRetryConfig(requestFailTimes, requestIntervalSec, isOpen)
+                }
             }
             lastAdJson = adJson
         }
@@ -111,8 +114,7 @@ object AdUtils {
         }
     }
 
-    fun showRvAd(activity: GenericActivity,
-                 adPosId: String, dismiss: (isRewardSuccess: Boolean) -> Unit = {}) {
+    fun showRvAd(activity: GenericActivity, adPosId: String, dismiss: (isRewardSuccess: Boolean) -> Unit = {}) {
         if (RiskHelper.isAdLimit()) {
             ShowAdLimitDialogFragment({
                 localEvent("see_you_tommorow")
@@ -128,16 +130,12 @@ object AdUtils {
         }
         if (rewardHolder.isAdHaveCache()) {
             var showRVAdTime = 0L
-            rewardHolder.showFullAd(activity,
-                adPosId = adPosId,
-                rewardCall = { isRewardCall = true },
-                onAdDismissed = {
-                    RiskHelper.closeRvEvent(System.currentTimeMillis() - showRVAdTime)
-                    dis.invoke()
-                },
-                onAdShowed = {
-                    showRVAdTime = System.currentTimeMillis()
-                })
+            rewardHolder.showFullAd(activity, adPosId = adPosId, rewardCall = { isRewardCall = true }, onAdDismissed = {
+                RiskHelper.closeRvEvent(System.currentTimeMillis() - showRVAdTime)
+                dis.invoke()
+            }, onAdShowed = {
+                showRVAdTime = System.currentTimeMillis()
+            })
             return
         } else if (isSwitchIntAd) {
             if (unlockHolder.isAdHaveCache()) {

@@ -17,6 +17,7 @@ import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.helper.risk.RiskHelper
 import com.sphere.shortvideos.notification.NotificationHelper
 import com.tencent.mmkv.MMKV
+import com.thinkup.core.api.TUSDK
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.filter
@@ -59,6 +60,7 @@ class App : Application() {
             MobileAds.initialize(this@App) {}
         }
         AdSdkHelper.initMaxAndTopon(this)
+        TUSDK.setLocalStrategyAssetPath(mApp, "localStrategy")
     }
 
     private fun initPSSDK() {
