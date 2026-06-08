@@ -16,7 +16,7 @@ import com.sphere.shortvideos.logError
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class AdHolder(val position: AdPosition) {
+class AdHolder(val position: AdPosition, private val retryKeySuffix: String = "") {
 
     private val sourceList = mutableListOf<AdItemBean>()
     private val cacheList = mutableListOf<BaseController>()
@@ -27,10 +27,12 @@ class AdHolder(val position: AdPosition) {
     private var requestIntervalSec = 0
     private var isOpen = false
 
-    private val failCountKey = "ad_fail_count_${position.adSense}"
-    private val lastFailTimeKey = "ad_last_fail_ms_${position.adSense}"
+    private val failCountKey = "ad_fail_count_${position.adSense}$retryKeySuffix"
+    private val lastFailTimeKey = "ad_last_fail_ms_${position.adSense}$retryKeySuffix"
 
     fun isAdHaveCache() = cacheList.isNotEmpty()
+
+    fun peekCachedAd() = cacheList.firstOrNull()
 
     fun initHolder(data: List<AdItemBean>) {
         sourceList.clear()
@@ -145,6 +147,7 @@ class AdHolder(val position: AdPosition) {
                         "ad_format" to adEntity.adBean.format.aliasName,
                         "ad_platform" to adEntity.adBean.source,
                         "ad_sense" to position.adSense,
+                        "loaded_revenue" to  adEntity.cachedBidEcpm
                     ))
                 cacheList.add(adEntity)
                 loading = false
@@ -163,10 +166,10 @@ class AdHolder(val position: AdPosition) {
             }
 
             in listOf("max", "applovin") -> {
-                runCatching {
-                    com.applovin.sdk.AppLovinSdk.getInstance(mApp).isInitialized
-                }.getOrElse { false }
+                return false
             }
+
+            in listOf("pangle", "pag", "pagm") -> true
 
             else -> { // Admob 或其他平台
                 val status = MobileAds.getInitializationStatus()

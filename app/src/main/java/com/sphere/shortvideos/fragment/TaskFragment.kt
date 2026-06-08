@@ -66,7 +66,7 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
             (activity as? MainActivity)?.let {
                 val actionAfter = {
                     lastClickTime = 0L
-                    AdUtils.unlockHolder.preloadIfCan()
+                    AdUtils.preloadUnlock()
                     AnimViewHelper.flyToTarget(view, binding.iv1, end = {
                         lifecycleScope.launch {
                             delay(Random.nextLong(6000, 16000))
@@ -93,7 +93,7 @@ class TaskFragment : GenericFragment<FragmentTaskBinding>() {
     override fun onResume() {
         super.onResume()
         localEvent("billetera_page")
-        AdUtils.unlockHolder.preloadIfCan()
+        AdUtils.preloadUnlock()
         setupWatchCoins()
         refreshMoney()
         startPopFloatAnim()

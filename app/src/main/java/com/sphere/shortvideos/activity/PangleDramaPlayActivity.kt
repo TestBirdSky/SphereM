@@ -119,7 +119,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
         bindClick()
         supportFragmentManager.registerFragmentLifecycleCallbacks(dialogLifecycleCallbacks, true)
         lifecycleScope.launch(Dispatchers.Main) {
-            AdUtils.unlockHolder.preloadIfCan()
+            AdUtils.preloadUnlock()
             shortPlay?.let { item ->
                 withContext(Dispatchers.IO) {
                     shortPlayHistory =
@@ -327,7 +327,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                     lastIsEven = currentIsEven
                     if (isOddGreaterThanRemote(index) || isForceShowAd)
                         localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_switch_int"))
-                    if (AdUtils.unlockHolder.isAdHaveCache()) {
+                    if (AdUtils.isUnlockAdHaveCache()) {
                         if (isOddGreaterThanRemote(index)) {
                             showUnlockAd(index)
                         } else if (isForceShowAd) {
@@ -339,7 +339,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                         }
                     } else {
                         episodeEntity?.let { updateEpisodeData(shortPlay, it, index) }
-                        AdUtils.unlockHolder.preloadIfCan()
+                        AdUtils.preloadUnlock()
                         if (index >= unlockIndex) {
                             isForceShowAd = true
                         }
@@ -351,8 +351,8 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                 }
 
                 fun showUnlockAd(index: Int) {
-                    AdUtils.unlockHolder.showFullAd(activity, adPosId = "dlmsf_switch_int", onAdDismissed = {
-                        AdUtils.unlockHolder.preloadIfCan()
+                    AdUtils.showUnlockAd(activity, adPosId = "dlmsf_switch_int", onAdDismissed = {
+                        AdUtils.preloadUnlock()
                         episodeEntity?.let {
                             updateEpisodeData(shortPlay, it, index)
                         }
@@ -501,8 +501,8 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
         super.onResume()
         localEvent("drame_page")
         AdUtils.run {
-            unlockHolder.preloadIfCan()
-            rewardHolder.preloadIfCan()
+            preloadUnlock()
+            preloadReward()
         }
         reStartPlay()
     }

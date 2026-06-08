@@ -1,8 +1,21 @@
 package com.sphere.shortvideos.helper.ad
 
 import androidx.lifecycle.lifecycleScope
-import com.applovin.mediation.MaxAd
-import com.applovin.mediation.MaxError
+import com.bytedance.sdk.openadsdk.api.PangleAd
+import com.bytedance.sdk.openadsdk.api.interstitial.PAGInterstitialAd
+import com.bytedance.sdk.openadsdk.api.interstitial.PAGInterstitialAdInteractionCallback
+import com.bytedance.sdk.openadsdk.api.interstitial.PAGInterstitialAdLoadCallback
+import com.bytedance.sdk.openadsdk.api.interstitial.PAGInterstitialRequest
+import com.bytedance.sdk.openadsdk.api.model.PAGErrorModel
+import com.bytedance.sdk.openadsdk.api.open.PAGAppOpenAd
+import com.bytedance.sdk.openadsdk.api.open.PAGAppOpenAdInteractionCallback
+import com.bytedance.sdk.openadsdk.api.open.PAGAppOpenAdLoadCallback
+import com.bytedance.sdk.openadsdk.api.open.PAGAppOpenRequest
+import com.bytedance.sdk.openadsdk.api.reward.PAGRewardItem
+import com.bytedance.sdk.openadsdk.api.reward.PAGRewardedAd
+import com.bytedance.sdk.openadsdk.api.reward.PAGRewardedAdInteractionCallback
+import com.bytedance.sdk.openadsdk.api.reward.PAGRewardedAdLoadCallback
+import com.bytedance.sdk.openadsdk.api.reward.PAGRewardedRequest
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdValue
@@ -34,6 +47,10 @@ import kotlinx.coroutines.launch
 abstract class BaseController(val position: AdPosition, val adBean: AdItemBean) : IAdController {
 
     var loadedTimeMills = System.currentTimeMillis()
+    var cachedBidEcpm: Double = 0.0
+        protected set
+
+    open val bidEcpm: Double get() = cachedBidEcpm
 
     fun isAdExpired() =
         if (0 == adBean.timeout) false else (System.currentTimeMillis() - loadedTimeMills) >= (adBean.timeout * 1000L)
@@ -73,13 +90,11 @@ abstract class BaseController(val position: AdPosition, val adBean: AdItemBean) 
 
     fun adLoadFiledEvent(reason: String) {
         localEvent("ad_return_fail",
-            hashMapOf(
-                "ad_code_id" to adBean.adId,
+            hashMapOf("ad_code_id" to adBean.adId,
                 "ad_format" to adBean.format.aliasName,
                 "ad_platform" to adBean.source,
                 "reason" to reason,
-                "ad_sense" to position.adSense
-            ))
+                "ad_sense" to position.adSense))
     }
 
     fun adShowFiledEvent(reason: String) {
@@ -98,12 +113,10 @@ abstract class BaseController(val position: AdPosition, val adBean: AdItemBean) 
 
     protected fun postAdReqEvent() {
         localEvent("ad_request",
-            hashMapOf(
-                "ad_code_id" to adBean.adId,
+            hashMapOf("ad_code_id" to adBean.adId,
                 "ad_format" to adBean.format.aliasName,
                 "ad_platform" to adBean.source,
-                "ad_sense" to position.adSense
-            ))
+                "ad_sense" to position.adSense))
     }
 }
 
@@ -254,6 +267,18 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
 class ToponFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(position, adBean) {
 
     private var fullAd: Any? = null
+    override val bidEcpm: Double
+        get() {
+            if (cachedBidEcpm > 0.0) return cachedBidEcpm
+            val current = when (val ad = fullAd) {
+                is com.thinkup.splashad.api.TUSplashAd -> fetchToponBidEcpm(ad.checkAdStatus()?.tuTopAdInfo)
+                is com.thinkup.interstitial.api.TUInterstitial -> fetchToponBidEcpm(ad.checkAdStatus()?.tuTopAdInfo)
+                is com.thinkup.rewardvideo.api.TURewardVideoAd -> fetchToponBidEcpm(ad.checkAdStatus()?.tuTopAdInfo)
+                else -> 0.0
+            }
+            if (current > 0.0) cachedBidEcpm = current
+            return cachedBidEcpm
+        }
 
     override fun preload(onLoaded: (Boolean) -> Unit) {
         adLogger("begin loading topon")
@@ -265,6 +290,10 @@ class ToponFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                     override fun onAdLoaded() {
                         adLogger("topon splash onAdLoad success")
                         loadedTimeMills = System.currentTimeMillis()
+                        (fullAd as? com.thinkup.splashad.api.TUSplashAd)?.let {
+                            cachedBidEcpm = fetchToponBidEcpm(it.checkAdStatus()?.tuTopAdInfo)
+                            logError("ToponFullAd ecpm--> $bidEcpm")
+                        }
                         onLoaded(true)
                     }
 
@@ -292,6 +321,8 @@ class ToponFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                         adLogger("topon interstitial onAdLoad success")
                         loadedTimeMills = System.currentTimeMillis()
                         fullAd = interstitialAd
+                        cachedBidEcpm = fetchToponBidEcpm(interstitialAd.checkAdStatus()?.tuTopAdInfo)
+                        logError("TopOn InterstitialFormat ecpm--> $bidEcpm")
                         onLoaded(true)
                     }
 
@@ -327,6 +358,8 @@ class ToponFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                         adLogger("topon reward video onAdLoad success")
                         loadedTimeMills = System.currentTimeMillis()
                         fullAd = rewardVideoAd
+                        cachedBidEcpm = fetchToponBidEcpm(rewardVideoAd.checkAdStatus()?.tuTopAdInfo)
+                        logError("RewardFormat ecpm--> $bidEcpm")
                         onLoaded(true)
                     }
 
@@ -456,6 +489,13 @@ class ToponFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
     override fun destroyAd() {
         fullAd = null
     }
+
+    private fun fetchToponBidEcpm(adInfo: TUAdInfo?): Double {
+        if (adInfo == null) return 0.0
+        return runCatching { adInfo.publisherRevenue }.getOrNull()
+            ?: runCatching { adInfo.ecpm / 1000.0 }.getOrNull()
+            ?: 0.0
+    }
 }
 
 class MaxFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(position, adBean) {
@@ -468,96 +508,96 @@ class MaxFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(posit
         postAdReqEvent()
         when (adBean.format) {
             AppOpenFormat -> { // MAX AppOpen 广告加载
-                val appOpenAd = com.applovin.mediation.ads.MaxAppOpenAd(adBean.adId)
-                appOpenAd.setListener(object : com.applovin.mediation.MaxAdListener {
-                    override fun onAdLoaded(maxAd: com.applovin.mediation.MaxAd) {
-                        adLogger("max appopen onAdLoad success")
-                        loadedTimeMills = System.currentTimeMillis()
-                        fullAd = appOpenAd
-                        onLoaded(true)
-                    }
-
-                    override fun onAdLoadFailed(adUnitId: String, error: com.applovin.mediation.MaxError) {
-                        adLogger("max appopen onAdLoadFailed: ${error.message}")
-                        adLoadFiledEvent(error.message)
-                        onLoaded(false)
-                    }
-
-                    override fun onAdDisplayed(maxAd: com.applovin.mediation.MaxAd) {}
-                    override fun onAdHidden(maxAd: com.applovin.mediation.MaxAd) {}
-                    override fun onAdClicked(maxAd: com.applovin.mediation.MaxAd) {}
-                    override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
-                    }
-
-                })
-                appOpenAd.loadAd()
+                onLoaded(false) //                val appOpenAd = com.applovin.mediation.ads.MaxAppOpenAd(adBean.adId)
+                //                appOpenAd.setListener(object : com.applovin.mediation.MaxAdListener {
+                //                    override fun onAdLoaded(maxAd: com.applovin.mediation.MaxAd) {
+                //                        adLogger("max appopen onAdLoad success")
+                //                        loadedTimeMills = System.currentTimeMillis()
+                //                        fullAd = appOpenAd
+                //                        onLoaded(true)
+                //                    }
+                //
+                //                    override fun onAdLoadFailed(adUnitId: String, error: com.applovin.mediation.MaxError) {
+                //                        adLogger("max appopen onAdLoadFailed: ${error.message}")
+                //                        adLoadFiledEvent(error.message)
+                //                        onLoaded(false)
+                //                    }
+                //
+                //                    override fun onAdDisplayed(maxAd: com.applovin.mediation.MaxAd) {}
+                //                    override fun onAdHidden(maxAd: com.applovin.mediation.MaxAd) {}
+                //                    override fun onAdClicked(maxAd: com.applovin.mediation.MaxAd) {}
+                //                    override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
+                //                    }
+                //
+                //                })
+                //                appOpenAd.loadAd()
             }
 
             InterstitialFormat -> { // MAX 插屏广告加载
-                mJob?.cancel()
-                mJob = mScopeMain.launch {
-                    delay(60000)
-                    adLoadFiledEvent("max_load_timeout")
-                    onLoaded(false)
-                }
-                val interstitialAd = com.applovin.mediation.ads.MaxInterstitialAd(adBean.adId)
-                interstitialAd.setListener(object : com.applovin.mediation.MaxAdListener {
-                    override fun onAdLoaded(maxAd: com.applovin.mediation.MaxAd) {
-                        adLogger("max interstitial onAdLoad success")
-                        loadedTimeMills = System.currentTimeMillis()
-                        fullAd = interstitialAd
-                        mJob?.cancel()
-                        onLoaded(true)
-                    }
-
-                    override fun onAdDisplayed(maxAd: com.applovin.mediation.MaxAd) {}
-                    override fun onAdHidden(maxAd: com.applovin.mediation.MaxAd) {}
-                    override fun onAdClicked(maxAd: com.applovin.mediation.MaxAd) {}
-                    override fun onAdLoadFailed(adUnitId: String, error: com.applovin.mediation.MaxError) {
-                        adLogger("max interstitial onAdLoadFailed: ${error.message}")
-                        adLoadFiledEvent(error.message)
-                        mJob?.cancel()
-                        onLoaded(false)
-                    }
-
-                    override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
-                    }
-
-                })
-                interstitialAd.loadAd()
+                onLoaded(false) //                mJob?.cancel()
+                //                mJob = mScopeMain.launch {
+                //                    delay(60000)
+                //                    adLoadFiledEvent("max_load_timeout")
+                //                    onLoaded(false)
+                //                }
+                //                val interstitialAd = com.applovin.mediation.ads.MaxInterstitialAd(adBean.adId)
+                //                interstitialAd.setListener(object : com.applovin.mediation.MaxAdListener {
+                //                    override fun onAdLoaded(maxAd: com.applovin.mediation.MaxAd) {
+                //                        adLogger("max interstitial onAdLoad success")
+                //                        loadedTimeMills = System.currentTimeMillis()
+                //                        fullAd = interstitialAd
+                //                        mJob?.cancel()
+                //                        onLoaded(true)
+                //                    }
+                //
+                //                    override fun onAdDisplayed(maxAd: com.applovin.mediation.MaxAd) {}
+                //                    override fun onAdHidden(maxAd: com.applovin.mediation.MaxAd) {}
+                //                    override fun onAdClicked(maxAd: com.applovin.mediation.MaxAd) {}
+                //                    override fun onAdLoadFailed(adUnitId: String, error: com.applovin.mediation.MaxError) {
+                //                        adLogger("max interstitial onAdLoadFailed: ${error.message}")
+                //                        adLoadFiledEvent(error.message)
+                //                        mJob?.cancel()
+                //                        onLoaded(false)
+                //                    }
+                //
+                //                    override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
+                //                    }
+                //
+                //                })
+                //                interstitialAd.loadAd()
             }
 
             RewardFormat -> { // MAX 激励广告加载
-                mJob?.cancel()
-                mJob = mScopeMain.launch {
-                    delay(60000)
-                    adLoadFiledEvent("max_load_timeout")
-                    onLoaded(false)
-                }
-                val rewardedAd = com.applovin.mediation.ads.MaxRewardedAd.getInstance(adBean.adId)
-                rewardedAd.setListener(object : com.applovin.mediation.MaxRewardedAdListener {
-                    override fun onAdLoaded(maxAd: com.applovin.mediation.MaxAd) {
-                        adLogger("max rewarded onAdLoad success")
-                        loadedTimeMills = System.currentTimeMillis()
-                        fullAd = rewardedAd
-                        mJob?.cancel()
-                        onLoaded(true)
-                    }
-
-                    override fun onAdDisplayed(maxAd: com.applovin.mediation.MaxAd) {}
-                    override fun onAdHidden(maxAd: com.applovin.mediation.MaxAd) {}
-                    override fun onAdClicked(maxAd: com.applovin.mediation.MaxAd) {}
-                    override fun onAdLoadFailed(adUnitId: String, error: com.applovin.mediation.MaxError) {
-                        adLogger("max rewarded onAdLoadFailed: ${error.message}")
-                        adLoadFiledEvent(error.message)
-                        mJob?.cancel()
-                        onLoaded(false)
-                    }
-
-                    override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {}
-                    override fun onUserRewarded(maxAd: MaxAd, reward: com.applovin.mediation.MaxReward) {}
-                })
-                rewardedAd.loadAd()
+                onLoaded(false) //                mJob?.cancel()
+                //                mJob = mScopeMain.launch {
+                //                    delay(60000)
+                //                    adLoadFiledEvent("max_load_timeout")
+                //                    onLoaded(false)
+                //                }
+                //                val rewardedAd = com.applovin.mediation.ads.MaxRewardedAd.getInstance(adBean.adId)
+                //                rewardedAd.setListener(object : com.applovin.mediation.MaxRewardedAdListener {
+                //                    override fun onAdLoaded(maxAd: com.applovin.mediation.MaxAd) {
+                //                        adLogger("max rewarded onAdLoad success")
+                //                        loadedTimeMills = System.currentTimeMillis()
+                //                        fullAd = rewardedAd
+                //                        mJob?.cancel()
+                //                        onLoaded(true)
+                //                    }
+                //
+                //                    override fun onAdDisplayed(maxAd: com.applovin.mediation.MaxAd) {}
+                //                    override fun onAdHidden(maxAd: com.applovin.mediation.MaxAd) {}
+                //                    override fun onAdClicked(maxAd: com.applovin.mediation.MaxAd) {}
+                //                    override fun onAdLoadFailed(adUnitId: String, error: com.applovin.mediation.MaxError) {
+                //                        adLogger("max rewarded onAdLoadFailed: ${error.message}")
+                //                        adLoadFiledEvent(error.message)
+                //                        mJob?.cancel()
+                //                        onLoaded(false)
+                //                    }
+                //
+                //                    override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {}
+                //                    override fun onUserRewarded(maxAd: MaxAd, reward: com.applovin.mediation.MaxReward) {}
+                //                })
+                //                rewardedAd.loadAd()
             }
         }
     }
@@ -568,90 +608,89 @@ class MaxFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(posit
             onAdDismissed(activity, onDismissed)
             return
         }
-        when (ad) {
-            is com.applovin.mediation.ads.MaxAppOpenAd -> {
-                val listener = object : com.applovin.mediation.MaxAdListener {
-                    override fun onAdLoaded(maxAd: com.applovin.mediation.MaxAd) {}
-                    override fun onAdDisplayed(maxAd: com.applovin.mediation.MaxAd) {
-                        onAdShowed()
-                        showAdEvent(ad) // MAX 广告价值上报
-                        RevenueHelper.onMaxRevenueCallback(maxAd, adBean, position)
-                    }
-
-                    override fun onAdHidden(maxAd: com.applovin.mediation.MaxAd) {
-                        onAdDismissed(activity, onDismissed)
-                    }
-
-                    override fun onAdClicked(maxAd: com.applovin.mediation.MaxAd) {}
-                    override fun onAdLoadFailed(adUnitId: String, error: com.applovin.mediation.MaxError) {}
-                    override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
-                        onAdDismissed(activity, onDismissed)
-                        adShowFiledEvent(p1.message)
-                    }
-                }
-                ad.setListener(listener)
-                ad.showAd()
-            }
-
-            is com.applovin.mediation.ads.MaxInterstitialAd -> {
-                val listener = object : com.applovin.mediation.MaxAdListener {
-                    override fun onAdLoaded(maxAd: MaxAd) {}
-                    override fun onAdDisplayed(maxAd: MaxAd) {
-                        onAdShowed()
-                        showAdEvent(ad) // MAX 广告价值上报
-                        RevenueHelper.onMaxRevenueCallback(maxAd, adBean, position)
-                    }
-
-                    override fun onAdHidden(maxAd: com.applovin.mediation.MaxAd) {
-                        onAdDismissed(activity, onDismissed)
-                    }
-
-                    override fun onAdClicked(maxAd: com.applovin.mediation.MaxAd) {}
-                    override fun onAdLoadFailed(adUnitId: String, error: com.applovin.mediation.MaxError) {}
-                    override fun onAdDisplayFailed(p0: MaxAd, error: MaxError) {
-                        onAdDismissed(activity, onDismissed)
-                        adShowFiledEvent(error.message)
-                    }
-                }
-                ad.setListener(listener)
-                ad.showAd(activity)
-            }
-
-            is com.applovin.mediation.ads.MaxRewardedAd -> {
-                val listener = object : com.applovin.mediation.MaxRewardedAdListener {
-                    override fun onAdLoaded(maxAd: com.applovin.mediation.MaxAd) {
-                        logError("max reward 11 onAdLoaded-->")
-                    }
-
-                    override fun onAdDisplayed(maxAd: com.applovin.mediation.MaxAd) {
-                        onAdShowed()
-                        showAdEvent(ad) // MAX 广告价值上报
-                        RevenueHelper.onMaxRevenueCallback(maxAd, adBean, position)
-                    }
-
-                    override fun onAdHidden(maxAd: MaxAd) {
-                        onAdDismissed(activity, onDismissed)
-                    }
-
-                    override fun onAdClicked(maxAd: MaxAd) {}
-                    override fun onAdLoadFailed(adUnitId: String, error: MaxError) {
-                        logError("max reward onAdLoadFailed-->${error.message}")
-                    }
-
-                    override fun onAdDisplayFailed(adUnitId: MaxAd, error: MaxError) {
-                        onAdDismissed(activity, onDismissed)
-                        adShowFiledEvent(error.message)
-                    }
-
-                    override fun onUserRewarded(maxAd: com.applovin.mediation.MaxAd,
-                                                reward: com.applovin.mediation.MaxReward) {
-                        logError("onUserRewarded-->")
-                        onUserEarnedReward?.invoke()
-                    }
-                }
-                ad.setListener(listener)
-                ad.showAd(activity)
-            }
+        when (ad) { //            is com.applovin.mediation.ads.MaxAppOpenAd -> {
+            //                val listener = object : com.applovin.mediation.MaxAdListener {
+            //                    override fun onAdLoaded(maxAd: com.applovin.mediation.MaxAd) {}
+            //                    override fun onAdDisplayed(maxAd: com.applovin.mediation.MaxAd) {
+            //                        onAdShowed()
+            //                        showAdEvent(ad) // MAX 广告价值上报
+            //                        RevenueHelper.onMaxRevenueCallback(maxAd, adBean, position)
+            //                    }
+            //
+            //                    override fun onAdHidden(maxAd: com.applovin.mediation.MaxAd) {
+            //                        onAdDismissed(activity, onDismissed)
+            //                    }
+            //
+            //                    override fun onAdClicked(maxAd: com.applovin.mediation.MaxAd) {}
+            //                    override fun onAdLoadFailed(adUnitId: String, error: com.applovin.mediation.MaxError) {}
+            //                    override fun onAdDisplayFailed(p0: MaxAd, p1: MaxError) {
+            //                        onAdDismissed(activity, onDismissed)
+            //                        adShowFiledEvent(p1.message)
+            //                    }
+            //                }
+            //                ad.setListener(listener)
+            //                ad.showAd()
+            //            }
+            //
+            //            is com.applovin.mediation.ads.MaxInterstitialAd -> {
+            //                val listener = object : com.applovin.mediation.MaxAdListener {
+            //                    override fun onAdLoaded(maxAd: MaxAd) {}
+            //                    override fun onAdDisplayed(maxAd: MaxAd) {
+            //                        onAdShowed()
+            //                        showAdEvent(ad) // MAX 广告价值上报
+            //                        RevenueHelper.onMaxRevenueCallback(maxAd, adBean, position)
+            //                    }
+            //
+            //                    override fun onAdHidden(maxAd: com.applovin.mediation.MaxAd) {
+            //                        onAdDismissed(activity, onDismissed)
+            //                    }
+            //
+            //                    override fun onAdClicked(maxAd: com.applovin.mediation.MaxAd) {}
+            //                    override fun onAdLoadFailed(adUnitId: String, error: com.applovin.mediation.MaxError) {}
+            //                    override fun onAdDisplayFailed(p0: MaxAd, error: MaxError) {
+            //                        onAdDismissed(activity, onDismissed)
+            //                        adShowFiledEvent(error.message)
+            //                    }
+            //                }
+            //                ad.setListener(listener)
+            //                ad.showAd(activity)
+            //            }
+            //
+            //            is com.applovin.mediation.ads.MaxRewardedAd -> {
+            //                val listener = object : com.applovin.mediation.MaxRewardedAdListener {
+            //                    override fun onAdLoaded(maxAd: com.applovin.mediation.MaxAd) {
+            //                        logError("max reward 11 onAdLoaded-->")
+            //                    }
+            //
+            //                    override fun onAdDisplayed(maxAd: com.applovin.mediation.MaxAd) {
+            //                        onAdShowed()
+            //                        showAdEvent(ad) // MAX 广告价值上报
+            //                        RevenueHelper.onMaxRevenueCallback(maxAd, adBean, position)
+            //                    }
+            //
+            //                    override fun onAdHidden(maxAd: MaxAd) {
+            //                        onAdDismissed(activity, onDismissed)
+            //                    }
+            //
+            //                    override fun onAdClicked(maxAd: MaxAd) {}
+            //                    override fun onAdLoadFailed(adUnitId: String, error: MaxError) {
+            //                        logError("max reward onAdLoadFailed-->${error.message}")
+            //                    }
+            //
+            //                    override fun onAdDisplayFailed(adUnitId: MaxAd, error: MaxError) {
+            //                        onAdDismissed(activity, onDismissed)
+            //                        adShowFiledEvent(error.message)
+            //                    }
+            //
+            //                    override fun onUserRewarded(maxAd: com.applovin.mediation.MaxAd,
+            //                                                reward: com.applovin.mediation.MaxReward) {
+            //                        logError("onUserRewarded-->")
+            //                        onUserEarnedReward?.invoke()
+            //                    }
+            //                }
+            //                ad.setListener(listener)
+            //                ad.showAd(activity)
+            //            }
 
             else -> onAdDismissed(activity, onDismissed)
         }
@@ -662,5 +701,201 @@ class MaxFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(posit
     }
 }
 
+class PangleFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(position, adBean) {
+    private var fullAd: Any? = null
+    override val bidEcpm: Double
+        get() {
+            if (cachedBidEcpm > 0.0) return cachedBidEcpm
+            val current = fetchPangleBidEcpm(fullAd)
+            if (current > 0.0) cachedBidEcpm = current
+            return cachedBidEcpm
+        }
 
+    override fun preload(onLoaded: (Boolean) -> Unit) {
+        adLogger("begin loading pangle")
+        postAdReqEvent()
+        when (adBean.format) {
+            AppOpenFormat -> {
+                val request = PAGAppOpenRequest(mApp)
+                PAGAppOpenAd.loadAd(adBean.adId, request, object : PAGAppOpenAdLoadCallback {
+                    override fun onError(pagErrorModel: PAGErrorModel) {
+                        handleLoadFailed(pagErrorModel, onLoaded)
+                    }
 
+                    override fun onAdLoaded(ad: PAGAppOpenAd) {
+                        val ecpm = fetchPangleBidEcpm(ad)
+                        logError("AppOpenFormat-->$ecpm --show-->${ad.pagRevenueInfo?.showEcpm} ")
+                        cachedBidEcpm = ecpm
+                        handleLoaded(ad, onLoaded)
+                    }
+                })
+            }
+
+            InterstitialFormat -> {
+                PAGInterstitialAd.loadAd(adBean.adId,
+                    PAGInterstitialRequest(mApp),
+                    object : PAGInterstitialAdLoadCallback {
+                        override fun onError(pagErrorModel: PAGErrorModel) {
+                            handleLoadFailed(pagErrorModel, onLoaded)
+                        }
+
+                        override fun onAdLoaded(ad: PAGInterstitialAd) {
+                            val ecpm = fetchPangleBidEcpm(ad)
+                            logError("InterstitialFormat-->$ecpm --show-->${ad.pagRevenueInfo?.showEcpm} ")
+                            cachedBidEcpm = ecpm
+                            handleLoaded(ad, onLoaded)
+                        }
+                    })
+            }
+
+            RewardFormat -> {
+                PAGRewardedAd.loadAd(adBean.adId, PAGRewardedRequest(mApp), object : PAGRewardedAdLoadCallback {
+                    override fun onError(pagErrorModel: PAGErrorModel) {
+                        handleLoadFailed(pagErrorModel, onLoaded)
+                    }
+
+                    override fun onAdLoaded(ad: PAGRewardedAd) {
+                        val ecpm = fetchPangleBidEcpm(ad)
+                        logError("PAGRewardedAd-->$ecpm --show-->${ad.pagRevenueInfo?.showEcpm} ")
+                        cachedBidEcpm = ecpm
+                        handleLoaded(ad, onLoaded)
+                    }
+                })
+            }
+        }
+    }
+
+    override fun showFullScreenAd(activity: GenericActivity, onDismissed: () -> Unit, onAdShowed: () -> Unit) {
+        val ad = fullAd
+        if (ad == null) {
+            onAdDismissed(activity, onDismissed)
+            return
+        }
+        when (ad) {
+            is PAGAppOpenAd -> {
+                if (!ad.isReady) {
+                    onAdDismissed(activity, onDismissed)
+                    return
+                }
+                ad.setAdInteractionCallback(object : PAGAppOpenAdInteractionCallback() {
+                    override fun onAdShowed() {
+                        onAdShowed()
+                        showAdEvent(ad)
+                    }
+
+                    override fun onAdDismissed() {
+                        onAdDismissed(activity, onDismissed)
+                    }
+
+                    override fun onAdShowFailed(pagErrorModel: PAGErrorModel) {
+                        onAdDismissed(activity, onDismissed)
+                        adShowFiledEvent("${pagErrorModel.errorCode}-${pagErrorModel.errorMessage}")
+                    }
+
+                    override fun onAdReturnRevenue(ecpmInfo: com.bytedance.sdk.openadsdk.api.model.PAGAdEcpmInfo) {
+                        RevenueHelper.onPangleRevenueCallback(ecpmInfo, adBean, position)
+                    }
+                })
+                ad.show(activity)
+            }
+
+            is PAGInterstitialAd -> {
+                if (!ad.isReady) {
+                    onAdDismissed(activity, onDismissed)
+                    return
+                }
+                ad.setAdInteractionCallback(object : PAGInterstitialAdInteractionCallback() {
+                    override fun onAdShowed() {
+                        onAdShowed()
+                        showAdEvent(ad)
+                    }
+
+                    override fun onAdDismissed() {
+                        onAdDismissed(activity, onDismissed)
+                    }
+
+                    override fun onAdShowFailed(pagErrorModel: PAGErrorModel) {
+                        onAdDismissed(activity, onDismissed)
+                        adShowFiledEvent("${pagErrorModel.errorCode}-${pagErrorModel.errorMessage}")
+                    }
+
+                    override fun onAdReturnRevenue(ecpmInfo: com.bytedance.sdk.openadsdk.api.model.PAGAdEcpmInfo) {
+                        RevenueHelper.onPangleRevenueCallback(ecpmInfo, adBean, position)
+                    }
+                })
+                ad.show(activity)
+            }
+
+            is PAGRewardedAd -> {
+                if (!ad.isReady) {
+                    onAdDismissed(activity, onDismissed)
+                    return
+                }
+                ad.setAdInteractionCallback(object : PAGRewardedAdInteractionCallback() {
+                    override fun onAdShowed() {
+                        onAdShowed()
+                        showAdEvent(ad)
+                    }
+
+                    override fun onAdDismissed() {
+                        onAdDismissed(activity, onDismissed)
+                    }
+
+                    override fun onUserEarnedReward(rewardItem: PAGRewardItem) {
+                        onUserEarnedReward?.invoke()
+                    }
+
+                    override fun onUserEarnedRewardFail(pagErrorModel: PAGErrorModel) {
+                        adLogger("pangle reward failed: ${pagErrorModel.errorCode}-${pagErrorModel.errorMessage}")
+                    }
+
+                    override fun onAdShowFailed(pagErrorModel: PAGErrorModel) {
+                        onAdDismissed(activity, onDismissed)
+                        adShowFiledEvent("${pagErrorModel.errorCode}-${pagErrorModel.errorMessage}")
+                    }
+
+                    override fun onAdReturnRevenue(ecpmInfo: com.bytedance.sdk.openadsdk.api.model.PAGAdEcpmInfo) {
+                        RevenueHelper.onPangleRevenueCallback(ecpmInfo, adBean, position)
+                    }
+                })
+                ad.show(activity)
+            }
+
+            else -> onAdDismissed(activity, onDismissed)
+        }
+    }
+
+    override fun destroyAd() {
+        fullAd = null
+    }
+
+    private fun handleLoaded(ad: Any, onLoaded: (Boolean) -> Unit) {
+        adLogger("pangle onAdLoad success")
+        loadedTimeMills = System.currentTimeMillis()
+        fullAd = ad
+        onLoaded(true)
+    }
+
+    private fun handleLoadFailed(error: PAGErrorModel, onLoaded: (Boolean) -> Unit) {
+        val reason = "${error.errorCode}-${error.errorMessage}"
+        adLogger("pangle onAdLoadFailed: $reason")
+        adLoadFiledEvent(reason)
+        onLoaded(false)
+    }
+
+    private fun fetchPangleBidEcpm(ad: Any?): Double {
+        return when (ad) {
+            is PAGAppOpenAd -> fetchPanglePriceValue(ad)
+            is PAGInterstitialAd -> fetchPanglePriceValue(ad)
+            is PAGRewardedAd -> fetchPanglePriceValue(ad)
+            else -> 0.0
+        }.apply {
+            logError("fetchPangleBidEcpm price/1000-->$this --$ad")
+        }
+    }
+
+    private fun fetchPanglePriceValue(pangleAd: PangleAd): Double {
+        val price = pangleAd.getExtraInfo("price")
+        return price?.toString()?.toDoubleOrNull()?.div(1000.0) ?: 0.0
+    }
+}

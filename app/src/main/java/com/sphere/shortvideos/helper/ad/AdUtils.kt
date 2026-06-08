@@ -31,9 +31,13 @@ object AdUtils {
     val launchHolder = AdHolder(LaunchPosition)
     val unlockHolder = AdHolder(UnlockPosition)
     val rewardHolder = AdHolder(RewardPosition)
+    private val sceneBidLaunchHolder = AdHolder(SceneBidPosition(LaunchPosition), "_scene_bid")
+    private val sceneBidUnlockHolder = AdHolder(SceneBidPosition(UnlockPosition), "_scene_bid")
+    private val sceneBidRewardHolder = AdHolder(SceneBidPosition(RewardPosition), "_scene_bid")
     var isInBack = true
 
     private var isSwitchIntAd = false //显示激励广告没有的情况下使用unlockHolder广告位逻辑
+    private var isSenseBidOpen = false
     private var lastAdJson = ""
     private var requestFailTimes = 5
     private var requestIntervalSec = 10
@@ -45,15 +49,18 @@ object AdUtils {
             JSONObject(adJson).apply {
                 isSwitchIntAd = optBoolean("dlmsf_switch")
                 val isOpen = optBoolean("dlmsf_req_s", false)
+                isSenseBidOpen = optBoolean("dlmsf_sencebid", false)
                 requestFailTimes = optInt("fail_times", 0)
                 requestIntervalSec = optInt("request_interval", 1)
                 launchHolder.initHolder(LaunchPosition.aliasName.formatBean(this))
                 unlockHolder.initHolder(UnlockPosition.aliasName.formatBean(this))
                 rewardHolder.initHolder(RewardPosition.aliasName.formatBean(this))
+                val sceneBidObj = optJSONObject("dlmsf_scene_bid") ?: JSONObject()
+                sceneBidLaunchHolder.initHolder(LaunchPosition.aliasName.formatBean(sceneBidObj))
+                sceneBidUnlockHolder.initHolder(UnlockPosition.aliasName.formatBean(sceneBidObj))
+                sceneBidRewardHolder.initHolder(RewardPosition.aliasName.formatBean(sceneBidObj))
                 if (isOpen) {
-                    launchHolder.updateRequestRetryConfig(requestFailTimes, requestIntervalSec, isOpen)
-                    unlockHolder.updateRequestRetryConfig(requestFailTimes, requestIntervalSec, isOpen)
-                    rewardHolder.updateRequestRetryConfig(requestFailTimes, requestIntervalSec, isOpen)
+                    allHolders().forEach { it.updateRequestRetryConfig(requestFailTimes, requestIntervalSec, isOpen) }
                 }
             }
             lastAdJson = adJson
@@ -99,18 +106,19 @@ object AdUtils {
             return
         }
         isRate.invoke()
-        if (unlockHolder.isAdHaveCache()) {
-            unlockHolder.showFullAd(activity, onAdDismissed = dismiss, adPosId = adPosId)
+        val holder = selectBestHolder(unlockHolders())
+        if (holder != null) {
+            holder.showFullAd(activity, onAdDismissed = dismiss, adPosId = adPosId)
         } else {
             noAd.invoke()
-            unlockHolder.preloadIfCan()
+            preloadUnlock()
         }
     }
 
     fun perLoadRvAd() {
-        rewardHolder.preloadIfCan()
+        preloadReward()
         if (isSwitchIntAd) {
-            unlockHolder.preloadIfCan()
+            preloadUnlock()
         }
     }
 
@@ -125,22 +133,33 @@ object AdUtils {
         var isRewardCall = false
         val dis = {
             dismiss.invoke(isRewardCall)
-            rewardHolder.preloadIfCan()
-            unlockHolder.preloadIfCan()
+            preloadReward()
+            preloadUnlock()
         }
-        if (rewardHolder.isAdHaveCache()) {
+        val rewardShowHolder = selectBestHolder(rewardBidHolders())
+        if (rewardShowHolder != null) {
             var showRVAdTime = 0L
-            rewardHolder.showFullAd(activity, adPosId = adPosId, rewardCall = { isRewardCall = true }, onAdDismissed = {
-                RiskHelper.closeRvEvent(System.currentTimeMillis() - showRVAdTime)
-                dis.invoke()
-            }, onAdShowed = {
-                showRVAdTime = System.currentTimeMillis()
-            })
+            val isRewardHolder = rewardShowHolder.isRewardHolder()
+            rewardShowHolder.showFullAd(activity,
+                adPosId = adPosId,
+                rewardCall = { isRewardCall = true },
+                onAdDismissed = {
+                    val showDuration = System.currentTimeMillis() - showRVAdTime
+                    RiskHelper.closeRvEvent(showDuration)
+                    if (!isRewardHolder && showDuration > 5000) {
+                        isRewardCall = true
+                    }
+                    dis.invoke()
+                },
+                onAdShowed = {
+                    showRVAdTime = System.currentTimeMillis()
+                })
             return
-        } else if (isSwitchIntAd) {
-            if (unlockHolder.isAdHaveCache()) {
+        } else if (isSwitchIntAd && isSenseBidOpen.not()) {
+            val holder = selectBestHolder(unlockHolders())
+            if (holder != null) {
                 val time = System.currentTimeMillis()
-                unlockHolder.showFullAd(activity, adPosId = adPosId, onAdDismissed = {
+                holder.showFullAd(activity, adPosId = adPosId, onAdDismissed = {
                     if (System.currentTimeMillis() - time > 5000) {
                         isRewardCall = true
                     }
@@ -151,5 +170,95 @@ object AdUtils {
         }
         dis.invoke()
     }
+
+    fun preloadLaunch() {
+        launchHolder.preloadIfCan()
+        sceneBidLaunchHolder.preloadIfCan()
+    }
+
+    fun preloadUnlock() {
+        unlockHolder.preloadIfCan()
+        sceneBidUnlockHolder.preloadIfCan()
+    }
+
+    fun preloadReward() {
+        rewardHolder.preloadIfCan()
+        sceneBidRewardHolder.preloadIfCan()
+        if (isSenseBidOpen) preloadUnlock()
+    }
+
+    fun isLaunchAdHaveCache() = selectBestHolder(launchBidHolders()) != null
+
+    fun showLaunchAd(activity: GenericActivity,
+                     adPosId: String,
+                     onAdDismissed: () -> Unit = {},
+                     onAdShowed: () -> Unit = {}) {
+        val holder = selectBestHolder(launchBidHolders())
+        if (holder == null) {
+            onAdDismissed()
+            preloadLaunch()
+        } else {
+            holder.showFullAd(activity, adPosId = adPosId, onAdDismissed = onAdDismissed, onAdShowed = onAdShowed)
+        }
+    }
+
+    fun isUnlockAdHaveCache() = selectBestHolder(unlockHolders()) != null
+
+    fun showUnlockAd(activity: GenericActivity,
+                     adPosId: String,
+                     canShowAd: () -> Boolean = { RiskHelper.isAdLimit().not() },
+                     onAdDismissed: () -> Unit = {},
+                     onAdShowed: () -> Unit = {}) {
+        val holder = selectBestHolder(unlockHolders())
+        if (holder == null) {
+            onAdDismissed()
+            preloadUnlock()
+        } else {
+            holder.showFullAd(activity,
+                adPosId = adPosId,
+                canShowAd = canShowAd,
+                onAdDismissed = onAdDismissed,
+                onAdShowed = onAdShowed)
+        }
+    }
+
+    private fun selectBestHolder(holders: List<AdHolder>): AdHolder? {
+        val candidates = holders.mapNotNull { holder ->
+            holder.peekCachedAd()?.let { holder to it }
+        }
+        return candidates.maxWithOrNull { first, second -> compareAd(first.second, second.second) }?.first
+    }
+
+    private fun launchBidHolders() = buildList {
+        add(launchHolder)
+        add(sceneBidLaunchHolder)
+        if (isSenseBidOpen) addAll(unlockHolders())
+    }
+
+    private fun unlockHolders() = listOf(unlockHolder, sceneBidUnlockHolder)
+
+    private fun rewardBidHolders() = buildList {
+        add(rewardHolder)
+        add(sceneBidRewardHolder)
+        if (isSenseBidOpen) addAll(unlockHolders())
+    }
+
+    private fun AdHolder.isRewardHolder() = this == rewardHolder || this == sceneBidRewardHolder
+
+    private fun compareAd(first: BaseController, second: BaseController): Int {
+        val firstEcpm = first.bidEcpm
+        val secondEcpm = second.bidEcpm
+        logError("compareAd-->$first ---$second  ecpm=>$firstEcpm --$secondEcpm")
+        return firstEcpm.compareTo(secondEcpm)
+    }
+
+    private fun allHolders() = listOf(
+        launchHolder,
+        unlockHolder,
+        rewardHolder,
+        sceneBidLaunchHolder,
+        sceneBidUnlockHolder,
+        sceneBidRewardHolder,
+    )
 
 }

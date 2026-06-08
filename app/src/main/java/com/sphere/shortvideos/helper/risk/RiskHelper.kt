@@ -251,7 +251,7 @@ object RiskHelper {
      * 检测 IP 地址（用户自行实现）
      */
     private fun checkIpRisk(): Boolean {
-        return HelperRiskNetCheck.checkIpStatus == "false"
+        return HelperRiskNetCheck.checkIpStatus == "true"
     }
 
 }

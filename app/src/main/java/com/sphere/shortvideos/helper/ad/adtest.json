@@ -1,0 +1,33 @@
+{
+  "dlmsf_switch": false,
+  "fail_times": 100,
+  "request_interval": 1,
+  "dlmsf_req_s": false,
+  "dlmsf_launch": [
+    {
+      "byfxjhld": "ca-app-pub-3940256099942544/9257395921",
+      "dmhytwql": "admob",
+      "ugebepat": "open",
+      "gqqvwedz": 13800,
+      "wdzqbsbt": 3
+    }
+  ],
+  "dlmsf_int": [
+    {
+      "byfxjhld": "ca-app-pub-3940256099942544/1033173712",
+      "dmhytwql": "admob",
+      "ugebepat": "interstitial",
+      "gqqvwedz": 13800,
+      "wdzqbsbt": 1
+    }
+  ],
+  "dlmsf_rv": [
+    {
+      "byfxjhld": "ca-app-pub-3940256099942544/5224354917",
+      "dmhytwql": "admob",
+      "ugebepat": "reward",
+      "gqqvwedz": 3000,
+      "wdzqbsbt": 1
+    }
+  ]
+}

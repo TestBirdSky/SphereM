@@ -19,7 +19,8 @@ object GlobalConstants {
     const val RISK_URL = "https://ip-prod.dramasphere.net/api/cbird"
 
 
-    val NEW_DEFAULT_AD_LOCAL_JSON = """
+    // todo check
+    val NEW_DEFAULT_AD_LOCAL_JSON = if (isDebugMode) NEW_AD_DEFAULT_CON else """
         {
           "dlmsf_switch": false,
           "fail_times": 100,
@@ -55,27 +56,91 @@ object GlobalConstants {
         }
     """.trimIndent()
 
-//    val DEFAULT_JSON = """
-//        {
-//           "ds_launch":[
-//              {
-//                 "dsid":"ca-app-pub-3940256099942544/9257395921",
-//                 "amtt":"admob",
-//                 "dsty":"op",
-//                 "dsad":13800,
-//                 "dsei":3
-//              }
-//           ],
-//           "ds_unlock_int":[
-//              {
-//                 "dsid":"ca-app-pub-3940256099942544/1033173712",
-//                 "amtt":"admob",
-//                 "dsty":"int",
-//                 "dsad":3000,
-//                 "dsei":3
-//              }
-//           ]
-//        }
-//    """.trimIndent()
+    //    val DEFAULT_JSON = """
+    //        {
+    //           "ds_launch":[
+    //              {
+    //                 "dsid":"ca-app-pub-3940256099942544/9257395921",
+    //                 "amtt":"admob",
+    //                 "dsty":"op",
+    //                 "dsad":13800,
+    //                 "dsei":3
+    //              }
+    //           ],
+    //           "ds_unlock_int":[
+    //              {
+    //                 "dsid":"ca-app-pub-3940256099942544/1033173712",
+    //                 "amtt":"admob",
+    //                 "dsty":"int",
+    //                 "dsad":3000,
+    //                 "dsei":3
+    //              }
+    //           ]
+    //        }
+    //    """.trimIndent()
 
+    const val NEW_AD_DEFAULT_CON = """
+{
+  "dlmsf_switch": false,
+  "fail_times": 100,
+  "request_interval": 1,
+  "dlmsf_req_s": false,
+  "dlmsf_sencebid": true,
+  "dlmsf_launch": [
+    {
+      "byfxjhld": "n69cb667213998",
+      "dmhytwql": "topon",
+      "ugebepat": "interstitial",
+      "gqqvwedz": 3000,
+      "wdzqbsbt": 1
+    }
+  ],
+  "dlmsf_int": [
+    {
+      "byfxjhld": "n69cb67522c47d",
+      "dmhytwql": "topon",
+      "ugebepat": "interstitial",
+      "gqqvwedz": 3000,
+      "wdzqbsbt": 1
+    }
+  ],
+  "dlmsf_rv": [
+    {
+      "byfxjhld": "n69cb673cc2c72",
+      "dmhytwql": "topon",
+      "ugebepat": "reward",
+      "gqqvwedz": 3000,
+      "wdzqbsbt": 1
+    }
+  ],
+  "dlmsf_scene_bid": {
+ "dlmsf_launch": [
+      {
+        "byfxjhld": "983207411",
+        "dmhytwql": "pangle",
+        "ugebepat": "interstitial",
+        "gqqvwedz": 3000,
+        "wdzqbsbt": 1
+      }
+    ],
+    "dlmsf_int": [
+      {
+        "byfxjhld": "983205646",
+        "dmhytwql": "pangle",
+        "ugebepat": "interstitial",
+        "gqqvwedz": 3000,
+        "wdzqbsbt": 1
+      }
+    ],
+    "dlmsf_rv": [
+      {
+        "byfxjhld": "983205618",
+        "dmhytwql": "pangle",
+        "ugebepat": "reward",
+        "gqqvwedz": 1
+      }
+    ]
+  }
+}        
+"""
 }

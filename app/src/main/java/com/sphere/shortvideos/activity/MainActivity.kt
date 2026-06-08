@@ -231,9 +231,9 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
     override fun onResume() {
         super.onResume()
         AdUtils.run {
-            unlockHolder.preloadIfCan()
-            rewardHolder.preloadIfCan()
-            launchHolder.preloadIfCan()
+            preloadUnlock()
+            preloadReward()
+            preloadLaunch()
         }
         runCatching {
             viewModel.syncPauseDialogState(DialogFragmentDisplayHelper.countShowingPauseDialogFragments(

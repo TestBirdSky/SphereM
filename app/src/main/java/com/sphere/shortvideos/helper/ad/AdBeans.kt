@@ -13,6 +13,7 @@ data class AdItemBean(
         return when (format) {
             AppOpenFormat, InterstitialFormat, RewardFormat -> {
                 when (source.lowercase()) {
+                    "pangle", "pag", "pagm" -> PangleFullAd(position, this)
                     "topon" -> ToponFullAd(position, this)
                     "max", "applovin" -> MaxFullAd(position, this)
                     else -> AdmobFullAd(position, this)
@@ -27,6 +28,16 @@ sealed class AdPosition {
     abstract val adSense: String
 
     open var adContext = "" //针对开屏广告增加的参数
+}
+
+class SceneBidPosition(private val delegate: AdPosition) : AdPosition() {
+    override var aliasName: String = delegate.aliasName
+    override val adSense: String get() = delegate.adSense
+    override var adContext: String
+        get() = delegate.adContext
+        set(value) {
+            delegate.adContext = value
+        }
 }
 
 data object LaunchPosition : AdPosition() {

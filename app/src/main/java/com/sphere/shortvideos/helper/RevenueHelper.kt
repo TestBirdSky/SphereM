@@ -5,6 +5,7 @@ import com.adjust.sdk.AdjustAdRevenue
 import com.google.android.gms.ads.AdValue
 import com.google.android.gms.ads.ResponseInfo
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.bytedance.sdk.openadsdk.api.model.PAGAdEcpmInfo
 import com.sphere.shortvideos.helper.ad.AdItemBean
 import com.sphere.shortvideos.helper.ad.AdPosition
 import com.sphere.shortvideos.logError
@@ -53,7 +54,7 @@ object RevenueHelper {
         runCatching { // TopOn 广告价值获取
             val revenue: Double = ad.publisherRevenue
             val currencyCode: String = "USD"
-            val adSourceName: String = adBean.source
+            val adSourceName: String = ad.networkName
             firebaseEvent("ad_impression_revenue",
                 hashMapOf(FirebaseAnalytics.Param.VALUE to revenue, FirebaseAnalytics.Param.CURRENCY to currencyCode))
 
@@ -83,15 +84,47 @@ object RevenueHelper {
         }
     }
 
-    fun onMaxRevenueCallback(maxAd: com.applovin.mediation.MaxAd, adBean: AdItemBean, position: AdPosition) {
-        runCatching { // MAX 广告价值获取
-            val revenue: Double = maxAd.revenue
-            val currencyCode: String = "USD"
-            val networkName: String = maxAd.networkName ?: "max"
+//    fun onMaxRevenueCallback(maxAd: com.applovin.mediation.MaxAd, adBean: AdItemBean, position: AdPosition) {
+//        runCatching { // MAX 广告价值获取
+//            val revenue: Double = maxAd.revenue
+//            val currencyCode: String = "USD"
+//            val networkName: String = maxAd.networkName ?: "max"
+//            firebaseEvent("ad_impression_revenue",
+//                hashMapOf(FirebaseAnalytics.Param.VALUE to revenue, FirebaseAnalytics.Param.CURRENCY to currencyCode))
+//            adImpression(JSONObject().apply {
+//                put("ontario", revenue * 1000000) // 转换为微单位
+//                put("ghoulish", currencyCode)
+//                put("auxin", networkName)
+//                put("friable", adBean.source)
+//                put("boniface", adBean.adId)
+//                put("hadamard", position.aliasName)
+//                put("hexagon", position.adContext.ifEmpty { position.adSense })
+//                put("neva", adBean.format.aliasName)
+//            })
+//            // Adjust 上报
+//            val adjustAdRevenue = AdjustAdRevenue("applovin_max_sdk")
+//            adjustAdRevenue.setRevenue(revenue, currencyCode)
+//            adjustAdRevenue.adRevenueUnit = maxAd.adUnitId
+//            adjustAdRevenue.adRevenueNetwork = networkName
+//            adjustAdRevenue.adRevenuePlacement = position.aliasName
+//            Adjust.trackAdRevenue(adjustAdRevenue)
+//            logError("FB-->")
+//            // Facebook 上报
+//            runCatching {
+//                logFbAdImpression(revenue, currencyCode)
+//            }
+//        }
+//    }
+
+    fun onPangleRevenueCallback(ecpmInfo: PAGAdEcpmInfo, adBean: AdItemBean, position: AdPosition) {
+        runCatching {
+            val revenue = ecpmInfo.revenue.toDoubleOrNull() ?: ((ecpmInfo.cpm.toDoubleOrNull() ?: 0.0) / 1000.0)
+            val currencyCode = ecpmInfo.currency.ifEmpty { "USD" }
+            val networkName = ecpmInfo.adnName.ifEmpty { "pangle" }
             firebaseEvent("ad_impression_revenue",
                 hashMapOf(FirebaseAnalytics.Param.VALUE to revenue, FirebaseAnalytics.Param.CURRENCY to currencyCode))
             adImpression(JSONObject().apply {
-                put("ontario", revenue * 1000000) // 转换为微单位
+                put("ontario", revenue * 1000000)
                 put("ghoulish", currencyCode)
                 put("auxin", networkName)
                 put("friable", adBean.source)
@@ -100,15 +133,14 @@ object RevenueHelper {
                 put("hexagon", position.adContext.ifEmpty { position.adSense })
                 put("neva", adBean.format.aliasName)
             })
-            // Adjust 上报
-            val adjustAdRevenue = AdjustAdRevenue("applovin_max_sdk")
+
+            val adjustAdRevenue = AdjustAdRevenue("pangle_sdk")
             adjustAdRevenue.setRevenue(revenue, currencyCode)
-            adjustAdRevenue.adRevenueUnit = maxAd.adUnitId
+            adjustAdRevenue.adRevenueUnit = ecpmInfo.adUnit
             adjustAdRevenue.adRevenueNetwork = networkName
             adjustAdRevenue.adRevenuePlacement = position.aliasName
             Adjust.trackAdRevenue(adjustAdRevenue)
-            logError("FB-->")
-            // Facebook 上报
+
             runCatching {
                 logFbAdImpression(revenue, currencyCode)
             }

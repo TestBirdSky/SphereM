@@ -11,13 +11,13 @@ plugins {
     id("com.google.gms.google-services")
 //    id("com.google.firebase.crashlytics")
 
-    id("applovin-quality-service")
+//    id("applovin-quality-service")
 }
 
-applovin {
-    // todo modify
-    apiKey = "«ad-review-key»"
-}
+//applovin {
+//    // todo modify
+//    apiKey = "«ad-review-key»"
+//}
 
 apply(plugin = "stringfog")
 
@@ -131,7 +131,7 @@ dependencies {
     // admob
 //    implementation("com.google.android.libraries.ads.mobile.sdk:ads-mobile-sdk:0.20.0-beta01")
     implementation("com.google.android.gms:play-services-ads:25.0.0")
-    implementation("com.google.ads.mediation:applovin:13.6.0.0")
+//    implementation("com.google.ads.mediation:applovin:13.6.0.0")
     implementation("com.google.ads.mediation:chartboost:9.11.1.0")
     implementation("com.google.ads.mediation:fyber:8.4.3.0")
     implementation("com.google.ads.mediation:inmobi:11.1.1.0")
@@ -140,7 +140,9 @@ dependencies {
     implementation("com.google.ads.mediation:facebook:6.21.0.1")
     implementation("com.google.ads.mediation:mintegral:17.0.91.0")
     implementation("com.google.ads.mediation:moloco:4.3.1.0")
-    implementation("com.google.ads.mediation:pangle:7.9.1.0.0")
+    implementation("com.google.ads.mediation:pangle:7.9.1.0.0") {
+        exclude(group = "com.pangle.global", module = "pag-sdk")
+    }
     implementation("com.unity3d.ads:unity-ads:4.17.0")
     implementation("com.google.ads.mediation:unity:4.17.0.0")
     // firebase
@@ -167,24 +169,24 @@ dependencies {
     api("io.github.alex-only:max_adapter_tpn:1.2.9")
 
     // Max 聚合 13.6.0
-    implementation("com.applovin:applovin-sdk:13.6.0")
-    implementation("com.applovin.mediation:bidmachine-adapter:3.6.1.0")
-    implementation("com.applovin.mediation:bigoads-adapter:5.7.1.0")
-    implementation("com.applovin.mediation:chartboost-adapter:9.11.1.0")
-    implementation("com.google.android.gms:play-services-base:16.1.0")
-    implementation("com.applovin.mediation:fyber-adapter:8.4.2.0")
-    implementation("com.applovin.mediation:google-ad-manager-adapter:25.0.0.0")
-    implementation("com.applovin.mediation:google-adapter:25.0.0.0")
-    implementation("com.applovin.mediation:inmobi-adapter:11.1.1.0")
-    implementation("com.squareup.picasso:picasso:2.8")
-    implementation("androidx.recyclerview:recyclerview:1.1.0")
-    implementation("com.applovin.mediation:ironsource-adapter:9.2.0.0.0")
-    implementation("com.applovin.mediation:vungle-adapter:7.7.1.0")
-    implementation("com.applovin.mediation:facebook-adapter:6.21.0.0")
-    implementation("com.applovin.mediation:mintegral-adapter:17.0.91.0")
-    implementation("com.applovin.mediation:moloco-adapter:4.3.1.0")
-    implementation("com.applovin.mediation:bytedance-adapter:7.9.1.0.0")
-    implementation("com.applovin.mediation:unityads-adapter:4.17.0.0")
+//    implementation("com.applovin:applovin-sdk:13.6.0")
+//    implementation("com.applovin.mediation:bidmachine-adapter:3.6.1.0")
+//    implementation("com.applovin.mediation:bigoads-adapter:5.7.1.0")
+//    implementation("com.applovin.mediation:chartboost-adapter:9.11.1.0")
+//    implementation("com.google.android.gms:play-services-base:16.1.0")
+//    implementation("com.applovin.mediation:fyber-adapter:8.4.2.0")
+//    implementation("com.applovin.mediation:google-ad-manager-adapter:25.0.0.0")
+//    implementation("com.applovin.mediation:google-adapter:25.0.0.0")
+//    implementation("com.applovin.mediation:inmobi-adapter:11.1.1.0")
+//    implementation("com.squareup.picasso:picasso:2.8")
+//    implementation("androidx.recyclerview:recyclerview:1.1.0")
+//    implementation("com.applovin.mediation:ironsource-adapter:9.2.0.0.0")
+//    implementation("com.applovin.mediation:vungle-adapter:7.7.1.0")
+//    implementation("com.applovin.mediation:facebook-adapter:6.21.0.0")
+//    implementation("com.applovin.mediation:mintegral-adapter:17.0.91.0")
+//    implementation("com.applovin.mediation:moloco-adapter:4.3.1.0")
+//    implementation("com.applovin.mediation:bytedance-adapter:7.9.1.0.0")
+//    implementation("com.applovin.mediation:unityads-adapter:4.17.0.0")
 
     // topon聚合 6.5.73
     //TU (Necessary)
@@ -215,7 +217,7 @@ dependencies {
     api("com.bigossp:bigo-ads:5.7.1")
     //Pangle
     api("com.thinkup.sdk:adapter-tpn-pangle:7.9.1.0.1.0")
-    api("com.pangle.global:pag-sdk:7.9.1.0")
+//    api("com.pangle.global:pag-sdk:7.9.1.0")
     api("com.google.android.gms:play-services-ads-identifier:18.2.0")
     //Kwai
     api("com.thinkup.sdk:adapter-tpn-kwai:1.2.21.1.0")
@@ -231,8 +233,8 @@ dependencies {
     api("com.thinkup.sdk:adapter-tpn-facebook:6.21.0.1.1")
     api("com.facebook.android:audience-network-sdk:6.21.0")
     api("androidx.annotation:annotation:1.0.0")
-    //Admob
-    api("com.thinkup.sdk:adapter-tpn-admob:25.0.0.1.0")
+    //Admob todo
+//    api("com.thinkup.sdk:adapter-tpn-admob:25.0.0.1.0")
     api("com.google.android.gms:play-services-ads:25.0.0")
     //Inmobi
     api("com.thinkup.sdk:adapter-tpn-inmobi:11.1.1.1.1")
@@ -241,8 +243,8 @@ dependencies {
     api("com.thinkup.sdk:adapter-tpn-sdm:6.5.67.1.0")
     api("com.smartdigimkttech.sdk:smartdigimkttech-sdk:6.5.67")
     //AppLovin
-    api("com.thinkup.sdk:adapter-tpn-applovin:13.6.0.1.0")
-    api("com.applovin:applovin-sdk:13.6.0")
+//    api("com.thinkup.sdk:adapter-tpn-applovin:13.6.0.1.0")
+//    api("com.applovin:applovin-sdk:13.6.0")
     //Mintegral
     api("com.thinkup.sdk:adapter-tpn-mintegral:17.0.91.1.0")
     api("com.mbridge.msdk.oversea:mbridge_android_sdk:17.0.91")
@@ -270,4 +272,26 @@ dependencies {
     //Tramini
     api("com.thinkup.sdk:tramini-plugin-tpn:6.5.73")
 
+    // pangle 聚合
+    implementation("com.pangle.global:pag-sdk-m:8.1.6.4")
+    // todo
+//    implementation("com.pangle.global:admob-adapter:24.4.0.5")
+//    implementation("com.pangle.global:unity-adapter:4.17.0.0")
+    implementation("com.pangle.global:vungle-adapter:7.5.1.2")
+    implementation("com.pangle.global:ironsource-adapter:8.10.0.2")
+    implementation("com.pangle.global:mintegral-adapter:16.9.91.1")
+    implementation("com.pangle.global:chartboost-adapter:9.8.3.2")
+    implementation("com.pangle.global:dtexchange-adapter:8.3.8.1")
+    implementation("com.pangle.global:bigo-adapter:5.5.1.1")
+    implementation("com.pangle.global:inmobi-adapter:11.1.0.0")
+
+    //admob 25.0.0
+    //vungle 7.6.1
+    //unity 4.17.0
+    //ironsource 9.2.0.0
+    //mintegral 17.0.91
+    //chartboost 9.11.0.1
+    //dtexchange  8.4.3
+    //bigo  5.7.1
+    //inmobi  11.1.1.0
 }
