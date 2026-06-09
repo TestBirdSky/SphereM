@@ -20,7 +20,7 @@ object GlobalConstants {
 
 
     // todo check
-    val NEW_DEFAULT_AD_LOCAL_JSON = """
+    val NEW_DEFAULT_AD_LOCAL_JSON = /*if (isDebugMode) LOCAL_TEST_AD_DEFAULT_CON else*/ """
         {
           "dlmsf_switch": false,
           "fail_times": 100,

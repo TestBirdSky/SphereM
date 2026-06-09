@@ -886,20 +886,27 @@ class PangleFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(po
 
     private fun fetchPangleBidEcpm(ad: Any?): Double {
         return when (ad) {
-            is PAGAppOpenAd -> fetchPanglePriceValue(ad)
-            is PAGInterstitialAd -> fetchPanglePriceValue(ad)
-            is PAGRewardedAd -> fetchPanglePriceValue(ad)
+            is PAGAppOpenAd -> {
+                logError("winEcpm==>${ad.pagRevenueInfo?.winEcpm?.revenue} --=>${ad.pagRevenueInfo?.winEcpm?.cpm} --${ad.pagRevenueInfo?.winEcpm?.adnName}")
+                ad.pagRevenueInfo?.winEcpm?.revenue?.toDoubleOrNull()
+                    ?: ad.pagRevenueInfo?.winEcpm?.cpm?.toDoubleOrNull()?.div(1000.0)
+                    ?: 0.0
+            }
+
+            is PAGInterstitialAd -> {
+                logError("winEcpm==>${ad.pagRevenueInfo?.winEcpm?.revenue} --=>${ad.pagRevenueInfo?.winEcpm?.cpm} --${ad.pagRevenueInfo?.winEcpm?.adnName}")
+                ad.pagRevenueInfo?.winEcpm?.revenue?.toDoubleOrNull()
+                    ?: ad.pagRevenueInfo?.winEcpm?.cpm?.toDoubleOrNull()?.div(1000.0)
+                    ?: 0.0
+            }
+
+            is PAGRewardedAd -> {
+                logError("winEcpm==>${ad.pagRevenueInfo?.winEcpm?.revenue} --=>${ad.pagRevenueInfo?.winEcpm?.cpm}")
+                ad.pagRevenueInfo?.winEcpm?.revenue?.toDoubleOrNull()
+                    ?: ad.pagRevenueInfo?.winEcpm?.cpm?.toDoubleOrNull()?.div(1000.0)
+                    ?: 0.0
+            }
             else -> 0.0
         }
-    }
-
-    private fun fetchPanglePriceValue(pangleAd: PangleAd): Double {
-        var price = pangleAd.getExtraInfo("price")
-        logError("fetchPanglePriceValue -->$price")
-        if (isDebugMode && price == null) {
-            price = listOf("299.2", "408.9", "108.0", "98.9", "308.1", "68.1").random()
-            logError("Ad cp--> use test info -->$price")
-        }
-        return price?.toString()?.toDoubleOrNull()?.div(1000.0) ?: 0.0
     }
 }

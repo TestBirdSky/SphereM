@@ -51,7 +51,7 @@ object AdSdkHelper {
     var isInitPAGSuccess = false
     private fun initPag(context: Context) {
         val mPAGMConfig = PAGMConfig.Builder()
-            //                        .appId("8580262")  // todo modify
+//                                    .appId("8580262")  // todo modify
             .appId("8778233")
             .appIcon(R.drawable.ic_splash_logo)
             .debugLog(isDebugMode)

@@ -12,6 +12,7 @@ import com.sphere.shortvideos.bean.RiskBean
 import com.sphere.shortvideos.helper.AppHelper
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.mmkv.MMKVData
+import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.mApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
