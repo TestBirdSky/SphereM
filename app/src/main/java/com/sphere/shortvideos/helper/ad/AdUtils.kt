@@ -81,7 +81,7 @@ object AdUtils {
                 }
                 val adId = itemObj.optString("byfxjhld")/*.ifBlank { itemObj.optString("dsid") }*/
                 val source = itemObj.optString("dmhytwql")/*.ifBlank { itemObj.optString("amtt") }*/
-                val timeout = itemObj.optInt("gqqvwedz", 0 /*itemObj.optInt("dsad", 0)*/)
+                val timeout = itemObj.optInt("gqqvwedz", 3000 /*itemObj.optInt("dsad", 0)*/)
                 val weight = itemObj.optInt("wdzqbsbt", 0/*itemObj.optInt("dsei", 0)*/)
                 result.add(AdItemBean(
                     adId = adId,
@@ -229,7 +229,7 @@ object AdUtils {
         logError("Ad cp--> compareAd position: ${
             candidates.joinToString(prefix = "[", postfix = "]") { (_, ad) ->
                 "${ad.position.adSense}/${ad.adBean.source}/${ad.adBean.format.aliasName}/${ad.adBean.adId}/${
-                    formatBidEcpm(ad.bidEcpm)
+                    ad.bidEcpm
                 }"
             }
         }")

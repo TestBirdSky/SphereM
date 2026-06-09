@@ -74,9 +74,12 @@ class RemoteConfHelper {
         if (channelConfig.isNotBlank()) {
             AdUtils.initData(channelConfig)
             return
-        }
-        // 回退默认配置
-        AdUtils.initData(runCatching { remoteConfig[defaultKey].asString() }.getOrNull().orEmpty())
+        } // 回退默认配置
+        AdUtils.initData(runCatching {
+            val str = remoteConfig[defaultKey].asString()
+            logError("fetchAdRemote--->$str")
+            str
+        }.getOrNull().orEmpty())
     }
 
     private fun resolveAdConfigKeyByChannel(channel: String): String {

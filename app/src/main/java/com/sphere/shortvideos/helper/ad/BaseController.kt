@@ -742,7 +742,7 @@ class PangleFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(po
 
                         override fun onAdLoaded(ad: PAGInterstitialAd) {
                             val ecpm = fetchPangleBidEcpm(ad)
-                            logError("Ad cp--> ecpm--> ${position.adSense}-InterstitialFormat-->$ecpm ")
+                            logError("Ad cp--> ecpm-->pangle ${position.adSense}-InterstitialFormat-->$ecpm --adid==>${adBean.adId} ")
                             cachedBidEcpm = ecpm
                             handleLoaded(ad, onLoaded)
                         }

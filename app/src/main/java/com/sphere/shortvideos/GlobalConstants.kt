@@ -137,7 +137,8 @@ object GlobalConstants {
         "byfxjhld": "983205618",
         "dmhytwql": "pangle",
         "ugebepat": "reward",
-        "gqqvwedz": 1
+        "gqqvwedz": 3000,
+        "wdzqbsbt": 1
       }
     ]
   }
