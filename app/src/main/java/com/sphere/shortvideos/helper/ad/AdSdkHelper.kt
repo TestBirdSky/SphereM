@@ -5,6 +5,7 @@ import com.bytedance.sdk.openadsdk.api.PAGMInitSuccessModel
 import com.bytedance.sdk.openadsdk.api.init.PAGMConfig
 import com.bytedance.sdk.openadsdk.api.init.PAGMSdk
 import com.bytedance.sdk.openadsdk.api.model.PAGErrorModel
+import com.sphere.shortvideos.R
 import com.sphere.shortvideos.helper.AppHelper
 import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.logError
@@ -50,8 +51,9 @@ object AdSdkHelper {
     var isInitPAGSuccess = false
     private fun initPag(context: Context) {
         val mPAGMConfig = PAGMConfig.Builder()
-//                        .appId("8580262")  // todo modify
+            //                        .appId("8580262")  // todo modify
             .appId("8778233")
+            .appIcon(R.drawable.ic_splash_logo)
             .debugLog(isDebugMode)
             .build()
         PAGMSdk.init(context, mPAGMConfig, object : PAGMSdk.PAGMInitCallback {

@@ -55,6 +55,7 @@ object RevenueHelper {
             val revenue: Double = ad.publisherRevenue
             val currencyCode: String = "USD"
             val adSourceName: String = ad.networkName
+            logError("Ad cp--> show ad${position.aliasName}--adId=${adBean.adId} show ecpm->${revenue}")
             firebaseEvent("ad_impression_revenue",
                 hashMapOf(FirebaseAnalytics.Param.VALUE to revenue, FirebaseAnalytics.Param.CURRENCY to currencyCode))
 
@@ -121,6 +122,7 @@ object RevenueHelper {
             val revenue = ecpmInfo.revenue.toDoubleOrNull() ?: ((ecpmInfo.cpm.toDoubleOrNull() ?: 0.0) / 1000.0)
             val currencyCode = ecpmInfo.currency.ifEmpty { "USD" }
             val networkName = ecpmInfo.adnName.ifEmpty { "pangle" }
+            logError("Ad cp--> show ad${position.aliasName}--adId=${adBean.adId} show ecpm->${revenue}")
             firebaseEvent("ad_impression_revenue",
                 hashMapOf(FirebaseAnalytics.Param.VALUE to revenue, FirebaseAnalytics.Param.CURRENCY to currencyCode))
             adImpression(JSONObject().apply {

@@ -273,25 +273,15 @@ dependencies {
     api("com.thinkup.sdk:tramini-plugin-tpn:6.5.73")
 
     // pangle 聚合
-    implementation("com.pangle.global:pag-sdk-m:8.1.6.4")
-    // todo
-//    implementation("com.pangle.global:admob-adapter:24.4.0.5")
-//    implementation("com.pangle.global:unity-adapter:4.17.0.0")
-    implementation("com.pangle.global:vungle-adapter:7.5.1.2")
-    implementation("com.pangle.global:ironsource-adapter:8.10.0.2")
-    implementation("com.pangle.global:mintegral-adapter:16.9.91.1")
-    implementation("com.pangle.global:chartboost-adapter:9.8.3.2")
-    implementation("com.pangle.global:dtexchange-adapter:8.3.8.1")
-    implementation("com.pangle.global:bigo-adapter:5.5.1.1")
+    implementation("com.pangle.global:pag-sdk-m:8.2.6.1")
+    implementation("com.pangle.global:admob-adapter:25.0.0.0")
+    implementation("com.pangle.global:vungle-adapter:7.6.1.0")
+    implementation("com.pangle.global:unity-adapter:4.17.0.0")
+    implementation("com.pangle.global:ironsource-adapter:9.2.0.0")
+    implementation("com.pangle.global:mintegral-adapter:17.0.91.0")
+    implementation("com.pangle.global:chartboost-adapter:9.11.0.1")
+    implementation("com.pangle.global:bigo-adapter:5.7.1.2")
     implementation("com.pangle.global:inmobi-adapter:11.1.0.0")
 
-    //admob 25.0.0
-    //vungle 7.6.1
-    //unity 4.17.0
-    //ironsource 9.2.0.0
-    //mintegral 17.0.91
-    //chartboost 9.11.0.1
-    //dtexchange  8.4.3
-    //bigo  5.7.1
-    //inmobi  11.1.1.0
+//    implementation("com.pangle.global:dtexchange-adapter:8.3.8.1")
 }

@@ -187,7 +187,7 @@ object AdUtils {
         if (isSenseBidOpen) preloadUnlock()
     }
 
-    fun isLaunchAdHaveCache() = selectBestHolder(launchBidHolders()) != null
+    fun isLaunchAdHaveCache() = launchBidHolders().any { it.isAdHaveCache() }
 
     fun showLaunchAd(activity: GenericActivity,
                      adPosId: String,
@@ -202,7 +202,7 @@ object AdUtils {
         }
     }
 
-    fun isUnlockAdHaveCache() = selectBestHolder(unlockHolders()) != null
+    fun isUnlockAdHaveCache() = unlockHolders().any { it.isAdHaveCache() }
 
     fun showUnlockAd(activity: GenericActivity,
                      adPosId: String,
@@ -226,7 +226,20 @@ object AdUtils {
         val candidates = holders.mapNotNull { holder ->
             holder.peekCachedAd()?.let { holder to it }
         }
-        return candidates.maxWithOrNull { first, second -> compareAd(first.second, second.second) }?.first
+        logError("Ad cp--> compareAd position: ${
+            candidates.joinToString(prefix = "[", postfix = "]") { (_, ad) ->
+                "${ad.position.adSense}/${ad.adBean.source}/${ad.adBean.format.aliasName}/${ad.adBean.adId}/${
+                    formatBidEcpm(ad.bidEcpm)
+                }"
+            }
+        }")
+        val pair = candidates.maxWithOrNull { first, second -> compareAd(first.second, second.second) }
+        val holder = pair?.first
+        pair?.let {
+            val se = pair.second
+            logError("Ad cp--> compareAd success position->-${se.adBean.source}--${holder?.position?.adSense}-${se.adBean.format.aliasName}  --ecpm=${se.bidEcpm} --adid=${se.adBean.adId}")
+        }
+        return holder
     }
 
     private fun launchBidHolders() = buildList {
@@ -248,9 +261,10 @@ object AdUtils {
     private fun compareAd(first: BaseController, second: BaseController): Int {
         val firstEcpm = first.bidEcpm
         val secondEcpm = second.bidEcpm
-        logError("compareAd-->$first ---$second  ecpm=>$firstEcpm --$secondEcpm")
         return firstEcpm.compareTo(secondEcpm)
     }
+
+    private fun formatBidEcpm(value: Double) = "%.10f".format(java.util.Locale.US, value).trimEnd('0').trimEnd('.')
 
     private fun allHolders() = listOf(
         launchHolder,

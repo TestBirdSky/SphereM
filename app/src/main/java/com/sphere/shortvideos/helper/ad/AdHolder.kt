@@ -46,6 +46,7 @@ class AdHolder(val position: AdPosition, private val retryKeySuffix: String = ""
     }
 
     fun preloadIfCan() {
+        if (sourceList.isEmpty()) return
         if (RiskHelper.isAdLimit()) {
             logError("ad limit-->")
             return
@@ -96,6 +97,7 @@ class AdHolder(val position: AdPosition, private val retryKeySuffix: String = ""
                 ad.onUserEarnedReward = rewardCall
                 position.aliasName = adPosId.ifBlank { position.aliasName }
                 ad.showFullScreenAd(activity, onAdDismissed, onAdShowed)
+                logError("Ad cp--> show ad event ${position.aliasName} ")
                 localEvent("ds_ad_impression", hashMapOf("ad_pos_id" to adPosId))
                 onAdLoaded = {}
                 preloadIfCan()
@@ -147,7 +149,7 @@ class AdHolder(val position: AdPosition, private val retryKeySuffix: String = ""
                         "ad_format" to adEntity.adBean.format.aliasName,
                         "ad_platform" to adEntity.adBean.source,
                         "ad_sense" to position.adSense,
-                        "loaded_revenue" to  adEntity.cachedBidEcpm
+                        "loaded_revenue" to adEntity.cachedBidEcpm
                     ))
                 cacheList.add(adEntity)
                 loading = false

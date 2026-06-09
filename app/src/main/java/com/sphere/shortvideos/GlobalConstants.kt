@@ -20,7 +20,7 @@ object GlobalConstants {
 
 
     // todo check
-    val NEW_DEFAULT_AD_LOCAL_JSON = if (isDebugMode) NEW_AD_DEFAULT_CON else """
+    val NEW_DEFAULT_AD_LOCAL_JSON = """
         {
           "dlmsf_switch": false,
           "fail_times": 100,
@@ -79,7 +79,7 @@ object GlobalConstants {
     //        }
     //    """.trimIndent()
 
-    const val NEW_AD_DEFAULT_CON = """
+    const val LOCAL_TEST_AD_DEFAULT_CON = """
 {
   "dlmsf_switch": false,
   "fail_times": 100,

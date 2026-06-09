@@ -66,3 +66,4 @@
 -keepclassmembers public class com.alex.** {
    public *;
 }
+-keep class com.bytedance.sdk.** { *; }

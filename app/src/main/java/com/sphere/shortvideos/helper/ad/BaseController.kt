@@ -33,6 +33,7 @@ import com.sphere.shortvideos.helper.RevenueHelper
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.risk.RiskHelper
 import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
+import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.mApp
 import com.thinkup.core.api.TUAdInfo
@@ -43,6 +44,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 abstract class BaseController(val position: AdPosition, val adBean: AdItemBean) : IAdController {
 
@@ -292,7 +294,7 @@ class ToponFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                         loadedTimeMills = System.currentTimeMillis()
                         (fullAd as? com.thinkup.splashad.api.TUSplashAd)?.let {
                             cachedBidEcpm = fetchToponBidEcpm(it.checkAdStatus()?.tuTopAdInfo)
-                            logError("ToponFullAd ecpm--> $bidEcpm")
+                            logError("Ad cp--> ecpm-->${position.adSense}- Topon AppOpenFormat  $cachedBidEcpm")
                         }
                         onLoaded(true)
                     }
@@ -322,7 +324,7 @@ class ToponFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                         loadedTimeMills = System.currentTimeMillis()
                         fullAd = interstitialAd
                         cachedBidEcpm = fetchToponBidEcpm(interstitialAd.checkAdStatus()?.tuTopAdInfo)
-                        logError("TopOn InterstitialFormat ecpm--> $bidEcpm")
+                        logError("Ad cp--> ecpm-->${position.adSense}- TopOn InterstitialFormat $cachedBidEcpm")
                         onLoaded(true)
                     }
 
@@ -359,7 +361,7 @@ class ToponFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                         loadedTimeMills = System.currentTimeMillis()
                         fullAd = rewardVideoAd
                         cachedBidEcpm = fetchToponBidEcpm(rewardVideoAd.checkAdStatus()?.tuTopAdInfo)
-                        logError("RewardFormat ecpm--> $bidEcpm")
+                        logError("Ad cp--> ecpm--> ${position.adSense}- TopOn RewardFormat $cachedBidEcpm")
                         onLoaded(true)
                     }
 
@@ -492,9 +494,8 @@ class ToponFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
 
     private fun fetchToponBidEcpm(adInfo: TUAdInfo?): Double {
         if (adInfo == null) return 0.0
-        return runCatching { adInfo.publisherRevenue }.getOrNull()
-            ?: runCatching { adInfo.ecpm / 1000.0 }.getOrNull()
-            ?: 0.0
+        return runCatching { adInfo.publisherRevenue }.getOrNull() ?: runCatching { adInfo.ecpm / 1000.0 }.getOrNull()
+        ?: 0.0
     }
 }
 
@@ -724,7 +725,7 @@ class PangleFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(po
 
                     override fun onAdLoaded(ad: PAGAppOpenAd) {
                         val ecpm = fetchPangleBidEcpm(ad)
-                        logError("AppOpenFormat-->$ecpm --show-->${ad.pagRevenueInfo?.showEcpm} ")
+                        logError("Ad cp--> ecpm--> pangle ${position.adSense}- AppOpenFormat-->$ecpm ")
                         cachedBidEcpm = ecpm
                         handleLoaded(ad, onLoaded)
                     }
@@ -741,7 +742,7 @@ class PangleFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(po
 
                         override fun onAdLoaded(ad: PAGInterstitialAd) {
                             val ecpm = fetchPangleBidEcpm(ad)
-                            logError("InterstitialFormat-->$ecpm --show-->${ad.pagRevenueInfo?.showEcpm} ")
+                            logError("Ad cp--> ecpm--> ${position.adSense}-InterstitialFormat-->$ecpm ")
                             cachedBidEcpm = ecpm
                             handleLoaded(ad, onLoaded)
                         }
@@ -756,7 +757,7 @@ class PangleFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(po
 
                     override fun onAdLoaded(ad: PAGRewardedAd) {
                         val ecpm = fetchPangleBidEcpm(ad)
-                        logError("PAGRewardedAd-->$ecpm --show-->${ad.pagRevenueInfo?.showEcpm} ")
+                        logError("Ad cp--> ecpm--> pangle ${position.adSense}- PAGRewardedAd-->$ecpm")
                         cachedBidEcpm = ecpm
                         handleLoaded(ad, onLoaded)
                     }
@@ -889,13 +890,16 @@ class PangleFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(po
             is PAGInterstitialAd -> fetchPanglePriceValue(ad)
             is PAGRewardedAd -> fetchPanglePriceValue(ad)
             else -> 0.0
-        }.apply {
-            logError("fetchPangleBidEcpm price/1000-->$this --$ad")
         }
     }
 
     private fun fetchPanglePriceValue(pangleAd: PangleAd): Double {
-        val price = pangleAd.getExtraInfo("price")
+        var price = pangleAd.getExtraInfo("price")
+        logError("fetchPanglePriceValue -->$price")
+        if (isDebugMode && price == null) {
+            price = listOf("299.2", "408.9", "108.0", "98.9", "308.1", "68.1").random()
+            logError("Ad cp--> use test info -->$price")
+        }
         return price?.toString()?.toDoubleOrNull()?.div(1000.0) ?: 0.0
     }
 }
