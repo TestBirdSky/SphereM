@@ -151,6 +151,12 @@ object NotificationHelper {
     const val CHANNEL_ID_LOCAL_MAX = "local_notification_channel_max"  // 本地定时通知渠道（用于弹窗显示）
     private const val CHANNEL_NAME_LOCAL = "sphere_drama_helper"
     private const val CHANNEL_NAME_LOCAL_MAX = "notification_sphere_drama"
+
+    /** 媒体通知专用渠道（与普通本地通知分离） */
+    const val CHANNEL_ID_MEDIA = "media_notification_channel"
+    const val CHANNEL_ID_MEDIA_MAX = "media_notification_channel_max"
+    private const val CHANNEL_NAME_MEDIA = "sphere_drama_media"
+    private const val CHANNEL_NAME_MEDIA_MAX = "notification_sphere_media"
     private val notificationImplUU by lazy {
         NotificationImpl(NOTI_ID_UNLOCK,
             listUserUnlockTitle,
@@ -206,20 +212,31 @@ object NotificationHelper {
                 .setLightsEnabled(false).setVibrationEnabled(false).setShowBadge(false).setName(CHANNEL_NAME).build())
     }
 
-    fun initNotificationChannel(context: Context, isShowN: Boolean = true): String {
-        var channelIdStr: String
+    fun initNotificationChannel(context: Context): String {
+        val channelIdStr: String = CHANNEL_ID_LOCAL_MAX
+        NotificationManagerCompat.from(context).createNotificationChannel(NotificationChannelCompat.Builder(
+            CHANNEL_ID_LOCAL_MAX,
+            NotificationManagerCompat.IMPORTANCE_MAX).setLightsEnabled(true).setVibrationEnabled(true)
+            .setShowBadge(true).setName(CHANNEL_NAME_LOCAL_MAX).build())
+        return channelIdStr
+    }
+
+    /** 媒体通知渠道，与 [initNotificationChannel] 普通渠道分离 */
+    fun initMediaNotificationChannel(context: Context, isShowN: Boolean = true): String {
+        val channelIdStr: String
         if (isShowN) {
-            channelIdStr = CHANNEL_ID_LOCAL_MAX
+            channelIdStr = CHANNEL_ID_MEDIA_MAX
             NotificationManagerCompat.from(context).createNotificationChannel(NotificationChannelCompat.Builder(
-                CHANNEL_ID_LOCAL_MAX,
-                NotificationManagerCompat.IMPORTANCE_MAX).setLightsEnabled(true).setVibrationEnabled(true)
-                .setShowBadge(true).setName(CHANNEL_NAME_LOCAL_MAX).build())
+                CHANNEL_ID_MEDIA_MAX,
+                NotificationManagerCompat.IMPORTANCE_MAX,
+            ).setLightsEnabled(true).setVibrationEnabled(true).setShowBadge(true).setName(CHANNEL_NAME_MEDIA_MAX)
+                .build())
         } else {
-            channelIdStr = CHANNEL_ID_LOCAL
+            channelIdStr = CHANNEL_ID_MEDIA
             NotificationManagerCompat.from(context).createNotificationChannel(NotificationChannelCompat.Builder(
-                CHANNEL_ID_LOCAL,
-                NotificationManagerCompat.IMPORTANCE_DEFAULT).setShowBadge(true).setLightsEnabled(false)
-                .setVibrationEnabled(false).setName(CHANNEL_NAME_LOCAL).build())
+                CHANNEL_ID_MEDIA,
+                NotificationManagerCompat.IMPORTANCE_DEFAULT,
+            ).setShowBadge(true).setLightsEnabled(false).setVibrationEnabled(false).setName(CHANNEL_NAME_MEDIA).build())
         }
         return channelIdStr
     }

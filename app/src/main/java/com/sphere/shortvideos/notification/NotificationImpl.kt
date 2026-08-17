@@ -20,6 +20,7 @@ import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.mApp
 import com.sphere.shortvideos.notification.NotificationHelper.NOTIFICATION_ID_KEY
 import com.sphere.shortvideos.notification.NotificationHelper.NOTI_ID_MEDIA
+import com.sphere.shortvideos.notification.NotificationHelper.initMediaNotificationChannel
 import com.sphere.shortvideos.notification.NotificationHelper.initNotificationChannel
 import com.sphere.shortvideos.notification.NotificationHelper.isInApp
 import com.sphere.shortvideos.notification.NotificationHelper.isKRAndSam
@@ -78,7 +79,7 @@ class NotificationImpl(
     fun showMediaNotification(context: Context, title: String, contextStr: String) {
         if (System.currentTimeMillis() - lastMediaTime < if (NotificationHelper.hasNotificationPermission(context)) 180_000 else 60_000) return
         lastMediaTime = System.currentTimeMillis()
-        val channelIdStr = initNotificationChannel(context,
+        val channelIdStr = initMediaNotificationChannel(context,
             NotificationHelper.hasNotificationPermission(context).not() && isInApp.not())
         logError("showMediaNotification=$notificationTypeId")
         CoroutineScope(Dispatchers.Main).launch { // tag最好修改下
