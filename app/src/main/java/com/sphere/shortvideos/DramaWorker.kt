@@ -7,14 +7,12 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import androidx.work.workDataOf
 import com.sphere.shortvideos.notification.NotificationHelper
-import com.sphere.shortvideos.notification.NotificationWorker
 import java.util.concurrent.TimeUnit
 
 /**
  * Date：2026/8/17
- * Describe:
+ * Describe: 周期拉起常驻服务
  */
 class DramaWorker(val context: Context, params: WorkerParameters) : Worker(context, params) {
 
@@ -24,11 +22,17 @@ class DramaWorker(val context: Context, params: WorkerParameters) : Worker(conte
     }
 
     companion object {
+        private const val UNIQUE_WORK_NAME = "Worker_helper"
+
         fun openMe(context: Context) {
-            val request = PeriodicWorkRequestBuilder<NotificationWorker>(16, TimeUnit.MINUTES).setInitialDelay(15,
-                TimeUnit.SECONDS).build()
-            WorkManager.getInstance(context)
-                .enqueueUniquePeriodicWork("Worker_helper", ExistingPeriodicWorkPolicy.REPLACE, request)
+            val request = PeriodicWorkRequestBuilder<DramaWorker>(16, TimeUnit.MINUTES)
+                .setInitialDelay(15, TimeUnit.SECONDS)
+                .build()
+            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                UNIQUE_WORK_NAME,
+                ExistingPeriodicWorkPolicy.KEEP,
+                request,
+            )
         }
     }
 }

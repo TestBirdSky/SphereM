@@ -91,9 +91,9 @@ class AdHolder(val position: AdPosition, private val retryKeySuffix: String = ""
                 preloadIfCan()
                 return@launch
             } else {
-                val dialog = showAdDialog(activity)
-                delay(1000L)
-                dialog?.dismiss()
+//                val dialog = showAdDialog(activity)
+//                delay(1000L)
+//                dialog?.dismiss()
                 ad.onUserEarnedReward = rewardCall
                 position.aliasName = adPosId.ifBlank { position.aliasName }
                 ad.showFullScreenAd(activity, onAdDismissed, onAdShowed)

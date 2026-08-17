@@ -196,6 +196,10 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         binding.bottomNav.selectedItemId = R.id.tab_wallet
     }
 
+    fun jumpTask() {
+        binding.bottomNav.selectedItemId = R.id.tab_task
+    }
+
     /** 切换到短视频 Tab（内嵌 [PangleVideoContainerFragment] 列表） */
     fun jumpToVideoTab() {
         binding.bottomNav.selectedItemId = R.id.tab_video
@@ -213,10 +217,10 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
     private fun selectForYouIfFromNotification(intent: Intent) {
         val notificationId = intent.getIntExtra(NotificationHelper.NOTIFICATION_ID_KEY, -1)
         if (notificationId != -1) {
-            binding.bottomNav.selectedItemId = if (notificationId == NotificationHelper.NOTI_ID_FIXED) {
-                R.id.tab_wallet
-            } else {
-                R.id.tab_video
+            binding.bottomNav.selectedItemId = when (notificationId) {
+                NotificationHelper.NOTI_ID_FIXED -> R.id.tab_wallet
+                NotificationHelper.NOTI_ID_HOME_CHECKIN -> R.id.tab_task
+                else -> R.id.tab_video
             }
         }
     }

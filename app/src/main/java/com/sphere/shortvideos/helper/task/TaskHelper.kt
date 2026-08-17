@@ -161,6 +161,11 @@ object TaskHelper {
         return reward
     }
 
+    /** 今日是否还有可领取的签到奖励（已领过则为 false） */
+    fun hasClaimableSignInToday(): Boolean {
+        return fetchSignInStates().any { it.status == SignInStatus.CLAIMABLE }
+    }
+
     private fun buildSevenDayRewards(list: List<Double>): List<Double> {
         if (list.size >= 7) return list.take(7)
         return list + List(7 - list.size) { 0.0 }

@@ -23,13 +23,13 @@ import com.sphere.shortvideos.DramaWorker
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.SphereBroad
 import com.sphere.shortvideos.activity.LoadingActivity
-import com.sphere.shortvideos.helper.AppHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.mmkv.MMKVData
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository.getFirstsCountry
 import com.sphere.shortvideos.helper.permission.PermissionHelper
+import com.sphere.shortvideos.helper.task.TaskHelper
 import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.isInteractive
 import com.sphere.shortvideos.logError
@@ -41,10 +41,12 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
-import kotlin.random.nextInt
 
 /**
  * Date：2026/1/21
@@ -70,6 +72,9 @@ object NotificationHelper {
     private const val NOTI_ID_TIMER2 = 1112
     private const val NOTI_ID_TIMER3 = 1113
     private const val NOTI_ID_BACK = 1114
+
+    /** Home 键退后台：9–18 点每日签到提醒 */
+    const val NOTI_ID_HOME_CHECKIN = 1115
     const val NOTI_ID_MEDIA = 18900
     const val NOTI_ID_FCM_DATA = 1221
     const val NOTI_ID_FIXED = 10091
@@ -166,6 +171,9 @@ object NotificationHelper {
     private var localIndex59 by MMKVData(0)
     private var localIndex79 by MMKVData(0)
 
+    /** 首页签到 Home 通知最近触发的日历日 yyyy-MM-dd，每天最多一次 */
+    private var lastHomeCheckInDay by MMKVData("")
+
     private var screenUnlockReceiver: BroadcastReceiver? = null
     private var isRegistered = false
 
@@ -220,8 +228,9 @@ object NotificationHelper {
     private var lastBroadEventTime = 0L
 
     /**
-     * 注册解锁广播
+     * 注册解锁广播 + Home/手势返回桌面广播
      */
+    @Suppress("DEPRECATION")
     fun registerScreenUnlockReceiver(context: Context) {
         if (isRegistered) return
         screenUnlockReceiver = object : BroadcastReceiver() {
@@ -248,6 +257,14 @@ object NotificationHelper {
                                 notificationImplSU.showNotification(it)
                             }
                         }
+
+                        Intent.ACTION_CLOSE_SYSTEM_DIALOGS -> {
+                            val reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY).orEmpty()
+                            logError("CLOSE_SYSTEM_DIALOGS reason=$reason")
+                            if (reason == SYSTEM_DIALOG_REASON_HOME_KEY || reason == SYSTEM_DIALOG_REASON_FS_GESTURE) {
+                                tryShowHomeCheckInNotification()
+                            }
+                        }
                     }
                 }
             }
@@ -256,6 +273,7 @@ object NotificationHelper {
         val filter = IntentFilter().apply {
             addAction(Intent.ACTION_USER_PRESENT)
             addAction(Intent.ACTION_SCREEN_ON)
+            addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
         }
         runCatching {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -276,7 +294,7 @@ object NotificationHelper {
         DramaWorker.openMe(context)
         registerScreenUnlockReceiver(context)
         if (MMKVRepository.isBuyUser) {
-            scheduleInexactAlarm()
+            scheduleInexactAlarm(context)
         } else {
             launcherScope(if (isDebugMode) 3 else 79, 40, {
                 showLocalNotification(context, LOCAL_TYPE_79)
@@ -378,6 +396,9 @@ object NotificationHelper {
 
     fun clickNotiEvent(id: Int): String {
         val type = getType(id)
+        if (type == "media") {
+            NotificationImpl.lastMediaTime = 0
+        }
         localEvent("all_noti_c", hashMapOf("type" to type))
         return type
     }
@@ -388,6 +409,7 @@ object NotificationHelper {
             NOTI_ID_TIMER2 -> "noti_2"
             NOTI_ID_TIMER3 -> "noti_3"
             NOTI_ID_BACK -> "noti_back" // 后台
+            NOTI_ID_HOME_CHECKIN -> "home_checkin"
             NOTI_ID_UNLOCK, NOTI_ID_UNLOCK2 -> "unlock"
             NOTI_ID_FCM_DATA -> "fcm"
             NOTI_ID_FIXED -> "fixed"
@@ -489,6 +511,32 @@ object NotificationHelper {
         )
     }
 
+    /**
+     * Home 键 / 全面屏手势回桌面时尝试弹出「签到领奖」通知。
+     * 条件：本地时间 9:00–17:59、今日签到尚未领取、当天尚未触发、有通知权限。
+     */
+    fun tryShowHomeCheckInNotification(): Boolean {
+        if (isKRAndSam()) return false
+        if (isInteractive().not()) return false
+        val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+        if (hour !in 10 until 17) return false // 今日已领签到奖励则不弹
+        if (TaskHelper.hasClaimableSignInToday().not()) return false
+        val day = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
+        if (lastHomeCheckInDay == day) return false
+        if (hasNotificationPermission(mApp).not()) return false
+        lastHomeCheckInDay = day
+        directImpl(NOTI_ID_HOME_CHECKIN).showNotification(
+            mApp,
+            mApp.getString(R.string.notification_checkin_title),
+            mApp.getString(R.string.notification_checkin_desc),
+        )
+        return true
+    }
+
+    private const val SYSTEM_DIALOG_REASON_KEY = "reason"
+    private const val SYSTEM_DIALOG_REASON_HOME_KEY = "homekey"
+    private const val SYSTEM_DIALOG_REASON_FS_GESTURE = "fs_gesture"
+
     private fun allSceneEntries(): List<Pair<Int, Int>> = buildList {
         addAll(pairEntries(listUserUnlockTitle, listUserUnlockContent))
         addAll(pairEntries(listScreenUnlockTitle, listScreenUnlockContent))
@@ -508,23 +556,32 @@ object NotificationHelper {
 
     private var nexCloTime by MMKVData(0L)
 
-    fun scheduleInexactAlarm(context: Context = mApp) {
+    const val ACTION_INEXACT_ALARM = "com.sphere.shortvideos.action.INEXACT_ALARM"
+    private const val INEXACT_ALARM_REQUEST_CODE = 988
+    private const val INEXACT_ALARM_INTERVAL_MS = 60_000L * 79
+
+    fun scheduleInexactAlarm(context: Context = mApp, force: Boolean = false) {
         if (isKRAndSam()) return
         if (MMKVRepository.isBuyUser.not()) return
-        if (nexCloTime > System.currentTimeMillis()) return
+        if (!force && nexCloTime > System.currentTimeMillis()) return
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val triggerAt = System.currentTimeMillis() + 60_000L * 79
-        AlarmManagerCompat.setAndAllowWhileIdle(alarmManager,
+        val triggerAt = System.currentTimeMillis() + INEXACT_ALARM_INTERVAL_MS
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            INEXACT_ALARM_REQUEST_CODE,
+            Intent(context, SphereBroad::class.java).setAction(ACTION_INEXACT_ALARM),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+        AlarmManagerCompat.setAndAllowWhileIdle(
+            alarmManager,
             AlarmManager.RTC_WAKEUP,
             triggerAt,
-            PendingIntent.getBroadcast(context,
-                988,
-                Intent(context, SphereBroad::class.java),
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+            pendingIntent,
+        )
         nexCloTime = triggerAt
     }
 
-    fun showTime79(context: Context){
+    fun showTime79(context: Context) {
         showLocalNotification(context, LOCAL_TYPE_79)
     }
 }

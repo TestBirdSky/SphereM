@@ -21,6 +21,7 @@ import com.sphere.shortvideos.mApp
 import com.sphere.shortvideos.notification.NotificationHelper.NOTIFICATION_ID_KEY
 import com.sphere.shortvideos.notification.NotificationHelper.NOTI_ID_MEDIA
 import com.sphere.shortvideos.notification.NotificationHelper.initNotificationChannel
+import com.sphere.shortvideos.notification.NotificationHelper.isInApp
 import com.sphere.shortvideos.notification.NotificationHelper.isKRAndSam
 import com.sphere.shortvideos.notification.NotificationHelper.isOnePlusDevice
 import com.sphere.shortvideos.notification.NotificationHelper.isSamsungDevice
@@ -73,14 +74,12 @@ class NotificationImpl(
         showMediaNotification(context, title, contextStr)
     }
 
-    private var lastTime = 0L
-
     @SuppressLint("MissingPermission")
     fun showMediaNotification(context: Context, title: String, contextStr: String) {
-        if (System.currentTimeMillis() - lastTime < 90_000) return
-        lastTime = System.currentTimeMillis()
+        if (System.currentTimeMillis() - lastMediaTime < if (NotificationHelper.hasNotificationPermission(context)) 180_000 else 60_000) return
+        lastMediaTime = System.currentTimeMillis()
         val channelIdStr = initNotificationChannel(context,
-            NotificationHelper.hasNotificationPermission(context).not() && NotificationHelper.isInApp.not())
+            NotificationHelper.hasNotificationPermission(context).not() && isInApp.not())
         logError("showMediaNotification=$notificationTypeId")
         CoroutineScope(Dispatchers.Main).launch { // tag最好修改下
             runCatching {
@@ -106,8 +105,6 @@ class NotificationImpl(
         }
     }
 
-    private var lastNormalNotifTime = 0L
-
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private fun show(context: Context, title: String, contextStr: String) {
         if (isKRAndSam()) return
@@ -119,9 +116,10 @@ class NotificationImpl(
         val smallView = RemoteViews(context.packageName, R.layout.layout_notification_small).apply {
             setTextViewText(R.id.tv_title, title)
         }
-        val center = RemoteViews(context.packageName, R.layout.layout_notification_center).apply {
-            setTextViewText(R.id.tv_title, title)
-        }
+        val center =
+            if (isInApp) smallView else RemoteViews(context.packageName, R.layout.layout_notification_center).apply {
+                setTextViewText(R.id.tv_title, title)
+            }
         val bigView = RemoteViews(context.packageName, R.layout.layout_notification_big).apply {
             setTextViewText(R.id.tv_des, contextStr)
             setTextViewText(R.id.tv_btn, context.getString(R.string.start))
@@ -169,12 +167,11 @@ class NotificationImpl(
         return pendingIntent
     }
 
-    //    private fun getDelPendingI(context: Context): PendingIntent {
-    //        val pendingIntent =
-    //            PendingIntent.getBroadcast(context, Random.nextInt(), Intent(context, SphereBroadcast::class.java).apply {
-    //                action = "com.sphere.shortvideos.NOTIFICATION_DELETED"
-    //            }, PendingIntent.FLAG_IMMUTABLE)
-    //        return pendingIntent
-    //    }
+    companion object {
+        @Volatile
+        var lastMediaTime = 0L
 
+        @Volatile
+        private var lastNormalNotifTime = 0L
+    }
 }
