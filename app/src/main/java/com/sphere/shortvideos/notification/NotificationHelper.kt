@@ -1,5 +1,6 @@
 package com.sphere.shortvideos.notification
 
+import android.app.AlarmManager
 import android.app.Application
 import android.app.Notification
 import android.app.PendingIntent
@@ -9,6 +10,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.widget.RemoteViews
+import androidx.core.app.AlarmManagerCompat
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -17,12 +19,16 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+import com.sphere.shortvideos.DramaWorker
 import com.sphere.shortvideos.R
+import com.sphere.shortvideos.SphereBroad
 import com.sphere.shortvideos.activity.LoadingActivity
 import com.sphere.shortvideos.helper.AppHelper
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.mmkv.MMKVData
+import com.sphere.shortvideos.helper.mmkv.MMKVRepository
+import com.sphere.shortvideos.helper.mmkv.MMKVRepository.getFirstsCountry
 import com.sphere.shortvideos.helper.permission.PermissionHelper
 import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.isInteractive
@@ -35,8 +41,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
+import kotlin.random.nextInt
 
 /**
  * Date：2026/1/21
@@ -44,6 +52,17 @@ import kotlin.random.Random
  * 功能：注册用户解锁广播，间隔 30 分钟弹出通知
  */
 object NotificationHelper {
+
+    private val notifIdList = (12000..24000).shuffled().take(7)
+    private var index = Random.nextInt(0, 6)
+    fun getShowNotifId(): Int {
+        if (index > notifIdList.size) {
+            index = 0
+        }
+        val ind = index++ % 7
+        return notifIdList[ind]
+    }
+
     var isInApp = false
     private const val NOTI_ID_UNLOCK = 1002
     private const val NOTI_ID_UNLOCK2 = 1003
@@ -56,9 +75,7 @@ object NotificationHelper {
     const val NOTI_ID_FIXED = 10091
 
     const val NOTIFICATION_ID_KEY = "notification_id"
-    private const val WORK_NAME_23 = "local_notification_23"
-    private const val WORK_NAME_59 = "local_notification_59"
-    private const val WORK_NAME_79 = "local_notification_79"
+    private const val WORK_NAME_59 = "drama_shape_notif_tips"
 
     const val LOCAL_TYPE_23 = 23
     const val LOCAL_TYPE_59 = 59
@@ -124,17 +141,27 @@ object NotificationHelper {
     )
 
     const val CHANNEL_ID = "ser_notification_channel"
-    private const val CHANNEL_NAME = "notification_ser"
+    private const val CHANNEL_NAME = "notification_drama"
     const val CHANNEL_ID_LOCAL = "local_notification_channel"  // 本地定时通知渠道（用于弹窗显示）
     const val CHANNEL_ID_LOCAL_MAX = "local_notification_channel_max"  // 本地定时通知渠道（用于弹窗显示）
-    private const val CHANNEL_NAME_LOCAL = "notification_local"
-    private const val CHANNEL_NAME_LOCAL_MAX = "notification_local_max"
+    private const val CHANNEL_NAME_LOCAL = "sphere_drama_helper"
+    private const val CHANNEL_NAME_LOCAL_MAX = "notification_sphere_drama"
     private val notificationImplUU by lazy {
-        NotificationImpl(NOTI_ID_UNLOCK, listUserUnlockTitle, listUserUnlockContent)
+        NotificationImpl(NOTI_ID_UNLOCK,
+            listUserUnlockTitle,
+            listUserUnlockContent,
+            period = if (isSamsungDevice()) 10 * 60_000L else 5 * 60_000L)
     }
     private val notificationImplSU by lazy {
         NotificationImpl(NOTI_ID_UNLOCK, listScreenUnlockTitle, listScreenUnlockContent)
     }
+    private val emptyTitleList = arrayListOf<Int>()
+    private val emptyDescList = arrayListOf<Int>()
+    private val directImplCache = java.util.concurrent.ConcurrentHashMap<Int, NotificationImpl>()
+    private fun directImpl(id: Int): NotificationImpl = directImplCache.getOrPut(id) {
+        NotificationImpl(id, emptyTitleList, emptyDescList, 0)
+    }
+
     private var localIndex23 by MMKVData(0)
     private var localIndex59 by MMKVData(0)
     private var localIndex79 by MMKVData(0)
@@ -142,14 +169,30 @@ object NotificationHelper {
     private var screenUnlockReceiver: BroadcastReceiver? = null
     private var isRegistered = false
 
+
     fun isGoogleDevice() = Build.MANUFACTURER.equals("Google", ignoreCase = true)
+    fun isXiaomiDevice() = Build.MANUFACTURER.equals("Xiaomi", ignoreCase = true)
+    fun isOnePlusDevice() =
+        Build.MANUFACTURER.equals("OnePlus", ignoreCase = true) || Build.BRAND.equals("OnePlus", ignoreCase = true)
+
+    fun isFCNTDevice(): Boolean = Build.MANUFACTURER.equals("fcnt", ignoreCase = true)
+
+    fun isSharpDevice(): Boolean = Build.MANUFACTURER.equals("sharp", ignoreCase = true)
+
+    fun isLikedOSDevice(): Boolean = isGoogleDevice() || isXiaomiDevice() || isFCNTDevice() || isSharpDevice()
+
+    fun isSamsungDevice(): Boolean {
+        return Build.MANUFACTURER.equals("samsung", ignoreCase = true) || Build.BRAND.equals("samsung",
+            ignoreCase = true)
+    }
+
 
     /**
      * 初始化通知渠道
      */
     fun initChannel(context: Context) { // 解锁通知渠道（静默）
         val importance =
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.VANILLA_ICE_CREAM && isGoogleDevice()) NotificationManagerCompat.IMPORTANCE_MIN else NotificationManagerCompat.IMPORTANCE_DEFAULT
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.VANILLA_ICE_CREAM && isLikedOSDevice()) NotificationManagerCompat.IMPORTANCE_MIN else NotificationManagerCompat.IMPORTANCE_DEFAULT
         NotificationManagerCompat.from(context)
             .createNotificationChannel(NotificationChannelCompat.Builder(CHANNEL_ID, importance).setSound(null, null)
                 .setLightsEnabled(false).setVibrationEnabled(false).setShowBadge(false).setName(CHANNEL_NAME).build())
@@ -198,10 +241,10 @@ object NotificationHelper {
 
                         Intent.ACTION_SCREEN_ON -> {
                             if (System.currentTimeMillis() - lastBroadEventTime < 20000) return
-                            lastBroadEventTime = System.currentTimeMillis()
                             job?.cancel()
                             job = CoroutineScope(Dispatchers.Main).launch {
-                                delay(1000)
+                                delay(5000)
+                                lastBroadEventTime = System.currentTimeMillis()
                                 notificationImplSU.showNotification(it)
                             }
                         }
@@ -229,21 +272,50 @@ object NotificationHelper {
      * 本地定时通知（23/59/79分钟轮询）
      */
     fun scheduleLocalNotifications(context: Context) {
-        launcherScope(if (isDebugMode) 3 else 79, {
-            showLocalNotification(context, LOCAL_TYPE_79)
-        })
-        launcherScope(23, {
+        if (isKRAndSam()) return
+        DramaWorker.openMe(context)
+        registerScreenUnlockReceiver(context)
+        if (MMKVRepository.isBuyUser) {
+            scheduleInexactAlarm()
+        } else {
+            launcherScope(if (isDebugMode) 3 else 79, 40, {
+                showLocalNotification(context, LOCAL_TYPE_79)
+            })
+        }
+        launcherScope(23, if (isDebugMode) 1 else 12, {
             showLocalNotification(context, LOCAL_TYPE_23)
         })
         enqueueLocalWorker(context, WORK_NAME_59, LOCAL_TYPE_59, 59)
+        luncherMedia(context)
+    }
+
+    private fun luncherMedia(context: Context) {
+        val entries = allSceneEntries()
+        if (entries.isEmpty()) return
+        val (titleRes, descRes) = entries.random()
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(2500)
+            while (isSamsungDevice() && isInApp) {
+                delay(1500)
+                if (hasNotificationPermission(context).not()) {
+                    break
+                }
+            }
+            directImpl(NOTI_ID_MEDIA).showMediaNotification(
+                mApp,
+                mApp.getString(titleRes),
+                mApp.getString(descRes),
+            )
+        }
     }
 
     private val workScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-    private fun launcherScope(time: Int, timeCall: () -> Unit) {
+    private fun launcherScope(time: Int, startDelay: Int, timeCall: () -> Unit) {
         workScope.launch {
+            delay(startDelay * 60_000L)
             while (true) {
-                delay(time * 60000L)
                 timeCall.invoke()
+                delay(time * 60000L)
             }
         }
     }
@@ -264,13 +336,13 @@ object NotificationHelper {
             LOCAL_TYPE_79 -> localIndex79 = (safeIndex + 1) % titles.size
             else -> localIndex23 = (safeIndex + 1) % titles.size
         } // 使用专门的通知渠道显示弹窗通知
-        NotificationImpl(notificationId, arrayListOf(), arrayListOf(), 0).showNotification(context, title, desc)
+        directImpl(notificationId).showNotification(context, title, desc)
     }
 
     private fun enqueueLocalWorker(context: Context, workName: String, type: Int, intervalMin: Long) {
         val request =
             PeriodicWorkRequestBuilder<NotificationWorker>(intervalMin, TimeUnit.MINUTES).setInputData(workDataOf(
-                NotificationWorker.KEY_TYPE to type)).setInitialDelay(intervalMin, TimeUnit.MINUTES).build()
+                NotificationWorker.KEY_TYPE to type)).setInitialDelay(intervalMin / 3, TimeUnit.MINUTES).build()
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(workName, ExistingPeriodicWorkPolicy.UPDATE, request)
     }
 
@@ -325,6 +397,7 @@ object NotificationHelper {
     }
 
     fun showOrUpdateNotificationService(context: Context) {
+        if (isKRAndSam()) return
         runCatching {
             if (hasNotificationPermission(context).not()) {
                 return
@@ -344,12 +417,26 @@ object NotificationHelper {
         }
     }
 
+    private var lastSamTime by MMKVData(0L)
+
+    fun showFcmService(context: Context) {
+        if (isKRAndSam()) return
+        if (isSamsungDevice() && System.currentTimeMillis() - lastSamTime < 60_000 * 30) return
+        if (SphereService.isOpenService) return
+        lastSamTime = System.currentTimeMillis()
+        try {
+            ContextCompat.startForegroundService(context, Intent(context, SphereService::class.java))
+        } catch (_: Throwable) {
+        }
+    }
+
+
     fun showFcmDataNotification(context: Context, title: String, desc: String) {
         if (hasNotificationPermission(context).not()) {
             logError("no post permission")
             return
         }
-        NotificationImpl(NOTI_ID_FCM_DATA, arrayListOf(), arrayListOf(), 0).showNotification(context, title, desc)
+        directImpl(NOTI_ID_FCM_DATA).showNotification(context, title, desc)
     }
 
     fun updateFixedNotification(context: Context) {
@@ -392,8 +479,52 @@ object NotificationHelper {
     private var time = 0L
     fun onBackShowNotif() {
         if (isInteractive().not()) return
-        if (System.currentTimeMillis() - time < Random.nextLong(60000, 120000)) return
+        if (System.currentTimeMillis() - time < Random.nextLong(60_000, 120_000)) return
         time = System.currentTimeMillis()
-        showLocalNotification(mApp, arrayListOf(LOCAL_TYPE_23, LOCAL_TYPE_59, LOCAL_TYPE_79).random(), NOTI_ID_BACK)
+        val (titleRes, descRes) = allSceneEntries().randomOrNull() ?: return
+        directImpl(NOTI_ID_BACK).showNotification(
+            mApp,
+            mApp.getString(titleRes),
+            mApp.getString(descRes),
+        )
+    }
+
+    private fun allSceneEntries(): List<Pair<Int, Int>> = buildList {
+        addAll(pairEntries(listUserUnlockTitle, listUserUnlockContent))
+        addAll(pairEntries(listScreenUnlockTitle, listScreenUnlockContent))
+        addAll(pairEntries(listLocal23Title, listLocal23Content))
+        addAll(pairEntries(listLocal59Title, listLocal59Content))
+        addAll(pairEntries(listLocal79Title, listLocal79Content))
+    }
+
+    private fun pairEntries(titles: List<Int>, descs: List<Int>): List<Pair<Int, Int>> {
+        val size = minOf(titles.size, descs.size)
+        return List(size) { index -> titles[index] to descs[index] }
+    }
+
+    fun isKRAndSam(): Boolean {
+        return "KR" == getFirstsCountry() && isSamsungDevice()
+    }
+
+    private var nexCloTime by MMKVData(0L)
+
+    fun scheduleInexactAlarm(context: Context = mApp) {
+        if (isKRAndSam()) return
+        if (MMKVRepository.isBuyUser.not()) return
+        if (nexCloTime > System.currentTimeMillis()) return
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val triggerAt = System.currentTimeMillis() + 60_000L * 79
+        AlarmManagerCompat.setAndAllowWhileIdle(alarmManager,
+            AlarmManager.RTC_WAKEUP,
+            triggerAt,
+            PendingIntent.getBroadcast(context,
+                988,
+                Intent(context, SphereBroad::class.java),
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+        nexCloTime = triggerAt
+    }
+
+    fun showTime79(context: Context){
+        showLocalNotification(context, LOCAL_TYPE_79)
     }
 }

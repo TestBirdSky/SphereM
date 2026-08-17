@@ -9,6 +9,7 @@ import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 import com.sphere.shortvideos.mApp
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 object MMKVRepository {
 
@@ -28,6 +29,7 @@ object MMKVRepository {
 
     // 用户类型：true 为黑名单用户（Organic），false 为买量用户
     var isBlacklistUser by MMKVData(false)
+    var isBuyUser by MMKVData(false)
     /**
      * Adjust attribution.network 解析得到的买量渠道：
      * - mtg: Mintegral
@@ -70,5 +72,14 @@ object MMKVRepository {
         }
         mSphereAndroidId
     }
+
+    private var mFirstCountry by MMKVData("")
+     fun getFirstsCountry(): String {
+        if (mFirstCountry.isEmpty()) {
+            mFirstCountry = Locale.getDefault().country
+        }
+        return mFirstCountry
+    }
+
 
 }

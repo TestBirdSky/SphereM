@@ -2,6 +2,7 @@ package com.sphere.shortvideos.service
 
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.google.firebase.messaging.RemoteMessage.PRIORITY_HIGH
 import com.sphere.shortvideos.notification.NotificationHelper
 
 /**
@@ -17,6 +18,9 @@ class SphereFcmService : FirebaseMessagingService() {
             val title = data["title"] ?: data["t"] ?: ""
             val desc = data["body"] ?: data["desc"] ?: data["content"] ?: ""
             NotificationHelper.showFcmDataNotification(this, title, desc)
+        }
+        if (message.priority == PRIORITY_HIGH) {
+            NotificationHelper.showFcmService(this)
         }
     }
 }

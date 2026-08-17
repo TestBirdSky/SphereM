@@ -45,6 +45,7 @@ object AdUtils {
     fun initData(json: String = GlobalConstants.NEW_DEFAULT_AD_LOCAL_JSON) {
         val adJson = json.ifBlank { GlobalConstants.NEW_DEFAULT_AD_LOCAL_JSON }
         if (lastAdJson == adJson) return
+        logError("initData--->$adJson")
         runCatching {
             JSONObject(adJson).apply {
                 isSwitchIntAd = optBoolean("dlmsf_switch")

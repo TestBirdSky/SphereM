@@ -21,25 +21,31 @@ import com.sphere.shortvideos.mApp
 import com.sphere.shortvideos.notification.NotificationHelper.NOTIFICATION_ID_KEY
 import com.sphere.shortvideos.notification.NotificationHelper.NOTI_ID_MEDIA
 import com.sphere.shortvideos.notification.NotificationHelper.initNotificationChannel
+import com.sphere.shortvideos.notification.NotificationHelper.isKRAndSam
+import com.sphere.shortvideos.notification.NotificationHelper.isOnePlusDevice
+import com.sphere.shortvideos.notification.NotificationHelper.isSamsungDevice
+import com.sphere.shortvideos.notification.NotificationHelper.isXiaomiDevice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.random.Random
-import kotlin.random.nextInt
 
 /**
  * Date：2026/1/21
  * Describe:
  */
-class NotificationImpl(val notificationId: Int = 1000,
-                       val strTitle: ArrayList<Int>,
-                       val strContext: ArrayList<Int>,
-                       val period: Long = 60000 * 30) {
+class NotificationImpl(
+    val notificationTypeId: Int = 1000,
+    val strTitle: ArrayList<Int>,
+    val strContext: ArrayList<Int>,
+    val period: Long = 60000 * 30,
+) {
     private var index = 0
     private var lastNotificationTime = 0L
 
     @SuppressLint("MissingPermission")
     fun showNotification(context: Context) {
+        if (isKRAndSam()) return
         if (strTitle.isEmpty() || strContext.isEmpty()) return
         val total = minOf(strTitle.size, strContext.size)
         if (total <= 0) return
@@ -59,19 +65,23 @@ class NotificationImpl(val notificationId: Int = 1000,
 
     @SuppressLint("MissingPermission")
     fun showNotification(context: Context, title: String, contextStr: String) {
-        showMediaNotification(context, title, contextStr)
         if (NotificationHelper.hasNotificationPermission(context)) {
             show(context, title, contextStr)
         } else {
             logError("no post permission")
         }
+        showMediaNotification(context, title, contextStr)
     }
+
+    private var lastTime = 0L
 
     @SuppressLint("MissingPermission")
     fun showMediaNotification(context: Context, title: String, contextStr: String) {
+        if (System.currentTimeMillis() - lastTime < 90_000) return
+        lastTime = System.currentTimeMillis()
         val channelIdStr = initNotificationChannel(context,
             NotificationHelper.hasNotificationPermission(context).not() && NotificationHelper.isInApp.not())
-        logError("showMediaNotification=$notificationId")
+        logError("showMediaNotification=$notificationTypeId")
         CoroutineScope(Dispatchers.Main).launch { // tag最好修改下
             runCatching {
                 val mMediaSession = MediaSessionCompat(context, "MediaSessionSphere")
@@ -96,32 +106,41 @@ class NotificationImpl(val notificationId: Int = 1000,
         }
     }
 
+    private var lastNormalNotifTime = 0L
+
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private fun show(context: Context, title: String, contextStr: String) {
+        if (isKRAndSam()) return
+        if (System.currentTimeMillis() - lastNormalNotifTime < 20_000) return
+        lastNormalNotifTime = System.currentTimeMillis()
         logError("show--->$title --$contextStr")
-        NotificationHelper.showNotiEvent(notificationId)
+        NotificationHelper.showNotiEvent(notificationTypeId)
         val channelIdStr = initNotificationChannel(context)
         val smallView = RemoteViews(context.packageName, R.layout.layout_notification_small).apply {
+            setTextViewText(R.id.tv_title, title)
+        }
+        val center = RemoteViews(context.packageName, R.layout.layout_notification_center).apply {
             setTextViewText(R.id.tv_title, title)
         }
         val bigView = RemoteViews(context.packageName, R.layout.layout_notification_big).apply {
             setTextViewText(R.id.tv_des, contextStr)
             setTextViewText(R.id.tv_btn, context.getString(R.string.start))
         }
-        val builder = NotificationCompat.Builder(context, channelIdStr)
-            .setSmallIcon(R.drawable.ic_notification_app)
-            .setContentTitle(title)
-            .setContentText(contextStr)
-            .setAutoCancel(true)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setPriority(NotificationCompat.PRIORITY_MAX)
+        val builder = NotificationCompat.Builder(context, channelIdStr).setSmallIcon(R.drawable.ic_notification_app)
+            .setContentTitle(title).setContentText(contextStr).setAutoCancel(true)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setPriority(NotificationCompat.PRIORITY_MAX)
             .setContentIntent(getPendingI(context)).setGroupSummary(false).setGroup("Sphere")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            builder.setStyle(DecoratedCustomViewStyle()).setCustomBigContentView(bigView)
-                .setCustomHeadsUpContentView(smallView).setCustomContentView(smallView)
+            if (isXiaomiDevice()) {
+                builder.setCustomContentView(center).setCustomBigContentView(center)
+            } else {
+                builder.setCustomContentView(smallView).setCustomHeadsUpContentView(center)
+                    .setCustomBigContentView(bigView)
+            }
+            builder.setStyle(DecoratedCustomViewStyle())
         } else {
-            val isXiaomi = Build.MANUFACTURER.equals("Xiaomi", ignoreCase = true)
-            if (isXiaomi) {
+            val isDeviceTarget = isXiaomiDevice() || isSamsungDevice() || isOnePlusDevice()
+            if (isDeviceTarget) {
                 builder.setCustomContentView(smallView).setCustomHeadsUpContentView(smallView)
                     .setCustomBigContentView(bigView)
                 builder.setStyle(DecoratedCustomViewStyle())
@@ -132,8 +151,8 @@ class NotificationImpl(val notificationId: Int = 1000,
         }
         try {
             val notificationId =
-                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.VANILLA_ICE_CREAM && NotificationHelper.isGoogleDevice()) 12980
-                else notificationId
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.VANILLA_ICE_CREAM && NotificationHelper.isLikedOSDevice()) 32980
+                else NotificationHelper.getShowNotifId()
             NotificationManagerCompat.from(context).notify(notificationId, builder.build())
         } catch (e: Exception) {
             logError("show error--->$e")
@@ -141,7 +160,7 @@ class NotificationImpl(val notificationId: Int = 1000,
         }
     }
 
-    private fun getPendingI(context: Context, id: Int = notificationId): PendingIntent {
+    private fun getPendingI(context: Context, id: Int = notificationTypeId): PendingIntent {
         val pendingIntent =
             PendingIntent.getActivity(context, Random.nextInt(), Intent(context, LoadingActivity::class.java).apply {
                 putExtra(NOTIFICATION_ID_KEY, id)

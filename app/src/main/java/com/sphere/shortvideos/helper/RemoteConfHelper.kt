@@ -65,6 +65,7 @@ class RemoteConfHelper {
         DramaIntAdHelper.updateConfigure()
         WithdrawalActionHelper.updateConfigure()
         fetchFbCon()
+        fetchAdmost()
     }
 
     fun fetchAdRemote() {
@@ -105,13 +106,18 @@ class RemoteConfHelper {
     }
 
     private fun fetchFbCon() {
-//        val fbInfo = getString("drama_fb")
-//        mFbAndAdjustHelper.initFb(fbInfo)
+    //        val fbInfo = getString("drama_fb")
+        //        mFbAndAdjustHelper.initFb(fbInfo)
     }
 
     fun getString(key: String): String = runCatching {
         remoteConfig.getString(key)
     }.getOrNull() ?: ""
+
+    private fun fetchAdmost() {
+        val str = getString("c155_admost")
+        RevenueHelper.update(str)
+    }
 
     companion object {
         private const val AD_CONFIG_DEFAULT_KEY = "dlmsf_ad_config"

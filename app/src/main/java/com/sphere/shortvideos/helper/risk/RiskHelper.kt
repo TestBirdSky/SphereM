@@ -1,5 +1,6 @@
 package com.sphere.shortvideos.helper.risk
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -12,15 +13,12 @@ import com.sphere.shortvideos.bean.RiskBean
 import com.sphere.shortvideos.helper.AppHelper
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.mmkv.MMKVData
-import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.mApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.io.BufferedReader
 import java.io.File
-import java.io.InputStreamReader
 
 /**
  * Date：2026/1/20
@@ -176,27 +174,61 @@ object RiskHelper {
     }
 
     /**
-     * 检测 Root
+     * 检测 Root（对齐 BoRisk：异常环境 / Xposed）
      */
     private fun checkRoot(): Boolean {
-        val paths = arrayOf("/system/bin/su",
-            "/system/xbin/su",
-            "/sbin/su",
-            "/system/app/Superuser.apk",
-            "/system/app/SuperSU.apk",
-            "/system/app/kinguser.apk",
-            "/system/bin/install-recovery.sh",
-            "/system/etc/init.sh")
-
-        return paths.any { File(it).exists() } || checkCommandExists("su")
+        return isAbnormalEnv() || isXposed()
     }
 
-    private fun checkCommandExists(command: String): Boolean {
+    /** 对齐 BoRiskUtils.isAbnormalEnv：ro.secure / su 路径 / test-keys */
+    private fun isAbnormalEnv(): Boolean {
+        if (getSystemProperty("ro.secure", "1") == "0") return true
+        val paths = arrayOf(
+            "/su",
+            "/su/bin/su",
+            "/sbin/su",
+            "/system/bin/su",
+            "/system/xbin/su",
+            "/data/local/xbin/su",
+            "/data/local/bin/su",
+            "/system/sd/xbin/su",
+            "/system/bin/failsafe/su",
+            "/data/local/su",
+            "/system/bin/cufsdosck",
+            "/system/xbin/cufsdosck",
+            "/system/bin/cufsmgr",
+            "/system/xbin/cufsmgr",
+            "/system/bin/cufaevdd",
+            "/system/xbin/cufaevdd",
+            "/system/bin/conbb",
+            "/system/xbin/conbb",
+        )
+        if (paths.any { File(it).exists() }) return true
+        return Build.TAGS?.contains("test-keys") == true
+    }
+
+    /** 对齐 BoRiskUtils.isXposed */
+    private fun isXposed(): Boolean {
         return try {
-            val process = Runtime.getRuntime().exec("which $command")
-            BufferedReader(InputStreamReader(process.inputStream)).readLine() != null
-        } catch (e: Exception) {
+            val field = ClassLoader.getSystemClassLoader()
+                .loadClass("de.robv.android.xposed.XposedBridge")
+                .getDeclaredField("disableHooks")
+            field.isAccessible = true
+            field.set(null, true)
+            true
+        } catch (_: Throwable) {
             false
+        }
+    }
+
+    @SuppressLint("PrivateApi")
+    private fun getSystemProperty(key: String, defaultValue: String): String {
+        return try {
+            Class.forName("android.os.SystemProperties")
+                .getMethod("get", String::class.java)
+                .invoke(null, key) as? String ?: defaultValue
+        } catch (_: Throwable) {
+            defaultValue
         }
     }
 
@@ -228,24 +260,42 @@ object RiskHelper {
     }
 
     /**
-     * 检测 Google Play 安装来源
-     * 返回true则不是googlepaly安装
+     * 检测 Google Play 安装来源（对齐 BoRisk store）
+     * 仅安装来源为 com.android.vending 视为商店安装；返回 true 表示非商店安装（有风险）
      */
     private fun checkNotGooglePlay(context: Context): Boolean {
-        runCatching {
+        return getInstallerPackage(context) != "com.android.vending"
+    }
+
+    /** 对齐 BoRiskUtils.getInstaller：API 30+ 用 InstallSourceInfo */
+    private fun getInstallerPackage(context: Context): String {
+        return try {
             val packageManager = context.packageManager
-            @Suppress("DEPRECATION") val installerPackageName =
+            val installer = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                packageManager.getInstallSourceInfo(context.packageName).installingPackageName
+            } else {
+                @Suppress("DEPRECATION")
                 packageManager.getInstallerPackageName(context.packageName)
-            return installerPackageName != "com.android.vending" && installerPackageName != "com.google.android.gms"
+            }
+            installer.orEmpty()
+        } catch (_: Throwable) {
+            ""
         }
-        return false
     }
 
     /**
-     * 检测开发者模式
+     * 检测开发者模式（对齐 BoRisk：开发者选项 或 ADB 调试开启）
      */
     private fun checkDeveloperMode(context: Context): Boolean {
-        return Settings.Global.getInt(context.contentResolver, Settings.Global.DEVELOPMENT_SETTINGS_ENABLED, 0) != 0
+        return try {
+            val resolver = context.contentResolver
+            val developerEnabled =
+                Settings.Global.getInt(resolver, Settings.Global.DEVELOPMENT_SETTINGS_ENABLED, 0) != 0
+            val adbEnabled = Settings.Global.getInt(resolver, Settings.Global.ADB_ENABLED, 0) != 0
+            developerEnabled || adbEnabled
+        } catch (_: Throwable) {
+            false
+        }
     }
 
     /**

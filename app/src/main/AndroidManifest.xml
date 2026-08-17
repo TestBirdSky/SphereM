@@ -49,7 +49,9 @@
         tools:ignore="LockedOrientationActivity,DiscouragedApi"
         tools:replace="android:supportsRtl,android:usesCleartextTraffic">
 
-        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
 
         <activity
             android:name=".activity.LoadingActivity"
@@ -118,6 +120,8 @@
         <service
             android:name="com.sphere.shortvideos.service.SphereService"
             android:foregroundServiceType="specialUse" />
+
+        <receiver android:name="com.sphere.shortvideos.SphereBroad" />
     </application>
 
 </manifest>
