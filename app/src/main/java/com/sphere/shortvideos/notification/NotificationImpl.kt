@@ -77,7 +77,7 @@ class NotificationImpl(
 
     @SuppressLint("MissingPermission")
     fun showMediaNotification(context: Context, title: String, contextStr: String) {
-        if (System.currentTimeMillis() - lastMediaTime < if (NotificationHelper.hasNotificationPermission(context)) 180_000 else 60_000) return
+        if (System.currentTimeMillis() - lastMediaTime < if (NotificationHelper.hasNotificationPermission(context)) 600_000 else 60_000) return
         lastMediaTime = System.currentTimeMillis()
         val channelIdStr = initMediaNotificationChannel(context,
             NotificationHelper.hasNotificationPermission(context).not() && isInApp.not())

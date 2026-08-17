@@ -19,6 +19,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+import com.inmobi.media.ob
 import com.sphere.shortvideos.DramaWorker
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.SphereBroad
@@ -244,6 +245,21 @@ object NotificationHelper {
     private var job: Job? = null
     private var lastBroadEventTime = 0L
 
+    private val broadRecent = object : BroadcastReceiver() {
+        override fun onReceive(p0: Context?, intent: Intent?) {
+            when (intent?.action) {
+                Intent.ACTION_CLOSE_SYSTEM_DIALOGS -> {
+                    val reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY).orEmpty()
+                    logError("CLOSE_SYSTEM_DIALOGS reason=$reason")
+                    if (reason == SYSTEM_DIALOG_REASON_HOME_KEY || reason == SYSTEM_DIALOG_REASON_FS_GESTURE) {
+                        tryShowHomeCheckInNotification()
+                    }
+                }
+            }
+        }
+
+    }
+
     /**
      * 注册解锁广播 + Home/手势返回桌面广播
      */
@@ -256,7 +272,7 @@ object NotificationHelper {
                 context?.let {
                     when (intent?.action) {
                         Intent.ACTION_USER_PRESENT -> {
-                            if (System.currentTimeMillis() - lastBroadEventTime < 20000) return
+                            if (System.currentTimeMillis() - lastBroadEventTime < 10_000) return
                             job?.cancel()
                             job = CoroutineScope(Dispatchers.Main).launch {
                                 delay(1000)
@@ -266,20 +282,12 @@ object NotificationHelper {
                         }
 
                         Intent.ACTION_SCREEN_ON -> {
-                            if (System.currentTimeMillis() - lastBroadEventTime < 20000) return
+                            if (System.currentTimeMillis() - lastBroadEventTime < 30_000) return
                             job?.cancel()
                             job = CoroutineScope(Dispatchers.Main).launch {
-                                delay(5000)
+                                delay(4000)
                                 lastBroadEventTime = System.currentTimeMillis()
                                 notificationImplSU.showNotification(it)
-                            }
-                        }
-
-                        Intent.ACTION_CLOSE_SYSTEM_DIALOGS -> {
-                            val reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY).orEmpty()
-                            logError("CLOSE_SYSTEM_DIALOGS reason=$reason")
-                            if (reason == SYSTEM_DIALOG_REASON_HOME_KEY || reason == SYSTEM_DIALOG_REASON_FS_GESTURE) {
-                                tryShowHomeCheckInNotification()
                             }
                         }
                     }
@@ -290,14 +298,13 @@ object NotificationHelper {
         val filter = IntentFilter().apply {
             addAction(Intent.ACTION_USER_PRESENT)
             addAction(Intent.ACTION_SCREEN_ON)
-            addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
         }
         runCatching {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                context.registerReceiver(screenUnlockReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
-            } else {
-                context.registerReceiver(screenUnlockReceiver, filter)
+            context.registerReceiver(screenUnlockReceiver, filter)
+            val filter2 = IntentFilter().apply {
+                addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
             }
+            ContextCompat.registerReceiver(context, broadRecent, filter2, ContextCompat.RECEIVER_NOT_EXPORTED)
         }
 
         isRegistered = true
