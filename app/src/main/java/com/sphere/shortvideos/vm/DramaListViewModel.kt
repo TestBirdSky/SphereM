@@ -16,6 +16,30 @@ class DramaListViewModel : ViewModel() {
     val addLiveData = MutableLiveData<MutableList<ShortPlay>>()
     val onErrorLiveData = MutableLiveData<Boolean>()
 
+    //获取指定短剧ID
+//    fun loadIdDrama() {
+////        DramaPangleHelper.getDramaById(shortPlayIds = DramaPangleHelper.testDrama(), count = 5)
+//        logError("loadIdDrama--->")
+//        PSSDK.requestFeedListByCategoryIds(null,
+//            DramaPangleHelper.testDrama(),
+//            1,
+//            5,
+//            object : PSSDK.FeedListResultListener {
+//                override fun onFail(errorInfo: PSSDK.ErrorInfo?) {
+//                    logError("loadIdDrama-->${errorInfo?.code},${errorInfo?.msg}")
+//                    if (10013 == errorInfo?.code) {
+//                        refreshLiveData.postValue(mutableListOf())
+//                    } else onErrorLiveData.postValue(true)
+//
+//                }
+//                override fun onSuccess(result: PSSDK.FeedListLoadResult<ShortPlay?>?) {
+//                    logError("loadIdDrama-->$result")
+//                    hasMoreData = result?.hasMore ?: false
+//                    refreshLiveData.postValue((result?.dataList ?: mutableListOf()) as MutableList<ShortPlay>?)
+//                }
+//            })
+//    }
+
     fun loadData(categoryId: Long) {
         pageIndex = 1
         val resultListener = object : PSSDK.FeedListResultListener {
@@ -34,7 +58,11 @@ class DramaListViewModel : ViewModel() {
         when (categoryId) {
             -2L -> PSSDK.requestFeedList(pageIndex, pageCount, resultListener)
             -1L -> PSSDK.requestNewDrama(pageIndex, pageCount, resultListener)
-            else -> PSSDK.requestFeedListByCategoryIds(mutableListOf(categoryId), null, pageIndex, pageCount, resultListener)
+            else -> PSSDK.requestFeedListByCategoryIds(mutableListOf(categoryId),
+                null,
+                pageIndex,
+                pageCount,
+                resultListener)
         }
     }
 
@@ -53,7 +81,11 @@ class DramaListViewModel : ViewModel() {
         when (categoryId) {
             -2L -> PSSDK.requestFeedList(pageIndex + 1, pageCount, resultListener)
             -1L -> PSSDK.requestNewDrama(pageIndex + 1, pageCount, resultListener)
-            else -> PSSDK.requestFeedListByCategoryIds(mutableListOf(categoryId), null, pageIndex + 1, pageCount, resultListener)
+            else -> PSSDK.requestFeedListByCategoryIds(mutableListOf(categoryId),
+                null,
+                pageIndex + 1,
+                pageCount,
+                resultListener)
         }
     }
 

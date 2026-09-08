@@ -148,9 +148,7 @@ object NotificationHelper {
 
     const val CHANNEL_ID = "ser_notification_channel"
     private const val CHANNEL_NAME = "notification_drama"
-    const val CHANNEL_ID_LOCAL = "local_notification_channel"  // 本地定时通知渠道（用于弹窗显示）
     const val CHANNEL_ID_LOCAL_MAX = "local_notification_channel_max"  // 本地定时通知渠道（用于弹窗显示）
-    private const val CHANNEL_NAME_LOCAL = "sphere_drama_helper"
     private const val CHANNEL_NAME_LOCAL_MAX = "notification_sphere_drama"
 
     /** 媒体通知专用渠道（与普通本地通知分离） */

@@ -40,14 +40,14 @@ class LoadingViewModel : ViewModel() {
         waitLoadingJob = viewModelScope.launch(Dispatchers.IO) {
             repeat(150) { num ->
                 delay(100L)
-                if (activity.getActivityState() && num >= 20 && AdUtils.isLaunchAdHaveCache()) {
+                if (activity.getActivityState() && num >= 10 && AdUtils.isLaunchAdHaveCache()) {
                     waitLoadingJob?.cancel()
                     AdUtils.preloadUnlock()
                     AdUtils.preloadReward()
                     AdUtils.showLaunchAd(activity, onAdDismissed = {
                         nextLiveData.postValue(true)
                     }, adPosId = posiIdName)
-                } else if (num % 10 == 0) {
+                } else {
                     preload()
                 }
             }

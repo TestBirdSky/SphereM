@@ -13,8 +13,10 @@ import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.mmkv.mmkvIns
 import com.sphere.shortvideos.helper.risk.RiskHelper
 import com.sphere.shortvideos.logError
+import com.sphere.shortvideos.notification.NotificationHelper.isInApp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 class AdHolder(val position: AdPosition, private val retryKeySuffix: String = "") {
 
@@ -53,17 +55,17 @@ class AdHolder(val position: AdPosition, private val retryKeySuffix: String = ""
         }
         AdUtils.adScope.launch {
             if (sourceList.isEmpty()) return@launch
-            if (position != LaunchPosition) {
-                if (isStoppedByBackgroundFailure()) {
-                    logError("stop preload by background fail rule: ${position.aliasName}")
-                    return@launch
-                }
-                val waitTime = isCanLoadAdIfNeeded()
-                if (waitTime > 0) {
-                    logError("stop preload not in period$waitTime  ${position.aliasName}")
-                    return@launch
-                }
-            }
+            //            if (position != LaunchPosition) {
+            //                if (isStoppedByBackgroundFailure()) {
+            //                    logError("stop preload by background fail rule: ${position.aliasName}")
+            //                    return@launch
+            //                }
+            //                val waitTime = isCanLoadAdIfNeeded()
+            //                if (waitTime > 0) {
+            //                    logError("stop preload not in period$waitTime  ${position.aliasName}")
+            //                    return@launch
+            //                }
+            //            }
             removeExpiredAd()
             if (cacheList.isNotEmpty()) return@launch
             if (loading && System.currentTimeMillis() - loadingTime < 60000 * 4) {
@@ -80,20 +82,28 @@ class AdHolder(val position: AdPosition, private val retryKeySuffix: String = ""
         RiskHelper.isAdLimit().not()
     }, onAdDismissed: () -> Unit = {}, onAdShowed: () -> Unit = {}, rewardCall: (() -> Unit)? = null) {
         AdUtils.adScope.launch {
+            val reportPosId = adPosId.ifBlank { position.aliasName }
+            if (activity.isFinishing || activity.isDestroyed) {
+                AdUtils.reportAdImpressionFail(reportPosId, "activity_invalid")
+                onAdDismissed()
+                return@launch
+            }
             if (!canShowAd()) {
+                AdUtils.reportAdImpressionFail(reportPosId, "risk_limit")
                 onAdDismissed()
                 return@launch
             }
             val ad = cacheList.removeFirstOrNull()
             if (null == ad) {
+                AdUtils.reportAdImpressionFail(reportPosId, "nocache")
                 onAdDismissed()
                 onAdLoaded = {}
                 preloadIfCan()
                 return@launch
             } else {
-//                val dialog = showAdDialog(activity)
-//                delay(1000L)
-//                dialog?.dismiss()
+                //                val dialog = showAdDialog(activity)
+                //                delay(1000L)
+                //                dialog?.dismiss()
                 ad.onUserEarnedReward = rewardCall
                 position.aliasName = adPosId.ifBlank { position.aliasName }
                 ad.showFullScreenAd(activity, onAdDismissed, onAdShowed)
@@ -122,12 +132,10 @@ class AdHolder(val position: AdPosition, private val retryKeySuffix: String = ""
             onAdLoaded(false) // 加载完成
             if (position != LaunchPosition && isAdHaveCache().not()) {
                 AdUtils.adScope.launch {
-                    delay(3000)
-                    val waitTime = isCanLoadAdIfNeeded()
-                    if (waitTime > 0) {
-                        delay(waitTime)
+                    delay(Random.nextLong(3000, 6000))
+                    if (isInApp) {
+                        preloadIfCan()
                     }
-                    preloadIfCan()
                 }
             }
             return
@@ -149,7 +157,8 @@ class AdHolder(val position: AdPosition, private val retryKeySuffix: String = ""
                         "ad_format" to adEntity.adBean.format.aliasName,
                         "ad_platform" to adEntity.adBean.source,
                         "ad_sense" to position.adSense,
-                        "loaded_revenue" to adEntity.cachedBidEcpm
+                        "loaded_revenue" to adEntity.cachedBidEcpm,
+                        "return_time" to adEntity.requestDurationMs(),
                     ))
                 cacheList.add(adEntity)
                 loading = false

@@ -49,6 +49,7 @@ import kotlin.random.Random
 abstract class BaseController(val position: AdPosition, val adBean: AdItemBean) : IAdController {
 
     var loadedTimeMills = System.currentTimeMillis()
+    private var requestStartedAtMills = 0L
     var cachedBidEcpm: Double = 0.0
         protected set
 
@@ -99,21 +100,31 @@ abstract class BaseController(val position: AdPosition, val adBean: AdItemBean) 
                 "ad_sense" to position.adSense))
     }
 
-    fun adShowFiledEvent(reason: String) {
+    fun adShowFiledEvent(reason: String, detail: String? = null) {
         localEvent("ad_impression_fail",
             hashMapOf(
                 "ad_code_id" to adBean.adId,
                 "ad_format" to adBean.format.aliasName,
                 "ad_platform" to adBean.source,
                 "reason" to reason,
+                "detail" to detail,
                 "ad_sense" to position.adSense,
                 "ad_pos_id" to position.aliasName,
             ))
     }
 
+    fun requestDurationMs(): Long {
+        return if (requestStartedAtMills > 0L) {
+            (System.currentTimeMillis() - requestStartedAtMills).coerceAtLeast(0L)
+        } else {
+            0L
+        }
+    }
+
     var onUserEarnedReward: (() -> Unit)? = null
 
     protected fun postAdReqEvent() {
+        requestStartedAtMills = System.currentTimeMillis()
         localEvent("ad_request",
             hashMapOf("ad_code_id" to adBean.adId,
                 "ad_format" to adBean.format.aliasName,
@@ -190,6 +201,7 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
         val ad = fullAd
         if (null == ad) {
             onAdDismissed(activity, onDismissed)
+            adShowFiledEvent("notready")
             return
         }
         when (ad) {
@@ -197,7 +209,7 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                 val callback = object : FullScreenContentCallback() {
                     override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                         onAdDismissed(activity, onDismissed)
-                        adShowFiledEvent(adError.message)
+                        adShowFiledEvent("show_failed", adError.message)
                     }
 
                     override fun onAdShowedFullScreenContent() {
@@ -218,7 +230,7 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                 val callback = object : FullScreenContentCallback() {
                     override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                         onAdDismissed(activity, onDismissed)
-                        adShowFiledEvent(adError.message)
+                        adShowFiledEvent("show_failed", adError.message)
                     }
 
                     override fun onAdShowedFullScreenContent() {
@@ -239,7 +251,7 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                 val callback = object : FullScreenContentCallback() {
                     override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                         onAdDismissed(activity, onDismissed)
-                        adShowFiledEvent(adError.message)
+                        adShowFiledEvent("show_failed", adError.message)
                     }
 
                     override fun onAdShowedFullScreenContent() {
@@ -258,7 +270,10 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                 }
             }
 
-            else -> onAdDismissed(activity, onDismissed)
+            else -> {
+                onAdDismissed(activity, onDismissed)
+                adShowFiledEvent("notready")
+            }
         }
     }
 
@@ -392,6 +407,7 @@ class ToponFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
         val ad = fullAd
         if (null == ad) {
             onAdDismissed(activity, onDismissed)
+            adShowFiledEvent("notready")
             return
         }
         when (ad) {
@@ -400,7 +416,7 @@ class ToponFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                     override fun onAdLoaded() {}
                     override fun onNoAdError(p0: com.thinkup.core.api.AdError?) {
                         onAdDismissed(activity, onDismissed)
-                        adShowFiledEvent("${p0?.code}-${p0?.desc}")
+                        adShowFiledEvent("show_failed", "${p0?.code}-${p0?.desc}")
                     }
 
                     override fun onAdShow(p0: TUAdInfo?) {
@@ -444,7 +460,7 @@ class ToponFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                     override fun onInterstitialAdVideoEnd(p0: TUAdInfo?) {}
                     override fun onInterstitialAdVideoError(p0: com.thinkup.core.api.AdError?) {
                         onAdDismissed(activity, onDismissed)
-                        adShowFiledEvent("${p0?.code}-${p0?.desc}")
+                        adShowFiledEvent("show_failed", "${p0?.code}-${p0?.desc}")
                     }
                 })
                 ad.show(activity)
@@ -467,7 +483,7 @@ class ToponFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
 
                     override fun onRewardedVideoAdPlayFailed(p0: com.thinkup.core.api.AdError?, p1: TUAdInfo?) {
                         onAdDismissed(activity, onDismissed)
-                        adShowFiledEvent("${p0?.code}-${p0?.desc}")
+                        adShowFiledEvent("show_failed", "${p0?.code}-${p0?.desc}")
                     }
 
                     override fun onRewardedVideoAdClosed(p0: TUAdInfo?) {
@@ -484,7 +500,10 @@ class ToponFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                 destroyAd()
             }
 
-            else -> onAdDismissed(activity, onDismissed)
+            else -> {
+                onAdDismissed(activity, onDismissed)
+                adShowFiledEvent("notready")
+            }
         }
     }
 
@@ -607,6 +626,7 @@ class MaxFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(posit
         val ad = fullAd
         if (null == ad) {
             onAdDismissed(activity, onDismissed)
+            adShowFiledEvent("notready")
             return
         }
         when (ad) { //            is com.applovin.mediation.ads.MaxAppOpenAd -> {
@@ -770,12 +790,14 @@ class PangleFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(po
         val ad = fullAd
         if (ad == null) {
             onAdDismissed(activity, onDismissed)
+            adShowFiledEvent("notready")
             return
         }
         when (ad) {
             is PAGAppOpenAd -> {
                 if (!ad.isReady) {
                     onAdDismissed(activity, onDismissed)
+                    adShowFiledEvent("notready")
                     return
                 }
                 ad.setAdInteractionCallback(object : PAGAppOpenAdInteractionCallback() {
@@ -790,7 +812,8 @@ class PangleFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(po
 
                     override fun onAdShowFailed(pagErrorModel: PAGErrorModel) {
                         onAdDismissed(activity, onDismissed)
-                        adShowFiledEvent("${pagErrorModel.errorCode}-${pagErrorModel.errorMessage}")
+                        adShowFiledEvent("show_failed",
+                            "${pagErrorModel.errorCode}-${pagErrorModel.errorMessage}")
                     }
 
                     override fun onAdReturnRevenue(ecpmInfo: com.bytedance.sdk.openadsdk.api.model.PAGAdEcpmInfo) {
@@ -803,6 +826,7 @@ class PangleFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(po
             is PAGInterstitialAd -> {
                 if (!ad.isReady) {
                     onAdDismissed(activity, onDismissed)
+                    adShowFiledEvent("notready")
                     return
                 }
                 ad.setAdInteractionCallback(object : PAGInterstitialAdInteractionCallback() {
@@ -817,7 +841,8 @@ class PangleFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(po
 
                     override fun onAdShowFailed(pagErrorModel: PAGErrorModel) {
                         onAdDismissed(activity, onDismissed)
-                        adShowFiledEvent("${pagErrorModel.errorCode}-${pagErrorModel.errorMessage}")
+                        adShowFiledEvent("show_failed",
+                            "${pagErrorModel.errorCode}-${pagErrorModel.errorMessage}")
                     }
 
                     override fun onAdReturnRevenue(ecpmInfo: com.bytedance.sdk.openadsdk.api.model.PAGAdEcpmInfo) {
@@ -830,6 +855,7 @@ class PangleFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(po
             is PAGRewardedAd -> {
                 if (!ad.isReady) {
                     onAdDismissed(activity, onDismissed)
+                    adShowFiledEvent("notready")
                     return
                 }
                 ad.setAdInteractionCallback(object : PAGRewardedAdInteractionCallback() {
@@ -852,7 +878,8 @@ class PangleFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(po
 
                     override fun onAdShowFailed(pagErrorModel: PAGErrorModel) {
                         onAdDismissed(activity, onDismissed)
-                        adShowFiledEvent("${pagErrorModel.errorCode}-${pagErrorModel.errorMessage}")
+                        adShowFiledEvent("show_failed",
+                            "${pagErrorModel.errorCode}-${pagErrorModel.errorMessage}")
                     }
 
                     override fun onAdReturnRevenue(ecpmInfo: com.bytedance.sdk.openadsdk.api.model.PAGAdEcpmInfo) {
@@ -862,7 +889,10 @@ class PangleFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(po
                 ad.show(activity)
             }
 
-            else -> onAdDismissed(activity, onDismissed)
+            else -> {
+                onAdDismissed(activity, onDismissed)
+                adShowFiledEvent("notready")
+            }
         }
     }
 

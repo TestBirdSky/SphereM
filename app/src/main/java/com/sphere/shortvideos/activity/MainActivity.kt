@@ -93,6 +93,8 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
             }
         })
         binding.bottomNav.setOnItemSelectedListener { item ->
+            AdUtils.preloadReward()
+            AdUtils.preloadUnlock()
             setOther()
             when (item.itemId) {
                 R.id.tab_home -> {

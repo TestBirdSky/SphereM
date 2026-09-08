@@ -27,6 +27,14 @@ object AdUtils {
         }
     }
 
+    fun reportAdImpressionFail(adPosId: String, reason: String) {
+        localEvent("ad_impression_fail",
+            hashMapOf(
+                "ad_pos_id" to adPosId,
+                "reason" to reason,
+            ))
+    }
+
     val adScope by lazy { CoroutineScope(Dispatchers.Main + SupervisorJob() + CoroutineExceptionHandler { _, _ -> }) }
     val launchHolder = AdHolder(LaunchPosition)
     val unlockHolder = AdHolder(UnlockPosition)
@@ -101,16 +109,18 @@ object AdUtils {
                    noAd: () -> Unit = {},
                    adPosId: String,
                    isRate: () -> Unit = {}) {
+        isRate.invoke()
         if (DramaIntAdHelper.fetchIsShowRateAd().not()) {
             logError("fetchIsShowRateAd failed-->")
+            reportAdImpressionFail(adPosId, "rate_gate")
             dismiss.invoke()
             return
         }
-        isRate.invoke()
         val holder = selectBestHolder(unlockHolders())
         if (holder != null) {
             holder.showFullAd(activity, onAdDismissed = dismiss, adPosId = adPosId)
         } else {
+            reportAdImpressionFail(adPosId, "nocache")
             noAd.invoke()
             preloadUnlock()
         }
@@ -125,6 +135,7 @@ object AdUtils {
 
     fun showRvAd(activity: GenericActivity, adPosId: String, dismiss: (isRewardSuccess: Boolean) -> Unit = {}) {
         if (RiskHelper.isAdLimit()) {
+            reportAdImpressionFail(adPosId, "risk_limit")
             ShowAdLimitDialogFragment({
                 localEvent("see_you_tommorow")
                 dismiss.invoke(false)
@@ -169,6 +180,7 @@ object AdUtils {
                 return
             }
         }
+        reportAdImpressionFail(adPosId, "nocache")
         dis.invoke()
     }
 
@@ -196,6 +208,7 @@ object AdUtils {
                      onAdShowed: () -> Unit = {}) {
         val holder = selectBestHolder(launchBidHolders())
         if (holder == null) {
+            reportAdImpressionFail(adPosId, "nocache")
             onAdDismissed()
             preloadLaunch()
         } else {
@@ -212,6 +225,7 @@ object AdUtils {
                      onAdShowed: () -> Unit = {}) {
         val holder = selectBestHolder(unlockHolders())
         if (holder == null) {
+            reportAdImpressionFail(adPosId, "nocache")
             onAdDismissed()
             preloadUnlock()
         } else {

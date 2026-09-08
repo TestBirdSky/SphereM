@@ -74,6 +74,7 @@
     <string name="bonus_welcome_action">รับรางวัล</string>
     <string name="tips_info">ดูละครสั้นแล้วรับรางวัลใหญ่!</string>
     <string name="v_pri">โบนัสคูณสอง</string>
+    <string name="claim_rewards">รับรางวัล</string>
     <string name="watch_basic_ad"><u>แบบพื้นฐาน</u></string>
 
     <string name="start">เริ่ม</string>
@@ -101,7 +102,7 @@
     <string name="claim">รับ</string>
     <string name="my_wallet">กระเป๋าของฉัน</string>
     <string name="fortune_challenge">ท้าทายวงล้อนำโชค</string>
-    <string name="get_re">รับ</string>
+    <string name="get_re">รับรางวัล</string>
     <string name="my_balance">ยอดคงเหลือ</string>
     <string name="withdrawal_method">ช่องทางถอนเงิน</string>
     <string name="withdrawal_amount">จำนวนเงินที่ถอน</string>

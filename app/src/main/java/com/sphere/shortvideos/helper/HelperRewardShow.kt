@@ -237,7 +237,9 @@ object HelperRewardShow {
             DialogFragmentDisplayHelper.hideCurShowFragment(activity)
             when (it) {
                 0 -> {
+                    val use164PopAdLogic = WithdrawalActionHelper.getConfig().popAdLogic == 1
                     NormalCongratulateDialogFragment().apply {
+                        use164Logic = use164PopAdLogic
                         onClaim = { reward ->
                             localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_video_rv"))
                             showRvAd(activity, reward, adPositionName = "dlmsf_video_rv")
@@ -258,12 +260,29 @@ object HelperRewardShow {
                 }
 
                 1 -> {
+                    val use164PopAdLogic = WithdrawalActionHelper.getConfig().popAdLogic == 1
                     LuckChallengeDialogFragment().apply {
+                        showNormalClaim = use164PopAdLogic
                         onResult = { reward ->
                             if (RiskHelper.isAdLimit().not()) {
                                 localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_wheel_rv"))
                             }
                             showRvAd(activity, reward, adPositionName = "dlmsf_wheel_rv")
+                        }
+                        onNormalClick = if (use164PopAdLogic) {
+                            { reward ->
+                                AdUtils.showRateAd(
+                                    activity,
+                                    adPosId = "dlmsf_wheel_int",
+                                    dismiss = {
+                                        addMoneyNotExChangeFlyAnim(reward)
+                                    },
+                                    isRate = {
+                                        localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_wheel_int"))
+                                    })
+                            }
+                        } else {
+                            null
                         }
                     }.show(activity.supportFragmentManager, "luck")
                 }

@@ -76,6 +76,7 @@
     <string name="bonus_welcome_action">Terima hadiah</string>
     <string name="tips_info">Tonton drama dan dapatkan hadiah besar!</string>
     <string name="v_pri">Bonus Ganda</string>
+    <string name="claim_rewards">Klaim Hadiah</string>
     <string name="watch_basic_ad"><u>Hadiah Normal</u></string>
 
     <string name="start">MULAI</string>
@@ -103,7 +104,7 @@
     <string name="claim">Klaim</string>
     <string name="my_wallet">Dompet saya</string>
     <string name="fortune_challenge">Tantangan Roda Keberuntungan</string>
-    <string name="get_re">Klaim</string>
+    <string name="get_re">Klaim Hadiah</string>
     <string name="my_balance">Saldo Saya</string>
     <string name="withdrawal_method">Metode penarikan</string>
     <string name="withdrawal_amount">Jumlah Penarikan</string>

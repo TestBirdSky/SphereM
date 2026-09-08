@@ -20,6 +20,7 @@ import com.sphere.shortvideos.view.AnimViewHelper
  */
 class NormalCongratulateDialogFragment : DialogFragment() {
 
+    var use164Logic: Boolean = false
     var onClaim: ((Double) -> Unit)? = null
     var onClose: ((Double) -> Unit)? = null
     var onNormalClick: ((Double) -> Unit)? = null
@@ -51,6 +52,10 @@ class NormalCongratulateDialogFragment : DialogFragment() {
         binding.tvPro.text = des
         binding.progressView.progress = WithdrawAmountHelper.fetchGetMoneyProgress()
         binding.tvRewardValue.text = adRvReward.second
+        if (use164Logic) {
+            binding.btnNormal.visibility = View.GONE
+            binding.tvMoney.setText(R.string.claim_rewards)
+        }
         binding.ivClose.setOnClickListener {
             onClose?.invoke(adRvReward.first)
             localEvent("money_pop_close")
@@ -63,8 +68,8 @@ class NormalCongratulateDialogFragment : DialogFragment() {
         }
         AnimViewHelper.applyPressBounceEffect(binding.btnClaim)
         binding.btnClaim.setOnClickListener {
-            localEvent("money_pop_2x")
-            onClaim?.invoke(adRvReward.first * 2)
+            localEvent(if (use164Logic) "money_pop_1x" else "money_pop_2x")
+            onClaim?.invoke(if (use164Logic) adRvReward.first else adRvReward.first * 2)
             dismissAllowingStateLoss()
         }
         localEvent("money_pop")

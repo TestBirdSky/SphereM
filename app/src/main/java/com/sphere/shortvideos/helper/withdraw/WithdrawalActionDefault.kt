@@ -22,7 +22,8 @@ const val DEFAULT_WITHDRAWAL_ACTION_JSON = """
   "cut_in": [
     60,
     80
-  ]
+  ],
+  "pop_ad_logic":0
 }
 """
 

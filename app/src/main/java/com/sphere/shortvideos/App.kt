@@ -77,6 +77,11 @@ class App : Application() {
             val l = listOf("en", "id", "in", "pt", "th", "es")
             PSSDK.setContentLanguages(l)
         }
+//        else {
+//            val str = LauageTools.getMyLanguage()
+//            logError("getMyLanguage-->$str")
+//            PSSDK.setContentLanguages(listOf(str,"en"))
+//        }
     }
 
     override fun onTerminate() {

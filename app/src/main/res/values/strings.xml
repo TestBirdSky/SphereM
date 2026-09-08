@@ -72,6 +72,7 @@
     <string name="bonus_welcome_action">Receive rewards</string>
     <string name="tips_info">Watch dramas and earn huge rewards!</string>
     <string name="v_pri">Double Bonus</string>
+    <string name="claim_rewards">Claim Rewards</string>
     <string name="watch_basic_ad"><u>Just the Basics</u></string>
 
     <string name="start">START</string>
@@ -99,7 +100,7 @@
     <string name="claim">Claim</string>
     <string name="my_wallet">My wallet</string>
     <string name="fortune_challenge">Wheel of Fortune Challenge</string>
-    <string name="get_re">Get</string>
+    <string name="get_re">Claim Reward</string>
     <string name="my_balance">My Balance</string>
     <string name="withdrawal_method">Withdrawal method</string>
     <string name="withdrawal_amount">Withdrawal Amount</string>

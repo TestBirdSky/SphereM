@@ -74,6 +74,7 @@
     <string name="bonus_welcome_action">استلام المكافآت</string>
     <string name="tips_info">شاهد الدراما واربح مكافآت ضخمة!</string>
     <string name="v_pri">مكافأة مزدوجة</string>
+    <string name="claim_rewards">المطالبة بالمكافآت</string>
     <string name="watch_basic_ad"><u>الأساسيات فقط</u></string>
 
     <string name="start">ابدأ</string>
@@ -101,7 +102,7 @@
     <string name="claim">المطالبة</string>
     <string name="my_wallet">محفظتي</string>
     <string name="fortune_challenge">تحدي عجلة الحظ</string>
-    <string name="get_re">احصل</string>
+    <string name="get_re">المطالبة بالمكافأة</string>
     <string name="my_balance">رصيدي</string>
     <string name="withdrawal_method">طريقة السحب</string>
     <string name="withdrawal_amount">مبلغ السحب</string>

@@ -14,6 +14,8 @@ data class WithdrawalActionConfig(
     val withdrawalTask: WithdrawalTaskConfig? = null,
     @SerializedName("cut_in")
     val cutIn: List<Int>,
+    @SerializedName("pop_ad_logic")
+    val popAdLogic: Int = 0,
 ) {
     fun isOpenWithdraw(): Boolean {
         return withdrawalProcess == 1
@@ -46,4 +48,3 @@ data class WithdrawalTaskRule(
     @SerializedName("ad")
     val ad: Int = 0,
 )
-
