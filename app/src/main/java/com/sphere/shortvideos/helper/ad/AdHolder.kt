@@ -132,7 +132,8 @@ class AdHolder(val position: AdPosition, private val retryKeySuffix: String = ""
             onAdLoaded(false) // 加载完成
             if (position != LaunchPosition && isAdHaveCache().not()) {
                 AdUtils.adScope.launch {
-                    delay(Random.nextLong(3000, 6000))
+                    delay(Random.nextLong(2000, 6000))
+                    logError("retry pre load  isInApp=$isInApp")
                     if (isInApp) {
                         preloadIfCan()
                     }

@@ -87,7 +87,6 @@ class LuckChallengeDialogFragment : DialogFragment() {
         binding.progressView.progress =
             WithdrawAmountHelper.fetchGetMoneyProgress() // 初始显示基础奖励，倍率加载完后改为公式：R$1,5 ✖️6 = R$xx
         binding.tvRewardValue.text = reward.second
-        binding.btnNormal.visibility = if (showNormalClaim) View.VISIBLE else View.GONE
         // 转盘倍率结束后才显示按钮
         binding.btnClaim.visibility = View.GONE
         binding.btnClaim.alpha = 0f
@@ -170,6 +169,7 @@ class LuckChallengeDialogFragment : DialogFragment() {
                 smoothMoveArrowToIndex(finalIndex) {
                     val binding = _binding ?: return@smoothMoveArrowToIndex
                     binding.ivArrow.animate().alpha(1f).setDuration(150L).start()
+                    binding.btnNormal.visibility = if (showNormalClaim) View.VISIBLE else View.GONE
                     showClaimButtonWithAnim()
                 }
             }
