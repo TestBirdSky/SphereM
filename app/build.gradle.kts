@@ -81,11 +81,6 @@ android {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
         }
     }
-    configurations.all {
-        exclude(group = "com.google.android.gms", module = "play-services-ads")
-        exclude(group = "com.google.android.gms", module = "play-services-ads-lite")
-    }
-
     sourceSets {
         getByName("main") {
             jniLibs.srcDirs("libs")
@@ -105,7 +100,6 @@ dependencies {
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.androidx.browser) // Room https://developer.android.com/training/data-storage/room
     implementation(libs.androidx.room.runtime)
-    implementation(libs.play.services.ads.api)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
     implementation(libs.mmkv)
@@ -258,4 +252,13 @@ dependencies {
     implementation("com.pangle.global:inmobi-adapter:11.1.0.0")
 
 //    implementation("com.pangle.global:dtexchange-adapter:8.3.8.1")
+}
+
+// Moloco 4.11.1.0 依赖 GMA 25.3+ 的 getAgeRestrictedTreatment()。
+// 聚合 SDK 可能把 play-services-ads / ads-api 拉回到 25.0.0，运行时就会 NoSuchMethodError。
+configurations.all {
+    resolutionStrategy {
+        force("com.google.android.gms:play-services-ads:25.4.0")
+        force("com.google.android.gms:play-services-ads-api:25.4.0")
+    }
 }

@@ -67,3 +67,13 @@
    public *;
 }
 -keep class com.bytedance.sdk.** { *; }
+
+# Moloco 4.10+ 会在初始化回调里直接调用
+# RequestConfiguration.getAgeRestrictedTreatment()（GMA 25.3.0 才有）。
+# 线上包 minify 后若该方法被改名/裁掉，会在首启直接 NoSuchMethodError。
+-keep class com.google.android.gms.ads.RequestConfiguration { *; }
+-keep class com.google.android.gms.ads.RequestConfiguration$* { *; }
+-keep class com.google.android.gms.ads.AgeRestrictedTreatment { *; }
+-keep class com.google.android.gms.ads.MobileAds { *; }
+-keep class com.google.ads.mediation.moloco.** { *; }
+-keep class com.google.ads.mediation.common.** { *; }
