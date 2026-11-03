@@ -25,49 +25,49 @@
     <string name="no_data">لا توجد بيانات</string>
     <string name="preparing_ads">جارٍ تحضير الإعلانات…</string>
 
-    <string name="notification_checkin_title">مكافأة يومية متاحة</string>
+    <string name="notification_checkin_title">🎁 مكافأة يومية متاحة</string>
     <string name="notification_checkin_desc">سجّل الدخول الآن للمطالبة بها.</string>
-    <string name="notification_drama_title">نشاط يومي جارٍ</string>
+    <string name="notification_drama_title">🎯 نشاط يومي جارٍ</string>
     <string name="notification_drama_desc">اربح المزيد اليوم.</string>
-    <string name="notification_reward_title">&#x200E;$48&#x200E; بانتظار السحب</string>
+    <string name="notification_reward_title">💵 &#x200E;$48&#x200E; بانتظار السحب</string>
     <string name="notification_reward_desc">لقد حصلت للتو على مكافأة مفاجئة.</string>
-    <string name="notification_almost_title">أوشكت على الجاهزية: &#x200E;$48&#x200E;</string>
+    <string name="notification_almost_title">⏳ أوشكت على الجاهزية: &#x200E;$48&#x200E;</string>
     <string name="notification_almost_desc">أكمل المهام لفتح السحب.</string>
 
-    <string name="notification_screen_on_title1">كل حلقة تدفع لك</string>
+    <string name="notification_screen_on_title1">🎬 كل حلقة تدفع لك</string>
     <string name="notification_screen_on_des1">لا تفوّت الفرصة</string>
-    <string name="notification_screen_on_title2">سحبك بات قريبًا</string>
+    <string name="notification_screen_on_title2">🚀 سحبك بات قريبًا</string>
     <string name="notification_screen_on_des2">بضع حلقات إضافية.</string>
-    <string name="notification_screen_on_title3">الأموال شبه متاحة</string>
+    <string name="notification_screen_on_title3">🔑 الأموال شبه متاحة</string>
     <string name="notification_screen_on_des3">لا تتوقف الآن — أداء رائع.</string>
-    <string name="notification_screen_on_title4">كشف حب محظور</string>
+    <string name="notification_screen_on_title4">💘 كشف حب محظور</string>
     <string name="notification_screen_on_des4">شاهد قبل أن تنكشف الحقيقة.</string>
 
-    <string name="notification_local_23_title1">شاهد واسحب أموالًا</string>
+    <string name="notification_local_23_title1">📺 شاهد واسحب أموالًا</string>
     <string name="notification_local_23_desc1">كل حلقة تزيد رصيدك. ابدأ الآن.</string>
-    <string name="notification_local_23_title2">دراما تدفع حقًا</string>
+    <string name="notification_local_23_title2">💰 دراما تدفع حقًا</string>
     <string name="notification_local_23_desc2">شاهد الآن واربح مالًا حقيقيًا.</string>
-    <string name="notification_local_23_title3">خانت زوجها في يوم زفافها</string>
+    <string name="notification_local_23_title3">💔 خانت زوجها في يوم زفافها</string>
     <string name="notification_local_23_desc3">ما حدث بعدها صدّم الجميع.</string>
-    <string name="notification_local_23_title4">&#x200E;$48&#x200E; على وشك أن تصبح لك</string>
+    <string name="notification_local_23_title4">💎 &#x200E;$48&#x200E; على وشك أن تصبح لك</string>
     <string name="notification_local_23_desc4">أكمل المهام للصرف.</string>
 
-    <string name="notification_local_59_title1">مزيد من الحلقات، مزيد من الأرباح</string>
+    <string name="notification_local_59_title1">📈 مزيد من الحلقات، مزيد من الأرباح</string>
     <string name="notification_local_59_desc1">السحب يقترب أكثر فأكثر.</string>
-    <string name="notification_local_59_title2">عاد غنيًا ينتقم</string>
+    <string name="notification_local_59_title2">🔥 عاد غنيًا ينتقم</string>
     <string name="notification_local_59_desc2">صُدمت العائلة كلها.</string>
-    <string name="notification_local_59_title3">طُردت… ثم عادت بملايين</string>
+    <string name="notification_local_59_title3">👑 طُردت… ثم عادت بملايين</string>
     <string name="notification_local_59_desc3">شاهد الآن.</string>
-    <string name="notification_local_59_title4">المُحبّة كانت صديقتها المقرّبة</string>
+    <string name="notification_local_59_title4">👀 المُحبّة كانت صديقتها المقرّبة</string>
     <string name="notification_local_59_desc4">انفجرت الدراما.</string>
 
-    <string name="notification_local_79_title1">مالك ينمو مع كل حلقة</string>
+    <string name="notification_local_79_title1">💹 مالك ينمو مع كل حلقة</string>
     <string name="notification_local_79_desc1">شاهد حلقة أخرى.</string>
-    <string name="notification_local_79_title2">صفعة غيّرت كل شيء</string>
+    <string name="notification_local_79_title2">⚡ صفعة غيّرت كل شيء</string>
     <string name="notification_local_79_desc2">هذه الحلقة نارية.</string>
-    <string name="notification_local_79_title3">تم فتح مكافأة مفاجئة</string>
+    <string name="notification_local_79_title3">🎉 تم فتح مكافأة مفاجئة</string>
     <string name="notification_local_79_desc3">مكافأة غير متوقعة أضيفت لرصيدك.</string>
-    <string name="notification_local_79_title4">تم تفعيل حظك اليومي</string>
+    <string name="notification_local_79_title4">🍀 تم تفعيل حظك اليومي</string>
     <string name="notification_local_79_desc4">تمت إضافة مكافأة.</string>
 
     <string name="bonus_welcome_title">مكافأة ترحيب</string>

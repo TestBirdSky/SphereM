@@ -28,6 +28,7 @@ object MMKVRepository {
 
     // 用户类型：true 为黑名单用户（Organic），false 为买量用户
     var isBlacklistUser by MMKVData(false)
+    var isBuyUser by MMKVData(false)
     /**
      * Adjust attribution.network 解析得到的买量渠道：
      * - mtg: Mintegral
@@ -69,6 +70,10 @@ object MMKVRepository {
             ) ?: ""
         }
         mSphereAndroidId
+    }
+
+    fun isUserGo(): Boolean{
+        return MMKVRepository.isBuyUser
     }
 
 }

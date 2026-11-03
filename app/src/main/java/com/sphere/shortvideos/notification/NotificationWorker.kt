@@ -1,17 +1,17 @@
 package com.sphere.shortvideos.notification
 
 import android.content.Context
-import androidx.work.Worker
+import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 
 class NotificationWorker(
     context: Context,
     params: WorkerParameters
-) : Worker(context, params) {
+) : CoroutineWorker(context, params) {
 
-    override fun doWork(): Result {
+    override suspend fun doWork(): Result {
         val type = inputData.getInt(KEY_TYPE, NotificationHelper.LOCAL_TYPE_23)
-        NotificationHelper.showLocalNotification(applicationContext, type)
+        NotificationHelper.showLocalNotification(applicationContext, type)?.join()
         return Result.success()
     }
 

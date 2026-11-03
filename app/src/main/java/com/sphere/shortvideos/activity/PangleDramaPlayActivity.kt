@@ -114,7 +114,6 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
 
     @SuppressLint("SetTextI18n")
     override fun initUI() {
-        pageResumeAtMs = System.currentTimeMillis()
         initSeekbarAnim()
         bindClick()
         supportFragmentManager.registerFragmentLifecycleCallbacks(dialogLifecycleCallbacks, true)
@@ -437,6 +436,13 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
 
     override fun onPause() {
         super.onPause()
+        if (pageResumeAtMs > 0L) {
+            val staySec = ((System.currentTimeMillis() - pageResumeAtMs) / 1000L).toInt().coerceAtLeast(0)
+            if (staySec > 0) {
+                localEvent("drame_page_stay", hashMapOf("stay_times" to staySec))
+            }
+        }
+        pageResumeAtMs = 0L
         shortPlayHistory?.let {
             lifecycleScope.launch(Dispatchers.IO) {
                 database.historyDao().upsert(it)
@@ -499,6 +505,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
 
     override fun onResume() {
         super.onResume()
+        pageResumeAtMs = System.currentTimeMillis()
         localEvent("drame_page")
         AdUtils.run {
             preloadUnlock()
@@ -530,10 +537,6 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
     override fun onDestroy() {
         supportFragmentManager.unregisterFragmentLifecycleCallbacks(dialogLifecycleCallbacks)
         super.onDestroy()
-        val staySec = ((System.currentTimeMillis() - pageResumeAtMs) / 1000L).toInt().coerceAtLeast(0)
-        if (staySec > 0) {
-            localEvent("drame_page_stay", hashMapOf("stay_times" to staySec))
-        }
     }
 
     override fun onStop() {

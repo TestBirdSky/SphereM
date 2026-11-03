@@ -42,6 +42,7 @@ class App : Application() {
         mFbAndAdjustHelper.initAdjust(this)
         NotificationHelper.scheduleLocalNotifications(this)
         RiskHelper.eventSession(this)
+        SpWorker.start(mApp)
     }
 
     private fun initBackgroundActive() {

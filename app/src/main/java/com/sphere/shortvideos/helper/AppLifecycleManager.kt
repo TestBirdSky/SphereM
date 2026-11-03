@@ -62,12 +62,15 @@ object AppLifecycleManager : Application.ActivityLifecycleCallbacks {
             backgroundJob?.cancel()
             if (--foregroundCounts <= 0) {
                 foregroundCounts = 0
-                val staySec = ((System.currentTimeMillis() - foregroundStartMs) / 1000L).toInt().coerceAtLeast(0)
-                if (staySec > 0) {
-                    localEvent("app_stay", hashMapOf("stay_times" to staySec))
+                if (foregroundStartMs > 0L) {
+                    val staySec = ((System.currentTimeMillis() - foregroundStartMs) / 1000L).toInt().coerceAtLeast(0)
+                    if (staySec > 0) {
+                        localEvent("app_stay", hashMapOf("stay_times" to staySec))
+                    }
                 }
+                foregroundStartMs = 0L
                 NotificationHelper.isInApp = false
-                backgroundJob = CoroutineScope(Dispatchers.IO).launch {
+                backgroundJob = CoroutineScope(Dispatchers.Main).launch {
                     delay(3000L)
                     AdUtils.isInBack = true
                     runCatching {

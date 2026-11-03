@@ -1,6 +1,7 @@
 package com.sphere.shortvideos.helper
 
 import android.content.Context
+import android.os.Build
 import android.util.Base64
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
@@ -63,14 +64,30 @@ object AppHelper {
 
     fun encrypt(data: String, code: Int): String { // 加密：异或 + Base64 编码
         val bytes = data.toByteArray(StandardCharsets.UTF_8)
-        
+
         // 异或加密
         val xorList = ByteArray(bytes.size)
         for (i in bytes.indices) {
             xorList[i] = (bytes[i].toInt() xor code).toByte()
         }
-        
+
         // Base64 编码
         return Base64.encodeToString(xorList, Base64.DEFAULT)
     }
+}
+
+
+fun isGoogleDevice() = Build.MANUFACTURER.equals("Google", ignoreCase = true)
+fun isXiaomiDevice() = Build.MANUFACTURER.equals("Xiaomi", ignoreCase = true)
+fun isOnePlusDevice() =
+    Build.MANUFACTURER.equals("OnePlus", ignoreCase = true) || Build.BRAND.equals("OnePlus", ignoreCase = true)
+
+fun isFCNTDevice(): Boolean = Build.MANUFACTURER.equals("fcnt", ignoreCase = true)
+
+fun isSharpDevice(): Boolean = Build.MANUFACTURER.equals("sharp", ignoreCase = true)
+
+fun isLikedOSDevice(): Boolean = isGoogleDevice() || isXiaomiDevice() || isFCNTDevice() || isSharpDevice()
+
+fun isSamsungDevice(): Boolean {
+    return Build.MANUFACTURER.equals("samsung", ignoreCase = true) || Build.BRAND.equals("samsung", ignoreCase = true)
 }

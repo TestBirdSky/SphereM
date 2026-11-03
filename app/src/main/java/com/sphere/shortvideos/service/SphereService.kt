@@ -41,8 +41,8 @@ class SphereService : Service() {
     }
 
     override fun onDestroy() {
-        stopForeground(STOP_FOREGROUND_REMOVE)
         isOpenService = false
+        stopForeground(STOP_FOREGROUND_REMOVE)
         super.onDestroy()
     }
 

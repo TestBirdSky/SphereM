@@ -211,6 +211,7 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                 ad.setOnPaidEventListener { value: AdValue ->
                     RevenueHelper.onAdmobRevenueCallback(value, adBean, position, ad.responseInfo)
                 }
+                ad.setImmersiveMode(true)
                 ad.show(activity)
             }
 
@@ -232,6 +233,7 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                 ad.setOnPaidEventListener { value: AdValue ->
                     RevenueHelper.onAdmobRevenueCallback(value, adBean, position, ad.responseInfo)
                 }
+                ad.setImmersiveMode(true)
                 ad.show(activity)
             }
 
@@ -253,6 +255,7 @@ class AdmobFullAd(position: AdPosition, adBean: AdItemBean) : BaseController(pos
                 ad.setOnPaidEventListener { value: AdValue ->
                     RevenueHelper.onAdmobRevenueCallback(value, adBean, position, ad.responseInfo)
                 }
+                ad.setImmersiveMode(true)
                 ad.show(activity) { _: RewardItem -> // reward callback handled by caller if needed
                     onUserEarnedReward?.invoke()
                 }

@@ -26,50 +26,50 @@
     <string name="preparing_ads">Menyiapkan iklan…</string>
 
     <!-- Notifikasi Checkin -->
-    <string name="notification_checkin_title">Sudah check-in hari ini?</string>
+    <string name="notification_checkin_title">🎁 Sudah check-in hari ini?</string>
     <string name="notification_checkin_desc">Masuk sekarang dan ambil bonus.</string>
-    <string name="notification_drama_title">Pernikahan palsu berubah jadi cinta</string>
+    <string name="notification_drama_title">💞 Pernikahan palsu berubah jadi cinta</string>
     <string name="notification_drama_desc">Akhirnya di luar dugaan.</string>
-    <string name="notification_reward_title">Hampir tarik Rp720.000</string>
+    <string name="notification_reward_title">💵 Hampir tarik Rp720.000</string>
     <string name="notification_reward_desc">Selesaikan tugas untuk mencairkan.</string>
-    <string name="notification_almost_title">Tinggal selangkah lagi</string>
+    <string name="notification_almost_title">⏳ Tinggal selangkah lagi</string>
     <string name="notification_almost_desc">Capai Rp720.000 dan tarik.</string>
 
     <!-- Notifikasi Screen On -->
-    <string name="notification_screen_on_title1">Setiap episode dibayar</string>
+    <string name="notification_screen_on_title1">🎬 Setiap episode dibayar</string>
     <string name="notification_screen_on_des1">Jangan ketinggalan</string>
-    <string name="notification_screen_on_title2">Penarikan makin dekat</string>
+    <string name="notification_screen_on_title2">🚀 Penarikan makin dekat</string>
     <string name="notification_screen_on_des2">Beberapa episode lagi dan siap tarik</string>
-    <string name="notification_screen_on_title3">Uang hampir cair</string>
+    <string name="notification_screen_on_title3">🔑 Uang hampir cair</string>
     <string name="notification_screen_on_des3">Jangan berhenti, kamu sudah dekat</string>
-    <string name="notification_screen_on_title4">Cinta terlarang terbongkar</string>
+    <string name="notification_screen_on_title4">💘 Cinta terlarang terbongkar</string>
     <string name="notification_screen_on_des4">Nonton sebelum semuanya terungkap</string>
 
-    <string name="notification_local_23_title1">Nonton drama dapat uang</string>
+    <string name="notification_local_23_title1">📺 Nonton drama dapat uang</string>
     <string name="notification_local_23_desc1">Setiap episode menambah saldo kamu.</string>
-    <string name="notification_local_23_title2">Setiap episode ada hasilnya</string>
+    <string name="notification_local_23_title2">💰 Setiap episode ada hasilnya</string>
     <string name="notification_local_23_desc2">Nonton dan kumpulkan uang.</string>
-    <string name="notification_local_23_title3">Penarikan Rp720.000 dikonfirmasi</string>
+    <string name="notification_local_23_title3">✅ Penarikan Rp720.000 dikonfirmasi</string>
     <string name="notification_local_23_desc3">Kamu dapat hadiah tambahan.</string>
-    <string name="notification_local_23_title4">Rp720.000 siap ditarik</string>
+    <string name="notification_local_23_title4">💎 Rp720.000 siap ditarik</string>
     <string name="notification_local_23_desc4">Saldo kamu sudah memenuhi syarat.</string>
 
-    <string name="notification_local_59_title1">Saldo naik sambil nonton</string>
+    <string name="notification_local_59_title1">📈 Saldo naik sambil nonton</string>
     <string name="notification_local_59_desc1">Lanjutkan sekarang.</string>
-    <string name="notification_local_59_title2">Tinggal selangkah ke penarikan</string>
+    <string name="notification_local_59_title2">🎯 Tinggal selangkah ke penarikan</string>
     <string name="notification_local_59_desc2">Lanjut nonton.</string>
-    <string name="notification_local_59_title3">Bonus kejutan diterima</string>
+    <string name="notification_local_59_title3">🎉 Bonus kejutan diterima</string>
     <string name="notification_local_59_desc3">Saldo kamu baru saja bertambah.</string>
-    <string name="notification_local_59_title4">Bonus tambahan terdeteksi</string>
+    <string name="notification_local_59_title4">✨ Bonus tambahan terdeteksi</string>
     <string name="notification_local_59_desc4">Masuk untuk melihat detail.</string>
 
-    <string name="notification_local_79_title1">Menantu menampar mertua di hari pertama</string>
+    <string name="notification_local_79_title1">🔥 Menantu menampar mertua di hari pertama</string>
     <string name="notification_local_79_desc1">Drama ini bikin emosi.</string>
-    <string name="notification_local_79_title2">Suami berselingkuh dengan sahabat istri</string>
+    <string name="notification_local_79_title2">💔 Suami berselingkuh dengan sahabat istri</string>
     <string name="notification_local_79_desc2">Rahasia akhirnya terbongkar.</string>
-    <string name="notification_local_79_title3">Reward mendadak terbuka</string>
+    <string name="notification_local_79_title3">🔓 Reward mendadak terbuka</string>
     <string name="notification_local_79_desc3">Jangan lewatkan.</string>
-    <string name="notification_local_79_title4">Rp720.000 bisa ditarik sekarang</string>
+    <string name="notification_local_79_title4">🏦 Rp720.000 bisa ditarik sekarang</string>
     <string name="notification_local_79_desc4">Masuk dan lakukan penarikan.</string>
 
     <string name="bonus_welcome_title">Bonus Sambutan</string>

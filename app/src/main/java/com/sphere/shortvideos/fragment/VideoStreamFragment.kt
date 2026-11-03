@@ -83,10 +83,13 @@ class VideoStreamFragment : GenericFragment<FragmentVideoStreamBinding>() {
 
     override fun onPause() {
         super.onPause()
-        val staySec = ((System.currentTimeMillis() - pageResumeAtMs) / 1000L).toInt().coerceAtLeast(0)
-        if (staySec > 0) {
-            localEvent("foru_page_stay", hashMapOf("stay_times" to staySec))
+        if (pageResumeAtMs > 0L) {
+            val staySec = ((System.currentTimeMillis() - pageResumeAtMs) / 1000L).toInt().coerceAtLeast(0)
+            if (staySec > 0) {
+                localEvent("foru_page_stay", hashMapOf("stay_times" to staySec))
+            }
         }
+        pageResumeAtMs = 0L
     }
 
 //    fun pauseCurrentVideo() {

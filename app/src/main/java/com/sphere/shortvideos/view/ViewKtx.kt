@@ -1,6 +1,5 @@
 package com.sphere.shortvideos.view
 
-import android.content.Context
 import android.graphics.Color
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -152,7 +151,8 @@ private fun LayoutTaskChildBinding.set7DayReword(daySignSuccess: (Double, ImageV
     adapter.submitList(items)
 }
 
-private fun LayoutTaskChildBinding.setWatchLayout(context: Context, watchTimeArriver: (Double, ImageView) -> Unit) {
+private fun LayoutTaskChildBinding.setWatchLayout(activity: GenericActivity, watchTimeArriver: (Double, ImageView) -> Unit, ) {
+    val context = activity
     val bean = MoneyCacheHelper.fetchAllWatchReword()
     tvDes1.text = bean[0].second
     tvDes2.text = bean[1].second
@@ -168,12 +168,13 @@ private fun LayoutTaskChildBinding.setWatchLayout(context: Context, watchTimeArr
     AnimViewHelper.playClaimablePulseAnim(ivBigMoney2, TaskHelper.canClaimWatchReward(4))
     AnimViewHelper.playClaimablePulseAnim(ivBigMoney3, TaskHelper.canClaimWatchReward(5))
     fun clickReward(index: Int, view: ImageView) {
+        if (!TaskHelper.canClaimWatchReward(index)) return
         val reward = TaskHelper.clickWatchReward(index)
         if (reward != null) {
             localEvent("billetera_time")
             watchTimeArriver.invoke(reward, view)
             isAnim = true
-            setWatchLayout(context, watchTimeArriver)
+            setWatchLayout(activity, watchTimeArriver)
         }
     }
     progressView.setProgress((((curIndexReward + 1) / 6.0) * 100).toInt(), isAnim)

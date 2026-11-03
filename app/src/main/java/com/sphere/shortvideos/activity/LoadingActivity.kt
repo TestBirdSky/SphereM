@@ -5,7 +5,9 @@ import androidx.activity.viewModels
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.withResumed
 import com.sphere.shortvideos.GlobalConstants
+import com.sphere.shortvideos.R
 
 import com.sphere.shortvideos.baseui.GenericBindActivity
 import com.sphere.shortvideos.databinding.ActivityLoadingBinding
@@ -19,6 +21,7 @@ import com.sphere.shortvideos.nextView
 import com.sphere.shortvideos.notification.NotificationHelper
 import com.sphere.shortvideos.view.AnimViewHelper
 import com.sphere.shortvideos.vm.LoadingViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -37,9 +40,7 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
     override fun initUI() {
         checkNotification()
         viewModel.umpCompletedLiveData.observe(this) {
-            if (isFirstGoLoadingPage.not()) {
-                viewModel.waitAdLoading(this)
-            }
+            viewModel.waitAdLoading(this, isFirstGoLoadingPage)
         }
         viewModel.nextLiveData.observe(this) {
             openMain()
@@ -55,8 +56,7 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
             binding.progressHorizontal.visibility = View.INVISIBLE
             binding.tvDes2.visibility = View.INVISIBLE
             binding.firstLayout.visibility = View.VISIBLE
-            binding.tvPp.visibility = View.VISIBLE // 启动按钮提醒：复用已有的呼吸脉冲动画
-            AnimViewHelper.playClaimablePulseAnim(binding.tvStart, true, 0.98f, 1.06f)
+            binding.tvPp.visibility = View.VISIBLE
             binding.tvStart.setOnClickListener {
                 localEvent("launch_start")
                 openMain()
@@ -69,6 +69,7 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
         MMKVRepository.checkCueDay()
     }
 
+
     private fun openMain() {
         isFirstGoLoadingPage = false
         nextView<MainActivity> {
@@ -80,6 +81,7 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
     override fun onBackActioned() = Unit
 
     override fun onDestroy() {
+        AnimViewHelper.playClaimablePulseAnim(binding.tvStart, false)
         super.onDestroy()
         AppHelper.isIceLuncher = false
     }
@@ -100,8 +102,7 @@ class LoadingActivity : GenericBindActivity<ActivityLoadingBinding>() {
     private fun checkNotification() {
         val notificationId = intent.getIntExtra(NotificationHelper.NOTIFICATION_ID_KEY, -1)
         lastNotificationId = notificationId
-        if (notificationId != -1) {
-            //            runCatching {
+        if (notificationId != -1) { //            runCatching {
             //                NotificationManagerCompat.from(this).cancel(notificationId)
             //            }
             viewModel.adContext = NotificationHelper.clickNotiEvent(notificationId)

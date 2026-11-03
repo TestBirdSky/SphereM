@@ -2,4 +2,5 @@
 <resources>
     <item name="press_gray_overlay_holder" type="id" />
     <item name="welcome_bonus_rotation_holder" type="id" />
+    <item name="task_reward_claim_in_progress" type="id" />
 </resources>

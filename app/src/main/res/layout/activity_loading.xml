@@ -102,6 +102,7 @@
             android:layout_marginHorizontal="24dp"
             android:layout_marginBottom="95dp"
             android:background="@drawable/shape_white50"
+            android:enabled="false"
             android:gravity="center"
             android:paddingHorizontal="6dp"
             android:paddingVertical="4dp"

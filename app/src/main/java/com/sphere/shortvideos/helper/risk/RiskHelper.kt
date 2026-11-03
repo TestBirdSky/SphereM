@@ -6,13 +6,16 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.provider.Settings
 import android.telephony.TelephonyManager
+import com.chartboost.sdk.impl.fa
 import com.google.gson.Gson
 import com.sphere.shortvideos.bean.BehaviorConfig
 import com.sphere.shortvideos.bean.RiskBean
 import com.sphere.shortvideos.helper.AppHelper
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.mmkv.MMKVData
+import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.isDebugMode
+import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.mApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -173,6 +176,17 @@ object RiskHelper {
         val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
 
         return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_VPN)
+    }
+
+    fun isDoLimit(): Boolean {
+        if (isDebugMode) {
+            logError("info-->isNormalUser=${MMKVRepository.isBuyUser.not()} root${checkRoot()} developer${
+                checkDeveloperMode(mApp)
+            }")
+            return false
+        }
+        if (MMKVRepository.isBuyUser.not()) return true
+        return checkRoot() || checkDeveloperMode(mApp)
     }
 
     /**

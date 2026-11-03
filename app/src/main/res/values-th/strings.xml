@@ -25,49 +25,49 @@
     <string name="no_data">ไม่มีข้อมูล</string>
     <string name="preparing_ads">กำลังเตรียมโฆษณา…</string>
 
-    <string name="notification_checkin_title">ปลดล็อกรางวัลรายวัน</string>
+    <string name="notification_checkin_title">🎁 ปลดล็อกรางวัลรายวัน</string>
     <string name="notification_checkin_desc">เข้าสู่ระบบตอนนี้เพื่อรับ</string>
-    <string name="notification_drama_title">กิจกรรมรายวันเริ่มแล้ว</string>
+    <string name="notification_drama_title">🎯 กิจกรรมรายวันเริ่มแล้ว</string>
     <string name="notification_drama_desc">รับเพิ่มวันนี้</string>
-    <string name="notification_reward_title">$48 รอการถอน</string>
+    <string name="notification_reward_title">💵 $48 รอการถอน</string>
     <string name="notification_reward_desc">คุณได้โบนัสเซอร์ไพรส์</string>
-    <string name="notification_almost_title">ใกล้พร้อมแล้ว: $48</string>
+    <string name="notification_almost_title">⏳ ใกล้พร้อมแล้ว: $48</string>
     <string name="notification_almost_desc">ทำภารกิจให้ครบเพื่อปลดล็อกการถอน</string>
 
-    <string name="notification_screen_on_title1">ทุกตอนมีรายได้</string>
+    <string name="notification_screen_on_title1">🎬 ทุกตอนมีรายได้</string>
     <string name="notification_screen_on_des1">อย่าพลาดโอกาส</string>
-    <string name="notification_screen_on_title2">ใกล้ถอนเงินแล้ว</string>
+    <string name="notification_screen_on_title2">🚀 ใกล้ถอนเงินแล้ว</string>
     <string name="notification_screen_on_des2">อีกไม่กี่ตอนก็พร้อม</string>
-    <string name="notification_screen_on_title3">เงินใกล้ปลดล็อกแล้ว</string>
+    <string name="notification_screen_on_title3">🔑 เงินใกล้ปลดล็อกแล้ว</string>
     <string name="notification_screen_on_des3">อย่าหยุดตอนนี้ — คุณทำได้ดีมาก</string>
-    <string name="notification_screen_on_title4">เปิดโปงรักต้องห้าม</string>
+    <string name="notification_screen_on_title4">💘 เปิดโปงรักต้องห้าม</string>
     <string name="notification_screen_on_des4">ดูก่อนความจริงจะถูกเปิด</string>
 
-    <string name="notification_local_23_title1">ดูแล้วถอนเป็นเงิน</string>
+    <string name="notification_local_23_title1">📺 ดูแล้วถอนเป็นเงิน</string>
     <string name="notification_local_23_desc1">แต่ละตอนเพิ่มยอดคงเหลือของคุณ เริ่มเลย</string>
-    <string name="notification_local_23_title2">ซีรีส์ที่จ่ายจริง</string>
+    <string name="notification_local_23_title2">💰 ซีรีส์ที่จ่ายจริง</string>
     <string name="notification_local_23_desc2">ดูตอนนี้แล้วรับเงินจริง</string>
-    <string name="notification_local_23_title3">เธอนอกใจในวันแต่งงาน</string>
+    <string name="notification_local_23_title3">💔 เธอนอกใจในวันแต่งงาน</string>
     <string name="notification_local_23_desc3">สิ่งที่เกิดขึ้นหลังจากนั้นช็อกทุกคน</string>
-    <string name="notification_local_23_title4">$48 เกือบเป็นของคุณแล้ว</string>
+    <string name="notification_local_23_title4">💎 $48 เกือบเป็นของคุณแล้ว</string>
     <string name="notification_local_23_desc4">ทำภารกิจให้ครบเพื่อถอนเงิน</string>
 
-    <string name="notification_local_59_title1">ยิ่งดูมาก ยิ่งได้มาก</string>
+    <string name="notification_local_59_title1">📈 ยิ่งดูมาก ยิ่งได้มาก</string>
     <string name="notification_local_59_desc1">การถอนเงินใกล้เข้ามาทุกขณะ</string>
-    <string name="notification_local_59_title2">เขากลับมารวยเพื่อล้างแค้น</string>
+    <string name="notification_local_59_title2">🔥 เขากลับมารวยเพื่อล้างแค้น</string>
     <string name="notification_local_59_desc2">ทั้งบ้านถึงกับอึ้ง</string>
-    <string name="notification_local_59_title3">เธอถูกไล่ออก… แล้วกลับมาเป็นเจ้าสัว</string>
+    <string name="notification_local_59_title3">👑 เธอถูกไล่ออก… แล้วกลับมาเป็นเจ้าสัว</string>
     <string name="notification_local_59_desc3">ดูเลยตอนนี้</string>
-    <string name="notification_local_59_title4">เมียน้อยคือเพื่อนสนิทของเธอ</string>
+    <string name="notification_local_59_title4">👀 เมียน้อยคือเพื่อนสนิทของเธอ</string>
     <string name="notification_local_59_desc4">ดราม่าระเบิดเต็มที่</string>
 
-    <string name="notification_local_79_title1">เงินโตขึ้นทุกตอนที่ดู</string>
+    <string name="notification_local_79_title1">💹 เงินโตขึ้นทุกตอนที่ดู</string>
     <string name="notification_local_79_desc1">ดูอีกหนึ่งตอน</string>
-    <string name="notification_local_79_title2">หนึ่ง slap เปลี่ยนทุกอย่าง</string>
+    <string name="notification_local_79_title2">⚡ หนึ่ง slap เปลี่ยนทุกอย่าง</string>
     <string name="notification_local_79_desc2">ตอนนี้มันฮอตมาก</string>
-    <string name="notification_local_79_title3">ปลดล็อกรางวัลเซอร์ไพรส์</string>
+    <string name="notification_local_79_title3">🎉 ปลดล็อกรางวัลเซอร์ไพรส์</string>
     <string name="notification_local_79_desc3">โบนัสไม่คาดฝันเข้ายอดคุณแล้ว</string>
-    <string name="notification_local_79_title4">เฮงรายวันเปิดใช้งาน</string>
+    <string name="notification_local_79_title4">🍀 เฮงรายวันเปิดใช้งาน</string>
     <string name="notification_local_79_desc4">มีรางวัลเพิ่มให้แล้ว</string>
 
     <string name="bonus_welcome_title">โบนัสต้อนรับ</string>

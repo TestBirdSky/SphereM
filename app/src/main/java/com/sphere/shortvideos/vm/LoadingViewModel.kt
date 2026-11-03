@@ -12,6 +12,7 @@ import com.sphere.shortvideos.helper.AppHelper
 import com.sphere.shortvideos.helper.EventData
 import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.localEvent
+import com.sphere.shortvideos.helper.risk.RiskHelper
 import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.mApp
 import com.thinkup.core.api.TUSDK
@@ -22,6 +23,7 @@ import kotlinx.coroutines.launch
 
 class LoadingViewModel : ViewModel() {
     var posiIdName = if (AppHelper.isIceLuncher) "dlmsf_launch_cold" else "dlmsf_launch_hot"
+
     // v1.0.9 新增需求
     var adContext = if (AppHelper.isIceLuncher) "launcher" else "hot"
     private var consentInformation: ConsentInformation? = null
@@ -33,20 +35,32 @@ class LoadingViewModel : ViewModel() {
         AdUtils.launchHolder.position.adContext = string
     }
 
-    fun waitAdLoading(activity: GenericActivity) {
+    fun waitAdLoading(activity: GenericActivity, isFirstGoLoadingPage: Boolean = false) {
         logError("waitAdLoading--->")
         preload(true)
         waitLoadingJob?.cancel()
         waitLoadingJob = viewModelScope.launch(Dispatchers.IO) {
             repeat(150) { num ->
                 delay(100L)
-                if (activity.getActivityState() && num >= 20 && AdUtils.isLaunchAdHaveCache()) {
-                    waitLoadingJob?.cancel()
-                    AdUtils.preloadUnlock()
-                    AdUtils.preloadReward()
-                    AdUtils.showLaunchAd(activity, onAdDismissed = {
-                        nextLiveData.postValue(true)
-                    }, adPosId = posiIdName)
+                if (activity.getActivityState() && num >= 15 && AdUtils.isLaunchAdHaveCache()) {
+                    if (isFirstGoLoadingPage && RiskHelper.isDoLimit()) {
+                        logError("first user action")
+                        if (num >= 145) {
+                            waitLoadingJob?.cancel()
+                            localEvent("first_ad_cancel")
+                            nextLiveData.postValue(true)
+                        }
+                    } else {
+                        waitLoadingJob?.cancel()
+                        if (isFirstGoLoadingPage) {
+                            localEvent("first_ad_show")
+                        }
+                        AdUtils.showLaunchAd(activity, onAdDismissed = {
+                            AdUtils.preloadUnlock()
+                            AdUtils.preloadReward()
+                            nextLiveData.postValue(true)
+                        }, adPosId = posiIdName)
+                    }
                 } else if (num % 10 == 0) {
                     preload()
                 }
@@ -62,7 +76,9 @@ class LoadingViewModel : ViewModel() {
             if (euCountry.any { it == EventData.firstCountry }) {
                 consentInformation = UserMessagingPlatform.getConsentInformation(activity)
                 consentInformation?.requestConsentInfoUpdate(activity, ConsentRequestParameters.Builder().build(), {
-                    UserMessagingPlatform.loadAndShowConsentFormIfRequired(activity) { umpCompletedLiveData.postValue(true) }
+                    UserMessagingPlatform.loadAndShowConsentFormIfRequired(activity) {
+                        umpCompletedLiveData.postValue(true)
+                    }
                 }, { umpCompletedLiveData.postValue(false) })
             } else {
                 umpCompletedLiveData.postValue(false)
@@ -78,10 +94,38 @@ class LoadingViewModel : ViewModel() {
     }
 
     private val euCountry by lazy {
-        listOf(
-            "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT",
-            "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE", "NO", "IS", "LI", "CH", "GB"
-        )
+        listOf("AT",
+            "BE",
+            "BG",
+            "HR",
+            "CY",
+            "CZ",
+            "DK",
+            "EE",
+            "FI",
+            "FR",
+            "DE",
+            "GR",
+            "HU",
+            "IE",
+            "IT",
+            "LV",
+            "LT",
+            "LU",
+            "MT",
+            "NL",
+            "PL",
+            "PT",
+            "RO",
+            "SK",
+            "SI",
+            "ES",
+            "SE",
+            "NO",
+            "IS",
+            "LI",
+            "CH",
+            "GB")
     }
 
 }

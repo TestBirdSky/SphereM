@@ -21,19 +21,19 @@ class FbAndAdjustHelper {
     """.trimIndent()
 
     fun initFb(str: String) {
-//        val js = str.ifBlank { defC }
-//        runCatching {
-//            JSONObject(js).apply {
-//                val fbStr = optString("app_id")
-//                val token = optString("client_token")
-//                if (fbStr.isBlank() || token.isBlank()) return
-//                if (FacebookSdk.isInitialized()) return
-//                FacebookSdk.setApplicationId(fbStr)
-//                FacebookSdk.setClientToken(token)
-//                FacebookSdk.sdkInitialize(mApp)
-//                AppEventsLogger.activateApp(mApp)
-//            }
-//        }
+        //        val js = str.ifBlank { defC }
+        //        runCatching {
+        //            JSONObject(js).apply {
+        //                val fbStr = optString("app_id")
+        //                val token = optString("client_token")
+        //                if (fbStr.isBlank() || token.isBlank()) return
+        //                if (FacebookSdk.isInitialized()) return
+        //                FacebookSdk.setApplicationId(fbStr)
+        //                FacebookSdk.setClientToken(token)
+        //                FacebookSdk.sdkInitialize(mApp)
+        //                AppEventsLogger.activateApp(mApp)
+        //            }
+        //        }
     }
 
     fun initAdjust(context: Context) {
@@ -50,6 +50,7 @@ class FbAndAdjustHelper {
             val network = attribution.network ?: ""
             val isBlacklist = network.contains("Organic", ignoreCase = false)
             MMKVRepository.isBlacklistUser = isBlacklist
+            MMKVRepository.isBuyUser = isBlacklist.not()
             val info = parsePaidChannelByAdjustNetwork(network)
             if (MMKVRepository.adjustPaidChannel != info) {
                 MMKVRepository.adjustPaidChannel = info
@@ -65,7 +66,7 @@ class FbAndAdjustHelper {
 
     private fun parsePaidChannelByAdjustNetwork(network: String): String {
         val n = if (isDebugMode) {
-            listOf("Facebook Int", "Instagram Installs","").random()
+            listOf("Facebook Int", "Instagram Installs", "").random()
         } else {
             network.trim()
         }
