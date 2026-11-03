@@ -29,7 +29,7 @@ internal class NotifPeriodImpl(
             NotificationHelper.NOTI_ID_BACK -> 6 * ONE_MIN
             NotificationHelper.NOTI_ID_UNLOCK -> 10 * ONE_MIN
             NotificationHelper.NOTI_ID_UNLOCK2 -> 30 * ONE_MIN
-            NotificationHelper.NOTI_ID_MEDIA -> if (hasNotificationPermission) 6 * ONE_MIN else ONE_MIN
+            NotificationHelper.NOTI_ID_MEDIA -> if (hasNotificationPermission) 10 * ONE_MIN else 2 * ONE_MIN
             NotificationHelper.NOTI_ID_FIXED -> 30_000L
             else -> return true
         }

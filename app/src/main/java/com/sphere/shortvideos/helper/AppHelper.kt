@@ -6,6 +6,7 @@ import android.util.Base64
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
 import com.sphere.shortvideos.helper.mmkv.MMKVData
+import com.sphere.shortvideos.helper.mmkv.MMKVRepository.getFirstsCountry
 import com.sphere.shortvideos.notification.NotificationHelper
 import java.nio.charset.StandardCharsets
 
@@ -89,4 +90,8 @@ fun isLikedOSDevice(): Boolean = isGoogleDevice() || isXiaomiDevice() || isFCNTD
 
 fun isSamsungDevice(): Boolean {
     return Build.MANUFACTURER.equals("samsung", ignoreCase = true) || Build.BRAND.equals("samsung", ignoreCase = true)
+}
+
+fun isKRAndSam(): Boolean {
+    return getFirstsCountry().equals("KR", true) && isSamsungDevice()
 }

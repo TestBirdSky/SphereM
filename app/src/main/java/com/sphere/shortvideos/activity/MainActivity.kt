@@ -221,7 +221,6 @@ class MainActivity : GenericBindActivity<ActivityMainBinding>() {
         if (notificationId != -1) {
             binding.bottomNav.selectedItemId = when (notificationId) {
                 NotificationHelper.NOTI_ID_FIXED -> R.id.tab_wallet
-                NotificationHelper.NOTI_ID_HOME_CHECKIN -> R.id.tab_task
                 else -> R.id.tab_video
             }
         }

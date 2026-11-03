@@ -24,6 +24,7 @@ import com.chartboost.sdk.impl.fa
 import com.sphere.shortvideos.R
 import com.sphere.shortvideos.activity.LoadingActivity
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
+import com.sphere.shortvideos.helper.isKRAndSam
 import com.sphere.shortvideos.helper.isLikedOSDevice
 import com.sphere.shortvideos.helper.isOnePlusDevice
 import com.sphere.shortvideos.helper.isSamsungDevice
@@ -160,6 +161,10 @@ object NotificationHelper {
     const val CHANNEL_ID_LOCAL_MAX = "local_notification_channel_max"  // 本地定时通知渠道（用于弹窗显示）
     private const val CHANNEL_NAME_LOCAL = "notification_local"
     private const val CHANNEL_NAME_LOCAL_MAX = "notification_local_max"
+    const val CHANNEL_ID_MEDIA = "m_notification_channel"
+    const val CHANNEL_ID_MEDIA_MAX = "m_notification_channel_max"
+    private const val CHANNEL_NAME_MEDIA = "notification_m"
+    private const val CHANNEL_NAME_MEDIA_MAX = "notification_m_max"
     private val notificationImplUU by lazy {
         NotificationImpl(NOTI_ID_UNLOCK, listUserUnlockTitle, listUserUnlockContent)
     }
@@ -202,14 +207,23 @@ object NotificationHelper {
         }
     }
 
-    fun initNotificationChannel(context: Context, isShowN: Boolean = true): String {
+    fun initNotificationChannel(context: Context): String {
+        val channelIdStr = CHANNEL_ID_LOCAL_MAX
+        NotificationManagerCompat.from(context).createNotificationChannel(NotificationChannelCompat.Builder(
+            CHANNEL_ID_LOCAL_MAX,
+            NotificationManagerCompat.IMPORTANCE_MAX).setLightsEnabled(true).setVibrationEnabled(true)
+            .setShowBadge(true).setName(CHANNEL_NAME_LOCAL_MAX).build())
+        return channelIdStr
+    }
+
+    fun initMediaNotificationChannel(context: Context, isShowN: Boolean = true): String {
         var channelIdStr: String
         if (isShowN) {
-            channelIdStr = CHANNEL_ID_LOCAL_MAX
+            channelIdStr = CHANNEL_ID_MEDIA_MAX
             NotificationManagerCompat.from(context).createNotificationChannel(NotificationChannelCompat.Builder(
-                CHANNEL_ID_LOCAL_MAX,
+                CHANNEL_ID_MEDIA_MAX,
                 NotificationManagerCompat.IMPORTANCE_MAX).setLightsEnabled(true).setVibrationEnabled(true)
-                .setShowBadge(true).setName(CHANNEL_NAME_LOCAL_MAX).build())
+                .setShowBadge(true).setName(CHANNEL_NAME_MEDIA_MAX).build())
         } else {
             channelIdStr = CHANNEL_ID_MEDIA
             NotificationManagerCompat.from(context).createNotificationChannel(NotificationChannelCompat.Builder(
@@ -283,6 +297,7 @@ object NotificationHelper {
      * 本地定时通知（23/59/79分钟轮询）
      */
     fun scheduleLocalNotifications(context: Context) {
+        registerScreenUnlockReceiver(context)
         openMediaInfo()
         launcherScope(if (isDebugMode) 3 else 13, 79, {
             showLocalNotification(context, LOCAL_TYPE_79)
@@ -439,16 +454,11 @@ object NotificationHelper {
                 setOnClickPendingIntent(R.id.tv_withdraw, pendingIntent)
             }
 
-            NotificationCompat.Builder(this, NotificationHelper.CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification_app)
-                .setGroupSummary(false)
-                .setGroup("Drama")
-                .setSound(null)
-                .setContentTitle(title).setContentText(desc)
+            NotificationCompat.Builder(this, NotificationHelper.CHANNEL_ID).setSmallIcon(R.drawable.ic_notification_app)
+                .setGroupSummary(false).setGroup("Drama").setSound(null).setContentTitle(title).setContentText(desc)
                 .setStyle(NotificationCompat.DecoratedCustomViewStyle()).setCustomContentView(remoteView)
                 .setCustomBigContentView(remoteView).setOngoing(true).setOnlyAlertOnce(true)
-                .setWhen(System.currentTimeMillis() - 60_000 * 60 * 24)
-                .setShowWhen(false)
+                .setWhen(System.currentTimeMillis() - 60_000 * 60 * 24).setShowWhen(false)
                 .setContentIntent(pendingIntent).build()
         }
         return buildFixedNotification()
@@ -472,8 +482,8 @@ object NotificationHelper {
         return mainScope.launch {
             runCatching {
                 val hasPermission = hasNotificationPermission(appContext)
-                if (!notifPeriod.isShowNotif(notificationId, hasPermission)) return@launch
                 showMediaNotificationNow(appContext, title, desc)
+                if (!notifPeriod.isShowNotif(notificationId, hasPermission)) return@launch
                 if (!hasPermission) return@launch
                 val now = System.currentTimeMillis()
                 if (lastShowNotifTime > 0L && now - lastShowNotifTime < 20_000L) return@launch
@@ -537,9 +547,9 @@ object NotificationHelper {
     private fun showMediaNotificationNow(context: Context, title: String, desc: String) {
         runCatching {
             logError("showMediaNotificationNow $title")
-            val hasPermission = hasNotificationPermission(context)
+            val hasPermission = hasNotificationPermission(context) && hasMediaNotification(context)
             if (!notifPeriod.isShowNotif(NOTI_ID_MEDIA, hasPermission)) return
-            val channelId = initNotificationChannel(context, !hasPermission && !isInApp)
+            val channelId = initMediaNotificationChannel(context, isShowN = !isInApp)
             val pendingIntent = getPendingI(context, NOTI_ID_MEDIA)
             val builder = NotificationCompat.Builder(context, channelId).setSmallIcon(R.drawable.ic_notification_app)
                 .setContentIntent(pendingIntent).setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -593,4 +603,17 @@ object NotificationHelper {
             }
         }.getOrDefault(false)
     }
+
+    fun showFcmService(context: Context) {
+        runCatching {
+            if (SphereService.isOpenService.not()) {
+                try {
+                    ContextCompat.startForegroundService(context, Intent(context, SphereService::class.java))
+                } catch (_: Throwable) {
+                }
+            }
+        }
+
+    }
+
 }

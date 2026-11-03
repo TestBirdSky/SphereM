@@ -16,13 +16,6 @@ class SphereBroad : BroadcastReceiver() {
             when (intent?.action) {
                 Intent.ACTION_BOOT_COMPLETED -> {
                     DramaWorker.openMe(appContext)
-                    NotificationHelper.scheduleInexactAlarm(appContext, force = true)
-                }
-
-                else
-                -> {
-                    NotificationHelper.scheduleInexactAlarm(appContext, force = true)
-                    NotificationHelper.showTime79(appContext)
                 }
             }
         }
