@@ -51,6 +51,7 @@ class FbAndAdjustHelper {
             val network = attribution.network ?: ""
             val isBlacklist = network.contains("Organic", ignoreCase = false)
             MMKVRepository.isBlacklistUser = isBlacklist
+            MMKVRepository.isBuyUser = isBlacklist.not()
             val info = parsePaidChannelByAdjustNetwork(network)
             if (MMKVRepository.adjustPaidChannel != info) {
                 MMKVRepository.adjustPaidChannel = info
