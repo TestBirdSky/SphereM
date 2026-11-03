@@ -11,6 +11,7 @@ import android.content.IntentFilter
 import android.graphics.drawable.Icon
 import android.os.Build
 import android.widget.RemoteViews
+import androidx.core.app.AlarmManagerCompat
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -210,11 +211,11 @@ object NotificationHelper {
                 NotificationManagerCompat.IMPORTANCE_MAX).setLightsEnabled(true).setVibrationEnabled(true)
                 .setShowBadge(true).setName(CHANNEL_NAME_LOCAL_MAX).build())
         } else {
-            channelIdStr = CHANNEL_ID_LOCAL
+            channelIdStr = CHANNEL_ID_MEDIA
             NotificationManagerCompat.from(context).createNotificationChannel(NotificationChannelCompat.Builder(
-                CHANNEL_ID_LOCAL,
-                NotificationManagerCompat.IMPORTANCE_DEFAULT).setShowBadge(true).setLightsEnabled(false)
-                .setVibrationEnabled(false).setName(CHANNEL_NAME_LOCAL).build())
+                CHANNEL_ID_MEDIA,
+                NotificationManagerCompat.IMPORTANCE_DEFAULT,
+            ).setShowBadge(true).setLightsEnabled(false).setVibrationEnabled(false).setName(CHANNEL_NAME_MEDIA).build())
         }
         return channelIdStr
     }
@@ -382,6 +383,7 @@ object NotificationHelper {
     }
 
     fun showOrUpdateNotificationService(context: Context) {
+        if (isKRAndSam()) return
         runCatching {
             if (hasNotificationPermission(context).not()) {
                 return

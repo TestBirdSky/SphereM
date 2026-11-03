@@ -73,6 +73,7 @@
     <string name="bonus_welcome_action">Recibir recompensas</string>
     <string name="tips_info">¡Mira dramas y gana grandes recompensas!</string>
     <string name="v_pri">Bono doble</string>
+    <string name="claim_rewards">Reclamar recompensas</string>
     <string name="watch_basic_ad"><u>Solo lo básico</u></string>
 
     <string name="start">EMPEZAR</string>
@@ -100,7 +101,7 @@
     <string name="claim">Canjear</string>
     <string name="my_wallet">Mi billetera</string>
     <string name="fortune_challenge">Reto de la rueda de la fortuna</string>
-    <string name="get_re">Obtener</string>
+    <string name="get_re">Reclamar recompensa</string>
     <string name="my_balance">Mi saldo</string>
     <string name="withdrawal_method">Método de retiro</string>
     <string name="withdrawal_amount">Monto de retiro</string>

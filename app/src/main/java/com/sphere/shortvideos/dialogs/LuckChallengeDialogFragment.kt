@@ -33,10 +33,12 @@ import kotlin.random.Random
 class LuckChallengeDialogFragment : DialogFragment() {
 
     private var rate = 3
+    var showNormalClaim: Boolean = false
 
     /** 激励广告基础奖励金额（倍率加载完后用于公式展示） */
     private var baseRewardAmount = 0.0
     var onResult: ((Double) -> Unit)? = null
+    var onNormalClick: ((Double) -> Unit)? = null
 
     private var _binding: DialogLuckChallengeBinding? = null
     private val binding get() = _binding!!
@@ -94,6 +96,11 @@ class LuckChallengeDialogFragment : DialogFragment() {
         binding.btnClaim.setOnClickListener {
             localEvent("wheel_pop_c")
             onResult?.invoke(rate * reward.first)
+            dismissAllowingStateLoss()
+        }
+        binding.btnNormal.setOnClickListener {
+            localEvent("wheel_pop_normal")
+            onNormalClick?.invoke(reward.first)
             dismissAllowingStateLoss()
         }
         localEvent("wheel_pop")
@@ -162,6 +169,7 @@ class LuckChallengeDialogFragment : DialogFragment() {
                 smoothMoveArrowToIndex(finalIndex) {
                     val binding = _binding ?: return@smoothMoveArrowToIndex
                     binding.ivArrow.animate().alpha(1f).setDuration(150L).start()
+                    binding.btnNormal.visibility = if (showNormalClaim) View.VISIBLE else View.GONE
                     showClaimButtonWithAnim()
                 }
             }
@@ -223,6 +231,14 @@ class LuckChallengeDialogFragment : DialogFragment() {
         AnimatorSet().apply {
             playTogether(alphaAnim, scaleXAnim, scaleYAnim)
             start()
+        }
+        if (showNormalClaim) {
+            binding.btnNormal.alpha = 0f
+            binding.btnNormal.animate()
+                .alpha(1f)
+                .setStartDelay(180L)
+                .setDuration(220L)
+                .start()
         }
     }
 

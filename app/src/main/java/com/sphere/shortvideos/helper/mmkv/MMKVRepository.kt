@@ -9,6 +9,7 @@ import com.sphere.shortvideos.helper.withdraw.WithdrawalActionHelper
 import com.sphere.shortvideos.mApp
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 object MMKVRepository {
 
@@ -71,6 +72,15 @@ object MMKVRepository {
         }
         mSphereAndroidId
     }
+
+    private var mFirstCountry by MMKVData("")
+     fun getFirstsCountry(): String {
+        if (mFirstCountry.isEmpty()) {
+            mFirstCountry = Locale.getDefault().country
+        }
+        return mFirstCountry
+    }
+
 
     fun isUserGo(): Boolean{
         return MMKVRepository.isBuyUser

@@ -13,6 +13,7 @@ import com.sphere.shortvideos.view.setTaskInfo
 import com.sphere.shortvideos.databinding.DialogTaskInfoBinding
 import com.sphere.shortvideos.helper.HelperRewardShow
 import com.sphere.shortvideos.helper.WithdrawAmountHelper
+import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.view.AnimViewHelper
 
@@ -41,6 +42,8 @@ class TaskInfoDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // 使用局部变量缓存 binding，避免在回调中访问已被置空的 mBinding 导致 NPE
+        AdUtils.preloadReward()
+        AdUtils.preloadUnlock()
         val binding = mBinding ?: return
         val hostActivity = activity as? GenericActivity ?: return
 

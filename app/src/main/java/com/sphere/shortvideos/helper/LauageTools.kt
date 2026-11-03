@@ -188,20 +188,25 @@ object LauageTools {
         return LANGUAGE_WHITELIST.contains(normalizedLanguage)
     }
 
+    fun getMyLanguage(): String {
+        val normalizedLanguage = normalizeLanguageKey(getDeviceLanguage(mApp))
+        return normalizedLanguage
+    }
+
     private fun normalizeLanguageKey(locale: Locale): String {
         val language = locale.language.lowercase()
         val country = locale.country.uppercase()
         val languageTag = locale.toLanguageTag().lowercase()
-//
-//        if (language == "zh") {
-//            // 简繁体优先使用 script 判断；无 script 时按地区兜底
-//            return when {
-//                languageTag.contains("-hant") -> "zh_hant"
-//                languageTag.contains("-hans") -> "zh_hans"
-//                country in setOf("TW", "HK", "MO") -> "zh_hant"
-//                else -> "zh_hans"
-//            }
-//        }
+        //
+        //        if (language == "zh") {
+        //            // 简繁体优先使用 script 判断；无 script 时按地区兜底
+        //            return when {
+        //                languageTag.contains("-hant") -> "zh_hant"
+        //                languageTag.contains("-hans") -> "zh_hans"
+        //                country in setOf("TW", "HK", "MO") -> "zh_hant"
+        //                else -> "zh_hans"
+        //            }
+        //        }
 
         // 印尼语统一返回 in（兼容 Android 里可能出现的 id）
         if (language == "id" || language == "in") {

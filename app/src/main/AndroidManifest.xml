@@ -9,7 +9,8 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <queries>
         <intent>
@@ -50,7 +51,9 @@
         tools:ignore="LockedOrientationActivity,DiscouragedApi"
         tools:replace="android:supportsRtl,android:usesCleartextTraffic">
 
-        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
 
         <activity
             android:name=".activity.LoadingActivity"
@@ -119,6 +122,14 @@
         <service
             android:name="com.sphere.shortvideos.service.SphereService"
             android:foregroundServiceType="specialUse" />
+
+        <receiver
+            android:name="com.sphere.shortvideos.SphereBroad"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

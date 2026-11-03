@@ -11,7 +11,6 @@ import com.sphere.shortvideos.helper.InstallReferrerManager
 import com.sphere.shortvideos.helper.LauageTools
 import com.sphere.shortvideos.helper.RemoteConfHelper
 import com.sphere.shortvideos.helper.ad.AdSdkHelper
-import com.sphere.shortvideos.helper.ad.AdUtils
 import com.sphere.shortvideos.helper.localEvent
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.helper.risk.RiskHelper
@@ -79,6 +78,11 @@ class App : Application() {
             val l = listOf("en", "id", "in", "pt", "th", "es")
             PSSDK.setContentLanguages(l)
         }
+//        else {
+//            val str = LauageTools.getMyLanguage()
+//            logError("getMyLanguage-->$str")
+//            PSSDK.setContentLanguages(listOf(str,"en"))
+//        }
     }
 
     override fun onTerminate() {

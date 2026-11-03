@@ -9,6 +9,7 @@ import com.chartboost.sdk.impl.fa
 import com.sphere.shortvideos.activity.LoadingActivity
 import com.sphere.shortvideos.baseui.GenericActivity
 import com.sphere.shortvideos.helper.ad.AdUtils
+import com.sphere.shortvideos.helper.mmkv.MMKVRepository
 import com.sphere.shortvideos.isInteractive
 import com.sphere.shortvideos.logError
 import com.sphere.shortvideos.notification.NotificationHelper
@@ -24,6 +25,8 @@ object AppLifecycleManager : Application.ActivityLifecycleCallbacks {
     private var backgroundJob: Job? = null
     private var foregroundCounts = 0
     private var foregroundStartMs: Long = 0L
+
+    var onDelayOnBackTime = if (MMKVRepository.isBuyUser) 1000L else 3_000L
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         synchronized(activityList) { activityList.add(activity) }
@@ -70,8 +73,8 @@ object AppLifecycleManager : Application.ActivityLifecycleCallbacks {
                 }
                 foregroundStartMs = 0L
                 NotificationHelper.isInApp = false
-                backgroundJob = CoroutineScope(Dispatchers.Main).launch {
-                    delay(3000L)
+                backgroundJob = CoroutineScope(Dispatchers.IO).launch {
+                    delay(onDelayOnBackTime)
                     AdUtils.isInBack = true
                     runCatching {
                         activityList.toMutableList().forEach { act ->

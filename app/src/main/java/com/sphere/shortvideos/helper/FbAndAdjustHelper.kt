@@ -4,6 +4,7 @@ import android.content.Context
 import com.adjust.sdk.Adjust
 import com.adjust.sdk.AdjustConfig
 import com.sphere.shortvideos.helper.mmkv.MMKVRepository
+import com.sphere.shortvideos.helper.mmkv.MMKVRepository.isBuyUser
 import com.sphere.shortvideos.isDebugMode
 import com.sphere.shortvideos.logError
 
@@ -50,7 +51,6 @@ class FbAndAdjustHelper {
             val network = attribution.network ?: ""
             val isBlacklist = network.contains("Organic", ignoreCase = false)
             MMKVRepository.isBlacklistUser = isBlacklist
-            MMKVRepository.isBuyUser = isBlacklist.not()
             val info = parsePaidChannelByAdjustNetwork(network)
             if (MMKVRepository.adjustPaidChannel != info) {
                 MMKVRepository.adjustPaidChannel = info

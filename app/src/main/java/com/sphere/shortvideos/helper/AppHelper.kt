@@ -23,7 +23,6 @@ object AppHelper {
     var isIceLuncher = true
 
     fun registerInfo(context: Context) {
-        NotificationHelper.registerScreenUnlockReceiver(context)
         if (LauageTools.isIndonesia()) {
             topicId.forEach {
                 register(it)

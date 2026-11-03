@@ -119,6 +119,7 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
         supportFragmentManager.registerFragmentLifecycleCallbacks(dialogLifecycleCallbacks, true)
         lifecycleScope.launch(Dispatchers.Main) {
             AdUtils.preloadUnlock()
+            AdUtils.preloadReward()
             shortPlay?.let { item ->
                 withContext(Dispatchers.IO) {
                     shortPlayHistory =
@@ -324,7 +325,8 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                     val lastEven = lastIsEven
                     val currentIsEven = index % 2 == 0
                     lastIsEven = currentIsEven
-                    if (isOddGreaterThanRemote(index) || isForceShowAd)
+                    AdUtils.preloadUnlock()
+                    if (isOddGreaterThanRemote(index))
                         localEvent("ad_chance", hashMapOf("ad_pos_id" to "dlmsf_switch_int"))
                     if (AdUtils.isUnlockAdHaveCache()) {
                         if (isOddGreaterThanRemote(index)) {
@@ -338,7 +340,6 @@ class PangleDramaPlayActivity : GenericBindActivity<ActivityDramaPlayPangleBindi
                         }
                     } else {
                         episodeEntity?.let { updateEpisodeData(shortPlay, it, index) }
-                        AdUtils.preloadUnlock()
                         if (index >= unlockIndex) {
                             isForceShowAd = true
                         }

@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.core.content.ContextCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.google.firebase.messaging.RemoteMessage.PRIORITY_HIGH
 import com.sphere.shortvideos.notification.NotificationHelper
 import com.sphere.shortvideos.notification.NotificationHelper.updateFixedNotification
 

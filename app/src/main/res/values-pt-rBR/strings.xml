@@ -72,6 +72,7 @@
     <string name="notification_local_79_desc4">Uma recompensa foi adicionada.</string>
 
     <string name="v_pri">2x Prêmio</string>
+    <string name="claim_rewards">Resgatar recompensas</string>
     <string name="tips_info">Assista a dramas e ganhe prêmios gigantes! </string>
     <string name="bonus_welcome_title">Bônus de Boas-Vindas</string>
     <string name="watch_basic_ad"><u>Prêmio Normal</u></string>
@@ -102,7 +103,7 @@
     <string name="claim">Resgatar</string>
     <string name="my_wallet">Minha carteira</string>
     <string name="fortune_challenge">Desafio da Roda da Sorte</string>
-    <string name="get_re">Resgatar</string>
+    <string name="get_re">Resgatar recompensa</string>
     <string name="proud_to_cash_out">-Orgulhe-se do Saque-</string>
     <string name="my_balance">Meu saldo</string>
     <string name="withdrawal_method">Método de saque</string>
